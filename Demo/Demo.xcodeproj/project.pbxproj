@@ -119,7 +119,7 @@
 /* Begin PBXFileReference section */
 		451D6094277E8671008F44C0 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		451D6096277E8672008F44C0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		451D60A1277E8672008F44C0 /* Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		451D60A1277E8672008F44C0 /* RenderKitDemoApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RenderKitDemoApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		452D1627278D3F57002A47E2 /* Project-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Project-Release.xcconfig"; sourceTree = "<group>"; };
 		452D1629278D3F57002A47E2 /* Project-Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Project-Shared.xcconfig"; sourceTree = "<group>"; };
 		452D162A278D3F57002A47E2 /* Demo-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Demo-Release.xcconfig"; sourceTree = "<group>"; };
@@ -252,7 +252,7 @@
 		451D609C277E8672008F44C0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				451D60A1277E8672008F44C0 /* Demo.app */,
+				451D60A1277E8672008F44C0 /* RenderKitDemoApp.app */,
 				455A9B892A43DF8600A8AB36 /* VisionOSDemo.app */,
 			);
 			name = Products;
@@ -434,7 +434,7 @@
 				4571A1D32A44E66B0034731B /* RenderKitDemo */,
 			);
 			productName = "RenderGraphKitDemo (macOS)";
-			productReference = 451D60A1277E8672008F44C0 /* Demo.app */;
+			productReference = 451D60A1277E8672008F44C0 /* RenderKitDemoApp.app */;
 			productType = "com.apple.product-type.application";
 		};
 		455A9B882A43DF8600A8AB36 /* VisionOSDemo */ = {

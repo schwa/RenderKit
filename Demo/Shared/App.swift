@@ -89,12 +89,6 @@ struct RenderKitDemoApp: App {
         }
         .keyboardShortcut("2", modifiers: [.command, .shift])
 
-        Button(title: "Minecraft Clone…", systemImage: "cube.transparent") {
-            openWindow(id: "Minecraft")
-            dismissWindow(id: "Welcome")
-        }
-        .keyboardShortcut("3", modifiers: [.command, .shift])
-
         Button(title: "SpriteSheet Editor…", systemImage: "cube.transparent") {
             openWindow(id: "SpriteSheet")
             dismissWindow(id: "Welcome")
