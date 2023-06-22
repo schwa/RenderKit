@@ -1,4 +1,5 @@
 import RenderKit
+import RenderKitSupport
 import SwiftUI
 
 @main
@@ -52,7 +53,7 @@ struct RenderKitDemoApp: App {
             }
             .windowStyle(.hiddenTitleBar)
             Window("Demo", id: "DemoView") {
-                DemosView()
+                DemosView().metalDevice(value: MTLCreateYoloDevice())
             }
             Window("SpriteSheet", id: "SpriteSheet") {
                 SpriteSheetView()

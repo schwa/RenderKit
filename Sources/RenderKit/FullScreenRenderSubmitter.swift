@@ -9,8 +9,7 @@ public class FullScreenRenderSubmitter: RenderSubmitter {
     let vertexBuffer: MTLBuffer
     let transforms: Transforms
 
-    public init() {
-        let device = MTLCreateYoloDevice()
+    public init(device: MTLDevice) {
 
         var transforms = Transforms()
         transforms.modelView = .identity

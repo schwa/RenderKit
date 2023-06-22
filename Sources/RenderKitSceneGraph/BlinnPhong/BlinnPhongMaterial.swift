@@ -18,10 +18,10 @@ public class BlinnPhongMaterial: MaterialProtocol, Codable {
         self.shininess = shininess
     }
 
-    public init(ambientColor: SIMD4<Float>? = nil, diffuseColor: SIMD4<Float>, specularColor: SIMD4<Float>, shininess: Float) throws {
-        ambient = try .init(color: ambientColor ?? diffuseColor, label: "ambientColor")
-        diffuse = try .init(color: diffuseColor, label: "diffuseColor")
-        specular = try .init(color: specularColor, label: "specularColor")
+    public init(ambientColor: SIMD4<Float>? = nil, diffuseColor: SIMD4<Float>, specularColor: SIMD4<Float>, shininess: Float, device: MTLDevice) throws {
+        ambient = try .init(color: ambientColor ?? diffuseColor, device: device, label: "ambientColor")
+        diffuse = try .init(color: diffuseColor, device: device, label: "diffuseColor")
+        specular = try .init(color: specularColor, device: device, label: "specularColor")
         self.shininess = shininess
     }
 

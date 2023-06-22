@@ -47,21 +47,6 @@ import CryptoKit
 
     // MARK: -
 
-    struct MetalDeviceEnvironmentKey: EnvironmentKey {
-        static let defaultValue: MTLDevice = MTLCreateYoloDevice()
-    }
-
-    extension EnvironmentValues {
-        var metalDevice: MTLDevice {
-            get {
-                self[MetalDeviceEnvironmentKey.self]
-            }
-            set {
-                self[MetalDeviceEnvironmentKey.self] = newValue
-            }
-        }
-    }
-
     struct MetalDocumentView: View {
         @Environment(\.metalDevice)
         var device

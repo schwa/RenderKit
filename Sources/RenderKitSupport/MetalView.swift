@@ -154,3 +154,25 @@ extension CGSize {
         height > 0 && width > 0
     }
 }
+
+public struct MTLDeviceKey: EnvironmentKey {
+    public static var defaultValue: MTLDevice = MTLCreateYoloDevice()
+}
+
+public extension EnvironmentValues {
+    var metalDevice: MTLDevice {
+        get {
+            self[MTLDeviceKey.self]
+        }
+        set {
+            self[MTLDeviceKey.self] = newValue
+        }
+    }
+}
+
+public extension View {
+    func metalDevice(value: MTLDevice) -> some View {
+        environment(\.metalDevice, value)
+    }
+}
+

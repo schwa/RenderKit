@@ -32,7 +32,8 @@ struct MetalInfoView: View {
 }
 
 struct MTLDeviceInfoView: View {
-    let device = MTLCreateYoloDevice()
+    @Environment(\.metalDevice)
+    var device
 
     var body: some View {
         Section("MTLDevice") {

@@ -9,9 +9,13 @@ import RenderKitSupport
 import RenderKitSceneGraph
 
 struct DemosView: View {
+
+    @Environment(\.metalDevice)
+    var device
+
     @StateObject
     // swiftlint:disable:next force_try
-    var model = try! RenderModel(device: MTLCreateSystemDefaultDevice()!)
+    var model = try! RenderModel(device: MTLCreateYoloDevice())
 
     enum Mode: String {
         case render
@@ -87,8 +91,8 @@ struct DemosView: View {
         do {
             let position = model.sceneGraph.cameraController.absoluteTarget
             let provider = GeometryProvider.shape(shape: .sphere(Sphere(radius: 1)))
-            let geometry = try MetalKitGeometry(provider: provider, device: MTLCreateYoloDevice())
-            let material = try BlinnPhongMaterial(diffuseColor: [0.5, 0, 0, 1], specularColor: [1, 1, 1, 1], shininess: 16)
+            let geometry = try MetalKitGeometry(provider: provider, device: device)
+            let material = try BlinnPhongMaterial(diffuseColor: [0.5, 0, 0, 1], specularColor: [1, 1, 1, 1], shininess: 16, device: device)
             let entity = ModelEntity(transform: Transform(translation: position), selectors: ["teapot"], geometry: geometry, material: material)
             model.sceneGraph.scene.addChild(node: entity)
         }

@@ -12,7 +12,6 @@ public class BlinnPhongLightingModel {
             guard oldValue.map(\.id) != lights.map(\.id) else {
                 return
             }
-            let device = MTLCreateYoloDevice()
             tryElseLog {
                 _ = try updateLightsBuffer(device: device)
             }
@@ -29,8 +28,11 @@ public class BlinnPhongLightingModel {
     var cachedLightsBuffer: MTLBuffer?
     var cachedArgumentEncoder: MTLArgumentEncoder?
 
-    public init(lights: [Light]) {
+    var device: MTLDevice
+
+    public init(lights: [Light], device: MTLDevice) {
         self.lights = lights
+        self.device = device
     }
 
     @discardableResult

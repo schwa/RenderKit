@@ -48,7 +48,9 @@ class GLTFLoader {
         }
     }
 
-    let device = MTLCreateYoloDevice()
+    @Environment(\.metalDevice)
+    var device
+    
     var buffers: [SwiftGLTF.URI: MTLBuffer] = [:]
 
     func makeNode(_ node: SwiftGLTF.Node) throws -> ModelEntity {

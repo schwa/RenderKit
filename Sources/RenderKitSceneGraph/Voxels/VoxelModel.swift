@@ -11,14 +11,13 @@ public class VoxelModel {
     public let indexCount: Int
     public let colorPalette: MTLTexture
 
-    public init(model: MagicaVoxelModel) throws {
+    public init(model: MagicaVoxelModel, device: MTLDevice) throws {
         // testBuilder()
 
         let maxVertexCount = model.voxels.count * 4 * 6
         // 2 triangles, 3 vertices, 6 sides
         let maxIndexCount = model.voxels.count * 2 * 3 * 6
 
-        let device = MTLCreateYoloDevice()
         let voxelBuffer = device.makeBuffer(bytesOf: model.voxels, options: .storageModeShared)
 
         let textureDescriptor = MTLTextureDescriptor()

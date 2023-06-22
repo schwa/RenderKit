@@ -23,7 +23,7 @@ public class RenderModel: ObservableObject {
     var frameStateBuffer: MTLBuffer
 
     public init(device: MTLDevice) throws {
-        sceneGraph = try SceneGraph.demo()
+        sceneGraph = try SceneGraph.demo(device: device)
         let graph = DemoRenderGraph()
 
         self.device = device
@@ -77,9 +77,9 @@ public class RenderModel: ObservableObject {
 
         renderer = Renderer(device: device, graph: graph, environment: environment)
         renderer.add(submitter: SceneGraphRenderSubmitter(scene: sceneGraph))
-        renderer.add(submitter: FullScreenRenderSubmitter())
+        renderer.add(submitter: FullScreenRenderSubmitter(device: device))
 
-        let voxelModel = try VoxelModel(model: try MagicaVoxelModel(named: "monu7", bundle: .module))
+        let voxelModel = try VoxelModel(model: try MagicaVoxelModel(named: "monu7", bundle: .module), device: device)
 
 
         renderer.add(submitter: VoxelsSubmitters(model: voxelModel, camera: sceneGraph.camera, lightingModel: sceneGraph.lightingModel))
@@ -122,23 +122,22 @@ public struct DemoRenderGraph: RenderGraphProtocol {
 }
 
 public extension SceneGraph {
-    static func demo() throws -> SceneGraph {
-        let device = MTLCreateYoloDevice()
-
+    static func demo(device: MTLDevice) throws -> SceneGraph {
         let camera = Camera(projection: .perspective(Perspective(fovy: .degrees(60), near: 0.1, far: 1000)))
         let cameraController = CameraController(position: [0, 1, 5], target: [0, 0, -1], camera: camera)
         let lightingModel = BlinnPhongLightingModel(lights: [
             Light(transform: .translation([-5, 2, 5]), lightColor: [0, 0, 0.5], lightPower: 40),
             Light(transform: .translation([5, 5, 5]), lightColor: [0, 1, 0], lightPower: 40),
-        ])
+        ], device: device)
 
         let scene = SceneNode(name: "root", children: [
-            try ModelEntity(name: "teapot", transform: Transform(scale: [0.5, 0.5, 0.5], rotation: simd_quatf(real: 0.707_106_828_689_575, imag: [0, 0.707_106_769_084_93, 0]), translation: [-1, 0, 0]), selectors: ["teapot"], geometry: MetalKitGeometry(named: "teapot", device: device), material: BlinnPhongMaterial(diffuseColor: [0.5, 0, 0, 1], specularColor: [1, 1, 1, 1], shininess: 16)),
-            try ModelEntity(isHidden: true, transform: .translation([-4, 0, -1]), geometry: MetalKitGeometry(provider: .shape(shape: .plane(Plane(extent: [10, 0, 10], segments: [1, 1]))), device: device), material: UnlitMaterial(baseColor: [1, 0, 0, 1])),
+            try ModelEntity(name: "teapot", transform: Transform(scale: [0.5, 0.5, 0.5], rotation: simd_quatf(real: 0.707_106_828_689_575, imag: [0, 0.707_106_769_084_93, 0]), translation: [-1, 0, 0]), selectors: ["teapot"], geometry: MetalKitGeometry(named: "teapot", device: device), material: BlinnPhongMaterial(diffuseColor: [0.5, 0, 0, 1], specularColor: [1, 1, 1, 1], shininess: 16, device: device)),
+            try ModelEntity(isHidden: true, transform: .translation([-4, 0, -1]), geometry: MetalKitGeometry(provider: .shape(shape: .plane(Plane(extent: [10, 0, 10], segments: [1, 1]))), device: device), material: UnlitMaterial(baseColor: [1, 0, 0, 1], device: device)),
             try ModelEntity(name: "plane", selectors: ["plane"], geometry: MetalKitGeometry(shape: .plane(Plane(extent: [10, 0, 10])), device: device), material: nil),
             try ModelEntity(name: "plane", transform: .translation([0, 5, -5]).rotated(angle: .degrees(180), axis: [0, 1, 0]), selectors: ["plane"], geometry: MetalKitGeometry(shape: .plane(Plane(extent: [10, 10, 0])), device: device), material: nil),
 
-            try ModelEntity(name: "skybox", transform: .translation([0, 0.5, 0]), selectors: ["teapot"], geometry: MetalKitGeometry(provider: .shape(shape: .sphere(Sphere(extent: [1, 1, 1], segments: [24, 24], inwardNormals: false))), device: device), material: BlinnPhongMaterial(ambient: .init(named: "Road_to_MonumentValley_8k", bundle: .module, device: device), diffuse: .color([0, 0, 0, 0]), specular: .color([0.5, 0.5, 0.5, 1]), shininess: 16)),
+            try ModelEntity(name: "skybox", transform: .translation([0, 0.5, 0]), selectors: ["teapot"], geometry: MetalKitGeometry(provider: .shape(shape: .sphere(Sphere(extent: [1, 1, 1], segments: [24, 24], inwardNormals: false))), device: device), material: BlinnPhongMaterial(ambient: .init(named: "Road_to_MonumentValley_8k", bundle: .module, device: device), diffuse: .color([0, 0, 0, 0], device: device), specular: .color([0.5, 0.5, 0.5, 1], device: device), shininess: 16)),
+            try ModelEntity(name: "skybox", transform: .translation([0, 0.5, 0]), selectors: ["teapot"], geometry: MetalKitGeometry(provider: .shape(shape: .sphere(Sphere(extent: [1, 1, 1], segments: [24, 24], inwardNormals: false))), device: device), material: BlinnPhongMaterial(ambient: .init(named: "Road_to_MonumentValley_8k", bundle: .module, device: device), diffuse: .color([0, 0, 0, 0], device: device), specular: .color([0.5, 0.5, 0.5, 1], device: device), shininess: 16)),
 
             ParticleNode(),
             camera,

@@ -11,8 +11,8 @@ public protocol MaterialProtocol: ParameterValuesProvider {
 public struct UnlitMaterial: MaterialProtocol, Codable {
     public var baseColor: MaterialParameter
 
-    public init(baseColor: SIMD4<Float>) throws {
-        self.baseColor = try .init(color: baseColor, label: "baseColor")
+    public init(baseColor: SIMD4<Float>, device: MTLDevice) throws {
+        self.baseColor = try .init(color: baseColor, device: device, label: "baseColor")
     }
 }
 

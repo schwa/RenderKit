@@ -61,9 +61,7 @@ public struct MaterialParameter: Codable {
         self.provider = provider
     }
 
-    public init(color: SIMD4<Float>, device: MTLDevice? = nil, label: String? = nil) throws {
-        let device = device ?? MTLCreateYoloDevice()
-
+    public init(color: SIMD4<Float>, device: MTLDevice, label: String? = nil) throws {
         provider = .color(color: color)
         kind = .color(color)
         let pixelFormat = MTLPixelFormat.rgba32Float
@@ -115,7 +113,7 @@ public struct MaterialParameter: Codable {
 }
 
 public extension MaterialParameter {
-    static func color(_ color: SIMD4<Float>, device: MTLDevice? = nil, label: String? = nil) throws -> MaterialParameter {
+    static func color(_ color: SIMD4<Float>, device: MTLDevice, label: String? = nil) throws -> MaterialParameter {
         try MaterialParameter(color: color, device: device, label: label)
     }
 }
