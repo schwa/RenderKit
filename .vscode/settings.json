@@ -1,0 +1,32 @@
+{
+    "lldb.library": "/Applications/Xcode.app/Contents/SharedFrameworks/LLDB.framework/Versions/A/LLDB",
+    "cSpell.words": [
+        "frecord",
+        "gline",
+        "GLSL",
+        "glslang",
+        "GLTF",
+        "Ints",
+        "Kode",
+        "memoryless",
+        "Pushable",
+        "rasterized",
+        "RGBCIF",
+        "SPIRV",
+        "swiftlint",
+        "WASD",
+        "xcconfig",
+        "xcodeproj",
+        "XXXL"
+    ],
+    "editor.tokenColorCustomizations": {
+        "textMateRules": [
+            {
+                "scope": "keyword.operator",
+                "settings": {
+                    "foreground": "#FF0000"
+                }
+            }
+        ]
+    }
+}

@@ -1,0 +1,33 @@
+{
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug CLI",
+            "program": "${workspaceFolder}/.build/debug/CLI",
+            "args": [],
+            "cwd": "${workspaceFolder:RenderGraphKit}",
+            "preLaunchTask": "swift: Build Debug CLI"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Release CLI",
+            "program": "${workspaceFolder}/.build/release/CLI",
+            "args": [],
+            "cwd": "${workspaceFolder:RenderGraphKit}",
+            "preLaunchTask": "swift: Build Release CLI"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Test RenderGraphKit",
+            "program": "/Applications/Xcode.app/Contents/Developer/usr/bin/xctest",
+            "args": [
+                ".build/debug/RenderGraphKitPackageTests.xctest"
+            ],
+            "cwd": "${workspaceFolder:RenderGraphKit}",
+            "preLaunchTask": "swift: Build All"
+        }
+    ]
+}

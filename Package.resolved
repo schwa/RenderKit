@@ -1,52 +1,68 @@
 {
-  "object": {
-    "pins": [
-      {
-        "package": "CoreGraphicsGeometrySupport",
-        "repositoryURL": "https://github.com/schwa/CoreGraphicsGeometrySupport",
-        "state": {
-          "branch": null,
-          "revision": "8032fa40acffc8791aa85f0ae347ae4feb197dd2",
-          "version": "0.0.2"
-        }
-      },
-      {
-        "package": "Everything",
-        "repositoryURL": "https://github.com/schwa/Everything",
-        "state": {
-          "branch": null,
-          "revision": "0a562a585ea02b802a01d5a7583cde5a31bc4f2d",
-          "version": "0.1.1"
-        }
-      },
-      {
-        "package": "SIMDSupport",
-        "repositoryURL": "https://github.com/schwa/SIMD-Support",
-        "state": {
-          "branch": null,
-          "revision": "c041a5b7086252a06ff8cf11158e289d5a3b62b4",
-          "version": "0.0.3"
-        }
-      },
-      {
-        "package": "swift-algorithms",
-        "repositoryURL": "https://github.com/apple/swift-algorithms",
-        "state": {
-          "branch": null,
-          "revision": "b14b7f4c528c942f121c8b860b9410b2bf57825e",
-          "version": "1.0.0"
-        }
-      },
-      {
-        "package": "swift-numerics",
-        "repositoryURL": "https://github.com/apple/swift-numerics",
-        "state": {
-          "branch": null,
-          "revision": "0a5bc04095a675662cf24757cc0640aa2204253b",
-          "version": "1.0.2"
-        }
+  "pins" : [
+    {
+      "identity" : "coregraphicsgeometrysupport",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/schwa/CoreGraphicsGeometrySupport",
+      "state" : {
+        "revision" : "8032fa40acffc8791aa85f0ae347ae4feb197dd2",
+        "version" : "0.0.2"
       }
-    ]
-  },
-  "version": 1
+    },
+    {
+      "identity" : "everything",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/schwa/Everything",
+      "state" : {
+        "branch" : "main",
+        "revision" : "0a562a585ea02b802a01d5a7583cde5a31bc4f2d"
+      }
+    },
+    {
+      "identity" : "metalsupport",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/schwa/MetalSupport",
+      "state" : {
+        "branch" : "main",
+        "revision" : "e0ed082f2c79dfaabec56c153448da337f369e76"
+      }
+    },
+    {
+      "identity" : "simd-support",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/schwa/SIMD-Support",
+      "state" : {
+        "branch" : "main",
+        "revision" : "c041a5b7086252a06ff8cf11158e289d5a3b62b4"
+      }
+    },
+    {
+      "identity" : "swift-algorithms",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-algorithms",
+      "state" : {
+        "revision" : "b14b7f4c528c942f121c8b860b9410b2bf57825e",
+        "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "swift-numerics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-numerics",
+      "state" : {
+        "revision" : "0a5bc04095a675662cf24757cc0640aa2204253b",
+        "version" : "1.0.2"
+      }
+    },
+    {
+      "identity" : "swiftgltf",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/schwa/SwiftGLTF",
+      "state" : {
+        "branch" : "main",
+        "revision" : "26680799a74af1233b44c22110e830978feffa48"
+      }
+    }
+  ],
+  "version" : 2
 }

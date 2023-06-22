@@ -1,0 +1,7 @@
+project: Demo/RenderKitDemo.xcodeproj
+retain_public: true
+schemes:
+- RenderKitDemo
+targets:
+- RenderKit.RenderKit
+- RenderKitDemo

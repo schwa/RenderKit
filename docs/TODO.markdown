@@ -1,0 +1,314 @@
+# TODO
+
+- [ ] Unorganised
+  - [ ] Produce a master set of all materials and prepare them on the fly when master list changes
+  - [ ] Use a real timer for particle system
+  - [ ] Get rid of "selectors" and use a real method to select what to render.
+  - [ ] If we inject a new node at just the right point - we can crash - race condition
+
+- [ ] Architecture
+  - [ ] Investigate Better Ways to make RenderGraphs
+      - [ ] Use ResultBuilders for both RenderGraph and SceneGraph creation
+      - [X] Maybe make RenderPass a protocol and have all stages adopt it. Similar to SwiftUI View.
+  - [ ] Compute Pass and Compute Stages are 1:1, it makes sense to have Compute Passes contain main Compute Passes
+  - [ ] workSize should not be hard coded in ComputePass.
+  - [ ] There's no way for passes to do setup unlike submitters
+  - [ ] Are passes more like "techniques"?
+  - [ ] ShaderBinding and ShaderIndex are the same. Can we move ShaderBinding into the headers?
+  - [ ] We have Parameter.Value and ParameterValue. Fail.
+  - [X] **Renderer can do with a per-pass "warm-up" to avoid creating buffers in render.**
+    - [ ] Bonus points for multi-threading
+    - [X] **"Submitters" need to participate in XXXX prepare frame**
+  - [ ] Provide a struct that can "wrap" an argument buffer either using subscripts or code generated.
+    - [ ] Similar to the "accessor" API I've been using before
+  - [ ] All stages are GPU - does a CPU stage make sense?
+
+- [ ] Bugs
+  - [ ] SwiftUI detail view kills performance - why?
+    - [ ] Get metal render display link closer to metal - dont use a task? Heck use a display link natively?
+  - [X] All publishers broken
+  - [X] Remove/fix FPS chart
+
+- [ ] Lighting
+  - [ ] **Make lighting model a protocol and let there be other kinds of lighting models.**
+  - [ ] Clean up the per frame argument buffer setting
+  - [X] ~~We can combine our two buffers into one (bonus points)~~
+
+- [ ] Performance & Optimisation
+  - [ ] **We're allocating at least one MTLBuffer during rendering. Stop that.**
+  - [ ] **Pay attention to the purple triangles in the Metal debugger. it's not bad yet, but it will be.**
+  - [ ] Moved more things into MTLBuffers that only change as needed - setBytes shouldn't be relied on
+    - [ ] **According to docs setBytes is prefered for less than 4KB** 
+    - [ ] Things that change per pass need to go into own buffer. setBytes is like a "one shot" buffer.
+  - [ ] **We need a geometry cache for when we add the "add teapot" button**
+  - [ ] **We need a texture cache.**
+  - [ ] **We create a lot of 1px x 1px textures for the solid color textures. How can we fix this?**
+  - [ ] Are the solid colour textures using a sensible sampler configuration?
+  - [ ] Look into Indirect Command Buffers
+  - [ ] Double/triple buffer metal buffers we're writing into from CPU per frame (see wwdc session)
+  - [ ] First frame problem - first frame allocates buffers.
+     - [ ] **Not sure if this is still true**
+  - [ ] Clean up the per frame argument buffer setting (material & lighting)
+  - [ ] Make an off-screen renderer so we can do unit tests and timing analysis - also capture first frame
+
+- [ ] RenderGraph
+  - [ ] Skybox (M)
+  - [ ] **Replace shader parameter IDs with named values across YAML, shaders and swift (M)**
+  - [ ] Need to take into account enabled state of shaders when computing read/write of colour buffers (to reproduce: add a disabled render shader as the first shader)
+    - [ ] This could be solved by a checker stage that makes sure somethign sensible will happen per render
+  - [ ] Rename RenderPass.Stage.Inputs (S) - these are "Parameter"?
+  - [ ] Some way of specifying defaults for uniforms in shader graph, so environment overwrites uniforms.
+  - [ ] Use "frame state"
+    - [ ] Use projection matrix from frame state
+  - [ ] Automatically coalesce command encoders (see purple warnings in graph debugger) (M)
+  - [ ] Result of previous render/compute/tile pass as input
+    - [ ] Deferred / forward+ shader [XL]
+  - [X] Configure attachment load/stores from render graph
+  - [ ] Make all render graph objects Identifiable
+  - [ ] Book of Shaders demos
+  - [ ] Add ability to pass a previous frame to shaders (M)
+  - [ ] Put uniforms into labelled Buffers (S)
+    - [ ] We can't put per-entity uniforms into a buffer - need to allocate per entity (?)
+    - [ ] break uniforms up into world uniforms / entity uniforms. The camera should be part of the world state (S)
+    - [ ] Optimisation - stop using dicts of strings (L)
+      - [ ] Strings -> Ints -> Arrays (L)
+  - [ ] Convert string keys and names to Tags where possible
+    - [ ] Names
+    - [ ] ID
+    - [X] Parameter Keys
+
+- [ ] Renderer
+  - [X] Instancing
+  - [X] Look into instanced rendering
+  - [ ] Skip Phong pass if no lights or entities (issue is we pass a zero byte buffer)
+  - [X] Improve shader calling
+    - [ ] Handle parameter "usage"
+  - [ ] Resource heaps - https://developer.apple.com/library/archive/documentation/Miscellaneous/Conceptual/MetalProgrammingGuide/ResourceHeaps/ResourceHeaps.html
+    - [ ] Heaps come in use with argument buffer to "join" groups of resources
+  - [ ] Minecraft style optimised voxel rendering
+    - [ ] Use compute shader to produce geometry from 3d array
+    - [ ] Do we even need to? Vertex shaders can generate all vertices from "voxel id".
+    - [ ] Hidden geometry removal
+  - [ ] Bloom effect
+    - [ ] Need multiple colour attachments (rendering bloom)
+    - [ ] Need MPS Gaussian Blur
+  - [ ] Use memoryless depth buffer for texture
+
+- [ ] SceneGraph
+  - [ ] SceneGraph should use instancing - somehow
+  - [ ] ~~Make own Package inside RenderKit.~~ The trouble here is the shaders. Packages & shaders are still not best buddies.
+  - [X] Turn into actual SceneGraph (parent nodes))
+  - [ ] **Materials**
+    - [X] Should be a protocol
+    - [ ] Instances should include BlinnPhongMaterial, UnlitMaterial, etc
+    - [ ] **Materials should cache any Argument Buffer**
+  - [ ] It's very hacky right now. Fix that
+    - [ ] **Start turning it into a _real_ scene graph**
+
+- [ ] Project
+  - [ ] Tidy-up links/notes
+  - [ ] Flesh out design document
+  - [X] Build for iOS
+    - [ ] Test on iOS Device
+  - [ ] Support simulator
+    - [ ] MTLValidateFeatureSupport:4818: failed assertion `Linear textures from shared buffers is not supported on this device (Note: Understood but not fixed)
+    - [ ] https://developer.apple.com/documentation/metal/developing_metal_apps_that_run_in_simulator
+
+- [ ] Misc
+  - [ ] Use (log) signposts
+
+
+- [ ] UI
+  - [ ] WASD controller is at a much lower framerate.
+  - [ ] Add a button to add a random teapot.
+  - [X] Many classes are not sending did change events
+  - [ ] **UI to turn off and on passes as needed and or reorder**
+  - [ ] Normal view. Show arrows on geometry
+  - [ ] KodeLife import
+  - [ ] Fix FPS UI
+  - [ ] Make detail views actual detail views
+  - [ ] Make map view more legible.
+  - [ ] New UI
+    - [ ] Hide/show chrome button (in toolbar?)
+    - [ ] Editable scene view
+    - [ ] Editable render graph view
+- [ ] Keep an eye on metal warnings
+- [ ] Debug Geometry (M)
+- [ ] RenderPass.State.Constants - constants should be able to be set at runtime, not just in the graph file.
+- [ ] RenderPass Constants
+  - [ ] More types:
+    - [ ] Scalars
+    - [ ] Transforms
+    - [ ] Colors
+    - [ ] More vector types
+    - [X] Proof of concept
+
+- [ ] Codable
+  - [ ] Make sure both RenderGraph and SceneGraph are fully codable
+    - [X] Render Graph
+    - [ ] Scene Graph
+  - [ ] Write unit tests to verify serialisation and deserialisation.
+
+## Housekeeping
+
+- [ ] Clean up Everything shaders - put into demo project (L)
+  - [ ] Deprecate SIMD & Command Encoder stuff in Everything/RenderKit (S)
+    - [ ] Might have to move deprecated functions directly to RenderKitClassic (S)
+
+## Stretch Goals
+
+- [ ] Optimize uniforms so they're not redundant (M)
+  - [ ] Only useful for single command encoders or when encoders are coalesced
+- [ ] Hook up AVPlayer texture
+- [ ] Simple animation (S)
+- [ ] Post processing with Tile Shaders (M)
+- [ ] PBR rendering (XXL)
+- [ ] Ray traced shadows (XXL)
+- [ ] Shadows (XL)
+- [ ] Device late binding
+  - [ ] need access to metal devices - before we're rendering but after a device is available
+- [ ] GLTF support (XXL)
+- [ ] Matrix decomposition (M)
+- [ ] Look into function stitching (?)
+
+## Done
+
+- [X] WASD controller (M)
+  - [X] Keyboard
+  - [X] **Mouse**
+  - [X] Fix look at cursor when camera moves
+- [X] **Propagate did change events from MetalView to renderer, so renderer can re-allocate Depth Buffer outside of render loop**
+- [X] **Allow passes to control colour attachments etc**
+- [X] **Renderer can create the render pass descriptor - not the view**
+- [X] Add a button to add a random light.
+- [X] EDR rendering
+- [X] CAMetalLayer depth buffer is HUGE
+- [X] CAMetalLayer resizes badly
+- [X] We can only render one entity per pass. OOPS.
+- [X] ~~Invert render loop so that the scene graph can run the render passes.~~ Wasn't needed, we just needed to provide a hook for the scene graph to make sure uniforms were being set. The whole render phase callback isn't working out well though :-(
+- [X] Sketch out the main render loop - see PLAN.markdown.
+- [X] Get README online
+  - [X] Update README
+  - [X] Get the README->GIST git hook or GitHub action working.
+- [X] Rename to RenderKit(2)
+- [X] Put demo .xcodeproj in main repo again
+- [X] Get working on BuildKite
+- [X] swiftlint
+- [X] Break out .xcconfig
+- [X] DemoApp
+  - [X] Use an actual Xcode project instead of hacked SPM target (allows debugging signing and use of all Instruments)
+  - [X] Compile shaders inside project not using project so we can debug shaders
+  - [X] Deal with refactoring nightmares this caused. [IMPORTANT]
+- [X] ~~BUG: Specular highlight is getting affected by camera location (M)~~ Doesn't seem to be true
+- [X] **BUG: `look(at:…)` still seems to looking straight ahead (can't look behind the camera?) (M)**
+- [X] Important
+  - [X] Matrix issues
+    - [X] Move old matrix code from Everything into RenderKitClassic
+    - [X] Duplicate old matrix into RenderKit
+    - [X] ~~Fix matrix code - make sure it's all column major - confirm with unit tests~~
+    - [X] ~~Fix look at code - use the DX look at code~~
+    - [X] ~~Make sure projection code all correct~~
+- [X] Stop using MLKView and use CAMetalLayer - fixes the memoryless issue on Apple Silicon (M)
+- [X] RenderPass should not create a PipelineDescriptor, but merely configure one created by renderer/
+- [X] Get scene & hacks outside of Renderer
+- [X] Hard-coded geometry as input - e.g. a skybox
+- [X] Metal view doesn't need to pass an entire MTKView struct as a parameter to draw (S)
+- [X] Use a placeholder for MTLDevice so we can clean up later. (S)
+- [X] FPS box (S)
+- [X] Make a MetalView that moves some responsibility out of RenderGraphView - has setup and per frame closures (S)
+- [X] Stop using drawable size did change
+- [X] Passes are all identical - get rid of protocol and use a concrete type
+- [X] Get rid of RenderKit dependency (M)
+  - [X] VertexBuilder (S)
+- [X] Use textures for material parameters
+  - [X] Solid colour materials are 1x1 pixel textures with relevant sampling
+- [X] Get rid of non-mesh geometry
+- [X] Fix depth buffer issues
+- [X] Finish map view and make it draggable
+- [X] Basic texture support
+- [X] Configure DepthStencilState from a pass (S)
+- [X] CPU load starts low and FPS is @ 120fps. After 30 seconds CPU grows to 100%, and then fps starts dropping.
+- [X] Add compute-shaders (M)
+- [X] Hello world compute shader
+- [X] Integrate into the graph
+- [X] uniform
+- [X] Game of life in a texture!
+- [X] Render Stack
+- [X] `RenderStackPushable` - things you can push on a render stack to provide uniforms and other objects to shaders
+  - [X] World transform
+  - [X] Phong lighting
+  - [X] Entities
+- [X] Get rid of RenderParameter struct [M]
+- [X] Parameters
+- [X] Parameters are not encoder setters - but just getters of objects (which can then be used to set)
+- [X] Fix uniform/material/texture handling
+- [X] Get multi-pass working
+- [X] Every pass processes all entities - this is wrong. Passes need to specify what inputs they take:
+- [X] "Scene" as input - how do we opt scenes into what passes?
+- [X] Renderer needs to provide hooks to allow environment modification @IMPORTANT
+  - [X] ~~At init time~~
+  - [X] ~~Even more hooks needed~~
+  - [X] ~~Clean this up - the closure is kinda lame~~
+  - [X] Before frame
+  - [X] At end frame
+  - [X] Before pass
+  - [X] At end of pass
+- [X] Need HDR support (using new CALayer renderer)
+- [X] Make the lighting model produce an argument buffer.
+- [X] Make render graph objects (Graph, Pass, Stage) value types so the graph can be navigated.
+- [X] Implement Renderer.argumentEncoder(for:)
+  - [X] We need to cache MTLFunctions by pass/stage in the renderer.
+    - [X] We need a full dotted name for a stage (pass.name + "." + stage.name)
+      - [X] Passes & stage need to become classes with parent values.
+- [X] ~~Add "named argument encoders" to Stage~~ - no need we walk the inputs of stages to find this
+- [X] Pass all Phong materials to shaders as a struct "Arguments to a graphics, kernel, visible, or user function can be a structure or a nested structure with members that are buffers, textures, or samplers only. You must pass such a structure by value. Each member of such a structure passed as the argument type to a graphics or kernel function can have an attribute to specify its location (as described in section 5.2.1)"
+- [X] Use MTLRenderCommandEncoder useResource:usage: to load memory as needed
+- [X] Argument buffers (2.13 Argument Buffers) - https://developer.apple.com/documentation/metal/buffers/about_argument_buffers
+- [X] How does one set up an argument buffer in a Render Graph?
+- [X] Get encoder descriptor from the function
+  - [X] Functions need to be available to parameters then???
+- [X] ~~Get rid of Scene Graph Encodable for now. We have a file format - make it work more~~
+- [X] Add encoders to all scene graph types
+- [X] Define scene graph it in YAML
+- [X] All writable variables need to be be made private. Guard state with locks as needed.
+    - [X] ~~Actor is going to be too heavy handed i think. But interesting experiment~~
+- [X] **How to share responsibility cleanly between renderer and scene graph "renderer"**
+  - [X] **Stop using closure and use protocol**
+- [X] **STOP CALLING makeLibrary AND REUSE**
+- [X] Event Handler
+  - [X] The eventHandler needs to be passed everything it needs for the handler to do the work... This includes: RendererEnvironment and some way to call `func argumentEncoder(forParameterKey key: RenderEnvironment.Key) throws -> MTLArgumentEncoder`
+  - [X] This refactoring will help with threeding
+- [X] **Make an assert that will fire if in render loop**
+  - [X] Use for -all- texture allocation
+- [X] Text-based render graph editor
+- [X] Use "SmoothedValue" types in FPS
+- [X] Most of RenderKit is deprecated as part of this rename to "ClassicRenderKit" (L)
+- [X] "SceneGraphRenderer"
+  - [X] Currently kinda hacky
+  - [X] Make into own thing
+  - [X] Make extensible
+- [X] ~~Convert TODOs in code to TODOs here~~
+- [X] Turn on swiftlint todos
+- [X] Get rid of Everything.unfair lock code
+- [X] No need to use buffer backed textures for colours
+- [X] ~~Can we use subtextures for color materials to reduce memory footprint~~ No.
+- [X] Flip back and forth between renders. Memory leak.
+- [X] 1/2 gig for ram wasted?
+- [X] Bring back game of life animation
+- [X] Make voxel shader work with blinn/phong - refactor blinn phong function
+- [X] Use new logging (string interpolation style)
+- [X] Put display link into environment so there is only one
+- [X] Bad flicker on teapot - probably sharing texture ids and occasionally getting blasted with game of life texture
+- [X] Look into all those @unchecked Sendables
+- [X] Re-do MetalView so UI and NS versions share more code
+- [X] Add ambient light color.
+- [X] WASD/Keyboard/Mouse controllers do not clean up and still prevent input
+- [X] Either shutting down/starting up a new metal view will crash - flip between full screen and render
+- [X] **DrawState passed to "submit" *should not* be an in-out**
+- [X] Environment should not be part of draw state, it should be passed mutable to `submit`
+- [X] Threading. THE TIME HAS COME.
+- [X] Rendering needs to happen on own queue.
+- [X] **Materials shouldn't load textures at decode time. we need another pass.**
+- [X] Clean up redundant keys in nested dictionaries ```(color: color: [0, 0, 0, 1])```
+- [X] Get rid of `_0` in the serialised dictionary (seen when encoding enums)
+- [ ] ~~**Re-organize TODO**~~
