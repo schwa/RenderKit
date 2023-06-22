@@ -266,7 +266,6 @@ public extension NSTextCheckingResult {
     }
 }
 
-
 public extension PixelFormat {
     init(mtlPixelFormat: MTLPixelFormat) {
         switch mtlPixelFormat {

@@ -76,7 +76,7 @@ let package = Package(
         ),
         .executableTarget(
             name: "RenderKitCTL",
-            dependencies: ["RenderKit", "RenderKitSceneGraph"]
+            dependencies: ["RenderKit", "RenderKitSceneGraph", "RenderKitDemo"]
         )
     ]
 )

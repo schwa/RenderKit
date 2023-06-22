@@ -9,16 +9,8 @@ import SIMDSupport
 import SwiftUI
 import RenderKitSupport
 import RenderKitSceneGraph
-import Everything
 import Foundation
 import Metal
-import Shaders
-import simd
-import SIMDSupport
-import SwiftUI
-import RenderKit
-import RenderKitSupport
-import RenderKitSceneGraph
 
 public class RenderModel: ObservableObject {
     public let device: MTLDevice
