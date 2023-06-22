@@ -157,7 +157,7 @@ import CryptoKit
                 shaderEditorPass.vertexStage.function = FunctionProvider(functionName: vertexFunctionName, library: libraryProvider, label: "\(vertexFunctionName)-\(sourceID)")
                 shaderEditorPass.fragmentStage.function = FunctionProvider(functionName: fragmentFunctionName, library: libraryProvider, label: "\(fragmentFunctionName)-\(sourceID)")
                 let renderGraph = ShaderEditorRenderGraph(passes: [shaderEditorPass])
-                let renderer = Renderer(device: device, graph: renderGraph)
+                let renderer = Renderer(device: device, graph: renderGraph, environment: RenderEnvironment())
                 renderer.label = "Renderer-\(sourceID)"
                 renderer.add(submitter: submitter)
                 mode = .rendering(renderer)

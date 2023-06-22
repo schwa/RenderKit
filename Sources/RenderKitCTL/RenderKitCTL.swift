@@ -8,7 +8,7 @@ struct Main {
     static func main() async throws {
 
         let device = MTLCreateYoloDevice()
-        let model = try RenderModel(device: device)
+        let model = try DemoModel(device: device)
         print(model)
 
     }

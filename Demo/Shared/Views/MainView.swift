@@ -8,7 +8,7 @@ import RenderKitDemo
 
 struct MainView: View, Sendable {
     @EnvironmentObject
-    var renderModel: RenderModel
+    var renderModel: DemoModel
 
     @Environment(\.displayLink)
     var displayLink

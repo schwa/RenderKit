@@ -11,7 +11,7 @@ import RenderKitDemo
 
 struct DetailView: View {
     @EnvironmentObject
-    var model: RenderModel
+    var model: DemoModel
 
     var body: some View {
         SceneGraphView().environmentObject(model.sceneGraph)

@@ -12,7 +12,7 @@ import RenderKitSceneGraph
 import Foundation
 import Metal
 
-public class RenderModel: ObservableObject {
+public class DemoModel: ObservableObject {
     public let device: MTLDevice
     public let sceneGraph: SceneGraph
     public let renderer: Renderer<DemoRenderGraph>
@@ -32,14 +32,14 @@ public class RenderModel: ObservableObject {
         let height = 1024
 
         let inputArray: [UInt8]
-        if let cachedArray = RenderModel.cachedArray {
+        if let cachedArray = DemoModel.cachedArray {
             inputArray = cachedArray
         }
         else {
             inputArray = (0 ... width * height).map { _ in
                 UInt8.random(in: 0 ... 1) * 255
             }
-            RenderModel.cachedArray = inputArray
+            DemoModel.cachedArray = inputArray
         }
         assertNotInRenderLoop()
         let inputTexture = device.makeTexture2D(width: width, height: height, pixelFormat: .r8Uint, storageMode: .private, usage: [.shaderRead, .shaderWrite], pixels: inputArray, label: "LIFE_A")
@@ -61,6 +61,13 @@ public class RenderModel: ObservableObject {
 
         let particleSystem = ParticleSystem(device: device)
 
+
+        let particleSubmitter = ParticleSubmitter(scene: sceneGraph, particleSystem: particleSystem)
+
+        let voxelModel = try VoxelModel(model: try MagicaVoxelModel(named: "monu7", bundle: .module), device: device)
+
+
+
         // NOTE: Hard coded. This needs to be generated syntheticly
         let environment: [RenderEnvironment.Key: ParameterValue] = [
             "$TEST_TEXTURE": .texture(color.texture),
@@ -73,15 +80,9 @@ public class RenderModel: ObservableObject {
             "$PARTICLES_ENVIRONMENT": .buffer(particleSystem.particlesEnvironment, offset: 0),
         ]
 
-        let particleSubmitter = ParticleSubmitter(scene: sceneGraph, particleSystem: particleSystem)
-
-        renderer = Renderer(device: device, graph: graph, environment: environment)
+        renderer = Renderer(device: device, graph: graph, environment: RenderEnvironment(environment))
         renderer.add(submitter: SceneGraphRenderSubmitter(scene: sceneGraph))
         renderer.add(submitter: FullScreenRenderSubmitter(device: device))
-
-        let voxelModel = try VoxelModel(model: try MagicaVoxelModel(named: "monu7", bundle: .module), device: device)
-
-
         renderer.add(submitter: VoxelsSubmitters(model: voxelModel, camera: sceneGraph.camera, lightingModel: sceneGraph.lightingModel))
         renderer.add(submitter: particleSubmitter)
         renderer.events.sink { [weak self] _ in

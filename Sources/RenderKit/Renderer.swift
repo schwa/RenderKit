@@ -47,12 +47,12 @@ public class Renderer<RenderGraph> where RenderGraph: RenderGraphProtocol {
 
     // MARK: Init & pre-render configuration
 
-    public init(device: MTLDevice, graph: RenderGraph, environment: [RenderEnvironment.Key: ParameterValue] = [:]) {
+    public init(device: MTLDevice, graph: RenderGraph, environment: RenderEnvironment) {
         self.graph = graph
         commandQueue = device.makeCommandQueue()!
         commandQueue.label = makeLabel(label, "Command Queue")
         lock = .init(uncheckedState: RenderState(device: device, graph: graph))
-        self.environment = RenderEnvironment(environment)
+        self.environment = environment
         logger?.debug("\(self.debugDescription, privacy: .public): \(#function, privacy: .public)")
     }
 
@@ -349,7 +349,7 @@ public class Renderer<RenderGraph> where RenderGraph: RenderGraphProtocol {
 
 extension Renderer: CustomDebugStringConvertible {
     public var debugDescription: String {
-        "Renderer(\(label.map({ "\"\($0)\"" }) ?? ObjectIdentifier(self).debugDescription))"
+        "Renderer(\(label.map({ "\"\($0)\"" }) ?? ""))"
     }
 }
 

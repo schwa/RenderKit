@@ -15,7 +15,7 @@ struct DemosView: View {
 
     @StateObject
     // swiftlint:disable:next force_try
-    var model = try! RenderModel(device: MTLCreateYoloDevice())
+    var model = try! DemoModel(device: MTLCreateYoloDevice())
 
     enum Mode: String {
         case render
