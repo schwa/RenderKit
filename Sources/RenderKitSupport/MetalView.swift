@@ -14,8 +14,6 @@ public struct MetalView: View {
 
     let draw: (CAMetalDrawable) -> Void
 
-    let drawID: AnyHashable
-
     var coordinator = Coordinator()
 
     @Environment(\.timingStatisticsPublisher)
@@ -24,10 +22,9 @@ public struct MetalView: View {
     @Environment(\.displayLink)
     var displayLink
 
-    public init(device: MTLDevice, drawableSize: Binding<CGSize> = .constant(.zero), drawID: AnyHashable, draw: @escaping (CAMetalDrawable) -> Void) {
+    public init(device: MTLDevice, drawableSize: Binding<CGSize> = .constant(.zero), draw: @escaping (CAMetalDrawable) -> Void) {
         self.device = device
         _drawableSize = drawableSize
-        self.drawID = drawID
         self.draw = draw
     }
 
@@ -70,10 +67,6 @@ public struct MetalView: View {
     }
 
     class Coordinator {
-        var device: MTLDevice? {
-            metalLayer?.device
-        }
-
         var metalLayer: CAMetalLayer?
 
         func tick(draw: ((CAMetalDrawable) -> Void)) {
@@ -148,12 +141,6 @@ public struct MetalView: View {
         }
     }
 #endif
-
-extension CGSize {
-    var isEmpty: Bool {
-        height > 0 && width > 0
-    }
-}
 
 public struct MTLDeviceKey: EnvironmentKey {
     public static var defaultValue: MTLDevice = MTLCreateYoloDevice()

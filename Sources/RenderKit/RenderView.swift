@@ -18,7 +18,7 @@ public struct RenderView<RenderGraph>: View where RenderGraph: RenderGraphProtoc
     }
 
     public var body: some View {
-        MetalView(device: device, drawableSize: $drawableSize, drawID: renderer.debugDescription) { drawable in
+        MetalView(device: device, drawableSize: $drawableSize) { drawable in
             tryElseLog {
                 try renderer.render(drawable: drawable)
             }
