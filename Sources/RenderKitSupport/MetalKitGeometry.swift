@@ -93,7 +93,7 @@ extension MetalKitGeometry: GeometryProtocol {
 
 public extension MetalKitGeometry {
     init(named name: String, device: MTLDevice) throws {
-        let url = Bundle.main.url(forResource: name, withExtension: "obj")!
+        let url = Bundle.module.url(forResource: name, withExtension: "obj")!
         self = try MetalKitGeometry(url: url, device: device, provider: .resource(name: name, bundleSpecifier: .main))
     }
 }

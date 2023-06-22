@@ -11,7 +11,7 @@ public class VoxelModel {
     public let indexCount: Int
     public let colorPalette: MTLTexture
 
-    init(model: MagicaVoxelModel) throws {
+    public init(model: MagicaVoxelModel) throws {
         // testBuilder()
 
         let maxVertexCount = model.voxels.count * 4 * 6

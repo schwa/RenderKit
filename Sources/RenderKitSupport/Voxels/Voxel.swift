@@ -38,8 +38,8 @@ public extension MagicaVoxelModel {
         self = MagicaVoxelModel.instantiate(mainChunk: mainChunk)
     }
 
-    init(named name: String) throws {
-        let url = Bundle.main.url(forResource: name, withExtension: "vox")!
+    init(named name: String, bundle: Bundle = Bundle.main) throws {
+        let url = bundle.url(forResource: name, withExtension: "vox")!
         self = try .init(contentsOf: url)
     }
 }

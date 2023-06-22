@@ -14,15 +14,13 @@ public class VoxelsSubmitters: RenderSubmitter {
 //    @MainActor
     public var voxelModel: VoxelModel?
 
-    public init(camera: Camera, lightingModel: BlinnPhongLightingModel) {
+    public init(model: VoxelModel, camera: Camera, lightingModel: BlinnPhongLightingModel) {
+        self.voxelModel = model
         self.camera = camera
         self.lightingModel = lightingModel
 
         // swiftlint:disable force_try
 //        Task {
-        let model = try! MagicaVoxelModel(named: "monu7")
-//            await MainActor.run {
-        voxelModel = try! VoxelModel(model: model)
 //            }
 //        }
         // swiftlint:enable force_try

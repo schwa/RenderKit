@@ -11,50 +11,24 @@
 		45582CE428DFBC42005F4A80 /* SwiftGLTF in Frameworks */ = {isa = PBXBuildFile; productRef = 45582CE328DFBC42005F4A80 /* SwiftGLTF */; };
 		455A9B8F2A43DF8600A8AB36 /* VisionOSDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 455A9B8E2A43DF8600A8AB36 /* VisionOSDemoApp.swift */; };
 		455A9B972A43DF8700A8AB36 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 455A9B962A43DF8700A8AB36 /* Assets.xcassets */; };
-		455A9BA12A43E19300A8AB36 /* monu10.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90D28FCEBB800329B34 /* monu10.vox */; };
-		455A9BA22A43E19300A8AB36 /* Teapot.mtl in Resources */ = {isa = PBXBuildFile; fileRef = 4599A8FA28FCEBB800329B34 /* Teapot.mtl */; };
-		455A9BA32A43E19300A8AB36 /* monu5.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90428FCEBB800329B34 /* monu5.vox */; };
-		455A9BA42A43E19300A8AB36 /* 2x2x2.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90B28FCEBB800329B34 /* 2x2x2.vox */; };
 		455A9BA52A43E19300A8AB36 /* SpriteSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB38B28FCD40D000E4319 /* SpriteSheet.swift */; };
 		455A9BA62A43E19300A8AB36 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB37828FCD40D000E4319 /* DetailView.swift */; };
-		455A9BA72A43E19300A8AB36 /* monu9.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A91328FCEBB800329B34 /* monu9.vox */; };
-		455A9BA82A43E19300A8AB36 /* monu16.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90A28FCEBB800329B34 /* monu16.vox */; };
-		455A9BAA2A43E19300A8AB36 /* gap.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90E28FCEBB800329B34 /* gap.vox */; };
 		455A9BAB2A43E19300A8AB36 /* Viewers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB37E28FCD40D000E4319 /* Viewers.swift */; };
-		455A9BAC2A43E19300A8AB36 /* 1x2x3.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90328FCEBB800329B34 /* 1x2x3.vox */; };
 		455A9BAD2A43E19300A8AB36 /* ConsoleLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB37F28FCD40D000E4319 /* ConsoleLogView.swift */; };
 		455A9BAE2A43E19300A8AB36 /* Monkey.ply in Resources */ = {isa = PBXBuildFile; fileRef = 4599A8FC28FCEBB800329B34 /* Monkey.ply */; };
 		455A9BAF2A43E19300A8AB36 /* Sprites.json in Resources */ = {isa = PBXBuildFile; fileRef = 456CB38628FCD40D000E4319 /* Sprites.json */; };
 		455A9BB02A43E19300A8AB36 /* GLTFLoaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB37C28FCD40D000E4319 /* GLTFLoaderView.swift */; };
-		455A9BB12A43E19300A8AB36 /* monu3.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90928FCEBB800329B34 /* monu3.vox */; };
 		455A9BB22A43E19300A8AB36 /* ShaderEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB38728FCD40D000E4319 /* ShaderEditor.swift */; };
-		455A9BB32A43E19300A8AB36 /* monu1.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90528FCEBB800329B34 /* monu1.vox */; };
-		455A9BB42A43E19300A8AB36 /* monu6.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90128FCEBB800329B34 /* monu6.vox */; };
 		455A9BB62A43E19300A8AB36 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 451D6096277E8672008F44C0 /* Assets.xcassets */; };
-		455A9BB72A43E19300A8AB36 /* 2x2.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A91028FCEBB800329B34 /* 2x2.vox */; };
-		455A9BB82A43E19300A8AB36 /* teapot.obj in Resources */ = {isa = PBXBuildFile; fileRef = 4599A8FB28FCEBB800329B34 /* teapot.obj */; };
 		455A9BB92A43E19300A8AB36 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB38928FCD40D000E4319 /* MainView.swift */; };
 		455A9BBA2A43E19300A8AB36 /* ShaderEditorSample.txt in Resources */ = {isa = PBXBuildFile; fileRef = 456CB38828FCD40D000E4319 /* ShaderEditorSample.txt */; };
-		455A9BBB2A43E19300A8AB36 /* monu8.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A91228FCEBB800329B34 /* monu8.vox */; };
-		455A9BBD2A43E19300A8AB36 /* Teapot.ply in Resources */ = {isa = PBXBuildFile; fileRef = 4599A8FD28FCEBB800329B34 /* Teapot.ply */; };
 		455A9BBE2A43E19300A8AB36 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4599A8F728FCEBB800329B34 /* Media.xcassets */; };
 		455A9BBF2A43E19300A8AB36 /* DemosView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB38A28FCD40D000E4319 /* DemosView.swift */; };
 		455A9BC02A43E19300A8AB36 /* VoronoiNoiseComputeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB38328FCD40D000E4319 /* VoronoiNoiseComputeView.swift */; };
 		455A9BC12A43E19300A8AB36 /* EditorViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB38428FCD40D000E4319 /* EditorViews.swift */; };
-		455A9BC22A43E19300A8AB36 /* monu8-without-water.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90028FCEBB800329B34 /* monu8-without-water.vox */; };
-		455A9BC32A43E19300A8AB36 /* 1x1x2.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90C28FCEBB800329B34 /* 1x1x2.vox */; };
 		455A9BC42A43E19300A8AB36 /* ObjectLog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB38228FCD40D000E4319 /* ObjectLog.swift */; };
 		455A9BC52A43E19300A8AB36 /* NumberFieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB37A28FCD40D000E4319 /* NumberFieldView.swift */; };
-		455A9BC62A43E19300A8AB36 /* Cube.ply in Resources */ = {isa = PBXBuildFile; fileRef = 4599A8F828FCEBB800329B34 /* Cube.ply */; };
-		455A9BC72A43E19300A8AB36 /* 1x1.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A91428FCEBB800329B34 /* 1x1.vox */; };
-		455A9BC82A43E19300A8AB36 /* monu4.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90228FCEBB800329B34 /* monu4.vox */; };
-		455A9BC92A43E19300A8AB36 /* monu6-without-water.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90F28FCEBB800329B34 /* monu6-without-water.vox */; };
-		455A9BCA2A43E19300A8AB36 /* monu2.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90828FCEBB800329B34 /* monu2.vox */; };
-		455A9BCC2A43E19300A8AB36 /* monu7.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A8FF28FCEBB800329B34 /* monu7.vox */; };
 		455A9BCD2A43E19300A8AB36 /* MetalInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB38128FCD40D000E4319 /* MetalInfoView.swift */; };
-		455A9BCF2A43E19300A8AB36 /* 3x1x1.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90628FCEBB800329B34 /* 3x1x1.vox */; };
-		455A9BD02A43E19300A8AB36 /* 2x1.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A91128FCEBB800329B34 /* 2x1.vox */; };
-		455A9BD12A43E19300A8AB36 /* monu0.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90728FCEBB800329B34 /* monu0.vox */; };
 		455A9BD22A43E19300A8AB36 /* Sprites.png in Resources */ = {isa = PBXBuildFile; fileRef = 456CB38C28FCD40D000E4319 /* Sprites.png */; };
 		455A9BD32A43E19300A8AB36 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB37B28FCD40D000E4319 /* MapView.swift */; };
 		455A9BD42A43E19300A8AB36 /* SceneGraph.yaml in Resources */ = {isa = PBXBuildFile; fileRef = 4599A8F928FCEBB800329B34 /* SceneGraph.yaml */; };
@@ -67,35 +41,9 @@
 		45723D9428FCBC12005E4A04 /* SwiftNodeEditor in Frameworks */ = {isa = PBXBuildFile; productRef = 45723D9328FCBC12005E4A04 /* SwiftNodeEditor */; };
 		45723D9628FCBC75005E4A04 /* SwiftNodeEditorDemo in Frameworks */ = {isa = PBXBuildFile; productRef = 45723D9528FCBC75005E4A04 /* SwiftNodeEditorDemo */; };
 		4594E4D127D8652A00DF1F8D /* SIMDSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 4594E4D027D8652A00DF1F8D /* SIMDSupport */; };
-		4599A91528FCEBBF00329B34 /* Teapot.ply in Resources */ = {isa = PBXBuildFile; fileRef = 4599A8FD28FCEBB800329B34 /* Teapot.ply */; };
 		4599A91628FCEBBF00329B34 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4599A8F728FCEBB800329B34 /* Media.xcassets */; };
 		4599A91728FCEBBF00329B34 /* SceneGraph.yaml in Resources */ = {isa = PBXBuildFile; fileRef = 4599A8F928FCEBB800329B34 /* SceneGraph.yaml */; };
-		4599A91828FCEBBF00329B34 /* Cube.ply in Resources */ = {isa = PBXBuildFile; fileRef = 4599A8F828FCEBB800329B34 /* Cube.ply */; };
-		4599A91928FCEBBF00329B34 /* teapot.obj in Resources */ = {isa = PBXBuildFile; fileRef = 4599A8FB28FCEBB800329B34 /* teapot.obj */; };
-		4599A91A28FCEBBF00329B34 /* Teapot.mtl in Resources */ = {isa = PBXBuildFile; fileRef = 4599A8FA28FCEBB800329B34 /* Teapot.mtl */; };
 		4599A91B28FCEBBF00329B34 /* Monkey.ply in Resources */ = {isa = PBXBuildFile; fileRef = 4599A8FC28FCEBB800329B34 /* Monkey.ply */; };
-		4599A91C28FCEBC700329B34 /* monu16.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90A28FCEBB800329B34 /* monu16.vox */; };
-		4599A91D28FCEBC700329B34 /* monu10.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90D28FCEBB800329B34 /* monu10.vox */; };
-		4599A91E28FCEBC700329B34 /* monu8-without-water.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90028FCEBB800329B34 /* monu8-without-water.vox */; };
-		4599A91F28FCEBC700329B34 /* monu6-without-water.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90F28FCEBB800329B34 /* monu6-without-water.vox */; };
-		4599A92028FCEBC700329B34 /* monu8.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A91228FCEBB800329B34 /* monu8.vox */; };
-		4599A92128FCEBC700329B34 /* monu1.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90528FCEBB800329B34 /* monu1.vox */; };
-		4599A92228FCEBC700329B34 /* monu6.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90128FCEBB800329B34 /* monu6.vox */; };
-		4599A92328FCEBC700329B34 /* 2x2x2.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90B28FCEBB800329B34 /* 2x2x2.vox */; };
-		4599A92428FCEBC700329B34 /* monu3.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90928FCEBB800329B34 /* monu3.vox */; };
-		4599A92528FCEBC700329B34 /* 2x2.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A91028FCEBB800329B34 /* 2x2.vox */; };
-		4599A92628FCEBC700329B34 /* 1x1x2.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90C28FCEBB800329B34 /* 1x1x2.vox */; };
-		4599A92728FCEBC700329B34 /* gap.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90E28FCEBB800329B34 /* gap.vox */; };
-		4599A92828FCEBC700329B34 /* 3x1x1.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90628FCEBB800329B34 /* 3x1x1.vox */; };
-		4599A92928FCEBC700329B34 /* 2x1.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A91128FCEBB800329B34 /* 2x1.vox */; };
-		4599A92A28FCEBC700329B34 /* 1x1.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A91428FCEBB800329B34 /* 1x1.vox */; };
-		4599A92B28FCEBC700329B34 /* monu7.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A8FF28FCEBB800329B34 /* monu7.vox */; };
-		4599A92C28FCEBC700329B34 /* monu9.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A91328FCEBB800329B34 /* monu9.vox */; };
-		4599A92D28FCEBC700329B34 /* monu2.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90828FCEBB800329B34 /* monu2.vox */; };
-		4599A92E28FCEBC700329B34 /* monu4.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90228FCEBB800329B34 /* monu4.vox */; };
-		4599A92F28FCEBC700329B34 /* monu5.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90428FCEBB800329B34 /* monu5.vox */; };
-		4599A93028FCEBC700329B34 /* monu0.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90728FCEBB800329B34 /* monu0.vox */; };
-		4599A93128FCEBC700329B34 /* 1x2x3.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90328FCEBB800329B34 /* 1x2x3.vox */; };
 		45EF7B8A28FCD61000B7FB16 /* DemosView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB38A28FCD40D000E4319 /* DemosView.swift */; };
 		45EF7B8C28FCD61600B7FB16 /* ShaderEditorSample.txt in Resources */ = {isa = PBXBuildFile; fileRef = 456CB38828FCD40D000E4319 /* ShaderEditorSample.txt */; };
 		45EF7B8D28FCD61600B7FB16 /* SpriteSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB38B28FCD40D000E4319 /* SpriteSheet.swift */; };
@@ -157,34 +105,8 @@
 		456CB38C28FCD40D000E4319 /* Sprites.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Sprites.png; sourceTree = "<group>"; };
 		45733C6427852B8700F9B1E9 /* linters.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = linters.sh; sourceTree = "<group>"; };
 		4599A8F728FCEBB800329B34 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
-		4599A8F828FCEBB800329B34 /* Cube.ply */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cube.ply; sourceTree = "<group>"; };
 		4599A8F928FCEBB800329B34 /* SceneGraph.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = SceneGraph.yaml; sourceTree = "<group>"; };
-		4599A8FA28FCEBB800329B34 /* Teapot.mtl */ = {isa = PBXFileReference; lastKnownFileType = text; path = Teapot.mtl; sourceTree = "<group>"; };
-		4599A8FB28FCEBB800329B34 /* teapot.obj */ = {isa = PBXFileReference; lastKnownFileType = text; path = teapot.obj; sourceTree = "<group>"; };
 		4599A8FC28FCEBB800329B34 /* Monkey.ply */ = {isa = PBXFileReference; lastKnownFileType = text; path = Monkey.ply; sourceTree = "<group>"; };
-		4599A8FD28FCEBB800329B34 /* Teapot.ply */ = {isa = PBXFileReference; lastKnownFileType = text; path = Teapot.ply; sourceTree = "<group>"; };
-		4599A8FF28FCEBB800329B34 /* monu7.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = monu7.vox; sourceTree = "<group>"; };
-		4599A90028FCEBB800329B34 /* monu8-without-water.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = "monu8-without-water.vox"; sourceTree = "<group>"; };
-		4599A90128FCEBB800329B34 /* monu6.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = monu6.vox; sourceTree = "<group>"; };
-		4599A90228FCEBB800329B34 /* monu4.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = monu4.vox; sourceTree = "<group>"; };
-		4599A90328FCEBB800329B34 /* 1x2x3.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = 1x2x3.vox; sourceTree = "<group>"; };
-		4599A90428FCEBB800329B34 /* monu5.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = monu5.vox; sourceTree = "<group>"; };
-		4599A90528FCEBB800329B34 /* monu1.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = monu1.vox; sourceTree = "<group>"; };
-		4599A90628FCEBB800329B34 /* 3x1x1.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = 3x1x1.vox; sourceTree = "<group>"; };
-		4599A90728FCEBB800329B34 /* monu0.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = monu0.vox; sourceTree = "<group>"; };
-		4599A90828FCEBB800329B34 /* monu2.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = monu2.vox; sourceTree = "<group>"; };
-		4599A90928FCEBB800329B34 /* monu3.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = monu3.vox; sourceTree = "<group>"; };
-		4599A90A28FCEBB800329B34 /* monu16.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = monu16.vox; sourceTree = "<group>"; };
-		4599A90B28FCEBB800329B34 /* 2x2x2.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = 2x2x2.vox; sourceTree = "<group>"; };
-		4599A90C28FCEBB800329B34 /* 1x1x2.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = 1x1x2.vox; sourceTree = "<group>"; };
-		4599A90D28FCEBB800329B34 /* monu10.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = monu10.vox; sourceTree = "<group>"; };
-		4599A90E28FCEBB800329B34 /* gap.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = gap.vox; sourceTree = "<group>"; };
-		4599A90F28FCEBB800329B34 /* monu6-without-water.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = "monu6-without-water.vox"; sourceTree = "<group>"; };
-		4599A91028FCEBB800329B34 /* 2x2.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = 2x2.vox; sourceTree = "<group>"; };
-		4599A91128FCEBB800329B34 /* 2x1.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = 2x1.vox; sourceTree = "<group>"; };
-		4599A91228FCEBB800329B34 /* monu8.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = monu8.vox; sourceTree = "<group>"; };
-		4599A91328FCEBB800329B34 /* monu9.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = monu9.vox; sourceTree = "<group>"; };
-		4599A91428FCEBB800329B34 /* 1x1.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = 1x1.vox; sourceTree = "<group>"; };
 		45A1F4F2285A947C00AD095B /* Demo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Demo.entitlements; sourceTree = "<group>"; };
 		45A1F4F3285A94DD00AD095B /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		45A1F4F5285A94DD00AD095B /* Demo-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Demo-Info.plist"; sourceTree = "<group>"; };
@@ -358,44 +280,10 @@
 			isa = PBXGroup;
 			children = (
 				4599A8F728FCEBB800329B34 /* Media.xcassets */,
-				4599A8F828FCEBB800329B34 /* Cube.ply */,
 				4599A8F928FCEBB800329B34 /* SceneGraph.yaml */,
-				4599A8FA28FCEBB800329B34 /* Teapot.mtl */,
-				4599A8FB28FCEBB800329B34 /* teapot.obj */,
 				4599A8FC28FCEBB800329B34 /* Monkey.ply */,
-				4599A8FD28FCEBB800329B34 /* Teapot.ply */,
-				4599A8FE28FCEBB800329B34 /* Voxels */,
 			);
 			path = Resources;
-			sourceTree = "<group>";
-		};
-		4599A8FE28FCEBB800329B34 /* Voxels */ = {
-			isa = PBXGroup;
-			children = (
-				4599A8FF28FCEBB800329B34 /* monu7.vox */,
-				4599A90028FCEBB800329B34 /* monu8-without-water.vox */,
-				4599A90128FCEBB800329B34 /* monu6.vox */,
-				4599A90228FCEBB800329B34 /* monu4.vox */,
-				4599A90328FCEBB800329B34 /* 1x2x3.vox */,
-				4599A90428FCEBB800329B34 /* monu5.vox */,
-				4599A90528FCEBB800329B34 /* monu1.vox */,
-				4599A90628FCEBB800329B34 /* 3x1x1.vox */,
-				4599A90728FCEBB800329B34 /* monu0.vox */,
-				4599A90828FCEBB800329B34 /* monu2.vox */,
-				4599A90928FCEBB800329B34 /* monu3.vox */,
-				4599A90A28FCEBB800329B34 /* monu16.vox */,
-				4599A90B28FCEBB800329B34 /* 2x2x2.vox */,
-				4599A90C28FCEBB800329B34 /* 1x1x2.vox */,
-				4599A90D28FCEBB800329B34 /* monu10.vox */,
-				4599A90E28FCEBB800329B34 /* gap.vox */,
-				4599A90F28FCEBB800329B34 /* monu6-without-water.vox */,
-				4599A91028FCEBB800329B34 /* 2x2.vox */,
-				4599A91128FCEBB800329B34 /* 2x1.vox */,
-				4599A91228FCEBB800329B34 /* monu8.vox */,
-				4599A91328FCEBB800329B34 /* monu9.vox */,
-				4599A91428FCEBB800329B34 /* 1x1.vox */,
-			);
-			path = Voxels;
 			sourceTree = "<group>";
 		};
 		45A544D627B9B06E00BDCC70 /* Packages */ = {
@@ -507,38 +395,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				4599A91728FCEBBF00329B34 /* SceneGraph.yaml in Resources */,
-				4599A91528FCEBBF00329B34 /* Teapot.ply in Resources */,
-				4599A92128FCEBC700329B34 /* monu1.vox in Resources */,
-				4599A92228FCEBC700329B34 /* monu6.vox in Resources */,
-				4599A92528FCEBC700329B34 /* 2x2.vox in Resources */,
-				4599A91C28FCEBC700329B34 /* monu16.vox in Resources */,
-				4599A92B28FCEBC700329B34 /* monu7.vox in Resources */,
 				45EF7B8C28FCD61600B7FB16 /* ShaderEditorSample.txt in Resources */,
-				4599A92F28FCEBC700329B34 /* monu5.vox in Resources */,
-				4599A91A28FCEBBF00329B34 /* Teapot.mtl in Resources */,
 				4599A91B28FCEBBF00329B34 /* Monkey.ply in Resources */,
-				4599A92828FCEBC700329B34 /* 3x1x1.vox in Resources */,
 				4599A91628FCEBBF00329B34 /* Media.xcassets in Resources */,
-				4599A91D28FCEBC700329B34 /* monu10.vox in Resources */,
-				4599A93028FCEBC700329B34 /* monu0.vox in Resources */,
-				4599A92328FCEBC700329B34 /* 2x2x2.vox in Resources */,
-				4599A92428FCEBC700329B34 /* monu3.vox in Resources */,
-				4599A91F28FCEBC700329B34 /* monu6-without-water.vox in Resources */,
-				4599A91928FCEBBF00329B34 /* teapot.obj in Resources */,
-				4599A92D28FCEBC700329B34 /* monu2.vox in Resources */,
-				4599A91828FCEBBF00329B34 /* Cube.ply in Resources */,
-				4599A92028FCEBC700329B34 /* monu8.vox in Resources */,
-				4599A92C28FCEBC700329B34 /* monu9.vox in Resources */,
 				45EF7B9028FCD61600B7FB16 /* Sprites.png in Resources */,
-				4599A93128FCEBC700329B34 /* 1x2x3.vox in Resources */,
-				4599A92728FCEBC700329B34 /* gap.vox in Resources */,
-				4599A92E28FCEBC700329B34 /* monu4.vox in Resources */,
-				4599A91E28FCEBC700329B34 /* monu8-without-water.vox in Resources */,
 				451D60A9277E8672008F44C0 /* Assets.xcassets in Resources */,
-				4599A92628FCEBC700329B34 /* 1x1x2.vox in Resources */,
 				45EF7B8E28FCD61600B7FB16 /* Sprites.json in Resources */,
-				4599A92A28FCEBC700329B34 /* 1x1.vox in Resources */,
-				4599A92928FCEBC700329B34 /* 2x1.vox in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -547,39 +409,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				455A9BAE2A43E19300A8AB36 /* Monkey.ply in Resources */,
-				455A9BA42A43E19300A8AB36 /* 2x2x2.vox in Resources */,
-				455A9BB12A43E19300A8AB36 /* monu3.vox in Resources */,
-				455A9BD12A43E19300A8AB36 /* monu0.vox in Resources */,
-				455A9BBB2A43E19300A8AB36 /* monu8.vox in Resources */,
-				455A9BAC2A43E19300A8AB36 /* 1x2x3.vox in Resources */,
 				455A9BB62A43E19300A8AB36 /* Assets.xcassets in Resources */,
 				455A9BAF2A43E19300A8AB36 /* Sprites.json in Resources */,
 				455A9BBA2A43E19300A8AB36 /* ShaderEditorSample.txt in Resources */,
-				455A9BC72A43E19300A8AB36 /* 1x1.vox in Resources */,
 				455A9BD42A43E19300A8AB36 /* SceneGraph.yaml in Resources */,
-				455A9BD02A43E19300A8AB36 /* 2x1.vox in Resources */,
-				455A9BCF2A43E19300A8AB36 /* 3x1x1.vox in Resources */,
-				455A9BA82A43E19300A8AB36 /* monu16.vox in Resources */,
-				455A9BAA2A43E19300A8AB36 /* gap.vox in Resources */,
-				455A9BC62A43E19300A8AB36 /* Cube.ply in Resources */,
-				455A9BA32A43E19300A8AB36 /* monu5.vox in Resources */,
-				455A9BA72A43E19300A8AB36 /* monu9.vox in Resources */,
-				455A9BC92A43E19300A8AB36 /* monu6-without-water.vox in Resources */,
-				455A9BB42A43E19300A8AB36 /* monu6.vox in Resources */,
-				455A9BCC2A43E19300A8AB36 /* monu7.vox in Resources */,
-				455A9BA22A43E19300A8AB36 /* Teapot.mtl in Resources */,
-				455A9BB82A43E19300A8AB36 /* teapot.obj in Resources */,
-				455A9BB32A43E19300A8AB36 /* monu1.vox in Resources */,
 				455A9BBE2A43E19300A8AB36 /* Media.xcassets in Resources */,
 				455A9BD22A43E19300A8AB36 /* Sprites.png in Resources */,
 				455A9B972A43DF8700A8AB36 /* Assets.xcassets in Resources */,
-				455A9BCA2A43E19300A8AB36 /* monu2.vox in Resources */,
-				455A9BB72A43E19300A8AB36 /* 2x2.vox in Resources */,
-				455A9BBD2A43E19300A8AB36 /* Teapot.ply in Resources */,
-				455A9BC32A43E19300A8AB36 /* 1x1x2.vox in Resources */,
-				455A9BC22A43E19300A8AB36 /* monu8-without-water.vox in Resources */,
-				455A9BA12A43E19300A8AB36 /* monu10.vox in Resources */,
-				455A9BC82A43E19300A8AB36 /* monu4.vox in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

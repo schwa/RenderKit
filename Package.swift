@@ -48,6 +48,12 @@ let package = Package(
             dependencies: [
                 "MetalSupport",
                 "Everything",
+            ],
+            resources: [
+                .copy("Cube.ply"),
+                .copy("Teapot.mtl"),
+                .copy("Teapot.ply"),
+                .copy("teapot.obj"),
             ]
         ),
         .target(
@@ -63,6 +69,30 @@ let package = Package(
             dependencies: [
                 "RenderKit",
                 "RenderKitSceneGraph",
+            ],
+            resources: [
+                .copy("Voxels/1x1.vox"),
+                .copy("Voxels/1x1x2.vox"),
+                .copy("Voxels/1x2x3.vox"),
+                .copy("Voxels/2x1.vox"),
+                .copy("Voxels/2x2.vox"),
+                .copy("Voxels/2x2x2.vox"),
+                .copy("Voxels/3x1x1.vox"),
+                .copy("Voxels/gap.vox"),
+                .copy("Voxels/monu0.vox"),
+                .copy("Voxels/monu1.vox"),
+                .copy("Voxels/monu10.vox"),
+                .copy("Voxels/monu16.vox"),
+                .copy("Voxels/monu2.vox"),
+                .copy("Voxels/monu3.vox"),
+                .copy("Voxels/monu4.vox"),
+                .copy("Voxels/monu5.vox"),
+                .copy("Voxels/monu6-without-water.vox"),
+                .copy("Voxels/monu6.vox"),
+                .copy("Voxels/monu7.vox"),
+                .copy("Voxels/monu8-without-water.vox"),
+                .copy("Voxels/monu8.vox"),
+                .copy("Voxels/monu9.vox"),
             ]
         ),
         .target(
