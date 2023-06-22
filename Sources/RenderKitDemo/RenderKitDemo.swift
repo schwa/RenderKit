@@ -20,7 +20,7 @@ import RenderKit
 import RenderKitSupport
 import RenderKitSceneGraph
 
-class RenderModel: ObservableObject {
+public class RenderModel: ObservableObject {
     let device: MTLDevice
 
     let sceneGraph: SceneGraph

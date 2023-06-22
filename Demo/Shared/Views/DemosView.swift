@@ -4,6 +4,7 @@ import RenderKit
 import simd
 import SIMDSupport
 import SwiftUI
+import RenderKitDemo
 import RenderKitSupport
 import RenderKitSceneGraph
 

@@ -19,7 +19,6 @@
 		455A9BA62A43E19300A8AB36 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB37828FCD40D000E4319 /* DetailView.swift */; };
 		455A9BA72A43E19300A8AB36 /* monu9.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A91328FCEBB800329B34 /* monu9.vox */; };
 		455A9BA82A43E19300A8AB36 /* monu16.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90A28FCEBB800329B34 /* monu16.vox */; };
-		455A9BA92A43E19300A8AB36 /* RenderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45EF7B9228FCD62D00B7FB16 /* RenderModel.swift */; };
 		455A9BAA2A43E19300A8AB36 /* gap.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90E28FCEBB800329B34 /* gap.vox */; };
 		455A9BAB2A43E19300A8AB36 /* Viewers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB37E28FCD40D000E4319 /* Viewers.swift */; };
 		455A9BAC2A43E19300A8AB36 /* 1x2x3.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90328FCEBB800329B34 /* 1x2x3.vox */; };
@@ -64,6 +63,7 @@
 		455A9BDA2A43E1E900A8AB36 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 451D6094277E8671008F44C0 /* App.swift */; };
 		45666E5A2A44370500566AB6 /* RenderKitSceneGraph in Frameworks */ = {isa = PBXBuildFile; productRef = 45666E592A44370500566AB6 /* RenderKitSceneGraph */; };
 		456CB37628FCC910000E4319 /* RenderKit in Frameworks */ = {isa = PBXBuildFile; productRef = 456CB37528FCC910000E4319 /* RenderKit */; };
+		4571A1D42A44E66B0034731B /* RenderKitDemo in Frameworks */ = {isa = PBXBuildFile; productRef = 4571A1D32A44E66B0034731B /* RenderKitDemo */; };
 		45723D9428FCBC12005E4A04 /* SwiftNodeEditor in Frameworks */ = {isa = PBXBuildFile; productRef = 45723D9328FCBC12005E4A04 /* SwiftNodeEditor */; };
 		45723D9628FCBC75005E4A04 /* SwiftNodeEditorDemo in Frameworks */ = {isa = PBXBuildFile; productRef = 45723D9528FCBC75005E4A04 /* SwiftNodeEditorDemo */; };
 		4594E4D127D8652A00DF1F8D /* SIMDSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 4594E4D027D8652A00DF1F8D /* SIMDSupport */; };
@@ -104,7 +104,6 @@
 		45EF7B8E28FCD61600B7FB16 /* Sprites.json in Resources */ = {isa = PBXBuildFile; fileRef = 456CB38628FCD40D000E4319 /* Sprites.json */; };
 		45EF7B8F28FCD61600B7FB16 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB38928FCD40D000E4319 /* MainView.swift */; };
 		45EF7B9028FCD61600B7FB16 /* Sprites.png in Resources */ = {isa = PBXBuildFile; fileRef = 456CB38C28FCD40D000E4319 /* Sprites.png */; };
-		45EF7B9328FCD62D00B7FB16 /* RenderModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45EF7B9228FCD62D00B7FB16 /* RenderModel.swift */; };
 		45EF7B9628FCD66200B7FB16 /* VoronoiNoiseComputeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB38328FCD40D000E4319 /* VoronoiNoiseComputeView.swift */; };
 		45EF7B9728FCD66200B7FB16 /* MetalInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB38128FCD40D000E4319 /* MetalInfoView.swift */; };
 		45EF7B9828FCD66200B7FB16 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB37828FCD40D000E4319 /* DetailView.swift */; };
@@ -195,7 +194,6 @@
 		45A1F4F6285A952A00AD095B /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		45A544D827B9B3A800BDCC70 /* Warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Warnings.xcconfig; sourceTree = "<group>"; };
 		45A5993E285A8CA600F8DAA3 /* Codesigning.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Codesigning.xcconfig; sourceTree = "<group>"; };
-		45EF7B9228FCD62D00B7FB16 /* RenderModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RenderModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -203,6 +201,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4571A1D42A44E66B0034731B /* RenderKitDemo in Frameworks */,
 				45723D9428FCBC12005E4A04 /* SwiftNodeEditor in Frameworks */,
 				45723D9628FCBC75005E4A04 /* SwiftNodeEditorDemo in Frameworks */,
 				45A1F4F4285A94DD00AD095B /* GameController.framework in Frameworks */,
@@ -249,7 +248,6 @@
 			children = (
 				451D6096277E8672008F44C0 /* Assets.xcassets */,
 				451D6094277E8671008F44C0 /* App.swift */,
-				45EF7B9228FCD62D00B7FB16 /* RenderModel.swift */,
 				4599A8F628FCEBB800329B34 /* Resources */,
 				456CB37728FCD40D000E4319 /* Support Views */,
 				456CB38528FCD40D000E4319 /* Views */,
@@ -439,6 +437,7 @@
 				45723D9528FCBC75005E4A04 /* SwiftNodeEditorDemo */,
 				456CB37528FCC910000E4319 /* RenderKit */,
 				45666E592A44370500566AB6 /* RenderKitSceneGraph */,
+				4571A1D32A44E66B0034731B /* RenderKitDemo */,
 			);
 			productName = "RenderGraphKitDemo (macOS)";
 			productReference = 451D60A1277E8672008F44C0 /* RenderKitDemo.app */;
@@ -634,7 +633,6 @@
 				45EF7B9F28FCD66200B7FB16 /* Viewers.swift in Sources */,
 				45EF7B8F28FCD61600B7FB16 /* MainView.swift in Sources */,
 				45EF7BA028FCD66200B7FB16 /* ConsoleLogView.swift in Sources */,
-				45EF7B9328FCD62D00B7FB16 /* RenderModel.swift in Sources */,
 				45EF7B9C28FCD66200B7FB16 /* GLTFLoaderView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -648,7 +646,6 @@
 				455A9BAB2A43E19300A8AB36 /* Viewers.swift in Sources */,
 				455A9BA52A43E19300A8AB36 /* SpriteSheet.swift in Sources */,
 				455A9BB92A43E19300A8AB36 /* MainView.swift in Sources */,
-				455A9BA92A43E19300A8AB36 /* RenderModel.swift in Sources */,
 				455A9BBF2A43E19300A8AB36 /* DemosView.swift in Sources */,
 				455A9BCD2A43E19300A8AB36 /* MetalInfoView.swift in Sources */,
 				455A9BC52A43E19300A8AB36 /* NumberFieldView.swift in Sources */,
@@ -973,6 +970,10 @@
 		456CB37528FCC910000E4319 /* RenderKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = RenderKit;
+		};
+		4571A1D32A44E66B0034731B /* RenderKitDemo */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RenderKitDemo;
 		};
 		45723D9328FCBC12005E4A04 /* SwiftNodeEditor */ = {
 			isa = XCSwiftPackageProductDependency;

@@ -16,9 +16,14 @@ let package = Package(
             targets: ["RenderKit"]
         ),
         .library(
+            name: "RenderKitDemo",
+            targets: ["RenderKitDemo"]
+        ),
+        .library(
             name: "RenderKitSceneGraph",
             targets: ["RenderKitSceneGraph"]
         ),
+        .executable(name: "RenderKitCTL", targets: ["RenderKitCTL"]),
     ],
     dependencies: [
         .package(url: "https://github.com/schwa/Everything", branch: "main"),
@@ -54,6 +59,13 @@ let package = Package(
             ]
         ),
         .target(
+            name: "RenderKitDemo",
+            dependencies: [
+                "RenderKit",
+                "RenderKitSceneGraph",
+            ]
+        ),
+        .target(
             name: "Shaders",
             dependencies: [
             ]
@@ -62,5 +74,9 @@ let package = Package(
             name: "RenderKitTests",
             dependencies: ["RenderKit"]
         ),
+        .executableTarget(
+            name: "RenderKitCTL",
+            dependencies: ["RenderKit", "RenderKitSceneGraph"]
+        )
     ]
 )
