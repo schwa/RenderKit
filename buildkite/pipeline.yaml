@@ -1,0 +1,5 @@
+steps:
+  - commands:
+      - swift package clean
+      - swift build
+      - swift test
