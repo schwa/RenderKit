@@ -50,10 +50,10 @@ let package = Package(
                 "Everything",
             ],
             resources: [
-                .copy("Cube.ply"),
-                .copy("Teapot.mtl"),
-                .copy("Teapot.ply"),
-                .copy("teapot.obj"),
+                .copy("Models/Cube.ply"),
+                .copy("Models/Teapot.mtl"),
+                .copy("Models/Teapot.ply"),
+                .copy("Models/teapot.obj"),
             ]
         ),
         .target(
@@ -71,6 +71,7 @@ let package = Package(
                 "RenderKitSceneGraph",
             ],
             resources: [
+                .process("Media.xcassets"),
                 .copy("Voxels/1x1.vox"),
                 .copy("Voxels/1x1x2.vox"),
                 .copy("Voxels/1x2x3.vox"),

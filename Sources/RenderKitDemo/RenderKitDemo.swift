@@ -74,7 +74,6 @@ public class RenderModel: ObservableObject {
         ]
 
         let particleSubmitter = ParticleSubmitter(scene: sceneGraph, particleSystem: particleSystem)
-//        graph.passes.append(contentsOf: ParticleSubmitter.makePasses())
 
         renderer = Renderer(device: device, graph: graph, environment: environment)
         renderer.add(submitter: SceneGraphRenderSubmitter(scene: sceneGraph))
@@ -139,7 +138,7 @@ public extension SceneGraph {
             try ModelEntity(name: "plane", selectors: ["plane"], geometry: MetalKitGeometry(shape: .plane(Plane(extent: [10, 0, 10])), device: device), material: nil),
             try ModelEntity(name: "plane", transform: .translation([0, 5, -5]).rotated(angle: .degrees(180), axis: [0, 1, 0]), selectors: ["plane"], geometry: MetalKitGeometry(shape: .plane(Plane(extent: [10, 10, 0])), device: device), material: nil),
 
-//            try ModelEntity(name: "skybox", transform: .translation([0, 0.5, 0]), selectors: ["teapot"], geometry: MetalKitGeometry(provider: .shape(shape: .sphere(Sphere(extent: [1, 1, 1], segments: [24, 24], inwardNormals: false))), device: device), material: BlinnPhongMaterial(ambient: .init(named: "Road_to_MonumentValley_8k", device: device), diffuse: .color([0, 0, 0, 0]), specular: .color([0.5, 0.5, 0.5, 1]), shininess: 16)),
+            try ModelEntity(name: "skybox", transform: .translation([0, 0.5, 0]), selectors: ["teapot"], geometry: MetalKitGeometry(provider: .shape(shape: .sphere(Sphere(extent: [1, 1, 1], segments: [24, 24], inwardNormals: false))), device: device), material: BlinnPhongMaterial(ambient: .init(named: "Road_to_MonumentValley_8k", bundle: .module, device: device), diffuse: .color([0, 0, 0, 0]), specular: .color([0.5, 0.5, 0.5, 1]), shininess: 16)),
 
             ParticleNode(),
             camera,

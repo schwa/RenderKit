@@ -15,14 +15,12 @@
 		455A9BA62A43E19300A8AB36 /* DetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB37828FCD40D000E4319 /* DetailView.swift */; };
 		455A9BAB2A43E19300A8AB36 /* Viewers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB37E28FCD40D000E4319 /* Viewers.swift */; };
 		455A9BAD2A43E19300A8AB36 /* ConsoleLogView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB37F28FCD40D000E4319 /* ConsoleLogView.swift */; };
-		455A9BAE2A43E19300A8AB36 /* Monkey.ply in Resources */ = {isa = PBXBuildFile; fileRef = 4599A8FC28FCEBB800329B34 /* Monkey.ply */; };
 		455A9BAF2A43E19300A8AB36 /* Sprites.json in Resources */ = {isa = PBXBuildFile; fileRef = 456CB38628FCD40D000E4319 /* Sprites.json */; };
 		455A9BB02A43E19300A8AB36 /* GLTFLoaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB37C28FCD40D000E4319 /* GLTFLoaderView.swift */; };
 		455A9BB22A43E19300A8AB36 /* ShaderEditor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB38728FCD40D000E4319 /* ShaderEditor.swift */; };
 		455A9BB62A43E19300A8AB36 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 451D6096277E8672008F44C0 /* Assets.xcassets */; };
 		455A9BB92A43E19300A8AB36 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB38928FCD40D000E4319 /* MainView.swift */; };
 		455A9BBA2A43E19300A8AB36 /* ShaderEditorSample.txt in Resources */ = {isa = PBXBuildFile; fileRef = 456CB38828FCD40D000E4319 /* ShaderEditorSample.txt */; };
-		455A9BBE2A43E19300A8AB36 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4599A8F728FCEBB800329B34 /* Media.xcassets */; };
 		455A9BBF2A43E19300A8AB36 /* DemosView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB38A28FCD40D000E4319 /* DemosView.swift */; };
 		455A9BC02A43E19300A8AB36 /* VoronoiNoiseComputeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB38328FCD40D000E4319 /* VoronoiNoiseComputeView.swift */; };
 		455A9BC12A43E19300A8AB36 /* EditorViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB38428FCD40D000E4319 /* EditorViews.swift */; };
@@ -31,7 +29,6 @@
 		455A9BCD2A43E19300A8AB36 /* MetalInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB38128FCD40D000E4319 /* MetalInfoView.swift */; };
 		455A9BD22A43E19300A8AB36 /* Sprites.png in Resources */ = {isa = PBXBuildFile; fileRef = 456CB38C28FCD40D000E4319 /* Sprites.png */; };
 		455A9BD32A43E19300A8AB36 /* MapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB37B28FCD40D000E4319 /* MapView.swift */; };
-		455A9BD42A43E19300A8AB36 /* SceneGraph.yaml in Resources */ = {isa = PBXBuildFile; fileRef = 4599A8F928FCEBB800329B34 /* SceneGraph.yaml */; };
 		455A9BD72A43E1DE00A8AB36 /* RenderKit in Frameworks */ = {isa = PBXBuildFile; productRef = 455A9BD62A43E1DE00A8AB36 /* RenderKit */; };
 		455A9BD92A43E1DE00A8AB36 /* Everything in Frameworks */ = {isa = PBXBuildFile; productRef = 455A9BD82A43E1DE00A8AB36 /* Everything */; };
 		455A9BDA2A43E1E900A8AB36 /* App.swift in Sources */ = {isa = PBXBuildFile; fileRef = 451D6094277E8671008F44C0 /* App.swift */; };
@@ -41,9 +38,6 @@
 		45723D9428FCBC12005E4A04 /* SwiftNodeEditor in Frameworks */ = {isa = PBXBuildFile; productRef = 45723D9328FCBC12005E4A04 /* SwiftNodeEditor */; };
 		45723D9628FCBC75005E4A04 /* SwiftNodeEditorDemo in Frameworks */ = {isa = PBXBuildFile; productRef = 45723D9528FCBC75005E4A04 /* SwiftNodeEditorDemo */; };
 		4594E4D127D8652A00DF1F8D /* SIMDSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 4594E4D027D8652A00DF1F8D /* SIMDSupport */; };
-		4599A91628FCEBBF00329B34 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 4599A8F728FCEBB800329B34 /* Media.xcassets */; };
-		4599A91728FCEBBF00329B34 /* SceneGraph.yaml in Resources */ = {isa = PBXBuildFile; fileRef = 4599A8F928FCEBB800329B34 /* SceneGraph.yaml */; };
-		4599A91B28FCEBBF00329B34 /* Monkey.ply in Resources */ = {isa = PBXBuildFile; fileRef = 4599A8FC28FCEBB800329B34 /* Monkey.ply */; };
 		45EF7B8A28FCD61000B7FB16 /* DemosView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB38A28FCD40D000E4319 /* DemosView.swift */; };
 		45EF7B8C28FCD61600B7FB16 /* ShaderEditorSample.txt in Resources */ = {isa = PBXBuildFile; fileRef = 456CB38828FCD40D000E4319 /* ShaderEditorSample.txt */; };
 		45EF7B8D28FCD61600B7FB16 /* SpriteSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB38B28FCD40D000E4319 /* SpriteSheet.swift */; };
@@ -104,9 +98,6 @@
 		456CB38B28FCD40D000E4319 /* SpriteSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpriteSheet.swift; sourceTree = "<group>"; };
 		456CB38C28FCD40D000E4319 /* Sprites.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Sprites.png; sourceTree = "<group>"; };
 		45733C6427852B8700F9B1E9 /* linters.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = linters.sh; sourceTree = "<group>"; };
-		4599A8F728FCEBB800329B34 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
-		4599A8F928FCEBB800329B34 /* SceneGraph.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = SceneGraph.yaml; sourceTree = "<group>"; };
-		4599A8FC28FCEBB800329B34 /* Monkey.ply */ = {isa = PBXFileReference; lastKnownFileType = text; path = Monkey.ply; sourceTree = "<group>"; };
 		45A1F4F2285A947C00AD095B /* Demo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Demo.entitlements; sourceTree = "<group>"; };
 		45A1F4F3285A94DD00AD095B /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
 		45A1F4F5285A94DD00AD095B /* Demo-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Demo-Info.plist"; sourceTree = "<group>"; };
@@ -164,7 +155,6 @@
 			children = (
 				451D6096277E8672008F44C0 /* Assets.xcassets */,
 				451D6094277E8671008F44C0 /* App.swift */,
-				4599A8F628FCEBB800329B34 /* Resources */,
 				456CB37728FCD40D000E4319 /* Support Views */,
 				456CB38528FCD40D000E4319 /* Views */,
 			);
@@ -276,16 +266,6 @@
 			path = Scripts;
 			sourceTree = "<group>";
 		};
-		4599A8F628FCEBB800329B34 /* Resources */ = {
-			isa = PBXGroup;
-			children = (
-				4599A8F728FCEBB800329B34 /* Media.xcassets */,
-				4599A8F928FCEBB800329B34 /* SceneGraph.yaml */,
-				4599A8FC28FCEBB800329B34 /* Monkey.ply */,
-			);
-			path = Resources;
-			sourceTree = "<group>";
-		};
 		45A544D627B9B06E00BDCC70 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
@@ -394,10 +374,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4599A91728FCEBBF00329B34 /* SceneGraph.yaml in Resources */,
 				45EF7B8C28FCD61600B7FB16 /* ShaderEditorSample.txt in Resources */,
-				4599A91B28FCEBBF00329B34 /* Monkey.ply in Resources */,
-				4599A91628FCEBBF00329B34 /* Media.xcassets in Resources */,
 				45EF7B9028FCD61600B7FB16 /* Sprites.png in Resources */,
 				451D60A9277E8672008F44C0 /* Assets.xcassets in Resources */,
 				45EF7B8E28FCD61600B7FB16 /* Sprites.json in Resources */,
@@ -408,12 +385,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				455A9BAE2A43E19300A8AB36 /* Monkey.ply in Resources */,
 				455A9BB62A43E19300A8AB36 /* Assets.xcassets in Resources */,
 				455A9BAF2A43E19300A8AB36 /* Sprites.json in Resources */,
 				455A9BBA2A43E19300A8AB36 /* ShaderEditorSample.txt in Resources */,
-				455A9BD42A43E19300A8AB36 /* SceneGraph.yaml in Resources */,
-				455A9BBE2A43E19300A8AB36 /* Media.xcassets in Resources */,
 				455A9BD22A43E19300A8AB36 /* Sprites.png in Resources */,
 				455A9B972A43DF8700A8AB36 /* Assets.xcassets in Resources */,
 			);
