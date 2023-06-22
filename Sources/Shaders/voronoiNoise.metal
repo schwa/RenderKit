@@ -1,10 +1,3 @@
-//
-//  Noise.metal
-//  RenderKitDemo
-//
-//  Created by Jonathan Wight on 1/28/22.
-//
-
 #include <metal_stdlib>
 #include "include/GLSLCompat.h"
 #include "include/Random.h"

@@ -1,10 +1,3 @@
-//
-//  MarchingCubes.metal
-//  RenderKitDemo
-//
-//  Created by Jonathan Wight on 1/28/22.
-//
-
 #include <metal_stdlib>
 using namespace metal;
 

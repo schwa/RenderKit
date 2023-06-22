@@ -21,18 +21,16 @@ import RenderKitSupport
 import RenderKitSceneGraph
 
 public class RenderModel: ObservableObject {
-    let device: MTLDevice
-
-    let sceneGraph: SceneGraph
-
-    let renderer: Renderer<DemoRenderGraph>
+    public let device: MTLDevice
+    public let sceneGraph: SceneGraph
+    public let renderer: Renderer<DemoRenderGraph>
 
     @Atomic
     static var cachedArray: [UInt8]?
 
     var frameStateBuffer: MTLBuffer
 
-    init(device: MTLDevice) throws {
+    public init(device: MTLDevice) throws {
         sceneGraph = try SceneGraph.demo()
         let graph = DemoRenderGraph()
 

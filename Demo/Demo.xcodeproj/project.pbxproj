@@ -96,8 +96,6 @@
 		4599A92F28FCEBC700329B34 /* monu5.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90428FCEBB800329B34 /* monu5.vox */; };
 		4599A93028FCEBC700329B34 /* monu0.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90728FCEBB800329B34 /* monu0.vox */; };
 		4599A93128FCEBC700329B34 /* 1x2x3.vox in Resources */ = {isa = PBXBuildFile; fileRef = 4599A90328FCEBB800329B34 /* 1x2x3.vox */; };
-		45A1F4F4285A94DD00AD095B /* GameController.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 45A1F4F3285A94DD00AD095B /* GameController.framework */; };
-		45A1F4F7285A952A00AD095B /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 45A1F4F6285A952A00AD095B /* MapKit.framework */; };
 		45EF7B8A28FCD61000B7FB16 /* DemosView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB38A28FCD40D000E4319 /* DemosView.swift */; };
 		45EF7B8C28FCD61600B7FB16 /* ShaderEditorSample.txt in Resources */ = {isa = PBXBuildFile; fileRef = 456CB38828FCD40D000E4319 /* ShaderEditorSample.txt */; };
 		45EF7B8D28FCD61600B7FB16 /* SpriteSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456CB38B28FCD40D000E4319 /* SpriteSheet.swift */; };
@@ -121,13 +119,13 @@
 /* Begin PBXFileReference section */
 		451D6094277E8671008F44C0 /* App.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = App.swift; sourceTree = "<group>"; };
 		451D6096277E8672008F44C0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		451D60A1277E8672008F44C0 /* RenderKitDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RenderKitDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		451D60A1277E8672008F44C0 /* Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		452D1627278D3F57002A47E2 /* Project-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Project-Release.xcconfig"; sourceTree = "<group>"; };
 		452D1629278D3F57002A47E2 /* Project-Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Project-Shared.xcconfig"; sourceTree = "<group>"; };
-		452D162A278D3F57002A47E2 /* RenderGraphKitDemo-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "RenderGraphKitDemo-Release.xcconfig"; sourceTree = "<group>"; };
+		452D162A278D3F57002A47E2 /* Demo-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Demo-Release.xcconfig"; sourceTree = "<group>"; };
 		452D162B278D3F57002A47E2 /* Project-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Project-Debug.xcconfig"; sourceTree = "<group>"; };
-		452D162C278D3F57002A47E2 /* RenderGraphKitDemo-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "RenderGraphKitDemo-Debug.xcconfig"; sourceTree = "<group>"; };
-		452D162D278D3F57002A47E2 /* RenderGraphKitDemo-Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "RenderGraphKitDemo-Shared.xcconfig"; sourceTree = "<group>"; };
+		452D162C278D3F57002A47E2 /* Demo-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Demo-Debug.xcconfig"; sourceTree = "<group>"; };
+		452D162D278D3F57002A47E2 /* Demo-Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Demo-Shared.xcconfig"; sourceTree = "<group>"; };
 		453E8CC427B9BF14006A9565 /* .gitkeep */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitkeep; sourceTree = "<group>"; };
 		453E8CC527B9BF14006A9565 /* pre-commit */ = {isa = PBXFileReference; lastKnownFileType = text; path = "pre-commit"; sourceTree = "<group>"; };
 		455A9B892A43DF8600A8AB36 /* VisionOSDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VisionOSDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -158,7 +156,6 @@
 		456CB38B28FCD40D000E4319 /* SpriteSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpriteSheet.swift; sourceTree = "<group>"; };
 		456CB38C28FCD40D000E4319 /* Sprites.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Sprites.png; sourceTree = "<group>"; };
 		45733C6427852B8700F9B1E9 /* linters.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = linters.sh; sourceTree = "<group>"; };
-		45743FC327B43CDB00A76D5A /* Entitlements.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Entitlements.entitlements; sourceTree = "<group>"; };
 		4599A8F728FCEBB800329B34 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		4599A8F828FCEBB800329B34 /* Cube.ply */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cube.ply; sourceTree = "<group>"; };
 		4599A8F928FCEBB800329B34 /* SceneGraph.yaml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = SceneGraph.yaml; sourceTree = "<group>"; };
@@ -188,9 +185,9 @@
 		4599A91228FCEBB800329B34 /* monu8.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = monu8.vox; sourceTree = "<group>"; };
 		4599A91328FCEBB800329B34 /* monu9.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = monu9.vox; sourceTree = "<group>"; };
 		4599A91428FCEBB800329B34 /* 1x1.vox */ = {isa = PBXFileReference; lastKnownFileType = file; path = 1x1.vox; sourceTree = "<group>"; };
-		45A1F4F2285A947C00AD095B /* RenderGraphKitDemo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = RenderGraphKitDemo.entitlements; sourceTree = "<group>"; };
+		45A1F4F2285A947C00AD095B /* Demo.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Demo.entitlements; sourceTree = "<group>"; };
 		45A1F4F3285A94DD00AD095B /* GameController.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = GameController.framework; path = System/Library/Frameworks/GameController.framework; sourceTree = SDKROOT; };
-		45A1F4F5285A94DD00AD095B /* RenderGraphKitDemo-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "RenderGraphKitDemo-Info.plist"; sourceTree = "<group>"; };
+		45A1F4F5285A94DD00AD095B /* Demo-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Demo-Info.plist"; sourceTree = "<group>"; };
 		45A1F4F6285A952A00AD095B /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		45A544D827B9B3A800BDCC70 /* Warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Warnings.xcconfig; sourceTree = "<group>"; };
 		45A5993E285A8CA600F8DAA3 /* Codesigning.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Codesigning.xcconfig; sourceTree = "<group>"; };
@@ -204,8 +201,6 @@
 				4571A1D42A44E66B0034731B /* RenderKitDemo in Frameworks */,
 				45723D9428FCBC12005E4A04 /* SwiftNodeEditor in Frameworks */,
 				45723D9628FCBC75005E4A04 /* SwiftNodeEditorDemo in Frameworks */,
-				45A1F4F4285A94DD00AD095B /* GameController.framework in Frameworks */,
-				45A1F4F7285A952A00AD095B /* MapKit.framework in Frameworks */,
 				456CB37628FCC910000E4319 /* RenderKit in Frameworks */,
 				45582CE428DFBC42005F4A80 /* SwiftGLTF in Frameworks */,
 				4594E4D127D8652A00DF1F8D /* SIMDSupport in Frameworks */,
@@ -229,9 +224,8 @@
 		451D608E277E8671008F44C0 = {
 			isa = PBXGroup;
 			children = (
-				45A1F4F5285A94DD00AD095B /* RenderGraphKitDemo-Info.plist */,
-				45A1F4F2285A947C00AD095B /* RenderGraphKitDemo.entitlements */,
-				45743FC327B43CDB00A76D5A /* Entitlements.entitlements */,
+				45A1F4F5285A94DD00AD095B /* Demo-Info.plist */,
+				45A1F4F2285A947C00AD095B /* Demo.entitlements */,
 				45733C6627852C7100F9B1E9 /* Dotfiles */,
 				452D1624278D3F57002A47E2 /* xcconfig */,
 				45733C6327852B8700F9B1E9 /* Scripts */,
@@ -258,7 +252,7 @@
 		451D609C277E8672008F44C0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				451D60A1277E8672008F44C0 /* RenderKitDemo.app */,
+				451D60A1277E8672008F44C0 /* Demo.app */,
 				455A9B892A43DF8600A8AB36 /* VisionOSDemo.app */,
 			);
 			name = Products;
@@ -271,9 +265,9 @@
 				452D1629278D3F57002A47E2 /* Project-Shared.xcconfig */,
 				452D162B278D3F57002A47E2 /* Project-Debug.xcconfig */,
 				452D1627278D3F57002A47E2 /* Project-Release.xcconfig */,
-				452D162D278D3F57002A47E2 /* RenderGraphKitDemo-Shared.xcconfig */,
-				452D162C278D3F57002A47E2 /* RenderGraphKitDemo-Debug.xcconfig */,
-				452D162A278D3F57002A47E2 /* RenderGraphKitDemo-Release.xcconfig */,
+				452D162D278D3F57002A47E2 /* Demo-Shared.xcconfig */,
+				452D162C278D3F57002A47E2 /* Demo-Debug.xcconfig */,
+				452D162A278D3F57002A47E2 /* Demo-Release.xcconfig */,
 				45A544D827B9B3A800BDCC70 /* Warnings.xcconfig */,
 			);
 			path = xcconfig;
@@ -415,9 +409,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		451D60A0277E8672008F44C0 /* RenderKitDemo */ = {
+		451D60A0277E8672008F44C0 /* Demo */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 451D60AF277E8672008F44C0 /* Build configuration list for PBXNativeTarget "RenderKitDemo" */;
+			buildConfigurationList = 451D60AF277E8672008F44C0 /* Build configuration list for PBXNativeTarget "Demo" */;
 			buildPhases = (
 				451D609D277E8672008F44C0 /* Sources */,
 				451D609E277E8672008F44C0 /* Frameworks */,
@@ -428,7 +422,7 @@
 			);
 			dependencies = (
 			);
-			name = RenderKitDemo;
+			name = Demo;
 			packageProductDependencies = (
 				45FF36FF27D8479F004D8BC2 /* Everything */,
 				4594E4D027D8652A00DF1F8D /* SIMDSupport */,
@@ -440,7 +434,7 @@
 				4571A1D32A44E66B0034731B /* RenderKitDemo */,
 			);
 			productName = "RenderGraphKitDemo (macOS)";
-			productReference = 451D60A1277E8672008F44C0 /* RenderKitDemo.app */;
+			productReference = 451D60A1277E8672008F44C0 /* Demo.app */;
 			productType = "com.apple.product-type.application";
 		};
 		455A9B882A43DF8600A8AB36 /* VisionOSDemo */ = {
@@ -482,7 +476,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 451D6092277E8671008F44C0 /* Build configuration list for PBXProject "RenderKitDemo" */;
+			buildConfigurationList = 451D6092277E8671008F44C0 /* Build configuration list for PBXProject "Demo" */;
 			compatibilityVersion = "Xcode 13.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -501,7 +495,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				451D60A0277E8672008F44C0 /* RenderKitDemo */,
+				451D60A0277E8672008F44C0 /* Demo */,
 				455A9B882A43DF8600A8AB36 /* VisionOSDemo */,
 			);
 		};
@@ -682,41 +676,15 @@
 		};
 		451D60B0277E8672008F44C0 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 452D162C278D3F57002A47E2 /* RenderGraphKitDemo-Debug.xcconfig */;
+			baseConfigurationReference = 452D162C278D3F57002A47E2 /* Demo-Debug.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = RenderGraphKitDemo.entitlements;
-				CODE_SIGN_IDENTITY = "-";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				INFOPLIST_FILE = "RenderGraphKitDemo-Info.plist";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
 		451D60B1277E8672008F44C0 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 452D162A278D3F57002A47E2 /* RenderGraphKitDemo-Release.xcconfig */;
+			baseConfigurationReference = 452D162A278D3F57002A47E2 /* Demo-Release.xcconfig */;
 			buildSettings = {
-				CODE_SIGN_ENTITLEMENTS = RenderGraphKitDemo.entitlements;
-				CODE_SIGN_IDENTITY = "-";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				INFOPLIST_FILE = "RenderGraphKitDemo-Info.plist";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.developer-tools";
-				INFOPLIST_KEY_NSHumanReadableCopyright = "";
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -884,7 +852,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		451D6092277E8671008F44C0 /* Build configuration list for PBXProject "RenderKitDemo" */ = {
+		451D6092277E8671008F44C0 /* Build configuration list for PBXProject "Demo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				451D60AA277E8672008F44C0 /* Debug */,
@@ -893,7 +861,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		451D60AF277E8672008F44C0 /* Build configuration list for PBXNativeTarget "RenderKitDemo" */ = {
+		451D60AF277E8672008F44C0 /* Build configuration list for PBXNativeTarget "Demo" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				451D60B0277E8672008F44C0 /* Debug */,

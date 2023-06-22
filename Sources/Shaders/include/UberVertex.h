@@ -1,10 +1,3 @@
-//
-//  UberVertex.h
-//  RenderKitDemo
-//
-//  Created by Jonathan Wight on 2/2/22.
-//
-
 #pragma once
 
 //#ifdef __METAL_VERSION__

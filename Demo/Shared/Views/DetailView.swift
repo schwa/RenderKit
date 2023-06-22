@@ -7,6 +7,7 @@ import Shaders
 import SIMDSupport
 import SwiftUI
 import RenderKitSceneGraph
+import RenderKitDemo
 
 struct DetailView: View {
     @EnvironmentObject

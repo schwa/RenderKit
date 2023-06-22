@@ -4,6 +4,7 @@ import RenderKit
 import simd
 import SwiftUI
 import RenderKitSupport
+import RenderKitDemo
 
 struct MainView: View, Sendable {
     @EnvironmentObject

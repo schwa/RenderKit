@@ -1,10 +1,3 @@
-//
-//  Random.h
-//  RenderKitDemo
-//
-//  Created by Jonathan Wight on 1/29/22.
-//
-
 #pragma once
 
 #include "GLSLCompat.h"

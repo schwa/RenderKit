@@ -1,4 +1,4 @@
-# RenderGraphKit
+# RenderKit
 
 ## TODO
 
