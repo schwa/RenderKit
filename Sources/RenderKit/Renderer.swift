@@ -53,18 +53,18 @@ public class Renderer<RenderGraph> where RenderGraph: RenderGraphProtocol {
         commandQueue.label = makeLabel(label, "Command Queue")
         lock = .init(uncheckedState: RenderState(device: device, graph: graph))
         self.environment = RenderEnvironment(environment)
-        logger?.debug("\(self.debugDescription): \(#function)")
+        logger?.debug("\(self.debugDescription, privacy: .public): \(#function, privacy: .public)")
     }
 
     public func add(submitter: some RenderSubmitter) {
-        logger?.debug("\(self.debugDescription): \(#function)")
+        logger?.debug("\(self.debugDescription, privacy: .public): \(#function, privacy: .public)")
         lock.withLockUnchecked { _ in
             submitters.append(submitter)
         }
     }
 
     public func update(drawableSize: CGSize) {
-        logger?.debug("\(self.debugDescription): \(#function) ####")
+        logger?.debug("\(self.debugDescription, privacy: .public): \(#function, privacy: .public) ####")
         lock.withLockUnchecked { state in
             state.drawableSize = drawableSize
             state.setup = false
@@ -74,7 +74,7 @@ public class Renderer<RenderGraph> where RenderGraph: RenderGraphProtocol {
     // MARK: Per frame...
 
     public func render(drawable: CAMetalDrawable) throws {
-//        logger?.debug("\(self.debugDescription): Render")
+//        logger?.debug("\(self.debugDescription, privacy: .public): Render")
         queue.async { [weak self] in
             guard let self else {
                 return
@@ -90,7 +90,7 @@ public class Renderer<RenderGraph> where RenderGraph: RenderGraphProtocol {
 
     private func _render(drawable: CAMetalDrawable) throws {
         try lock.withLockUnchecked { state in
-            //        logger?.debug("\(self.debugDescription): _render")
+            //        logger?.debug("\(self.debugDescription, privacy: .public): _render")
             if state.setup == false {
                 try setup(drawable: drawable, state: &state)
             }
@@ -173,7 +173,7 @@ public class Renderer<RenderGraph> where RenderGraph: RenderGraphProtocol {
     }
 
     private func configure(commandEncoder: MTLRenderCommandEncoder, forPass pass: some RenderPassProtocol, lastPassConfiguration: inout RenderPassOptions?, state: inout RenderState) throws {
-        // logger?.debug("\(self.debugDescription): \(#function)")
+        // logger?.debug("\(self.debugDescription, privacy: .public): \(#function, privacy: .public)")
         lock.precondition(.owner)
         assert(state.setup == true)
 
@@ -212,7 +212,7 @@ public class Renderer<RenderGraph> where RenderGraph: RenderGraphProtocol {
     // MARK: -
 
     private func setup(drawable: CAMetalDrawable, state: inout RenderState) throws {
-        logger?.debug("\(self.debugDescription): \(#function)")
+        logger?.debug("\(self.debugDescription, privacy: .public): \(#function, privacy: .public)")
         lock.precondition(.owner)
         assert(state.setup == false)
 
@@ -227,7 +227,7 @@ public class Renderer<RenderGraph> where RenderGraph: RenderGraphProtocol {
     }
 
     private func updateDepthTexture(state: inout RenderState) {
-        logger?.debug("\(self.debugDescription): \(#function)")
+        logger?.debug("\(self.debugDescription, privacy: .public): \(#function, privacy: .public)")
         lock.precondition(.owner)
         assert(state.setup == false)
 
@@ -255,7 +255,7 @@ public class Renderer<RenderGraph> where RenderGraph: RenderGraphProtocol {
     }
 
     private func setup(renderPass pass: some RenderPassProtocol, drawable: CAMetalDrawable, state: inout RenderState) throws {
-        logger?.debug("\(self.debugDescription): \(#function)")
+        logger?.debug("\(self.debugDescription, privacy: .public): \(#function, privacy: .public)")
         let activeSubmitters = submitters.filter { $0.shouldSubmit(pass: pass, environment: environment) }
         if activeSubmitters.isEmpty {
             return
@@ -300,7 +300,7 @@ public class Renderer<RenderGraph> where RenderGraph: RenderGraphProtocol {
 
     private func cacheFunction(stage: some StageProtocol, state: inout RenderState) throws -> MTLFunction {
         lock.precondition(.owner)
-        logger?.debug("\(self.debugDescription): \(#function)")
+        logger?.debug("\(self.debugDescription, privacy: .public): \(#function, privacy: .public)")
         if state.setup == true {
             logger?.warning("Caching functions when already setup. Potential perf issue?")
         }
@@ -317,7 +317,7 @@ public class Renderer<RenderGraph> where RenderGraph: RenderGraphProtocol {
 //            library = try device.makeLibrary(source: source, options: options)
         }
 
-//        logger?.debug("\(self.debugDescription): Make function \(stage.function.functionName)")
+//        logger?.debug("\(self.debugDescription, privacy: .public): Make function \(stage.function.functionName)")
         if !stage.functionConstants.isEmpty {
             let constants = try MTLFunctionConstantValues(constants: stage.functionConstants)
             function = try library.makeFunction(name: stage.function.functionName, constantValues: constants)
@@ -357,7 +357,7 @@ extension Renderer: CustomDebugStringConvertible {
 
 private extension Renderer {
     func encodeComputePass(commandEncoder: MTLComputeCommandEncoder, pass: some ComputePassProtocol, state: inout RenderState) throws {
-        logger?.debug("\(self.debugDescription): \(#function)")
+        logger?.debug("\(self.debugDescription, privacy: .public): \(#function, privacy: .public)")
         let key = pass.id
         // swiftlint:disable:next implicitly_unwrapped_optional
         var computePipelineState: MTLComputePipelineState! = state.cachedComputePipelineStates[key]

@@ -48,6 +48,7 @@ public enum BundleSpecifier: Codable {
 }
 
 let log = OSLog(subsystem: "timeit", category: .pointsOfInterest)
+let logger = Logger(subsystem: "timeit", category: "timeit")
 
 public func timeit<R>(_ label: String, closure: () throws -> R) rethrows -> R {
     os_signpost(.begin, log: log, name: "TIMEIT")
@@ -60,7 +61,7 @@ public func timeit<R>(_ label: String, closure: () throws -> R) rethrows -> R {
             fatalError("Could not get mach_timebase_infothat")
         }
         let nanos = (end - start) * UInt64(info.numer) / UInt64(info.denom)
-        print("\(label): \(TimeInterval(nanos) / TimeInterval(NSEC_PER_SEC))")
+        logger.debug("\(label, privacy: .public): \(TimeInterval(nanos) / TimeInterval(NSEC_PER_SEC))")
     }
     return try closure()
 }
