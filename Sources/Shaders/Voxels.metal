@@ -6,26 +6,8 @@
 #include "include/Support.h"
 #include "include/Shaders.h"
 
+
 using namespace metal;
-
-struct VoxelVertex {
-    half3 position [[attribute(0)]];
-    half3 normal [[attribute(1)]];
-    half2 textureCoordinate [[attribute(2)]];
-    ushort colorIndex [[attribute(3)]];
-};
-
-struct PackedVoxelVertex {
-    packed_half3 position;
-    packed_half3 normal;
-    packed_half2 textureCoordinate;
-    ushort colorIndex;
-};
-
-struct MagicaVoxel {
-    uchar3 position;
-    uchar color;
-};
 
 kernel void magicaVoxelsToColorTexture3D(uint gid [[thread_position_in_grid]],
                                          constant MagicaVoxel *voxels [[buffer(VoxelsBindings_VoxelsBuffer)]],
