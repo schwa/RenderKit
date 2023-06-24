@@ -24,7 +24,7 @@
       "location" : "https://github.com/schwa/MetalSupport",
       "state" : {
         "branch" : "main",
-        "revision" : "4ffd09e6d3b1bccd15a348da01439e0577de96b5"
+        "revision" : "9bd0e27ace5fcc6928ecfc0903d142954030f508"
       }
     },
     {
@@ -69,7 +69,7 @@
       "location" : "https://github.com/schwa/SwiftGLTF",
       "state" : {
         "branch" : "main",
-        "revision" : "26680799a74af1233b44c22110e830978feffa48"
+        "revision" : "3cbe26d419a0ce0f80c3ddd88c8a9bb8d3477059"
       }
     },
     {

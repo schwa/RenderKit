@@ -1,16 +1,33 @@
 import Metal
 import RenderKitSupport
 
+/// RenderGraphs merely contain Passes
 public protocol RenderGraphProtocol {
     var passes: [any PassProtocol] { get }
 }
 
+/// Passes contain Stages.
 public protocol PassProtocol: Identifiable, Labelled {
     var enabled: Bool { get }
     var stages: [any StageProtocol] { get }
     var selectors: Set<PassSelector> { get }
 }
 
+public protocol RenderPassProtocol: PassProtocol {
+    associatedtype VertexStage: VertexStageProtocol
+    associatedtype FragmentStage: FragmentStageProtocol
+    var configuration: RenderPassOptions? { get }
+    var vertexStage: VertexStage { get }
+    var fragmentStage: FragmentStage { get }
+}
+
+public protocol ComputePassProtocol: PassProtocol {
+    associatedtype ComputeStage: ComputeStageProtocol
+    var workSize: MTLSize { get } // NOTE: This should probably not be in the pass?
+    var computeStage: ComputeStage { get }
+}
+
+/// Stages contain Functions
 public protocol StageProtocol: Identifiable {
     var function: FunctionProvider { get }
     var parameters: [Parameter] { get }
@@ -18,6 +35,17 @@ public protocol StageProtocol: Identifiable {
     var kind: ShaderStageKind { get }
 }
 
+public protocol RenderStageProtocol: StageProtocol {
+}
+
+public protocol VertexStageProtocol: RenderStageProtocol {
+}
+
+public protocol FragmentStageProtocol: RenderStageProtocol {
+}
+
+
+/// RenderSubmitters submit geometry to be rendered by stages.
 public protocol RenderSubmitter {
     /// Called before any rendering
     func setup(state: inout RenderState) throws
@@ -33,31 +61,6 @@ public protocol RenderSubmitter {
 }
 
 // MARK: Render
-
-public protocol RenderPassProtocol: PassProtocol {
-    associatedtype VertexStage: VertexStageProtocol
-    associatedtype FragmentStage: FragmentStageProtocol
-    var configuration: RenderPassOptions? { get }
-    var vertexStage: VertexStage { get }
-    var fragmentStage: FragmentStage { get }
-}
-
-public protocol RenderStageProtocol: StageProtocol {
-}
-
-public protocol VertexStageProtocol: RenderStageProtocol {
-}
-
-public protocol FragmentStageProtocol: RenderStageProtocol {
-}
-
-// MARK: Compute
-
-public protocol ComputePassProtocol: PassProtocol {
-    associatedtype ComputeStage: ComputeStageProtocol
-    var workSize: MTLSize { get } // NOTE: This should probably not be in the pass?
-    var computeStage: ComputeStage { get }
-}
 
 public protocol ComputeStageProtocol: StageProtocol {
 }

@@ -16,40 +16,7 @@ struct RenderKitDemoApp: App {
 
         var body: some Scene {
             Window("Welcome", id: "Welcome") {
-                VStack {
-                    Image(nsImage: NSImage(named: "AppIcon") ?? NSImage())
-                    Text(verbatim: Bundle.main.infoDictionary!["CFBundleName"]! as! String)
-                    Text("Version \(Bundle.main.infoDictionary!["CFBundleShortVersionString"]! as! String)")
-                    List {
-                        openMenu
-                        Button(title: "New Metal Shader…", systemImage: "doc") {
-                        }
-                        Button(title: "Open Metal Document…", systemImage: "folder", action: {
-                        })
-                    }
-                    .buttonStyle { configuration in
-                        configuration.label
-                            .font(.body.bold())
-                            .frame(maxWidth: .infinity)
-                            .padding([.leading, .trailing], 10)
-                            .padding([.top, .bottom], 5)
-
-                            .background {
-                                ButtonBorderShape.buttonBorder.fill(Color(red: 0.92, green: 0.92, blue: 0.92)).brightness(configuration.isPressed ? -0.2 : 0)
-                            }
-                            .accentColor(.primary)
-                    }
-                }
-                .inspector(isPresented: .constant(true)) {
-                    RecentDocuments() { url in
-                        dismissWindow(id: "Welcome")
-                        Task {
-                            try! await openDocument(at: url)
-                        }
-                    }
-                    .ignoresSafeArea()
-                    .inspectorColumnWidth(320)
-                }
+                WelcomeView()
             }
             .windowStyle(.hiddenTitleBar)
             Window("Demo", id: "DemoView") {
@@ -58,13 +25,16 @@ struct RenderKitDemoApp: App {
             Window("SpriteSheet", id: "SpriteSheet") {
                 SpriteSheetView()
             }
+            Window("FishEye…", id: "FishEye") {
+                FishEyeContentView()
+            }
             .commands {
                 CommandMenu("Action") {
                     Button("Welcome") {
                         openWindow(id: "Welcome")
                     }
                     .keyboardShortcut("1", modifiers: [.command, .shift])
-                    openMenu
+                    OpenMenu()
                 }
             }
             DocumentGroup(newDocument: MetalDocument()) { file in
@@ -80,23 +50,6 @@ struct RenderKitDemoApp: App {
             }
         }
     #endif
-
-#if os(macOS)
-    @ViewBuilder
-    var openMenu: some View {
-        Button(title: "All Demos…", systemImage: "cube.transparent") {
-            openWindow(id: "DemoView")
-            dismissWindow(id: "Welcome")
-        }
-        .keyboardShortcut("2", modifiers: [.command, .shift])
-
-        Button(title: "SpriteSheet Editor…", systemImage: "cube.transparent") {
-            openWindow(id: "SpriteSheet")
-            dismissWindow(id: "Welcome")
-        }
-        .keyboardShortcut("4", modifiers: [.command, .shift])
-    }
-#endif
 }
 
 #if os(macOS)
@@ -133,3 +86,86 @@ struct RecentDocuments: View {
     }
 }
 #endif
+
+struct WelcomeView: View {
+
+    @Environment(\.openWindow)
+    var openWindow
+
+    @Environment(\.dismissWindow)
+    var dismissWindow
+
+    @Environment(\.openDocument)
+    var openDocument
+
+    var body: some View {
+        VStack {
+            Image(nsImage: NSImage(named: "AppIcon") ?? NSImage())
+            Text(verbatim: Bundle.main.infoDictionary!["CFBundleName"]! as! String)
+            Text("Version \(Bundle.main.infoDictionary!["CFBundleShortVersionString"]! as! String)")
+            List {
+                OpenMenu()
+                Button(title: "New Metal Shader…", systemImage: "doc") {
+                }
+                Button(title: "Open Metal Document…", systemImage: "folder", action: {
+                })
+            }
+            .buttonStyle { configuration in
+                configuration.label
+                    .font(.body.bold())
+                    .frame(maxWidth: .infinity)
+                    .padding([.leading, .trailing], 10)
+                    .padding([.top, .bottom], 5)
+
+                    .background {
+                        ButtonBorderShape.buttonBorder.fill(Color(red: 0.92, green: 0.92, blue: 0.92)).brightness(configuration.isPressed ? -0.2 : 0)
+                    }
+                    .accentColor(.primary)
+            }
+        }
+        .inspector(isPresented: .constant(true)) {
+            RecentDocuments() { url in
+                dismissWindow(id: "Welcome")
+                Task {
+                    try! await openDocument(at: url)
+                }
+            }
+            .ignoresSafeArea()
+            .inspectorColumnWidth(320)
+        }
+
+    }
+}
+
+struct OpenMenu: View {
+    @Environment(\.openWindow)
+    var openWindow
+
+    @Environment(\.dismissWindow)
+    var dismissWindow
+
+    @Environment(\.openDocument)
+    var openDocument
+
+    var body: some View {
+        Button(title: "All Demos…", systemImage: "cube.transparent") {
+            openWindow(id: "DemoView")
+            dismissWindow(id: "Welcome")
+        }
+        .keyboardShortcut("2", modifiers: [.command])
+
+        Button(title: "SpriteSheet Editor…", systemImage: "cube.transparent") {
+            openWindow(id: "SpriteSheet")
+            dismissWindow(id: "Welcome")
+        }
+        .keyboardShortcut("3", modifiers: [.command])
+
+        Button(title: "FishEye…", systemImage: "cube.transparent") {
+            openWindow(id: "FishEye")
+            dismissWindow(id: "Welcome")
+        }
+        .keyboardShortcut("3", modifiers: [.command])
+
+
+    }
+}

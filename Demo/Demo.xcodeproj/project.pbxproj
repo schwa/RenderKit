@@ -8,6 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		451D60A9277E8672008F44C0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 451D6096277E8672008F44C0 /* Assets.xcassets */; };
+		454C8A382A47B5850025F743 /* 3D Capture-Left.png in Resources */ = {isa = PBXBuildFile; fileRef = 454C8A2D2A47B5850025F743 /* 3D Capture-Left.png */; };
+		454C8A392A47B5850025F743 /* 3D Capture.png in Resources */ = {isa = PBXBuildFile; fileRef = 454C8A2E2A47B5850025F743 /* 3D Capture.png */; };
+		454C8A3A2A47B5850025F743 /* FishEye.swift in Sources */ = {isa = PBXBuildFile; fileRef = 454C8A2F2A47B5850025F743 /* FishEye.swift */; };
+		454C8A3D2A47B5850025F743 /* FishEye.metal in Sources */ = {isa = PBXBuildFile; fileRef = 454C8A342A47B5850025F743 /* FishEye.metal */; };
+		454C8A3E2A47B5850025F743 /* big-gallery-005worldmap.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 454C8A352A47B5850025F743 /* big-gallery-005worldmap.jpg */; };
+		454C8A3F2A47B5850025F743 /* FishEyeContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 454C8A362A47B5850025F743 /* FishEyeContentView.swift */; };
+		454C8A422A47B9230025F743 /* Support.swift in Sources */ = {isa = PBXBuildFile; fileRef = 454C8A412A47B9230025F743 /* Support.swift */; };
 		45582CE428DFBC42005F4A80 /* SwiftGLTF in Frameworks */ = {isa = PBXBuildFile; productRef = 45582CE328DFBC42005F4A80 /* SwiftGLTF */; };
 		455A9B8F2A43DF8600A8AB36 /* VisionOSDemoApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 455A9B8E2A43DF8600A8AB36 /* VisionOSDemoApp.swift */; };
 		455A9B972A43DF8700A8AB36 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 455A9B962A43DF8700A8AB36 /* Assets.xcassets */; };
@@ -70,6 +77,13 @@
 		452D162D278D3F57002A47E2 /* Demo-Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Demo-Shared.xcconfig"; sourceTree = "<group>"; };
 		453E8CC427B9BF14006A9565 /* .gitkeep */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitkeep; sourceTree = "<group>"; };
 		453E8CC527B9BF14006A9565 /* pre-commit */ = {isa = PBXFileReference; lastKnownFileType = text; path = "pre-commit"; sourceTree = "<group>"; };
+		454C8A2D2A47B5850025F743 /* 3D Capture-Left.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "3D Capture-Left.png"; sourceTree = "<group>"; };
+		454C8A2E2A47B5850025F743 /* 3D Capture.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "3D Capture.png"; sourceTree = "<group>"; };
+		454C8A2F2A47B5850025F743 /* FishEye.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FishEye.swift; sourceTree = "<group>"; };
+		454C8A342A47B5850025F743 /* FishEye.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = FishEye.metal; sourceTree = "<group>"; };
+		454C8A352A47B5850025F743 /* big-gallery-005worldmap.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = "big-gallery-005worldmap.jpg"; sourceTree = "<group>"; };
+		454C8A362A47B5850025F743 /* FishEyeContentView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FishEyeContentView.swift; sourceTree = "<group>"; };
+		454C8A412A47B9230025F743 /* Support.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Support.swift; sourceTree = "<group>"; };
 		455A9B892A43DF8600A8AB36 /* VisionOSDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VisionOSDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		455A9B8E2A43DF8600A8AB36 /* VisionOSDemoApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisionOSDemoApp.swift; sourceTree = "<group>"; };
 		455A9B962A43DF8700A8AB36 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -155,7 +169,8 @@
 			children = (
 				451D6096277E8672008F44C0 /* Assets.xcassets */,
 				451D6094277E8671008F44C0 /* App.swift */,
-				456CB37728FCD40D000E4319 /* Support Views */,
+				454C8A2C2A47B5850025F743 /* Fisheye */,
+				456CB37728FCD40D000E4319 /* Support */,
 				456CB38528FCD40D000E4319 /* Views */,
 			);
 			path = Shared;
@@ -194,6 +209,19 @@
 			path = git_hooks;
 			sourceTree = "<group>";
 		};
+		454C8A2C2A47B5850025F743 /* Fisheye */ = {
+			isa = PBXGroup;
+			children = (
+				454C8A2D2A47B5850025F743 /* 3D Capture-Left.png */,
+				454C8A2E2A47B5850025F743 /* 3D Capture.png */,
+				454C8A2F2A47B5850025F743 /* FishEye.swift */,
+				454C8A342A47B5850025F743 /* FishEye.metal */,
+				454C8A352A47B5850025F743 /* big-gallery-005worldmap.jpg */,
+				454C8A362A47B5850025F743 /* FishEyeContentView.swift */,
+			);
+			path = Fisheye;
+			sourceTree = "<group>";
+		};
 		4554B8E427BCCF9400D4892B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -213,7 +241,7 @@
 			path = VisionOSDemo;
 			sourceTree = "<group>";
 		};
-		456CB37728FCD40D000E4319 /* Support Views */ = {
+		456CB37728FCD40D000E4319 /* Support */ = {
 			isa = PBXGroup;
 			children = (
 				456CB37A28FCD40D000E4319 /* NumberFieldView.swift */,
@@ -225,8 +253,9 @@
 				456CB38228FCD40D000E4319 /* ObjectLog.swift */,
 				456CB38328FCD40D000E4319 /* VoronoiNoiseComputeView.swift */,
 				456CB38428FCD40D000E4319 /* EditorViews.swift */,
+				454C8A412A47B9230025F743 /* Support.swift */,
 			);
-			path = "Support Views";
+			path = Support;
 			sourceTree = "<group>";
 		};
 		456CB38528FCD40D000E4319 /* Views */ = {
@@ -374,10 +403,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				454C8A3E2A47B5850025F743 /* big-gallery-005worldmap.jpg in Resources */,
 				45EF7B8C28FCD61600B7FB16 /* ShaderEditorSample.txt in Resources */,
 				45EF7B9028FCD61600B7FB16 /* Sprites.png in Resources */,
+				454C8A392A47B5850025F743 /* 3D Capture.png in Resources */,
 				451D60A9277E8672008F44C0 /* Assets.xcassets in Resources */,
 				45EF7B8E28FCD61600B7FB16 /* Sprites.json in Resources */,
+				454C8A382A47B5850025F743 /* 3D Capture-Left.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -425,9 +457,12 @@
 			files = (
 				45EF7B9728FCD66200B7FB16 /* MetalInfoView.swift in Sources */,
 				45EF7B9828FCD66200B7FB16 /* DetailView.swift in Sources */,
+				454C8A3D2A47B5850025F743 /* FishEye.metal in Sources */,
 				45EF7B9B28FCD66200B7FB16 /* NumberFieldView.swift in Sources */,
+				454C8A422A47B9230025F743 /* Support.swift in Sources */,
 				45EF7B8D28FCD61600B7FB16 /* SpriteSheet.swift in Sources */,
 				45EF7B9928FCD66200B7FB16 /* MapView.swift in Sources */,
+				454C8A3A2A47B5850025F743 /* FishEye.swift in Sources */,
 				45EF7BA128FCD7DE00B7FB16 /* ShaderEditor.swift in Sources */,
 				45EF7B9E28FCD66200B7FB16 /* ObjectLog.swift in Sources */,
 				45EF7B9D28FCD66200B7FB16 /* EditorViews.swift in Sources */,
@@ -435,6 +470,7 @@
 				45EF7B9628FCD66200B7FB16 /* VoronoiNoiseComputeView.swift in Sources */,
 				455A9BDA2A43E1E900A8AB36 /* App.swift in Sources */,
 				45EF7B9F28FCD66200B7FB16 /* Viewers.swift in Sources */,
+				454C8A3F2A47B5850025F743 /* FishEyeContentView.swift in Sources */,
 				45EF7B8F28FCD61600B7FB16 /* MainView.swift in Sources */,
 				45EF7BA028FCD66200B7FB16 /* ConsoleLogView.swift in Sources */,
 				45EF7B9C28FCD66200B7FB16 /* GLTFLoaderView.swift in Sources */,

@@ -202,35 +202,6 @@ public protocol Labelled {
     var label: String? { get }
 }
 
-public extension MTLTexture {
-    func betterCGImage() throws -> CGImage {
-        let sampleSize = pixelFormat.size!
-        let bytesPerRow = width * sampleSize
-        let bytesPerImage = height * width * sampleSize
-        let length = width * height * depth * sampleSize
-        let buffer = device.makeBuffer(length: length, options: .storageModeShared)!
-
-        let commandQueue = device.makeCommandQueue()!
-        let commandBuffer = commandQueue.makeCommandBuffer()!
-        let commandEncoder = commandBuffer.makeBlitCommandEncoder()!
-        commandEncoder.copy(from: self, sourceSlice: 0, sourceLevel: 0, sourceOrigin: MTLOrigin.zero, sourceSize: MTLSize(width, height, depth), to: buffer, destinationOffset: 0, destinationBytesPerRow: bytesPerRow, destinationBytesPerImage: bytesPerImage)
-        commandEncoder.endEncoding()
-        commandBuffer.commit()
-        commandBuffer.waitUntilCompleted()
-
-        // MARK: -
-
-        //    let data = Data(bytes: buffer.contents(), count: length)
-
-        let b = BitmapDefinition(width: width, height: height * depth, pixelFormat: PixelFormat(mtlPixelFormat: pixelFormat))
-
-        let d = UnsafeMutableRawBufferPointer(start: buffer.contents(), count: buffer.length)
-        let context = CGContext.bitmapContext(data: d, definition: b)!
-        let image = context.makeImage()!
-
-        return image
-    }
-}
 
 /// An object that provides access to the bytes of a value.
 /// Avoids issues where getting the bytes of an onject cast to Any is not the same as getting the bytes to the object
@@ -280,6 +251,12 @@ public extension PixelFormat {
 
         case .rgba32Float:
             self = .init(bitsPerComponent: 32, numberOfComponents: 4, alphaInfo: .premultipliedLast, byteOrder: .order32Little, useFloatComponents: true, colorSpace: CGColorSpaceCreateDeviceRGB())
+
+        case .bgra8Unorm_srgb:
+
+            let colorSpace = CGColorSpace(name: CGColorSpace.sRGB)
+
+            self = .init(bitsPerComponent: 8, numberOfComponents: 4, alphaInfo: .premultipliedLast, byteOrder: .order32Little, useFloatComponents: false, colorSpace: colorSpace)
         default:
             fatalError("Unexpected case")
         }
@@ -287,6 +264,7 @@ public extension PixelFormat {
 }
 
 public extension MTLTexture {
+    @available(*, deprecated, message: "TODO: Merge all CGImage functions")
     var cgImage: CGImage {
         let pixelFormat = PixelFormat(mtlPixelFormat: pixelFormat)
         let bitmapDefinition = BitmapDefinition(width: width, height: height, pixelFormat: pixelFormat)
@@ -296,10 +274,51 @@ public extension MTLTexture {
         }
         let mutableContents = UnsafeMutableRawPointer(contents)
         let p = UnsafeMutableRawBufferPointer(start: mutableContents, count: buffer!.length)
-
+        
         let context = CGContext.bitmapContext(data: p, definition: bitmapDefinition)!
         let image = context.makeImage()!
         return image
+    }
+    
+    @available(*, deprecated, message: "TODO: Merge all CGImage functions")
+    var betterCGImage: CGImage {
+        let sampleSize = pixelFormat.size!
+        let bytesPerRow = width * sampleSize
+        let bytesPerImage = height * width * sampleSize
+        let length = width * height * depth * sampleSize
+        let buffer = device.makeBuffer(length: length, options: .storageModeShared)!
+
+        let commandQueue = device.makeCommandQueue()!
+        let commandBuffer = commandQueue.makeCommandBuffer()!
+        let commandEncoder = commandBuffer.makeBlitCommandEncoder()!
+        commandEncoder.copy(from: self, sourceSlice: 0, sourceLevel: 0, sourceOrigin: MTLOrigin.zero, sourceSize: MTLSize(width, height, depth), to: buffer, destinationOffset: 0, destinationBytesPerRow: bytesPerRow, destinationBytesPerImage: bytesPerImage)
+        commandEncoder.endEncoding()
+        commandBuffer.commit()
+        commandBuffer.waitUntilCompleted()
+
+        // MARK: -
+
+        //    let data = Data(bytes: buffer.contents(), count: length)
+
+        let b = BitmapDefinition(width: width, height: height * depth, pixelFormat: PixelFormat(mtlPixelFormat: pixelFormat))
+
+        let d = UnsafeMutableRawBufferPointer(start: buffer.contents(), count: buffer.length)
+        let context = CGContext.bitmapContext(data: d, definition: b)!
+        let image = context.makeImage()!
+
+        return image
+    }
+
+    @available(*, deprecated, message: "TODO: Merge all CGImage functions")
+    var betterBetterCGImage: CGImage {
+        let colorspace = CGColorSpaceCreateDeviceRGB()
+        var data = Data(count: width * 4 * height)
+        return data.withUnsafeMutableBytes { buffer in
+            getBytes(buffer.baseAddress!, bytesPerRow: width * 4, from: MTLRegion(origin: MTLOrigin(x: 0, y: 0, z: 0), size: MTLSize(width: width, height: height, depth: 1)), mipmapLevel: 0)
+            let bitmapInfo = CGImageAlphaInfo.premultipliedFirst.rawValue | CGBitmapInfo.byteOrder32Little.rawValue
+            let context = CGContext(data: buffer.baseAddress!, width: width, height: height, bitsPerComponent: 8, bytesPerRow: width * 4, space: colorspace, bitmapInfo: bitmapInfo)!
+            return context.makeImage()!
+        }
     }
 }
 
