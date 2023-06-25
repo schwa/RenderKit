@@ -16,6 +16,10 @@ let package = Package(
             targets: ["RenderKit"]
         ),
         .library(
+            name: "RenderKitSupport",
+            targets: ["RenderKit"]
+        ),
+        .library(
             name: "RenderKitDemo",
             targets: ["RenderKitDemo"]
         ),
