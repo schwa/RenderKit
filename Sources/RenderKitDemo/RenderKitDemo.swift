@@ -85,7 +85,7 @@ public class DemoModel: ObservableObject {
         renderer.add(submitter: FullScreenRenderSubmitter(device: device))
         renderer.add(submitter: VoxelsSubmitters(model: voxelModel, camera: sceneGraph.camera, lightingModel: sceneGraph.lightingModel))
         renderer.add(submitter: particleSubmitter)
-        renderer.events.sink { [weak self] _ in
+        renderer.didRender = { [weak self] in
             self?.swapLifeTextures()
 
             self?.frameStateBuffer.with(type: FrameState.self) { frameState in
@@ -93,7 +93,6 @@ public class DemoModel: ObservableObject {
                 frameState.frame += 1
             }
         }
-        .store(in: &cancellables)
     }
 
     func swapLifeTextures() {

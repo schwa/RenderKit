@@ -1,4 +1,3 @@
-import Combine
 import Everything
 import Foundation
 import Metal
@@ -28,17 +27,9 @@ public class Renderer<RenderGraph> where RenderGraph: RenderGraphProtocol {
     
     private var submitters: [any RenderSubmitter] = []
     private var lock: OSAllocatedUnfairLock<RenderState>
-    
-    public enum Event {
-        case didRender
-    }
-    
-    private var eventsPassthrough = PassthroughSubject<Event, Never>()
-    
-    public var events: AnyPublisher<Event, Never> {
-        eventsPassthrough.eraseToAnyPublisher()
-    }
-    
+
+    public var didRender: (() -> Void)?
+
     private let queue = DispatchQueue(label: "RenderQueue", qos: .userInteractive, attributes: [])
     
     // MARK: Init & pre-render configuration
@@ -99,7 +90,7 @@ public extension Renderer {
             DispatchQueue.main.async {
                 commandBuffer.commit()
             }
-            eventsPassthrough.send(.didRender)
+            didRender?()
         }
     }
 
