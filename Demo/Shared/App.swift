@@ -85,7 +85,6 @@ struct RecentDocuments: View {
         }
     }
 }
-#endif
 
 struct WelcomeView: View {
 
@@ -94,6 +93,7 @@ struct WelcomeView: View {
 
     @Environment(\.dismissWindow)
     var dismissWindow
+
 
     @Environment(\.openDocument)
     var openDocument
@@ -169,3 +169,4 @@ struct OpenMenu: View {
 
     }
 }
+#endif

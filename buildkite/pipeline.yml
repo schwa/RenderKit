@@ -3,7 +3,7 @@ steps:
           - swift build
     - command:
           - cd Demo
-          - xcodebuild -scheme 'Demos' -allowProvisioningUpdates -destination 'generic/platform=macOS'
+          - xcodebuild -scheme 'Demo' -allowProvisioningUpdates -destination 'generic/platform=macOS'
     - command:
           - cd Demo
-          - xcodebuild -scheme 'Demos' -allowProvisioningUpdates -destination 'generic/platform=iOS'
+          - xcodebuild -scheme 'Demo' -allowProvisioningUpdates -destination 'generic/platform=iOS'

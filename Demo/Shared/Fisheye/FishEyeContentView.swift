@@ -25,7 +25,9 @@ struct FishEyeContentView: View {
 
     var body: some View {
         VStack {
+            #if os(macOS)
             OfflineMetalView(image: imageSelection, debug: debug, uniforms: uniforms)
+            #endif
             Form {
                 Picker("Image", selection: $imageSelection) {
                     ForEach(images, id: \.self) { image in
@@ -46,6 +48,7 @@ struct FishEyeContentView: View {
     }
 }
 
+#if os(macOS)
 struct OfflineMetalView: View {
 
     let sourceImage: Image
@@ -68,3 +71,4 @@ struct OfflineMetalView: View {
     }
 
 }
+#endif
