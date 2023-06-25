@@ -42,7 +42,7 @@ public class SceneGraphRenderSubmitter: RenderSubmitter {
     }
 
     public func submit(pass: some RenderPassProtocol, state: RenderState, environment: inout RenderEnvironment, commandEncoder: MTLRenderCommandEncoder) throws {
-        let drawableSize = state.drawableSize
+        let drawableSize = state.targetTextureSize
         let aspectRatio = Float(drawableSize.width / drawableSize.height)
         let projectionTransform = graph.camera.projection._matrix(aspectRatio: aspectRatio)
         let viewTransform = graph.camera.transform.matrix.inverse

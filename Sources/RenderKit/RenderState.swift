@@ -4,16 +4,16 @@ import Metal
 import RenderKitSupport
 
 public struct RenderState {
-    public let device: MTLDevice
-    public let graph: any RenderGraphProtocol
-    public internal(set) var drawableSize: CGSize = .zero
-    public internal(set) var cachedDepthTexture: MTLTexture?
-    public internal(set) var cachedLibrary: MTLLibrary?
-    public internal(set) var cachedComputePipelineStates: [AnyHashable: MTLComputePipelineState] = [:]
-    public internal(set) var cachedRenderPipelineStates: [AnyHashable: MTLRenderPipelineState] = [:]
-    public internal(set) var cachedDepthStencilStates: [DepthStencil: MTLDepthStencilState] = [:]
-    public internal(set) var cachedFunctionsByStage: [AnyHashable: MTLFunction] = [:]
-    public internal(set) var cachedArgumentEncodersForStage: [Pair<AnyHashable, ShaderBinding>: MTLArgumentEncoder] = [:]
+    public var device: MTLDevice
+    public var graph: any RenderGraphProtocol
+    public var targetTextureSize: CGSize = .zero
+    public var cachedDepthTexture: MTLTexture?
+    public var cachedLibrary: MTLLibrary?
+    public var cachedComputePipelineStates: [AnyHashable: MTLComputePipelineState] = [:]
+    public var cachedRenderPipelineStates: [AnyHashable: MTLRenderPipelineState] = [:]
+    public var cachedDepthStencilStates: [DepthStencil: MTLDepthStencilState] = [:]
+    public var cachedFunctionsByStage: [AnyHashable: MTLFunction] = [:]
+    public var cachedArgumentEncodersForStage: [Pair<AnyHashable, ShaderBinding>: MTLArgumentEncoder] = [:]
 
     internal var setup = false {
         didSet {

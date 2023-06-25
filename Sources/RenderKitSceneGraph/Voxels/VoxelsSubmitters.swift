@@ -46,7 +46,7 @@ public class VoxelsSubmitters: RenderSubmitter {
             return
         }
 
-        let drawableSize = state.drawableSize
+        let drawableSize = state.targetTextureSize
         let aspectRatio = Float(drawableSize.width / drawableSize.height)
         let projectionTransform = camera.projection._matrix(aspectRatio: aspectRatio)
         let viewTransform = camera.transform.matrix.inverse

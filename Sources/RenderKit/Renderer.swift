@@ -10,43 +10,39 @@ import simd
 import SwiftUI
 import RenderKitSupport
 
+//public struct MyDrawable {
+//    var texture: MTLTexture
+//}
+
+public typealias MyDrawable = CAMetalDrawable
+
 // swiftlint:disable file_length
 
-// TODO: Move & cleanup
-func makeLabel(_ rootLabel: String?, _ label: String?, _ label2: String? = nil) -> String {
-    String([rootLabel, label, label2].compactMap { $0 }.joined(separator: "."))
-}
-
 private let logger: Logger? = Logger(subsystem: "Renderer", category: "Renderer")
-
-public protocol ParameterValuesProvider {
-    mutating func setup(state: inout RenderState) throws
-    func parameterValues() throws -> [RenderEnvironment.Key: ParameterValue]
-}
 
 public class Renderer<RenderGraph> where RenderGraph: RenderGraphProtocol {
     public let graph: RenderGraph
     public var label: String?
     public let commandQueue: MTLCommandQueue
     public /* private(set) */ var environment: RenderEnvironment // TODO: Make private
-
+    
     private var submitters: [any RenderSubmitter] = []
     private var lock: OSAllocatedUnfairLock<RenderState>
-
+    
     public enum Event {
         case didRender
     }
-
+    
     private var eventsPassthrough = PassthroughSubject<Event, Never>()
-
+    
     public var events: AnyPublisher<Event, Never> {
         eventsPassthrough.eraseToAnyPublisher()
     }
-
+    
     private let queue = DispatchQueue(label: "RenderQueue", qos: .userInteractive, attributes: [])
-
+    
     // MARK: Init & pre-render configuration
-
+    
     public init(device: MTLDevice, graph: RenderGraph, environment: RenderEnvironment) {
         self.graph = graph
         commandQueue = device.makeCommandQueue()!
@@ -55,32 +51,29 @@ public class Renderer<RenderGraph> where RenderGraph: RenderGraphProtocol {
         self.environment = environment
         logger?.debug("\(self.debugDescription, privacy: .public): \(#function, privacy: .public)")
     }
-
+    
     public func add(submitter: some RenderSubmitter) {
         logger?.debug("\(self.debugDescription, privacy: .public): \(#function, privacy: .public)")
         lock.withLockUnchecked { _ in
             submitters.append(submitter)
         }
     }
-
-    public func update(drawableSize: CGSize) {
+    
+    public func update(targetTextureSize: CGSize) {
         logger?.debug("\(self.debugDescription, privacy: .public): \(#function, privacy: .public) ####")
         lock.withLockUnchecked { state in
-            state.drawableSize = drawableSize
+            state.targetTextureSize = targetTextureSize
             state.setup = false
         }
     }
+}
 
-    // MARK: Per frame...
+public extension Renderer {
 
-    public func render(drawable: CAMetalDrawable) throws {
-//        logger?.debug("\(self.debugDescription, privacy: .public): Render")
+    func render(drawable: MyDrawable) throws {
         queue.async { [weak self] in
-            guard let self else {
-                return
-            }
             do {
-                try self._render(drawable: drawable)
+                try self?._render(drawable: drawable)
             }
             catch {
                 error.log()
@@ -88,88 +81,116 @@ public class Renderer<RenderGraph> where RenderGraph: RenderGraphProtocol {
         }
     }
 
-    private func _render(drawable: CAMetalDrawable) throws {
+    func render(commandBuffer: MTLCommandBuffer) throws {
         try lock.withLockUnchecked { state in
-            //        logger?.debug("\(self.debugDescription, privacy: .public): _render")
-            if state.setup == false {
-                try setup(drawable: drawable, state: &state)
-            }
-            guard state.setup == true else {
-                logger?.warning("Failed to setup frame")
-                return
-            }
-            for pass in graph.passes where pass.enabled {
-                guard let pass = pass as? any RenderPassProtocol else {
-                    continue
-                }
-                let activeSubmitters = submitters.filter { $0.shouldSubmit(pass: pass, environment: environment) }
-                if activeSubmitters.isEmpty {
-                    continue
-                }
-                for submitter in activeSubmitters {
-                    try submitter.prepareRender(pass: pass, state: &state, environment: &environment)
-                }
-            }
+            try submitPasses(commandBuffer: commandBuffer, state: &state)
+        }
+    }
+
+    private func _render(drawable: MyDrawable) throws {
+        try lock.withLockUnchecked { state in
+            try prepare(target: drawable.texture, state: &state)
             guard let commandBuffer = commandQueue.makeCommandBuffer() else {
                 fatalError("Could not make command queue")
             }
             commandBuffer.label = makeLabel(label, "CommandBuffer")
-
-            guard let depthTexture = state.cachedDepthTexture else {
-                //                fatalError("No depth texture")
-                logger?.debug("NO DEPTH TEXTURE SKIPPING")
-                return
-            }
-
-            environment["$DRAWABLE_TEXTURE"] = .texture(drawable.texture)
-            environment["$DEPTH_TEXTURE"] = .texture(depthTexture)
-
-            var lastPassConfiguration: RenderPassOptions?
-
-            for pass in graph.passes where pass.enabled {
-                if let pass = pass as? any RenderPassProtocol {
-                    var environment = self.environment
-                    let activeSubmitters = submitters.filter { $0.shouldSubmit(pass: pass, environment: environment) }
-                    if activeSubmitters.isEmpty {
-                        continue
-                    }
-                    let renderPassDescriptor = MTLRenderPassDescriptor()
-                    if let configuration = pass.configuration {
-                        if let depthAttachment = configuration.depthAttachment {
-                            renderPassDescriptor.depthAttachment = MTLRenderPassDepthAttachmentDescriptor(depthAttachment, environment: environment)
-                        }
-                        for (index, colorAttachment) in (configuration.colorAttachments ?? []).enumerated() {
-                            renderPassDescriptor.colorAttachments[index] = MTLRenderPassColorAttachmentDescriptor(colorAttachment, environment: environment)
-                        }
-                    }
-                    guard let commandEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
-                        fatalError("Could not make encoder")
-                    }
-                    commandEncoder.label = makeLabel(label, pass.label, "Command Encoder")
-                    try configure(commandEncoder: commandEncoder, forPass: pass, lastPassConfiguration: &lastPassConfiguration, state: &state)
-                    for submitter in activeSubmitters {
-                        try submitter.submit(pass: pass, state: state, environment: &environment, commandEncoder: commandEncoder)
-                    }
-                    self.environment = environment
-                    commandEncoder.endEncoding()
-                }
-                else if let pass = pass as? any ComputePassProtocol {
-                    guard let computeCommandEncoder = commandBuffer.makeComputeCommandEncoder() else {
-                        fatalError("Could not make encoder")
-                    }
-                    computeCommandEncoder.label = makeLabel(label, pass.label, "Compute Command Encoder")
-                    try encodeComputePass(commandEncoder: computeCommandEncoder, pass: pass, state: &state)
-                    computeCommandEncoder.endEncoding()
-                }
-            }
-
+            try submitPasses(commandBuffer: commandBuffer, state: &state)
             commandBuffer.present(drawable)
             DispatchQueue.main.async {
                 commandBuffer.commit()
             }
-
             eventsPassthrough.send(.didRender)
         }
+    }
+
+}
+
+
+extension Renderer {
+
+    private func prepare(target: MTLTexture, state: inout RenderState) throws {
+        if state.setup == false {
+            try setup(target: target, state: &state)
+        }
+        guard state.setup == true else {
+            logger?.warning("Failed to setup frame")
+            return
+        }
+        for pass in graph.passes where pass.enabled {
+            guard let pass = pass as? any RenderPassProtocol else {
+                continue
+            }
+            let activeSubmitters = submitters.filter { $0.shouldSubmit(pass: pass, environment: environment) }
+            if activeSubmitters.isEmpty {
+                continue
+            }
+            for submitter in activeSubmitters {
+                try submitter.prepareRender(pass: pass, state: &state, environment: &environment)
+            }
+        }
+        guard let depthTexture = state.cachedDepthTexture else {
+            //                fatalError("No depth texture")
+            logger?.debug("NO DEPTH TEXTURE SKIPPING")
+            return
+        }
+        environment["$DRAWABLE_TEXTURE"] = .texture(target)
+        environment["$DEPTH_TEXTURE"] = .texture(depthTexture)
+    }
+
+    private func setup(target: MTLTexture, state: inout RenderState) throws {
+        logger?.debug("\(self.debugDescription, privacy: .public): \(#function, privacy: .public)")
+        lock.precondition(.owner)
+        assert(state.setup == false)
+
+        updateDepthTexture(state: &state)
+        for pass in graph.passes where pass.enabled {
+            guard let pass = pass as? any RenderPassProtocol else {
+                continue
+            }
+            try setup(renderPass: pass, target: target, state: &state)
+        }
+        state.setup = true
+    }
+
+    private func submitPasses(commandBuffer: MTLCommandBuffer, state: inout RenderState) throws {
+        var lastPassConfiguration: RenderPassOptions?
+        for pass in graph.passes where pass.enabled {
+            if let pass = pass as? any RenderPassProtocol {
+                var environment = self.environment
+                let activeSubmitters = submitters.filter { $0.shouldSubmit(pass: pass, environment: environment) }
+                if activeSubmitters.isEmpty {
+                    continue
+                }
+                let renderPassDescriptor = MTLRenderPassDescriptor()
+                if let configuration = pass.configuration {
+                    if let depthAttachment = configuration.depthAttachment {
+                        renderPassDescriptor.depthAttachment = MTLRenderPassDepthAttachmentDescriptor(depthAttachment, environment: environment)
+                    }
+                    for (index, colorAttachment) in (configuration.colorAttachments ?? []).enumerated() {
+                        renderPassDescriptor.colorAttachments[index] = MTLRenderPassColorAttachmentDescriptor(colorAttachment, environment: environment)
+                    }
+                }
+                guard let commandEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
+                    fatalError("Could not make encoder")
+                }
+                commandEncoder.label = makeLabel(label, pass.label, "Command Encoder")
+                try configure(commandEncoder: commandEncoder, forPass: pass, lastPassConfiguration: &lastPassConfiguration, state: &state)
+                for submitter in activeSubmitters {
+                    try submitter.submit(pass: pass, state: state, environment: &environment, commandEncoder: commandEncoder)
+                }
+                self.environment = environment
+                commandEncoder.endEncoding()
+            }
+            else if let pass = pass as? any ComputePassProtocol {
+                guard let computeCommandEncoder = commandBuffer.makeComputeCommandEncoder() else {
+                    fatalError("Could not make encoder")
+                }
+                computeCommandEncoder.label = makeLabel(label, pass.label, "Compute Command Encoder")
+                try encodeComputePass(commandEncoder: computeCommandEncoder, pass: pass, state: &state)
+                computeCommandEncoder.endEncoding()
+            }
+        }
+
     }
 
     private func configure(commandEncoder: MTLRenderCommandEncoder, forPass pass: some RenderPassProtocol, lastPassConfiguration: inout RenderPassOptions?, state: inout RenderState) throws {
@@ -211,35 +232,20 @@ public class Renderer<RenderGraph> where RenderGraph: RenderGraphProtocol {
 
     // MARK: -
 
-    private func setup(drawable: CAMetalDrawable, state: inout RenderState) throws {
-        logger?.debug("\(self.debugDescription, privacy: .public): \(#function, privacy: .public)")
-        lock.precondition(.owner)
-        assert(state.setup == false)
-
-        updateDepthTexture(state: &state)
-        for pass in graph.passes where pass.enabled {
-            guard let pass = pass as? any RenderPassProtocol else {
-                continue
-            }
-            try setup(renderPass: pass, drawable: drawable, state: &state)
-        }
-        state.setup = true
-    }
-
     private func updateDepthTexture(state: inout RenderState) {
         logger?.debug("\(self.debugDescription, privacy: .public): \(#function, privacy: .public)")
         lock.precondition(.owner)
         assert(state.setup == false)
 
-        let width = Int(state.drawableSize.width)
-        let height = Int(state.drawableSize.height)
+        let width = Int(state.targetTextureSize.width)
+        let height = Int(state.targetTextureSize.height)
 
         guard width > 0, height > 0 else {
             return
         }
 
         if width == state.cachedDepthTexture?.width && height == state.cachedDepthTexture?.height {
-            warning("Depth texture (\(String(describing: state.cachedDepthTexture?.width)), \(String(describing: state.cachedDepthTexture?.height))) at incorrect size \(state.drawableSize)")
+            warning("Depth texture (\(String(describing: state.cachedDepthTexture?.width)), \(String(describing: state.cachedDepthTexture?.height))) at incorrect size \(state.targetTextureSize)")
             return
         }
 
@@ -254,7 +260,7 @@ public class Renderer<RenderGraph> where RenderGraph: RenderGraphProtocol {
         state.cachedDepthTexture = depthTexture
     }
 
-    private func setup(renderPass pass: some RenderPassProtocol, drawable: CAMetalDrawable, state: inout RenderState) throws {
+    private func setup(renderPass pass: some RenderPassProtocol, target: MTLTexture, state: inout RenderState) throws {
         logger?.debug("\(self.debugDescription, privacy: .public): \(#function, privacy: .public)")
         let activeSubmitters = submitters.filter { $0.shouldSubmit(pass: pass, environment: environment) }
         if activeSubmitters.isEmpty {
@@ -279,8 +285,8 @@ public class Renderer<RenderGraph> where RenderGraph: RenderGraphProtocol {
             let attributes = vertexFunction.vertexAttributes!
             renderPipelineDescriptor.vertexDescriptor = MTLVertexDescriptor(attributes: attributes)
 
-            assert(drawable.texture.pixelFormat != .invalid)
-            renderPipelineDescriptor.colorAttachments[0].pixelFormat = drawable.texture.pixelFormat
+            assert(target.pixelFormat != .invalid)
+            renderPipelineDescriptor.colorAttachments[0].pixelFormat = target.pixelFormat
             if let depthTexture = state.cachedDepthTexture {
                 assert(depthTexture.pixelFormat != .invalid)
                 renderPipelineDescriptor.depthAttachmentPixelFormat = depthTexture.pixelFormat
@@ -468,3 +474,9 @@ public extension MTLRenderCommandEncoder {
 //        commandEncoder.setTexture(texture, stage: stage, index: index)
 //    }
 // }
+
+// TODO: Move & cleanup
+func makeLabel(_ rootLabel: String?, _ label: String?, _ label2: String? = nil) -> String {
+    String([rootLabel, label, label2].compactMap { $0 }.joined(separator: "."))
+}
+

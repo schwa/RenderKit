@@ -77,7 +77,7 @@ public class ParticleSubmitter: RenderSubmitter {
             return
         }
 
-        let drawableSize = state.drawableSize
+        let drawableSize = state.targetTextureSize
         let aspectRatio = Float(drawableSize.width / drawableSize.height)
         let projectionTransform = scene.camera.projection._matrix(aspectRatio: aspectRatio)
         let viewTransform = scene.camera.transform.matrix.inverse

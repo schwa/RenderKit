@@ -24,7 +24,7 @@ public struct RenderView<RenderGraph>: View where RenderGraph: RenderGraphProtoc
             }
         }
         .onChange(of: drawableSize) {
-            renderer.update(drawableSize: drawableSize)
+            renderer.update(targetTextureSize: drawableSize)
         }
     }
 }

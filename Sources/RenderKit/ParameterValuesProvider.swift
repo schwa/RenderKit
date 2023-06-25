@@ -12,6 +12,11 @@ public enum ParameterValue {
     case argumentBuffer(MTLBuffer, [MTLResourceUsage: [MTLResource]])
 }
 
+public protocol ParameterValuesProvider {
+    mutating func setup(state: inout RenderState) throws
+    func parameterValues() throws -> [RenderEnvironment.Key: ParameterValue]
+}
+
 extension MTLRenderCommandEncoder {
     func setParameterValue(_ value: ParameterValue, stage: MTLRenderStages, binding: ShaderBinding) throws {
         switch value {
