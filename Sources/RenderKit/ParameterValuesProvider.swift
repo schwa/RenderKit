@@ -63,3 +63,6 @@ extension MTLComputeCommandEncoder {
         }
     }
 }
+
+extension MTLResourceUsage: Hashable {
+}

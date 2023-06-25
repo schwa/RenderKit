@@ -62,6 +62,15 @@
         "branch" : "0.0.3",
         "revision" : "3a213d59a8ab62cf665b1af9a10c5dd0ab9b5fd9"
       }
+    },
+    {
+      "identity" : "unsafeconformances",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/schwa/UnsafeConformances",
+      "state" : {
+        "branch" : "0.0.1",
+        "revision" : "d03729cedf5ab39785b9b811d8d388d3d0c47999"
+      }
     }
   ],
   "version" : 2

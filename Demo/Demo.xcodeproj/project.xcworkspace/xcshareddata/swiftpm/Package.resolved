@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/schwa/Everything.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "0a562a585ea02b802a01d5a7583cde5a31bc4f2d"
+        "revision" : "ae84a2ffad8597146deed736cef40966b8570f00",
+        "version" : "0.1.2"
       }
     },
     {
@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/schwa/SIMD-Support",
       "state" : {
-        "branch" : "main",
-        "revision" : "c041a5b7086252a06ff8cf11158e289d5a3b62b4"
+        "revision" : "a7d1f9585c56f27494599b82ca51fb2cf2d0eb57",
+        "version" : "0.1.1"
       }
     },
     {
@@ -59,8 +59,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/schwa/SwiftGLTF",
       "state" : {
+        "branch" : "0.0.3",
+        "revision" : "3a213d59a8ab62cf665b1af9a10c5dd0ab9b5fd9"
+      }
+    },
+    {
+      "identity" : "unsafeconformances",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/schwa/UnsafeConformances",
+      "state" : {
         "branch" : "0.0.1",
-        "revision" : "26680799a74af1233b44c22110e830978feffa48"
+        "revision" : "d03729cedf5ab39785b9b811d8d388d3d0c47999"
       }
     }
   ],

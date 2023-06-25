@@ -30,6 +30,7 @@ let package = Package(
         .package(url: "https://github.com/schwa/MetalSupport", from: "0.1.0"),
         .package(url: "https://github.com/schwa/SIMD-Support", from: "0.1.1"),
         .package(url: "https://github.com/schwa/SwiftGLTF", branch: "0.0.3"),
+        .package(url: "https://github.com/schwa/UnsafeConformances", branch: "0.0.1"),
     ],
     targets: [
         .target(
@@ -48,6 +49,7 @@ let package = Package(
             dependencies: [
                 "MetalSupport",
                 "Everything",
+                "UnsafeConformances",
             ],
             resources: [
                 .copy("Models/Cube.ply"),

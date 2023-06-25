@@ -1,6 +1,7 @@
 import Foundation
 import simd
 import SIMDSupport
+import UnsafeConformances
 
 public enum Projection: Equatable, Codable {
     public static let identity = Projection.matrix(.identity)
