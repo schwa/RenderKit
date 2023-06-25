@@ -3,7 +3,7 @@ import RenderKit
 import Metal
 import Shaders
 
-public struct LifeComputePass: ComputePassProtocol {
+public struct LifeComputePass: ComputePipelineProtocol {
     public let id = String(describing: Self.self)
     public let workSize: MTLSize = [1024, 1024, 1]
     public struct ComputeStage: ComputeStageProtocol {
@@ -21,7 +21,7 @@ public struct LifeComputePass: ComputePassProtocol {
     }
 }
 
-public struct GameOfLifeRenderPass: RenderPassProtocol {
+public struct GameOfLifeRenderPass: RenderPipelineProtocol {
     public let id = String(describing: Self.self)
     public struct VertexStage: VertexStageProtocol {
         public let id: AnyHashable = UUID()
@@ -44,7 +44,7 @@ public struct GameOfLifeRenderPass: RenderPassProtocol {
 
     public let vertexStage = VertexStage()
     public let fragmentStage = FragmentStage()
-    public let selectors: Set<PassSelector> = ["plane"]
+    public let selectors: Set<PipelineSelector> = ["plane"]
 
     public init() {
     }

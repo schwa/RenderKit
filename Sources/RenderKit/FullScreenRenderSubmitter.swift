@@ -44,15 +44,15 @@ public class FullScreenRenderSubmitter: RenderSubmitter {
     public func setup(state: inout RenderState) throws {
     }
 
-    public func shouldSubmit(pass: some RenderPassProtocol, environment: RenderEnvironment) -> Bool {
-        pass.selectors.contains("full_screen")
+    public func shouldSubmit(pipeline: some RenderPipelineProtocol, environment: RenderEnvironment) -> Bool {
+        pipeline.selectors.contains("full_screen")
     }
 
-    public func prepareRender(pass: some RenderPassProtocol, state: inout RenderState, environment: inout RenderEnvironment) throws {
+    public func prepareRender(pipeline: some RenderPipelineProtocol, state: inout RenderState, environment: inout RenderEnvironment) throws {
     }
 
-    public func submit(pass: some RenderPassProtocol, state: RenderState, environment: inout RenderEnvironment, commandEncoder: MTLRenderCommandEncoder) throws {
-        guard pass.selectors.contains("full_screen") else {
+    public func submit(pipeline: some RenderPipelineProtocol, state: RenderState, environment: inout RenderEnvironment, commandEncoder: MTLRenderCommandEncoder) throws {
+        guard pipeline.selectors.contains("full_screen") else {
             fatalError("Should not get here")
         }
 
@@ -61,7 +61,7 @@ public class FullScreenRenderSubmitter: RenderSubmitter {
             "$TRANSFORMS": .accessor(UnsafeBytesAccessor(transforms)),
         ])
 
-        try commandEncoder.set(environment: environment, forPass: pass)
+        try commandEncoder.set(environment: environment, forPipeline: pipeline)
 
         commandEncoder.drawIndexedPrimitives(type: .triangle, indexCount: 6, indexType: .uint16, indexBuffer: indexBuffer, indexBufferOffset: 0)
     }

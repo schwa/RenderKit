@@ -188,9 +188,9 @@ public class ModelEntity: Node {
     @MyObservable
     public var isHidden: Bool
     @MyObservable
-    public var selectors: Set<PassSelector>
+    public var selectors: Set<PipelineSelector>
 
-    public init(name: String? = nil, isHidden: Bool = false, transform: Transform = .identity, selectors: Set<PassSelector> = [], geometry: MetalKitGeometry, material: MaterialProtocol? = nil) {
+    public init(name: String? = nil, isHidden: Bool = false, transform: Transform = .identity, selectors: Set<PipelineSelector> = [], geometry: MetalKitGeometry, material: MaterialProtocol? = nil) {
         self.isHidden = isHidden
         self.geometry = geometry
         materials = material.map { [$0] } ?? []

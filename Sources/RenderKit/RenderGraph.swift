@@ -3,17 +3,18 @@ import RenderKitSupport
 
 /// RenderGraphs merely contain Passes
 public protocol RenderGraphProtocol {
-    var passes: [any PassProtocol] { get }
+    var pipelines: [any PipelineProtocol] { get }
 }
 
 /// Passes contain Stages.
-public protocol PassProtocol: Identifiable, Labelled {
+// TODO: Rename -> Pipeline
+public protocol PipelineProtocol: Identifiable, Labelled {
     var enabled: Bool { get }
     var stages: [any StageProtocol] { get }
-    var selectors: Set<PassSelector> { get }
+    var selectors: Set<PipelineSelector> { get }
 }
 
-public protocol RenderPassProtocol: PassProtocol {
+public protocol RenderPipelineProtocol: PipelineProtocol {
     associatedtype VertexStage: VertexStageProtocol
     associatedtype FragmentStage: FragmentStageProtocol
     var configuration: RenderPassOptions? { get }
@@ -21,7 +22,7 @@ public protocol RenderPassProtocol: PassProtocol {
     var fragmentStage: FragmentStage { get }
 }
 
-public protocol ComputePassProtocol: PassProtocol {
+public protocol ComputePipelineProtocol: PipelineProtocol {
     associatedtype ComputeStage: ComputeStageProtocol
     var workSize: MTLSize { get } // NOTE: This should probably not be in the pass?
     var computeStage: ComputeStage { get }
@@ -51,13 +52,13 @@ public protocol RenderSubmitter {
     func setup(state: inout RenderState) throws
 
     /// Called before prepareRender and submit
-    func shouldSubmit(pass: some RenderPassProtocol, environment: RenderEnvironment) -> Bool
+    func shouldSubmit(pipeline: some RenderPipelineProtocol, environment: RenderEnvironment) -> Bool
 
     /// Called at beginning of render pass
-    func prepareRender(pass: some RenderPassProtocol, state: inout RenderState, environment: inout RenderEnvironment) throws
+    func prepareRender(pipeline: some RenderPipelineProtocol, state: inout RenderState, environment: inout RenderEnvironment) throws
 
     /// Called per render pas
-    func submit(pass: some RenderPassProtocol, state: RenderState, environment: inout RenderEnvironment, commandEncoder: MTLRenderCommandEncoder) throws
+    func submit(pipeline: some RenderPipelineProtocol, state: RenderState, environment: inout RenderEnvironment, commandEncoder: MTLRenderCommandEncoder) throws
 }
 
 // MARK: Render
@@ -92,12 +93,12 @@ public struct FunctionProvider {
 
 // MARK: -
 
-public extension PassProtocol {
+public extension PipelineProtocol {
     var enabled: Bool { true }
-    var selectors: Set<PassSelector> { [] }
+    var selectors: Set<PipelineSelector> { [] }
 }
 
-public extension RenderPassProtocol {
+public extension RenderPipelineProtocol {
     var configuration: RenderPassOptions? {
         .default
     }
@@ -107,7 +108,7 @@ public extension RenderPassProtocol {
     }
 }
 
-public extension ComputePassProtocol {
+public extension ComputePipelineProtocol {
     var stages: [any StageProtocol] {
         [computeStage]
     }
@@ -130,6 +131,6 @@ public extension ComputeStageProtocol {
     var kind: ShaderStageKind { .compute }
 }
 
-public extension PassProtocol {
+public extension PipelineProtocol {
     var label: String? { String(describing: "\(type(of: self))") }
 }

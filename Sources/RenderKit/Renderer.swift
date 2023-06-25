@@ -83,7 +83,7 @@ public extension Renderer {
 
     func render(commandBuffer: MTLCommandBuffer) throws {
         try lock.withLockUnchecked { state in
-            try submitPasses(commandBuffer: commandBuffer, state: &state)
+            try submitPipelines(commandBuffer: commandBuffer, state: &state)
         }
     }
 
@@ -94,7 +94,7 @@ public extension Renderer {
                 fatalError("Could not make command queue")
             }
             commandBuffer.label = makeLabel(label, "CommandBuffer")
-            try submitPasses(commandBuffer: commandBuffer, state: &state)
+            try submitPipelines(commandBuffer: commandBuffer, state: &state)
             commandBuffer.present(drawable)
             DispatchQueue.main.async {
                 commandBuffer.commit()
@@ -116,16 +116,16 @@ extension Renderer {
             logger?.warning("Failed to setup frame")
             return
         }
-        for pass in graph.passes where pass.enabled {
-            guard let pass = pass as? any RenderPassProtocol else {
+        for pipeline in graph.pipelines where pipeline.enabled {
+            guard let pipeline = pipeline as? any RenderPipelineProtocol else {
                 continue
             }
-            let activeSubmitters = submitters.filter { $0.shouldSubmit(pass: pass, environment: environment) }
+            let activeSubmitters = submitters.filter { $0.shouldSubmit(pipeline: pipeline, environment: environment) }
             if activeSubmitters.isEmpty {
                 continue
             }
             for submitter in activeSubmitters {
-                try submitter.prepareRender(pass: pass, state: &state, environment: &environment)
+                try submitter.prepareRender(pipeline: pipeline, state: &state, environment: &environment)
             }
         }
         guard let depthTexture = state.cachedDepthTexture else {
@@ -143,26 +143,26 @@ extension Renderer {
         assert(state.setup == false)
 
         updateDepthTexture(state: &state)
-        for pass in graph.passes where pass.enabled {
-            guard let pass = pass as? any RenderPassProtocol else {
+        for pipeline in graph.pipelines where pipeline.enabled {
+            guard let pipeline = pipeline as? any RenderPipelineProtocol else {
                 continue
             }
-            try setup(renderPass: pass, target: target, state: &state)
+            try setup(renderPipeline: pipeline, target: target, state: &state)
         }
         state.setup = true
     }
 
-    private func submitPasses(commandBuffer: MTLCommandBuffer, state: inout RenderState) throws {
+    private func submitPipelines(commandBuffer: MTLCommandBuffer, state: inout RenderState) throws {
         var lastPassConfiguration: RenderPassOptions?
-        for pass in graph.passes where pass.enabled {
-            if let pass = pass as? any RenderPassProtocol {
+        for pipeline in graph.pipelines where pipeline.enabled {
+            if let renderPipeline = pipeline as? any RenderPipelineProtocol {
                 var environment = self.environment
-                let activeSubmitters = submitters.filter { $0.shouldSubmit(pass: pass, environment: environment) }
+                let activeSubmitters = submitters.filter { $0.shouldSubmit(pipeline: renderPipeline, environment: environment) }
                 if activeSubmitters.isEmpty {
                     continue
                 }
                 let renderPassDescriptor = MTLRenderPassDescriptor()
-                if let configuration = pass.configuration {
+                if let configuration = renderPipeline.configuration {
                     if let depthAttachment = configuration.depthAttachment {
                         renderPassDescriptor.depthAttachment = MTLRenderPassDepthAttachmentDescriptor(depthAttachment, environment: environment)
                     }
@@ -173,43 +173,43 @@ extension Renderer {
                 guard let commandEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
                     fatalError("Could not make encoder")
                 }
-                commandEncoder.label = makeLabel(label, pass.label, "Command Encoder")
-                try configure(commandEncoder: commandEncoder, forPass: pass, lastPassConfiguration: &lastPassConfiguration, state: &state)
+                commandEncoder.label = makeLabel(label, renderPipeline.label, "Command Encoder")
+                try configure(commandEncoder: commandEncoder, forPipeline: renderPipeline, lastPassConfiguration: &lastPassConfiguration, state: &state)
                 for submitter in activeSubmitters {
-                    try submitter.submit(pass: pass, state: state, environment: &environment, commandEncoder: commandEncoder)
+                    try submitter.submit(pipeline: renderPipeline, state: state, environment: &environment, commandEncoder: commandEncoder)
                 }
                 self.environment = environment
                 commandEncoder.endEncoding()
             }
-            else if let pass = pass as? any ComputePassProtocol {
+            else if let computePipeline = pipeline as? any ComputePipelineProtocol {
                 guard let computeCommandEncoder = commandBuffer.makeComputeCommandEncoder() else {
                     fatalError("Could not make encoder")
                 }
-                computeCommandEncoder.label = makeLabel(label, pass.label, "Compute Command Encoder")
-                try encodeComputePass(commandEncoder: computeCommandEncoder, pass: pass, state: &state)
+                computeCommandEncoder.label = makeLabel(label, computePipeline.label, "Compute Command Encoder")
+                try encodeComputePipeline(commandEncoder: computeCommandEncoder, pipeline: computePipeline, state: &state)
                 computeCommandEncoder.endEncoding()
             }
         }
 
     }
 
-    private func configure(commandEncoder: MTLRenderCommandEncoder, forPass pass: some RenderPassProtocol, lastPassConfiguration: inout RenderPassOptions?, state: inout RenderState) throws {
+    private func configure(commandEncoder: MTLRenderCommandEncoder, forPipeline pipeline: some RenderPipelineProtocol, lastPassConfiguration: inout RenderPassOptions?, state: inout RenderState) throws {
         // logger?.debug("\(self.debugDescription, privacy: .public): \(#function, privacy: .public)")
         lock.precondition(.owner)
         assert(state.setup == true)
 
-        guard let renderPipelineState = state.cachedRenderPipelineStates[pass.id] else {
-            fatalError("No render pipeline state for \(pass.id), got \(state.cachedRenderPipelineStates.keys)).")
+        guard let renderPipelineState = state.cachedRenderPipelineStates[pipeline.id] else {
+            fatalError("No render pipeline state for \(pipeline.id), got \(state.cachedRenderPipelineStates.keys)).")
         }
         commandEncoder.setRenderPipelineState(renderPipelineState)
 
         // Use the current configuration if there is one, Otherwise last one. Otherwise default one.
         var configuration: RenderPassOptions?
-        if pass.configuration == nil {
+        if pipeline.configuration == nil {
             configuration = lastPassConfiguration
         }
         else {
-            configuration = pass.configuration
+            configuration = pipeline.configuration
         }
         if configuration == nil {
             configuration = RenderPassOptions()
@@ -260,24 +260,24 @@ extension Renderer {
         state.cachedDepthTexture = depthTexture
     }
 
-    private func setup(renderPass pass: some RenderPassProtocol, target: MTLTexture, state: inout RenderState) throws {
+    private func setup(renderPipeline pipeline: some RenderPipelineProtocol, target: MTLTexture, state: inout RenderState) throws {
         logger?.debug("\(self.debugDescription, privacy: .public): \(#function, privacy: .public)")
-        let activeSubmitters = submitters.filter { $0.shouldSubmit(pass: pass, environment: environment) }
+        let activeSubmitters = submitters.filter { $0.shouldSubmit(pipeline: pipeline, environment: environment) }
         if activeSubmitters.isEmpty {
             return
         }
 
-        if let configuration = pass.configuration, state.cachedDepthStencilStates[configuration.depthStencil] == nil {
+        if let configuration = pipeline.configuration, state.cachedDepthStencilStates[configuration.depthStencil] == nil {
             let descriptor = MTLDepthStencilDescriptor(configuration.depthStencil)
             descriptor.label = makeLabel(label, "Depth Stencil Descriptor")
             let depthStencilState = state.device.makeDepthStencilState(descriptor: descriptor)
             state.cachedDepthStencilStates[configuration.depthStencil] = depthStencilState
         }
 
-        let vertexFunction = try state.cachedFunctionsByStage[pass.vertexStage.id] ?? cacheFunction(stage: pass.vertexStage, state: &state)
-        let fragmentFunction = try state.cachedFunctionsByStage[pass.fragmentStage.id] ?? cacheFunction(stage: pass.fragmentStage, state: &state)
+        let vertexFunction = try state.cachedFunctionsByStage[pipeline.vertexStage.id] ?? cacheFunction(stage: pipeline.vertexStage, state: &state)
+        let fragmentFunction = try state.cachedFunctionsByStage[pipeline.fragmentStage.id] ?? cacheFunction(stage: pipeline.fragmentStage, state: &state)
 
-        if state.cachedRenderPipelineStates[pass.id] == nil {
+        if state.cachedRenderPipelineStates[pipeline.id] == nil {
             let renderPipelineDescriptor = MTLRenderPipelineDescriptor()
             renderPipelineDescriptor.vertexFunction = vertexFunction
             renderPipelineDescriptor.fragmentFunction = fragmentFunction
@@ -294,7 +294,7 @@ extension Renderer {
             renderPipelineDescriptor.label = makeLabel(label, "Pipeline State")
 
             let renderPipelineState = try state.device.makeRenderPipelineState(descriptor: renderPipelineDescriptor)
-            state.cachedRenderPipelineStates[pass.id] = renderPipelineState
+            state.cachedRenderPipelineStates[pipeline.id] = renderPipelineState
         }
 
         for submitter in activeSubmitters {
@@ -362,14 +362,14 @@ extension Renderer: CustomDebugStringConvertible {
 // MARK: -
 
 private extension Renderer {
-    func encodeComputePass(commandEncoder: MTLComputeCommandEncoder, pass: some ComputePassProtocol, state: inout RenderState) throws {
+    func encodeComputePipeline(commandEncoder: MTLComputeCommandEncoder, pipeline: some ComputePipelineProtocol, state: inout RenderState) throws {
         logger?.debug("\(self.debugDescription, privacy: .public): \(#function, privacy: .public)")
-        let key = pass.id
+        let key = pipeline.id
         // swiftlint:disable:next implicitly_unwrapped_optional
         var computePipelineState: MTLComputePipelineState! = state.cachedComputePipelineStates[key]
-        let stage = pass.stages.first!
+        let stage = pipeline.stages.first!
         if computePipelineState == nil {
-            let function = try cacheFunction(stage: pass.computeStage, state: &state)
+            let function = try cacheFunction(stage: pipeline.computeStage, state: &state)
             computePipelineState = try state.device.makeComputePipelineState(function: function)
             state.cachedComputePipelineStates[key] = computePipelineState
         }
@@ -395,7 +395,7 @@ private extension Renderer {
 
         // NOTE: This code needs to move to thread
         var workSize = ComputeWorkSize(pipelineState: computePipelineState)
-        workSize.configure(workSize: pass.workSize)
+        workSize.configure(workSize: pipeline.workSize)
         guard let threadsPerGrid = workSize.threadsPerGrid, let threadsPerThreadGroup = workSize.threadsPerThreadGroup else {
             fatalError("Could not get work size info.")
         }
@@ -411,8 +411,8 @@ private extension Renderer {
 // MARK: Support
 
 public extension MTLRenderCommandEncoder {
-    func set(environment: RenderEnvironment, forPass pass: some PassProtocol) throws {
-        for stage in pass.stages {
+    func set(environment: RenderEnvironment, forPipeline pipeline: some PipelineProtocol) throws {
+        for stage in pipeline.stages {
             let mtlStage = stage.kind.mtlRenderStages
             for input in stage.parameters {
                 switch input.value {

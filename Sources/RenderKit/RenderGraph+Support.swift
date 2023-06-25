@@ -177,7 +177,7 @@ public struct FunctionConstant: Codable, Identifiable {
     }
 }
 
-public struct PassSelector: Hashable, Codable {
+public struct PipelineSelector: Hashable, Codable {
     let rawValue: String
 
     public init(from decoder: Decoder) throws {
@@ -193,13 +193,13 @@ public struct PassSelector: Hashable, Codable {
 
 // MARK: -
 
-extension PassSelector: CustomStringConvertible {
+extension PipelineSelector: CustomStringConvertible {
     public var description: String {
         rawValue
     }
 }
 
-extension PassSelector: ExpressibleByStringLiteral {
+extension PipelineSelector: ExpressibleByStringLiteral {
     public init(stringLiteral value: String) {
         rawValue = value
     }

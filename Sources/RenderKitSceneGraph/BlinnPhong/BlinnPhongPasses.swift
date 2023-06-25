@@ -3,7 +3,7 @@ import RenderKit
 import Metal
 import Shaders
 
-public struct BlinnPhongRenderPass: RenderPassProtocol {
+public struct BlinnPhongRenderPass: RenderPipelineProtocol {
     public let id = String(describing: Self.self)
     public struct VertexStage: VertexStageProtocol {
         public let id: AnyHashable = UUID()
@@ -29,7 +29,7 @@ public struct BlinnPhongRenderPass: RenderPassProtocol {
     public let vertexStage = VertexStage()
     public let fragmentStage = FragmentStage()
     public let configuration: RenderPassOptions? = RenderPassOptions.default.modifiedForFirstPass()
-    public let selectors: Set<PassSelector> = ["teapot"]
+    public let selectors: Set<PipelineSelector> = ["teapot"]
 
     public init() {
     }

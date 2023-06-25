@@ -107,7 +107,7 @@ public class DemoModel: ObservableObject {
 }
 
 public struct DemoRenderGraph: RenderGraphProtocol {
-    public let passes: [any PassProtocol] = [
+    public let pipelines: [any PipelineProtocol] = [
         LifeComputePass(),
         BlinnPhongRenderPass(),
         GameOfLifeRenderPass(),

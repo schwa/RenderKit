@@ -2,7 +2,7 @@ import Foundation
 import RenderKit
 import Shaders
 
-public struct VoxelRenderPass: RenderPassProtocol {
+public struct VoxelRenderPass: RenderPipelineProtocol {
     public let id = String(describing: Self.self)
     public struct VertexStage: VertexStageProtocol {
         public let id: AnyHashable = UUID()
@@ -27,7 +27,7 @@ public struct VoxelRenderPass: RenderPassProtocol {
 
     public let vertexStage = VertexStage()
     public let fragmentStage = FragmentStage()
-    public let selectors: Set<PassSelector> = ["voxel"]
+    public let selectors: Set<PipelineSelector> = ["voxel"]
 
     public init() {
     }

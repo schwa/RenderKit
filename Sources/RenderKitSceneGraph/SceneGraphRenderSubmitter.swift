@@ -12,7 +12,7 @@ public class SceneGraphRenderSubmitter: RenderSubmitter {
         graph = scene
     }
 
-    func entities(for pass: some RenderPassProtocol) -> [ModelEntity] {
+    func entities(for pass: some RenderPipelineProtocol) -> [ModelEntity] {
         graph.entities
             .filter { !$0.isHidden }
             .filter { !$0.selectors.isDisjoint(with: pass.selectors) }
@@ -22,14 +22,14 @@ public class SceneGraphRenderSubmitter: RenderSubmitter {
 //            }
     }
 
-    public func shouldSubmit(pass: some RenderPassProtocol, environment: RenderEnvironment) -> Bool {
-        !entities(for: pass).isEmpty
+    public func shouldSubmit(pipeline: some RenderPipelineProtocol, environment: RenderEnvironment) -> Bool {
+        !entities(for: pipeline).isEmpty
     }
 
     public func setup(state: inout RenderState) throws {
     }
 
-    public func prepareRender(pass: some RenderPassProtocol, state: inout RenderState, environment: inout RenderEnvironment) throws {
+    public func prepareRender(pipeline: some RenderPipelineProtocol, state: inout RenderState, environment: inout RenderEnvironment) throws {
         // NOTE: We are doing this every frame. We can instead keep track of _ALL_ materials in a scene and do it only when that changes.
 
         for entity in graph.entities {
@@ -41,7 +41,7 @@ public class SceneGraphRenderSubmitter: RenderSubmitter {
         environment.update(try graph.lightingModel.parameterValues())
     }
 
-    public func submit(pass: some RenderPassProtocol, state: RenderState, environment: inout RenderEnvironment, commandEncoder: MTLRenderCommandEncoder) throws {
+    public func submit(pipeline: some RenderPipelineProtocol, state: RenderState, environment: inout RenderEnvironment, commandEncoder: MTLRenderCommandEncoder) throws {
         let drawableSize = state.targetTextureSize
         let aspectRatio = Float(drawableSize.width / drawableSize.height)
         let projectionTransform = graph.camera.projection._matrix(aspectRatio: aspectRatio)
@@ -64,7 +64,7 @@ public class SceneGraphRenderSubmitter: RenderSubmitter {
                 return
             }
 
-            guard !entity.isHidden && !entity.selectors.isDisjoint(with: pass.selectors) else {
+            guard !entity.isHidden && !entity.selectors.isDisjoint(with: pipeline.selectors) else {
                 return
             }
 
@@ -81,7 +81,7 @@ public class SceneGraphRenderSubmitter: RenderSubmitter {
             }
 
             // NOTE: We keep setting lighting (which is the same) for every entity)
-            try commandEncoder.set(environment: environment, forPass: pass)
+            try commandEncoder.set(environment: environment, forPipeline: pipeline)
             commandEncoder.draw(geometry: entity.geometry)
         }
         try visit(node: graph.scene)

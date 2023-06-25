@@ -156,7 +156,7 @@ import CryptoKit
 
                 shaderEditorPass.vertexStage.function = FunctionProvider(functionName: vertexFunctionName, library: libraryProvider, label: "\(vertexFunctionName)-\(sourceID)")
                 shaderEditorPass.fragmentStage.function = FunctionProvider(functionName: fragmentFunctionName, library: libraryProvider, label: "\(fragmentFunctionName)-\(sourceID)")
-                let renderGraph = ShaderEditorRenderGraph(passes: [shaderEditorPass])
+                let renderGraph = ShaderEditorRenderGraph(pipelines: [shaderEditorPass])
                 let renderer = Renderer(device: device, graph: renderGraph, environment: RenderEnvironment())
                 renderer.label = "Renderer-\(sourceID)"
                 renderer.add(submitter: submitter)
@@ -195,10 +195,10 @@ import CryptoKit
     }
 
     struct ShaderEditorRenderGraph: RenderGraphProtocol {
-        let passes: [any PassProtocol]
+        let pipelines: [any PipelineProtocol]
     }
 
-    struct ShaderEditorPass: RenderPassProtocol {
+    struct ShaderEditorPass: RenderPipelineProtocol {
         struct VertexStage: VertexStageProtocol {
             let id: String
             var function = FunctionProvider(functionName: "TODO", library: .default)
@@ -265,19 +265,19 @@ import CryptoKit
         func setup(state: inout RenderState) throws {
         }
 
-        func shouldSubmit(pass: some RenderPassProtocol, environment: RenderEnvironment) -> Bool {
+        func shouldSubmit(pipeline: some RenderPipelineProtocol, environment: RenderEnvironment) -> Bool {
             true
         }
 
-        func prepareRender(pass: some RenderPassProtocol, state: inout RenderState, environment: inout RenderEnvironment) throws {
+        func prepareRender(pipeline: some RenderPipelineProtocol, state: inout RenderState, environment: inout RenderEnvironment) throws {
         }
 
-        func submit(pass: some RenderPassProtocol, state: RenderState, environment: inout RenderEnvironment, commandEncoder: MTLRenderCommandEncoder) throws {
+        func submit(pipeline: some RenderPipelineProtocol, state: RenderState, environment: inout RenderEnvironment, commandEncoder: MTLRenderCommandEncoder) throws {
             environment.update([
                 "$VERTICES": .buffer(vertexBuffer, offset: 0),
                 "$TRANSFORMS": .accessor(UnsafeBytesAccessor(transforms)),
             ])
-            try commandEncoder.set(environment: environment, forPass: pass)
+            try commandEncoder.set(environment: environment, forPipeline: pipeline)
             commandEncoder.drawIndexedPrimitives(type: .triangle, indexCount: 6, indexType: .uint16, indexBuffer: indexBuffer, indexBufferOffset: 0)
         }
     }

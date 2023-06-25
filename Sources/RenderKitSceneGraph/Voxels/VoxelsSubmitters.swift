@@ -29,20 +29,20 @@ public class VoxelsSubmitters: RenderSubmitter {
     public func setup(state: inout RenderState) throws {
     }
 
-    public func shouldSubmit(pass: some RenderPassProtocol, environment: RenderEnvironment) -> Bool {
+    public func shouldSubmit(pipeline: some RenderPipelineProtocol, environment: RenderEnvironment) -> Bool {
         true
     }
 
-    public func prepareRender(pass: some RenderPassProtocol, state: inout RenderState, environment: inout RenderEnvironment) throws {
-        guard pass.selectors.contains("voxel") else {
+    public func prepareRender(pipeline: some RenderPipelineProtocol, state: inout RenderState, environment: inout RenderEnvironment) throws {
+        guard pipeline.selectors.contains("voxel") else {
             return
         }
         try lightingModel.setup(state: &state)
         environment.update(try lightingModel.parameterValues())
     }
 
-    public func submit(pass: some RenderPassProtocol, state: RenderState, environment: inout RenderEnvironment, commandEncoder: MTLRenderCommandEncoder) throws {
-        guard pass.selectors.contains("voxel"), let voxelModel else {
+    public func submit(pipeline: some RenderPipelineProtocol, state: RenderState, environment: inout RenderEnvironment, commandEncoder: MTLRenderCommandEncoder) throws {
+        guard pipeline.selectors.contains("voxel"), let voxelModel else {
             return
         }
 
@@ -61,7 +61,7 @@ public class VoxelsSubmitters: RenderSubmitter {
         environment["$VERTICES"] = .buffer(voxelModel.vertexBuffer, offset: 0)
         environment["$TRANSFORMS"] = .accessor(UnsafeBytesAccessor(transforms))
         environment["$VOXEL_COLOR_PALETTE"] = .texture(voxelModel.colorPalette)
-        try commandEncoder.set(environment: environment, forPass: pass)
+        try commandEncoder.set(environment: environment, forPipeline: pipeline)
 
         commandEncoder.draw(voxel: voxelModel)
 

@@ -3,7 +3,7 @@ import RenderKit
 import RenderKitSupport
 import Shaders
 
-public struct ParticleUpdatePass: ComputePassProtocol {
+public struct ParticleUpdatePass: ComputePipelineProtocol {
     public let id = String(describing: Self.self)
     public let workSize: MTLSize = [10000, 1, 1]
     public struct ComputeStage: ComputeStageProtocol {
@@ -21,7 +21,7 @@ public struct ParticleUpdatePass: ComputePassProtocol {
     }
 }
 
-public struct ParticleRenderPass: RenderPassProtocol {
+public struct ParticleRenderPass: RenderPipelineProtocol {
     public let id = String(describing: Self.self)
     public struct VertexStage: VertexStageProtocol {
         public let id: AnyHashable = UUID()
@@ -43,7 +43,7 @@ public struct ParticleRenderPass: RenderPassProtocol {
 
     public let vertexStage = VertexStage()
     public let fragmentStage = FragmentStage()
-    public let selectors: Set<PassSelector> = ["particles"]
+    public let selectors: Set<PipelineSelector> = ["particles"]
 
     public init() {
     }

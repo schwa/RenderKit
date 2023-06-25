@@ -40,7 +40,7 @@ public struct RenderState {
 
 public extension RenderState {
     func stages(forParameterKey key: RenderEnvironment.Key) -> [any StageProtocol] {
-        let allStages = graph.passes.flatMap(\.stages)
+        let allStages = graph.pipelines.flatMap(\.stages)
         // NOTE: Cache
         return allStages.filter { stage in
             !stage.parameter(forKey: key).isEmpty

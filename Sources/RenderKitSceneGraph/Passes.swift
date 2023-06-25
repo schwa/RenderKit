@@ -1,7 +1,7 @@
 import RenderKit
 import Shaders
 
-public struct DebugVisualizerPass: RenderPassProtocol {
+public struct DebugVisualizerPass: RenderPipelineProtocol {
     public let id = String(describing: Self.self)
     public struct VertexStage: VertexStageProtocol {
         public let id: AnyHashable = UUID()
@@ -28,7 +28,7 @@ public struct DebugVisualizerPass: RenderPassProtocol {
     }
 }
 
-public struct WireframePass: RenderPassProtocol {
+public struct WireframePass: RenderPipelineProtocol {
     public let id = String(describing: Self.self)
     public struct VertexStage: VertexStageProtocol {
         public let id: AnyHashable = UUID()
@@ -51,7 +51,7 @@ public struct WireframePass: RenderPassProtocol {
 
     public let vertexStage = VertexStage()
     public let fragmentStage = FragmentStage()
-    public let selectors: Set<PassSelector> = ["teapot"]
+    public let selectors: Set<PipelineSelector> = ["teapot"]
     public let configuration: RenderPassOptions? = {
         var options = RenderPassOptions.default
         options.fillMode = .lines

@@ -57,20 +57,20 @@ public class ParticleSubmitter: RenderSubmitter {
         geometry = try MetalKitGeometry(provider: .shape(shape: .box(Box(extent: [0.1, 0.1, 0.1], segments: [1, 1, 1], inwardNormals: false))), device: device)
     }
 
-    public func shouldSubmit(pass: some RenderPassProtocol, environment: RenderEnvironment) -> Bool {
-        pass.selectors.contains("particles")
+    public func shouldSubmit(pipeline: some RenderPipelineProtocol, environment: RenderEnvironment) -> Bool {
+        pipeline.selectors.contains("particles")
     }
 
-    public func prepareRender(pass: some RenderPassProtocol, state: inout RenderState, environment: inout RenderEnvironment) throws {
-        guard pass.selectors.contains("particles") else {
+    public func prepareRender(pipeline: some RenderPipelineProtocol, state: inout RenderState, environment: inout RenderEnvironment) throws {
+        guard pipeline.selectors.contains("particles") else {
             return
         }
         environment["$PARTICLES"] = .buffer(particleSystem.particles, offset: 0)
         environment["$PARTICLES_ENVIRONMENT"] = .buffer(particleSystem.particlesEnvironment, offset: 0)
     }
 
-    public func submit(pass: some RenderPassProtocol, state: RenderState, environment: inout RenderEnvironment, commandEncoder: MTLRenderCommandEncoder) throws {
-        guard pass.selectors.contains("particles") else {
+    public func submit(pipeline: some RenderPipelineProtocol, state: RenderState, environment: inout RenderEnvironment, commandEncoder: MTLRenderCommandEncoder) throws {
+        guard pipeline.selectors.contains("particles") else {
             return
         }
         guard let geometry else {
@@ -92,7 +92,7 @@ public class ParticleSubmitter: RenderSubmitter {
         assert(geometry.mesh.submeshes.count == 1)
         let submesh = geometry.mesh.submeshes[0]
 
-        try commandEncoder.set(environment: environment, forPass: pass)
+        try commandEncoder.set(environment: environment, forPipeline: pipeline)
 
         commandEncoder.drawIndexedPrimitives(type: submesh.primitiveType, indexCount: submesh.indexCount, indexType: submesh.indexType, indexBuffer: submesh.indexBuffer.buffer, indexBufferOffset: submesh.indexBuffer.offset, instanceCount: particleSystem.particleCount, baseVertex: 0, baseInstance: 0)
     }
