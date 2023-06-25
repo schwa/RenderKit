@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/schwa/CoreGraphicsGeometrySupport",
       "state" : {
-        "revision" : "8032fa40acffc8791aa85f0ae347ae4feb197dd2",
-        "version" : "0.0.2"
+        "revision" : "bdfd61e3dc130c0c73b1c9ba401f7bb0df161cd3",
+        "version" : "0.1.0"
       }
     },
     {
@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/schwa/Everything",
       "state" : {
-        "branch" : "main",
-        "revision" : "0a562a585ea02b802a01d5a7583cde5a31bc4f2d"
+        "revision" : "ae84a2ffad8597146deed736cef40966b8570f00",
+        "version" : "0.1.2"
       }
     },
     {
@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/schwa/MetalSupport",
       "state" : {
-        "branch" : "main",
-        "revision" : "e0ed082f2c79dfaabec56c153448da337f369e76"
+        "revision" : "aeb40be6868e13b784432842bfd8b9b6bd6ae563",
+        "version" : "0.1.0"
       }
     },
     {
@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/schwa/SIMD-Support",
       "state" : {
-        "branch" : "main",
-        "revision" : "c041a5b7086252a06ff8cf11158e289d5a3b62b4"
+        "revision" : "a7d1f9585c56f27494599b82ca51fb2cf2d0eb57",
+        "version" : "0.1.1"
       }
     },
     {
@@ -59,8 +59,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/schwa/SwiftGLTF",
       "state" : {
-        "branch" : "main",
-        "revision" : "26680799a74af1233b44c22110e830978feffa48"
+        "branch" : "0.0.3",
+        "revision" : "3a213d59a8ab62cf665b1af9a10c5dd0ab9b5fd9"
       }
     }
   ],

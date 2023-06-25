@@ -26,10 +26,10 @@ let package = Package(
         .executable(name: "RenderKitCTL", targets: ["RenderKitCTL"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/schwa/Everything", branch: "main"),
-        .package(url: "https://github.com/schwa/MetalSupport", branch: "main"),
-        .package(url: "https://github.com/schwa/SIMD-Support", branch: "main"),
-        .package(url: "https://github.com/schwa/SwiftGLTF", branch: "main"),
+        .package(url: "https://github.com/schwa/Everything", from: "0.1.2"),
+        .package(url: "https://github.com/schwa/MetalSupport", from: "0.1.0"),
+        .package(url: "https://github.com/schwa/SIMD-Support", from: "0.1.1"),
+        .package(url: "https://github.com/schwa/SwiftGLTF", branch: "0.0.3"),
     ],
     targets: [
         .target(
