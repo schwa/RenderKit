@@ -28,6 +28,30 @@
             ],
             "cwd": "${workspaceFolder:RenderGraphKit}",
             "preLaunchTask": "swift: Build All"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "sourceLanguages": [
+                "swift"
+            ],
+            "name": "Debug RenderKitCTL",
+            "program": "${workspaceFolder:RenderKit}/.build/debug/RenderKitCTL",
+            "args": [],
+            "cwd": "${workspaceFolder:RenderKit}",
+            "preLaunchTask": "swift: Build Debug RenderKitCTL"
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "sourceLanguages": [
+                "swift"
+            ],
+            "name": "Release RenderKitCTL",
+            "program": "${workspaceFolder:RenderKit}/.build/release/RenderKitCTL",
+            "args": [],
+            "cwd": "${workspaceFolder:RenderKit}",
+            "preLaunchTask": "swift: Build Release RenderKitCTL"
         }
     ]
 }

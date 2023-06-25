@@ -24,6 +24,19 @@ struct FishEyeRemoval {
 
         let device = MTLCreateSystemDefaultDevice()!
 
+        let outputTextureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .bgra8Unorm_srgb, width: cgImage.width, height: cgImage.height, mipmapped: false)
+        outputTextureDescriptor.storageMode = .shared
+        outputTextureDescriptor.usage = [.renderTarget, .shaderRead, .shaderWrite]
+        let outputTexture = device.makeTexture(descriptor: outputTextureDescriptor)!
+        outputTexture.label = "Output"
+
+        let renderPassDescriptor = MTLRenderPassDescriptor()
+        renderPassDescriptor.colorAttachments[0].texture = outputTexture
+        renderPassDescriptor.colorAttachments[0].loadAction = .dontCare
+        renderPassDescriptor.colorAttachments[0].storeAction = .store
+        //renderPassDescriptor.depthAttachment
+
+
         let vertices: [SIMD2<Float>] = [
             [-1, -1], [1, 1], [1, -1],
             [-1, -1], [-1, 1], [1, 1],
@@ -85,17 +98,6 @@ struct FishEyeRemoval {
         let samplerDescriptor = MTLSamplerDescriptor()
         let sampler = device.makeSamplerState(descriptor: samplerDescriptor)!
 
-        let outputTextureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: .bgra8Unorm_srgb, width: cgImage.width, height: cgImage.height, mipmapped: false)
-        outputTextureDescriptor.storageMode = .shared
-        outputTextureDescriptor.usage = [.renderTarget, .shaderRead, .shaderWrite]
-        let outputTexture = device.makeTexture(descriptor: outputTextureDescriptor)!
-        outputTexture.label = "Output"
-
-        let renderPassDescriptor = MTLRenderPassDescriptor()
-        renderPassDescriptor.colorAttachments[0].texture = outputTexture
-        renderPassDescriptor.colorAttachments[0].loadAction = .dontCare
-        renderPassDescriptor.colorAttachments[0].storeAction = .store
-
         let commandQueue = device.makeCommandQueue()!
 
         var captureScope: MTLCaptureScope?
@@ -109,27 +111,27 @@ struct FishEyeRemoval {
         }
 
         let commandBuffer = commandQueue.makeCommandBuffer()!
-        let commandEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor)!
+        let renderCommandEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor)!
 
-        commandEncoder.setViewport(MTLViewport(originX: 0, originY: 0, width: Double(cgImage.width), height: Double(cgImage.height), znear: 0, zfar: 1))
-        commandEncoder.setCullMode(.back)
+        renderCommandEncoder.setViewport(MTLViewport(originX: 0, originY: 0, width: Double(cgImage.width), height: Double(cgImage.height), znear: 0, zfar: 1))
+        renderCommandEncoder.setCullMode(.back)
 
-        commandEncoder.setRenderPipelineState(renderPipelineState)
+        renderCommandEncoder.setRenderPipelineState(renderPipelineState)
 
         withUnsafeBytes(of: uniforms) { buffer in
-            commandEncoder.setVertexBytes(buffer.baseAddress!, length: buffer.count, index: 2)
-            commandEncoder.setFragmentBytes(buffer.baseAddress!, length: buffer.count, index: 2)
+            renderCommandEncoder.setVertexBytes(buffer.baseAddress!, length: buffer.count, index: 2)
+            renderCommandEncoder.setFragmentBytes(buffer.baseAddress!, length: buffer.count, index: 2)
         }
 
-        commandEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
-        commandEncoder.setVertexBuffer(textureCoordinatesBuffer, offset: 0, index: 1)
+        renderCommandEncoder.setVertexBuffer(vertexBuffer, offset: 0, index: 0)
+        renderCommandEncoder.setVertexBuffer(textureCoordinatesBuffer, offset: 0, index: 1)
 
-        commandEncoder.setFragmentTexture(texture, index: 0)
-        commandEncoder.setFragmentSamplerState(sampler, index: 0)
+        renderCommandEncoder.setFragmentTexture(texture, index: 0)
+        renderCommandEncoder.setFragmentSamplerState(sampler, index: 0)
 
-        commandEncoder.drawIndexedPrimitives(type: .triangle, indexCount: indices.count, indexType: .uint16, indexBuffer: indicesBuffer, indexBufferOffset: 0)
+        renderCommandEncoder.drawIndexedPrimitives(type: .triangle, indexCount: indices.count, indexType: .uint16, indexBuffer: indicesBuffer, indexBufferOffset: 0)
 
-        commandEncoder.endEncoding()
+        renderCommandEncoder.endEncoding()
         commandBuffer.commit()
 
         commandBuffer.waitUntilCompleted()
