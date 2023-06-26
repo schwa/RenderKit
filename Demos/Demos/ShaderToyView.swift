@@ -22,7 +22,7 @@ struct ShaderToyView: View {
     var scale = SIMD2<Float>(16, 16)
 
     @State
-    var speed = Float(51)
+    var speed = Float(1)
 
     let start = Date.now
 

@@ -44,23 +44,15 @@ constant bool floorXY [[function_constant(0)]];
 [[fragment]]
 vector_float4 shaderToyFragmentShader(Fragment fragmentIn [[stage_in]], constant ShaderToyFragmentUniforms &uniforms [[buffer(kShaderToyID_FragmentShaderUniforms)]])
 {
-    vector_float2 xy = fragmentIn.position.xy * uniforms.scale;
+    vector_float2 vert = fragmentIn.position.xy * uniforms.scale;
     if (floorXY) {
-        xy = floor(xy);
+        vert = floor(vert);
     }
-
-    const float x = xy.x;
-    const float y = xy.y;
-
-    const float step = uniforms.time;
-
-    const float xs = sin(step / 100.0) * 20.0;
-    const float ys = cos(step / 100.0) * 20.0;
-    const float scale = ((sin(step / 60.0) + 1.0) / 5.0) + 0.2;
-    const float r = sin((x + xs) * scale) + cos((y + xs) * scale);
-    const float g = sin((x + xs) * scale) + cos((y + ys) * scale);
-    const float b = sin((x + ys) * scale) + cos((y + ys) * scale);
-
+    const auto step = vector_float2(sin(uniforms.time), cos(uniforms.time)) * 20;
+    const auto scale = ((sin(uniforms.time / 60.0) + 1.0) / 5.0) + 0.2;
+    const auto r = sin((vert.x + step.x) * scale) + cos((vert.y + step.x) * scale);
+    const auto g = sin((vert.x + step.x) * scale) + cos((vert.y + step.y) * scale);
+    const auto b = sin((vert.x + step.y) * scale) + cos((vert.y + step.y) * scale);
     return vector_float4(r, g, b, 1.0);
 }
 
