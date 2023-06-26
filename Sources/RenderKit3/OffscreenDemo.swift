@@ -7,7 +7,6 @@ import MetalSupport
 import SIMDSupport
 
 public struct OffscreenDemo {
-
     public class Configuration {
         public var size = CGSize(width: 1920, height: 1080)
 
@@ -55,7 +54,6 @@ public struct OffscreenDemo {
     public var sampler: MTLSamplerState?
 
     public init() {
-
     }
 
     public mutating func setup(configuration: Configuration) {
@@ -64,7 +62,6 @@ public struct OffscreenDemo {
         }
         let library = try! device.makeDefaultLibrary(bundle: .module)
         let constants = MTLFunctionConstantValues()
-
 
         let textureLoader = MTKTextureLoader(device: device)
         texture = try! textureLoader.newTexture(name: "HD-Testcard-original", scaleFactor: 1.0, bundle: .module)

@@ -8,7 +8,6 @@ let logger = os.Logger()
 public struct MetalView2: View {
     @Observable
     class Model: NSObject, MTKViewDelegate {
-
         var update: (any MetalViewConfiguration) -> Void = { _ in fatalError() }
         var drawableSizeWillChange: (CGSize) -> Void = { _ in fatalError() }
         var draw: (any MetalViewConfiguration) -> Void = { _ in fatalError() }
@@ -66,7 +65,6 @@ extension MetalView2 {
     public init(update: @escaping (any MetalViewConfiguration) -> Void, draw: @escaping (any MetalViewConfiguration) -> Void) {
         self.init(update: update, drawableSizeWillChange: { _ in }, draw: draw)
     }
-
 }
 
 // TODO: this needs to be paired down and replaced with better logic on MetalView

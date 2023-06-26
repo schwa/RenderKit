@@ -6,7 +6,6 @@ import Everything
 import MetalSupport
 
 public struct ShaderToyView: View {
-
     @State
     var commandQueue: MTLCommandQueue?
 
@@ -31,7 +30,7 @@ public struct ShaderToyView: View {
         return Float(Date.now.timeIntervalSince(start)) * speed
     }
 
-    public init() {        
+    public init() {
     }
 
     public var body: some View {
@@ -51,7 +50,6 @@ public struct ShaderToyView: View {
                 let fragmentFunction = try! library.makeFunction(name: "shaderToyFragmentShader", constantValues: constants)
                 let plane = try! MTKMesh(mesh: Plane().toMDLMesh(extent: [2, 2, 0], allocator: MTKMeshBufferAllocator(device: device)), device: device)
                 let renderPipelineDescriptor = MTLRenderPipelineDescriptor()
-                renderPipelineDescriptor.label = "shaderToy"
                 renderPipelineDescriptor.vertexFunction = vertexFunction
                 renderPipelineDescriptor.fragmentFunction = fragmentFunction
                 renderPipelineDescriptor.colorAttachments[0].pixelFormat = configuration.colorPixelFormat

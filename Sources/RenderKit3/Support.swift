@@ -4,13 +4,9 @@ import MetalKit
 import os
 import SwiftUI
 import MetalSupportUnsafeConformances
-import Foundation
-import SwiftUI
 import simd
-import Everything
 import Metal
 import ModelIO
-import MetalKit
 import MetalPerformanceShaders
 
 public extension MTKView {
@@ -87,10 +83,8 @@ public extension View {
     }
 }
 
-
 public extension MTLTexture {
     func cgImage(colorSpace: CGColorSpace? = nil) async -> CGImage {
-
         if let pixelFormat = PixelFormat(mtlPixelFormat: pixelFormat) {
             let bitmapDefinition = BitmapDefinition(width: width, height: height, pixelFormat: pixelFormat)
             if let buffer {
@@ -433,7 +427,6 @@ extension MTLPixelFormat {
 
 public extension PixelFormat {
     init?(mtlPixelFormat: MTLPixelFormat) {
-
 //    CGBitmapContextCreate:
 //        Valid parameters for RGB color space model are:
 //        16  bits per pixel,         5  bits per component,         kCGImageAlphaNoneSkipFirst
@@ -445,7 +438,6 @@ public extension PixelFormat {
 //        64  bits per pixel,         16 bits per component,         kCGImageAlphaPremultipliedLast
 //        64  bits per pixel,         16 bits per component,         kCGImageAlphaNoneSkipLast
 //        64  bits per pixel,         16 bits per component,         kCGImageAlphaPremultipliedLast|kCGBitmapFloatComponents|k
-
 
         switch mtlPixelFormat {
         case .bgra8Unorm:
@@ -475,7 +467,6 @@ public extension PixelFormat {
 }
 
 public extension PixelFormat {
-
     var bitsPerPixel: Int {
         switch formatInfo {
         case .packed:
@@ -517,10 +508,9 @@ public extension MTLTexture {
         commandBuffer.waitUntilCompleted()
         return histogram
     }
-
 }
 
-public struct Argument : Equatable, Sendable {
+public struct Argument: Equatable, Sendable {
     let bytes: [UInt8]
 
     init(bytes: [UInt8]) {
@@ -539,13 +529,13 @@ public struct Argument : Equatable, Sendable {
         }
     }
 
-    public static func float3<T>(_ x: T, _ y: T, _ z: T) -> Self where T : BinaryFloatingPoint {
+    public static func float3<T>(_ x: T, _ y: T, _ z: T) -> Self where T: BinaryFloatingPoint {
         return withUnsafeBytes(of: (x, y, z)) {
             return Argument(bytes: Array($0))
         }
     }
 
-    public static func float4<T>(_ x: T, _ y: T, _ z: T, _ w: T) -> Self where T : BinaryFloatingPoint {
+    public static func float4<T>(_ x: T, _ y: T, _ z: T, _ w: T) -> Self where T: BinaryFloatingPoint {
         return withUnsafeBytes(of: (x, y, z, w)) {
             return Argument(bytes: Array($0))
         }
@@ -621,7 +611,6 @@ public struct UnsafeBytesAccessor: Sendable {
     }
 }
 
-
 public func bytes <T>(of value: T) -> [UInt8] {
     withUnsafeBytes(of: value) { return Array($0) }
 }
@@ -633,7 +622,7 @@ public protocol Shape3D {
 
 public struct Plane: Shape3D {
     public func toMDLMesh(extent: SIMD3<Float>, allocator: MDLMeshBufferAllocator?) -> MDLMesh {
-        let mesh = MDLMesh(planeWithExtent: extent, segments: [1,1], geometryType: .triangles, allocator: allocator)
+        let mesh = MDLMesh(planeWithExtent: extent, segments: [1, 1], geometryType: .triangles, allocator: allocator)
         mesh.flipTextureCoordinates(inAttributeNamed: "textureCoordinate")
         return mesh
     }

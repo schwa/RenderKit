@@ -16,10 +16,9 @@ struct Main {
         offscreen.setup(configuration: configuration)
         offscreen.draw(configuration: configuration)
 
-
         let histogram = configuration.targetTexture!.histogram()
 
-        histogram.withEx(type: UInt32.self, count: 4*256) { pointer in
+        histogram.withEx(type: UInt32.self, count: 4 * 256) { pointer in
             print(Array(pointer))
         }
         let image = await configuration.targetTexture!.cgImage(colorSpace: CGColorSpace(name: CGColorSpace.displayP3))
