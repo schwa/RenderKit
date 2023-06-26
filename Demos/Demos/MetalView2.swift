@@ -6,7 +6,8 @@ import os
 let logger = os.Logger()
 
 public struct MetalView2: View {
-    class Model: NSObject, MTKViewDelegate, ObservableObject {
+    @Observable
+    class Model: NSObject, MTKViewDelegate {
 
         var update: (any MetalViewConfiguration) -> Void = { _ in fatalError() }
         var drawableSizeWillChange: (CGSize) -> Void = { _ in fatalError() }
@@ -19,12 +20,11 @@ public struct MetalView2: View {
 
         func draw(in view: MTKView) {
 //            logger.debug("\(String(describing: type(of: self)), privacy: .public).\(#function, privacy: .public)")
-            var configuration = view as any MetalViewConfiguration
-            draw(configuration)
+            draw(view as any MetalViewConfiguration)
         }
     }
 
-    @StateObject
+    @State
     private var model = Model()
 
     var update: (any MetalViewConfiguration) -> Void
@@ -49,8 +49,7 @@ public struct MetalView2: View {
             return view
         } update: { view in
 //            logger.debug("\(String(describing: type(of: self)), privacy: .public).\(#function, privacy: .public) view adaptor update")
-            var configuration = view as any MetalViewConfiguration
-            model.update(configuration)
+            model.update(view as any MetalViewConfiguration)
         }
         .onAppear {
             model.update = update

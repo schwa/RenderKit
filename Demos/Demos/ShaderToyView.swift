@@ -31,7 +31,7 @@ struct ShaderToyView: View {
     var body: some View {
         MetalView2 { configuration in
             Task {
-                logger.debug("\(String(describing: type(of: self)), privacy: .public).setup")
+//                logger.debug("\(String(describing: type(of: self)), privacy: .public).setup")
                 //            configuration.colorPixelFormat = .bgra10_xr_srgb
                 //            configuration.clearColor = MTLClearColor(red: 0.2, green: 0.2, blue: 0.2, alpha: 1)
                 configuration.preferredFramesPerSecond = 120
@@ -41,7 +41,6 @@ struct ShaderToyView: View {
                 guard let library = device.makeDefaultLibrary() else {
                     fatalError()
                 }
-            print(self.floorXY)
             let constants = MTLFunctionConstantValues()
             constants.setConstantValue(bytes(of: self.floorXY), type: .bool, index: 0)
 
