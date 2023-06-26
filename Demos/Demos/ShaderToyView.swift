@@ -16,7 +16,7 @@ struct ShaderToyView: View {
     var plane: MTKMesh?
 
     @State
-    var floorXY = true
+    var pixelate = true
 
     @State
     var scale = SIMD2<Float>(16, 16)
@@ -33,9 +33,6 @@ struct ShaderToyView: View {
     var body: some View {
         MetalView2 { configuration in
             Task {
-//                logger.debug("\(String(describing: type(of: self)), privacy: .public).setup")
-                //            configuration.colorPixelFormat = .bgra10_xr_srgb
-                //            configuration.clearColor = MTLClearColor(red: 0.2, green: 0.2, blue: 0.2, alpha: 1)
                 configuration.preferredFramesPerSecond = 120
                 guard let device = configuration.device else {
                     fatalError("No metal device")
@@ -44,7 +41,7 @@ struct ShaderToyView: View {
                     fatalError("Failed to make default metal library.")
                 }
                 let constants = MTLFunctionConstantValues()
-                constants.setConstantValue(bytes(of: self.floorXY), type: .bool, index: 0)
+                constants.setConstantValue(bytes(of: pixelate), type: .bool, index: 0)
 
                 let vertexFunction = library.makeFunction(name: "shaderToyVertexShader")!
                 let fragmentFunction = try! library.makeFunction(name: "shaderToyFragmentShader", constantValues: constants)
@@ -93,7 +90,7 @@ struct ShaderToyView: View {
                 TextField("Scale 1/X", value: $scale.x, format: .number)
                 TextField("Scale 1/Y", value: $scale.y, format: .number)
                 TextField("Speed", value: $speed, format: .number)
-                Toggle("Floor", isOn: $floorXY)
+                Toggle("Pixelate", isOn: $pixelate)
             }
             .frame(maxWidth: 120)
             .padding()

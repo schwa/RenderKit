@@ -6,6 +6,6 @@ import RenderKitSupport
 
 struct ContentView: View {
     var body: some View {
-        ShaderToyView()
+        ShaderToyView().metalDevice(MTLCreateSystemDefaultDevice()!)
     }
 }

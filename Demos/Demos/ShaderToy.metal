@@ -29,26 +29,27 @@ enum ShaderToyID {
     kShaderToyID_Vertices = 0,
     kShaderToyID_VertexShaderUniforms = 1,
     kShaderToyID_FragmentShaderUniforms = 2,
+    kShaderToyID_PixelateFunctionConstant = 0,
 };
 
 // MARK: -
 
+constant bool pixelate [[function_constant(kShaderToyID_PixelateFunctionConstant)]];
+
 [[vertex]]
 Fragment shaderToyVertexShader(ShaderToyVertex vertexIn [[stage_in]], constant ShaderToyVertexUniforms &uniforms [[buffer(kShaderToyID_VertexShaderUniforms)]])
 {
-    return { .position = vector_float4(vector_float4(vertexIn.position, 1) * uniforms.transform, 1) };
+    return { .position = vector_float4(vector_float4(vertexIn.position, 1.0) * uniforms.transform, 1.0) };
 }
-
-constant bool floorXY [[function_constant(0)]];
 
 [[fragment]]
 vector_float4 shaderToyFragmentShader(Fragment fragmentIn [[stage_in]], constant ShaderToyFragmentUniforms &uniforms [[buffer(kShaderToyID_FragmentShaderUniforms)]])
 {
     vector_float2 vert = fragmentIn.position.xy * uniforms.scale;
-    if (floorXY) {
+    if (pixelate) {
         vert = floor(vert);
     }
-    const auto step = vector_float2(sin(uniforms.time), cos(uniforms.time)) * 20;
+    const auto step = vector_float2(sin(uniforms.time), cos(uniforms.time)) * 20.0;
     const auto scale = ((sin(uniforms.time / 60.0) + 1.0) / 5.0) + 0.2;
     const auto r = sin((vert.x + step.x) * scale) + cos((vert.y + step.x) * scale);
     const auto g = sin((vert.x + step.x) * scale) + cos((vert.y + step.y) * scale);

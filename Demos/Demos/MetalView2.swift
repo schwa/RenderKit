@@ -37,6 +37,9 @@ public struct MetalView2: View {
         self.draw = draw
     }
 
+    @Environment(\.metalDevice)
+    var device
+
     public var body: some View {
         ViewAdaptor<MTKView> {
             model.update = update
@@ -44,7 +47,7 @@ public struct MetalView2: View {
             model.draw = draw
 
 //            logger.debug("\(String(describing: type(of: self)), privacy: .public).\(#function, privacy: .public), view adaptor setup")
-            let view = MTKView(frame: .zero, device: MTLCreateSystemDefaultDevice()!)
+            let view = MTKView(frame: .zero, device: device)
             view.delegate = model
             return view
         } update: { view in

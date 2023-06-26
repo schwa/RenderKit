@@ -1,6 +1,7 @@
 import Foundation
 import MetalKit
 import os
+import SwiftUI
 
 extension MTKView {
     var betterDebugDescription: String {
@@ -55,3 +56,25 @@ extension Bool {
 enum RenderKitError: Error {
     case generic(String)
 }
+
+struct MetalDeviceKey: EnvironmentKey {
+    static var defaultValue: MTLDevice?
+}
+
+extension EnvironmentValues {
+    var metalDevice: MTLDevice? {
+        get {
+            self[MetalDeviceKey.self]
+        }
+        set {
+            self[MetalDeviceKey.self] = newValue
+        }
+    }
+}
+
+extension View {
+    func metalDevice(_ device: MTLDevice) -> some View {
+        environment(\.metalDevice, device)
+    }
+}
+
