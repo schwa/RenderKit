@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/schwa/Everything",
       "state" : {
-        "revision" : "ae84a2ffad8597146deed736cef40966b8570f00",
-        "version" : "0.1.2"
+        "revision" : "f78620142c61b3724da4e355074b2f61546e6684",
+        "version" : "0.2.0"
       }
     },
     {
@@ -23,17 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/schwa/MetalSupport",
       "state" : {
-        "revision" : "aeb40be6868e13b784432842bfd8b9b6bd6ae563",
-        "version" : "0.1.0"
-      }
-    },
-    {
-      "identity" : "renderkit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/schwa/RenderKit",
-      "state" : {
-        "branch" : "main",
-        "revision" : "8d25d79ed73ebda9dd005ba2168de8876b760c1b"
+        "revision" : "28cdfc952493e217b0b68ad4ddce01e6c207b915",
+        "version" : "0.2.0"
       }
     },
     {
@@ -61,24 +52,6 @@
       "state" : {
         "revision" : "0a5bc04095a675662cf24757cc0640aa2204253b",
         "version" : "1.0.2"
-      }
-    },
-    {
-      "identity" : "swiftgltf",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/schwa/SwiftGLTF",
-      "state" : {
-        "branch" : "0.0.3",
-        "revision" : "3a213d59a8ab62cf665b1af9a10c5dd0ab9b5fd9"
-      }
-    },
-    {
-      "identity" : "unsafeconformances",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/schwa/UnsafeConformances",
-      "state" : {
-        "branch" : "0.0.1",
-        "revision" : "d03729cedf5ab39785b9b811d8d388d3d0c47999"
       }
     }
   ],

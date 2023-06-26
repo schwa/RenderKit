@@ -18,4 +18,4 @@ Yet another Metal Rendering engine experiment…
 * Cleaner render model that more closely matches Metal.
 * Built in support for RenderGraph editor (use NodeEditor)
 * Work with multisample, ray tracing
-
+* Figure out how to #include metal headers across packages (likely not possible).

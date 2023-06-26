@@ -3,8 +3,9 @@ import MetalKit
 import ModelIO
 import simd
 import Everything
+import MetalSupport
 
-struct ShaderToyView: View {
+public struct ShaderToyView: View {
 
     @State
     var commandQueue: MTLCommandQueue?
@@ -30,16 +31,19 @@ struct ShaderToyView: View {
         return Float(Date.now.timeIntervalSince(start)) * speed
     }
 
-    var body: some View {
+    public init() {        
+    }
+
+    public var body: some View {
         MetalView2 { configuration in
             Task {
                 configuration.preferredFramesPerSecond = 120
+                configuration.colorPixelFormat = .bgra10_xr_srgb
+                print((configuration as! MTKView).betterDebugDescription)
                 guard let device = configuration.device else {
                     fatalError("No metal device")
                 }
-                guard let library = device.makeDefaultLibrary() else {
-                    fatalError("Failed to make default metal library.")
-                }
+                let library = try! device.makeDefaultLibrary(bundle: .module)
                 let constants = MTLFunctionConstantValues()
                 constants.setConstantValue(bytes(of: pixelate), type: .bool, index: 0)
 

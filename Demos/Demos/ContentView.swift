@@ -1,8 +1,5 @@
 import SwiftUI
-import Everything
-import MetalKit
-import Observation
-import RenderKitSupport
+import RenderKit3
 
 struct ContentView: View {
     var body: some View {
