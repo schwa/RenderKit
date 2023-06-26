@@ -1,5 +1,6 @@
 import Foundation
 import MetalKit
+import os
 
 extension MTKView {
     var betterDebugDescription: String {
@@ -49,4 +50,8 @@ extension Bool {
     func formatted() -> String {
         return BooleanFormatStyle().format(self)
     }
+}
+
+enum RenderKitError: Error {
+    case generic(String)
 }

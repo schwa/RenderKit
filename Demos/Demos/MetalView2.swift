@@ -1,54 +1,74 @@
 import SwiftUI
 import MetalKit
 import Everything
+import os
+
+let logger = os.Logger()
 
 public struct MetalView2: View {
-    @Observable
-    class Model: NSObject, MTKViewDelegate {
+    class Model: NSObject, MTKViewDelegate, ObservableObject {
 
-        let setup: (inout any MetalViewConfiguration) -> Void
-        let drawableSizeWillChange: (CGSize) -> Void
-        let draw: (inout any MetalViewConfiguration) -> Void
-
-        init(setup: @escaping (inout any MetalViewConfiguration) -> Void, drawableSizeWillChange: @escaping (CGSize) -> Void, draw: @escaping (inout any MetalViewConfiguration) -> Void) {
-            print("Model.init")
-            self.setup = setup
-            self.drawableSizeWillChange = drawableSizeWillChange
-            self.draw = draw
-        }
+        var update: (any MetalViewConfiguration) -> Void = { _ in fatalError() }
+        var drawableSizeWillChange: (CGSize) -> Void = { _ in fatalError() }
+        var draw: (any MetalViewConfiguration) -> Void = { _ in fatalError() }
 
         func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
+//            logger.debug("\(String(describing: type(of: self)), privacy: .public).\(#function, privacy: .public)")
             drawableSizeWillChange(size)
         }
 
         func draw(in view: MTKView) {
+//            logger.debug("\(String(describing: type(of: self)), privacy: .public).\(#function, privacy: .public)")
             var configuration = view as any MetalViewConfiguration
-            draw(&configuration)
+            draw(configuration)
         }
     }
 
-    private var model: Model
+    @StateObject
+    private var model = Model()
 
-    public init(setup: @escaping (inout any MetalViewConfiguration) -> Void, drawableSizeWillChange: @escaping (CGSize) -> Void, draw: @escaping (inout any MetalViewConfiguration) -> Void) {
-        print(#function)
-        model = Model(setup: setup, drawableSizeWillChange: drawableSizeWillChange, draw: draw)
+    var update: (any MetalViewConfiguration) -> Void
+    var drawableSizeWillChange: (CGSize) -> Void
+    var draw: (any MetalViewConfiguration) -> Void
+
+    public init(update: @escaping (any MetalViewConfiguration) -> Void, drawableSizeWillChange: @escaping (CGSize) -> Void, draw: @escaping (any MetalViewConfiguration) -> Void) {
+        self.update = update
+        self.drawableSizeWillChange = drawableSizeWillChange
+        self.draw = draw
     }
 
     public var body: some View {
         ViewAdaptor<MTKView> {
+            model.update = update
+            model.drawableSizeWillChange = drawableSizeWillChange
+            model.draw = draw
+
+//            logger.debug("\(String(describing: type(of: self)), privacy: .public).\(#function, privacy: .public), view adaptor setup")
             let view = MTKView(frame: .zero, device: MTLCreateSystemDefaultDevice()!)
             view.delegate = model
-            var configuration = view as any MetalViewConfiguration
-            model.setup(&configuration)
             return view
         } update: { view in
-            print("Update")
+//            logger.debug("\(String(describing: type(of: self)), privacy: .public).\(#function, privacy: .public) view adaptor update")
+            var configuration = view as any MetalViewConfiguration
+            model.update(configuration)
+        }
+        .onAppear {
+            model.update = update
+            model.drawableSizeWillChange = drawableSizeWillChange
+            model.draw = draw
         }
     }
 }
 
+extension MetalView2 {
+    public init(update: @escaping (any MetalViewConfiguration) -> Void, draw: @escaping (any MetalViewConfiguration) -> Void) {
+        self.init(update: update, drawableSizeWillChange: { _ in }, draw: draw)
+    }
+
+}
+
 // TODO: this needs to be paired down and replaced with better logic on MetalView
-public protocol MetalViewConfiguration {
+public protocol MetalViewConfiguration: AnyObject {
     var device: MTLDevice? { get set }
     var currentDrawable: CAMetalDrawable? { get }
     var framebufferOnly: Bool { get set }

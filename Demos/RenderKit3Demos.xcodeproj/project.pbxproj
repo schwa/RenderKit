@@ -12,6 +12,9 @@
 		453D32BC2A48D06600FCEE29 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 453D32BB2A48D06600FCEE29 /* Assets.xcassets */; };
 		453D32C02A48D06600FCEE29 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 453D32BF2A48D06600FCEE29 /* Preview Assets.xcassets */; };
 		455BE1E52A48EE6C007F0776 /* MetalView2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 455BE1E42A48EE6C007F0776 /* MetalView2.swift */; };
+		455BE1E72A48F50E007F0776 /* ShaderToy.metal in Sources */ = {isa = PBXBuildFile; fileRef = 455BE1E62A48F50E007F0776 /* ShaderToy.metal */; };
+		455BE1E92A48F52C007F0776 /* ShaderToyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 455BE1E82A48F52C007F0776 /* ShaderToyView.swift */; };
+		455BE1EB2A491FB9007F0776 /* Experimental.swift in Sources */ = {isa = PBXBuildFile; fileRef = 455BE1EA2A491FB9007F0776 /* Experimental.swift */; };
 		459E2E1E2A48D0D900E98F70 /* Everything in Frameworks */ = {isa = PBXBuildFile; productRef = 459E2E1D2A48D0D900E98F70 /* Everything */; };
 		459E2E232A48D5A000E98F70 /* MetalSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 459E2E222A48D5A000E98F70 /* MetalSupport */; };
 		459E2E262A48D5B900E98F70 /* SIMDSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 459E2E252A48D5B900E98F70 /* SIMDSupport */; };
@@ -27,6 +30,9 @@
 		453D32BD2A48D06600FCEE29 /* Demos.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Demos.entitlements; sourceTree = "<group>"; };
 		453D32BF2A48D06600FCEE29 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		455BE1E42A48EE6C007F0776 /* MetalView2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalView2.swift; sourceTree = "<group>"; };
+		455BE1E62A48F50E007F0776 /* ShaderToy.metal */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.metal; path = ShaderToy.metal; sourceTree = "<group>"; };
+		455BE1E82A48F52C007F0776 /* ShaderToyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderToyView.swift; sourceTree = "<group>"; };
+		455BE1EA2A491FB9007F0776 /* Experimental.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Experimental.swift; sourceTree = "<group>"; };
 		459E2E1F2A48D12000E98F70 /* RenderKit3 */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = RenderKit3; path = ..; sourceTree = "<group>"; };
 		459E2E2A2A48DBAD00E98F70 /* Support.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Support.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -69,8 +75,11 @@
 			children = (
 				453D32B72A48D06500FCEE29 /* DemosApp.swift */,
 				453D32B92A48D06500FCEE29 /* ContentView.swift */,
+				455BE1E82A48F52C007F0776 /* ShaderToyView.swift */,
 				459E2E2A2A48DBAD00E98F70 /* Support.swift */,
 				455BE1E42A48EE6C007F0776 /* MetalView2.swift */,
+				455BE1EA2A491FB9007F0776 /* Experimental.swift */,
+				455BE1E62A48F50E007F0776 /* ShaderToy.metal */,
 				453D32BB2A48D06600FCEE29 /* Assets.xcassets */,
 				453D32BD2A48D06600FCEE29 /* Demos.entitlements */,
 				453D32BE2A48D06600FCEE29 /* Preview Content */,
@@ -134,7 +143,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 453D32AF2A48D06500FCEE29 /* Build configuration list for PBXProject "Demos" */;
+			buildConfigurationList = 453D32AF2A48D06500FCEE29 /* Build configuration list for PBXProject "RenderKit3Demos" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -176,8 +185,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				455BE1E52A48EE6C007F0776 /* MetalView2.swift in Sources */,
+				455BE1EB2A491FB9007F0776 /* Experimental.swift in Sources */,
 				453D32BA2A48D06500FCEE29 /* ContentView.swift in Sources */,
+				455BE1E72A48F50E007F0776 /* ShaderToy.metal in Sources */,
 				453D32B82A48D06500FCEE29 /* DemosApp.swift in Sources */,
+				455BE1E92A48F52C007F0776 /* ShaderToyView.swift in Sources */,
 				459E2E2B2A48DBAD00E98F70 /* Support.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -378,7 +390,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		453D32AF2A48D06500FCEE29 /* Build configuration list for PBXProject "Demos" */ = {
+		453D32AF2A48D06500FCEE29 /* Build configuration list for PBXProject "RenderKit3Demos" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				453D32C12A48D06600FCEE29 /* Debug */,
