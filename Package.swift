@@ -29,6 +29,9 @@ let package = Package(
                 .product(name: "MetalSupportUnsafeConformances", package: "MetalSupport"),
                 //.product(name: "RenderKitSupport", package: "RenderKit"),
                 .product(name: "SIMDSupport", package: "SIMD-Support"),
+            ],
+            resources: [
+                .process("Media.xcassets")
             ]
         ),
         .testTarget(
