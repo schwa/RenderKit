@@ -483,7 +483,7 @@ public extension PixelFormat {
         case .RGBCIF10:
             // Only for RGB 32 bits per pixel,
             return 32
-        @unknown default:
+        default:
             fatalError("Unknown case")
         }
     }
