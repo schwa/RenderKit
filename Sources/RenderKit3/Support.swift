@@ -8,6 +8,7 @@ import simd
 import Metal
 import ModelIO
 import MetalPerformanceShaders
+import SIMDSupport
 
 public extension MTKView {
     var betterDebugDescription: String {
@@ -226,7 +227,7 @@ extension MTLPixelFormat {
         case .bgr10_xr:
             return CGColorSpaceCreateDeviceRGB()
         case .bgr10_xr_srgb:
-            return CGColorSpace(name: CGColorSpace.sRGB)
+            return CGColorSpace(name: CGColorSpace.extendedLinearSRGB)
         case .rg32Uint:
             return nil
         case .rg32Sint:
@@ -246,7 +247,7 @@ extension MTLPixelFormat {
         case .bgra10_xr:
             return CGColorSpaceCreateDeviceRGB()
         case .bgra10_xr_srgb:
-            return CGColorSpace(name: CGColorSpace.sRGB)
+            return CGColorSpace(name: CGColorSpace.extendedLinearSRGB)
         case .rgba32Uint:
             return nil
         case .rgba32Sint:
@@ -497,7 +498,6 @@ public extension MTLTexture {
     func histogram() -> MTLBuffer {
         let filter = MPSImageHistogram(device: device)
         let size = filter.histogramSize(forSourceFormat: pixelFormat)
-        print(size)
         guard let histogram = device.makeBuffer(length: size) else {
             fatalError()
         }
@@ -628,3 +628,72 @@ public struct Plane: Shape3D {
     }
 }
 
+
+public extension MTLRenderCommandEncoder {
+    func setVertexBuffer(_ mesh: MTKMesh, startingIndex: Int) {
+        for (index, vertexBuffer) in mesh.vertexBuffers.enumerated() {
+            setVertexBuffer(vertexBuffer.buffer, offset: vertexBuffer.offset, index: startingIndex + index)
+        }
+    }
+
+    func draw(_ mesh: MTKMesh) {
+        for submesh in mesh.submeshes {
+            drawIndexedPrimitives(type: submesh.primitiveType, indexCount: submesh.indexCount, indexType: submesh.indexType, indexBuffer: submesh.indexBuffer.buffer, indexBufferOffset: submesh.indexBuffer.offset)
+        }
+    }
+}
+
+extension Transform {
+    func scaled(_ scale: SIMD3<Float>) -> Transform {
+        var copy = self
+        copy.scale *= scale
+        return copy
+    }
+}
+
+extension SIMD3 where Scalar == Float {
+    var h: Float {
+        get {
+            return x
+        }
+        set {
+            x = newValue
+        }
+    }
+
+    var s: Float {
+        get {
+            return y
+        }
+        set {
+            y = newValue
+        }
+    }
+
+    var v: Float {
+        get {
+            return z
+        }
+        set {
+            z = newValue
+        }
+    }
+
+    func hsv2rgb() -> Self {
+        let h_i = Int(h * 6)
+        let f = h * 6 - Float(h_i)
+        let p = v * (1 - s)
+        let q = v * (1 - f * s)
+        let t = v * (1 - (1 - f) * s)
+
+        switch h_i {
+        case 0: return [v, t, p]
+        case 1: return [q, v, p]
+        case 2: return [p, v, t]
+        case 3: return [p, q, v]
+        case 4: return [t, p, v]
+        case 5: return [v, p, q]
+        default: return [0, 0, 0]
+        }
+    }
+}

@@ -53,6 +53,24 @@
         "revision" : "0a5bc04095a675662cf24757cc0640aa2204253b",
         "version" : "1.0.2"
       }
+    },
+    {
+      "identity" : "swiftfields",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/schwa/swiftfields",
+      "state" : {
+        "revision" : "bac046ccfa7454a475da4768e84431dd62283d5b",
+        "version" : "0.1.2"
+      }
+    },
+    {
+      "identity" : "swiftformats",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/schwa/swiftformats",
+      "state" : {
+        "revision" : "6ea63e3af409187ca73fa1d4e96b73d092888835",
+        "version" : "0.3.2"
+      }
     }
   ],
   "version" : 2

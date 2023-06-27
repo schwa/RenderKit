@@ -1,4 +1,3 @@
-
 #include <metal_stdlib>
 #include <simd/simd.h>
 
@@ -39,7 +38,9 @@ constant bool pixelate [[function_constant(kShaderToyID_PixelateFunctionConstant
 [[vertex]]
 Fragment shaderToyVertexShader(ShaderToyVertex vertexIn [[stage_in]], constant ShaderToyVertexUniforms &uniforms [[buffer(kShaderToyID_VertexShaderUniforms)]])
 {
-    return { .position = vector_float4(vector_float4(vertexIn.position, 1.0) * uniforms.transform, 1.0) };
+    return {
+        .position = vector_float4(vector_float4(vertexIn.position, 1.0) * uniforms.transform, 1.0)
+    };
 }
 
 [[fragment]]

@@ -2,6 +2,10 @@
 
 Yet another Metal Rendering engine experiment…
 
+## Assumptions
+
+Post-multiplication, Column-Major, Right-handed, Y up
+
 ## Goals
 
 * Learn from RenderKit & RenderKitClassic
