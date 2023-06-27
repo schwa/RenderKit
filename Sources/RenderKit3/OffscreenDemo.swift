@@ -92,14 +92,14 @@ public struct OffscreenDemo {
         }
 
         var captureScope: MTLCaptureScope?
-        if false {
+//        if false {
             let captureManager = MTLCaptureManager.shared()
             captureScope = captureManager.makeCaptureScope(device: device)
             let captureDescriptor = MTLCaptureDescriptor()
             captureDescriptor.captureObject = captureScope
             try! captureManager.startCapture(with: captureDescriptor)
             captureScope?.begin()
-        }
+//        }
 
         commandQueue.withCommandBuffer(waitAfterCommit: true) { commandBuffer in
             guard let renderPassDescriptor = configuration.currentRenderPassDescriptor else {
