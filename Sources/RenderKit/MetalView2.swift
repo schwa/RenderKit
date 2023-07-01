@@ -122,7 +122,7 @@ public protocol MetalViewConfiguration: AnyObject, RenderPassConfiguration {
     var preferredDrawableSize: CGSize { get }
     var preferredDevice: MTLDevice? { get }
     var isPaused: Bool { get set }
-    var colorspace: CGColorSpace? { get set }
+//    var colorspace: CGColorSpace? { get set }
 }
 
 extension MTKView: MetalViewConfiguration {

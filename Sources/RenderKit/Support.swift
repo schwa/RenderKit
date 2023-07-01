@@ -37,7 +37,7 @@ public extension MTKView {
             ("preferredDrawableSize", String(describing: preferredDrawableSize)),
             ("preferredDevice", preferredDevice?.name),
             ("isPaused", isPaused.formatted()),
-            ("colorspace", String(describing: colorspace)),
+//            ("colorspace", String(describing: colorspace)),
         ]
         let formattedAttributes = attributes.compactMap { key, value in
             value.map { value in "\t\(key): \(value)" }

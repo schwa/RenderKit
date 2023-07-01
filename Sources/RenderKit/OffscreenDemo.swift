@@ -149,6 +149,7 @@ public struct OffscreenDemoRenderPass: RenderPass {
     }
 }
 
+#if os(macOS)
 public struct OffscreenDemo {
     public static func main() async throws {
         let device = MTLCreateSystemDefaultDevice()!
@@ -179,6 +180,7 @@ public struct OffscreenDemo {
         let openConfiguration = NSWorkspace.OpenConfiguration()
         openConfiguration.activates = true
         _ = try await NSWorkspace.shared.open(url, configuration: openConfiguration)
-
     }
 }
+#endif
+
