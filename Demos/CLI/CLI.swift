@@ -1,4 +1,4 @@
-import RenderKit3
+import RenderKit
 
 @main
 struct Main {

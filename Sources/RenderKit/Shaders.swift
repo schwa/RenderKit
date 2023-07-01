@@ -10,7 +10,7 @@ import Foundation
 extension Bundle {
 
     static var shaders: Bundle {
-        guard let url = Bundle.main.url(forResource: "RenderKit3_Shaders", withExtension: "bundle") else {
+        guard let url = Bundle.main.url(forResource: "RenderKit_Shaders", withExtension: "bundle") else {
             fatalError()
         }
         guard let shaders = Bundle(url: url) else {

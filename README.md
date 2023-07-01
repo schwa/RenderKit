@@ -1,4 +1,4 @@
-# RenderKit3
+# RenderKit
 
 Yet another Metal Rendering engine experiment…
 

@@ -3,14 +3,14 @@
 import PackageDescription
 
 let package = Package(
-    name: "RenderKit3",
+    name: "RenderKit",
     platforms: [
         .macOS(.v14)
     ],
     products: [
         .library(
-            name: "RenderKit3",
-            targets: ["RenderKit3"]),
+            name: "RenderKit",
+            targets: ["RenderKit"]),
     ],
     dependencies: [
         .package(url: "https://github.com/schwa/Everything", from: "0.2.0"),
@@ -24,7 +24,7 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "RenderKit3",
+            name: "RenderKit",
             dependencies: [
                 "CoreGraphicsGeometrySupport",
                 "Everything",
@@ -47,7 +47,7 @@ let package = Package(
         ),
         .target(name: "Shaders"),
         .testTarget(
-            name: "RenderKit3Tests",
-            dependencies: ["RenderKit3"]),
+            name: "RenderKitTests",
+            dependencies: ["RenderKit"]),
     ]
 )
