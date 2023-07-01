@@ -18,6 +18,9 @@ public struct SimpleSceneView: View {
     @State
     var renderPass = SimpleSceneRenderPass()
 
+    @State
+    var isInspectorPresented = false
+
     public init() {
     }
 
@@ -57,13 +60,16 @@ public struct SimpleSceneView: View {
                 print(error)
             }
         }
-        .inspector(isPresented: .constant(true)) {
+        .inspector(isPresented: $isInspectorPresented) {
             $renderPass.scene.withUnsafeBinding {
                 SimpleSceneInspector(scene: $0)
                     .controlSize(.small)
             }
         }
         .toolbar {
+            Button(title: "Show/Hide Inspector", systemImage: "sidebar.trailing") {
+                isInspectorPresented.toggle()
+            }
             ValueView(value: false) { isPresentedBinding in
                 Button(title: "Snapshot", systemImage: "camera") {
                     Task {
@@ -71,7 +77,7 @@ public struct SimpleSceneView: View {
                             return
                         }
                         let configuration = OffscreenRenderPassConfiguration()
-                        configuration.colorPixelFormat = .bgra10_xr_srgb
+                        configuration.colorPixelFormat = .bgra8Unorm_srgb
                         configuration.depthStencilPixelFormat = .depth16Unorm
                         configuration.device = device
                         configuration.update()

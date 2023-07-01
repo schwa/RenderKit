@@ -48,7 +48,7 @@ public class OffscreenRenderPassConfiguration: RenderPassConfiguration {
 
         if depthStencilPixelFormat != .invalid {
             let depthTextureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: depthStencilPixelFormat, width: Int(size.width), height: Int(size.height), mipmapped: false)
-            depthTextureDescriptor.storageMode = .shared
+            depthTextureDescriptor.storageMode = .private
             depthTextureDescriptor.usage = [.renderTarget, .shaderRead, .shaderWrite]
             let depthStencilTexture = device.makeTexture(descriptor: depthTextureDescriptor)!
             depthStencilTexture.label = "Depth Texture"

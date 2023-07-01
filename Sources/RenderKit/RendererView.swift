@@ -11,7 +11,7 @@ public struct RendererView <T>: View where T: RenderPass {
         MetalView2 { configuration in
             Task {
                 configuration.preferredFramesPerSecond = 120
-                configuration.colorPixelFormat = .bgra10_xr_srgb
+                configuration.colorPixelFormat = .bgra8Unorm_srgb
                 configuration.depthStencilPixelFormat = .depth16Unorm
                 configuration.depthStencilStorageMode = .memoryless
                 renderPass.setup(configuration: configuration)
