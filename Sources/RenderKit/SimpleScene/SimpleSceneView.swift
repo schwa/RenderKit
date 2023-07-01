@@ -18,8 +18,20 @@ public struct SimpleSceneView: View {
     @State
     var renderPass = SimpleSceneRenderPass()
 
+    #if os(macOS)
+    @State
+    var isInspectorPresented = true
+    #else
     @State
     var isInspectorPresented = false
+    #endif
+
+    @State
+    var mouselook = false
+
+    @Environment(\.displayLink)
+    var displayLink
+
 
     public init() {
     }
@@ -27,6 +39,35 @@ public struct SimpleSceneView: View {
     public var body: some View {
         ZStack {
             RendererView(renderPass: $renderPass)
+            .overlay(alignment: .bottomLeading) {
+                Button(mouselook ? "Disable Mouselook (⌘⎋)" : "Enable Mouselook (⌘⎋)") {
+                    mouselook.toggle()
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(mouselook ? Color.mint : Color.yellow)
+                .keyboardShortcut(.init(.escape, modifiers: .command))
+                .padding()
+            }
+            .task {
+                for await movement in WASDStream(displayLinkPublisher: displayLink) {
+                    let target = renderPass.scene!.camera.target
+                    let angle = atan2(target.z, target.x) - .pi / 2
+                    let rotation = simd_quaternion(angle, [0, -1, 0])
+                    let movement = SIMD3<Float>(Float(movement.x), 0, Float(movement.y)) * [-1, 1, -1] * 0.1
+                    renderPass.scene!.camera.transform.translation += simd_act(rotation, movement)
+                }
+            }
+            .task {
+                for await delta in CapturedMouseStream() {
+                    guard mouselook else {
+                        continue
+                    }
+                    guard delta.x != 0 else {
+                        continue
+                    }
+                    renderPass.scene?.camera.heading.degrees += Float(delta.x)
+                }
+            }
         }
         .ignoresSafeArea()
         .onAppear {
@@ -45,7 +86,7 @@ public struct SimpleSceneView: View {
                 let zRange = Array<Float>(stride(from: 0, through: -10, by: -1))
 
                 let scene = SimpleScene(
-                    camera: Camera(transform: .translation([0, 1, 2]), projection: .perspective(.init(fovy: Float(degrees: 90), zClip: 0.1 ... 100))),
+                    camera: Camera(transform: .translation([0, 0, 2]), target: [0, 0, 0], projection: .perspective(.init(fovy: Float(degrees: 90), zClip: 0.1 ... 100))),
                     light: .init(position: .translation([-1, 2, 1]), color: [1, 1, 1], power: 1),
                     ambientLightColor: [0, 0, 0],
                     models:
@@ -115,13 +156,6 @@ public struct SimpleSceneView: View {
     var exportImage: Image?
 }
 
-//extension View {
-//    func export() -> some View {
-//
-//        fileExporter(isPresented: <#T##Binding<Bool>#>, item: <#T##Transferable?#>, onCompletion: <#T##(Result<URL, Error>) -> Void#>)
-//    }
-//}
-
 extension Button where Label == SwiftUI.Label<Text, Image> {
     init(title: LocalizedStringKey, image: String, action: @escaping () -> Void) {
         self.init(action: action, label: {
@@ -170,8 +204,10 @@ struct SimpleSceneInspector: View {
         var camera: Camera
 
         var body: some View {
-            LabeledContent("Transform") {
+            Section("Transform") {
                 TransformEditor(transform: $camera.transform, options: [.hideScale])
+                TextField("Heading", value: $camera.heading.degrees, format: .number)
+                TextField("Target", value: $camera.target, format: .vector)
             }
             Section("Projection") {
                 ProjectionInspector(projection: $camera.projection)
@@ -347,6 +383,35 @@ extension Binding where Value == Double {
             return Double(binding.wrappedValue)
         } set: { newValue in
             binding.wrappedValue = Other(newValue)
+        }
+    }
+}
+
+extension Camera {
+    var heading: SIMDSupport.Angle<Float> {
+        get {
+            let degrees = Angle(from: .zero, to: target.xz).degrees
+            return Angle(degrees: degrees)
+        }
+        set {
+            let length = target.length
+            target = SIMD3<Float>(xz: SIMD2<Float>(length: length, angle: newValue))
+        }
+    }
+}
+
+
+public struct DisplayLinkKey: EnvironmentKey {
+    public static var defaultValue = DisplayLinkPublisher()
+}
+
+public extension EnvironmentValues {
+    var displayLink: DisplayLinkPublisher {
+        get {
+            self[DisplayLinkKey.self]
+        }
+        set {
+            self[DisplayLinkKey.self] = newValue
         }
     }
 }

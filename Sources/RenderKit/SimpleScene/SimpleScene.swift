@@ -76,6 +76,12 @@ struct Model {
 
 struct Camera {
     var transform: Transform
+    var target: SIMD3<Float> {
+        didSet {
+            let position = transform.translation // TODO: Scale?
+            transform = Transform(look(at: position + target, from: position, up: [0, 1, 0]))
+        }
+    }
     var projection: Projection
 }
 
