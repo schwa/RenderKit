@@ -28,6 +28,7 @@ public struct SimpleSceneView: View {
         ZStack {
             RendererView(renderPass: $renderPass)
         }
+        .ignoresSafeArea()
         .onAppear {
             do {
                 guard let device else {
@@ -60,43 +61,52 @@ public struct SimpleSceneView: View {
                 print(error)
             }
         }
-        .inspector(isPresented: $isInspectorPresented) {
-            $renderPass.scene.withUnsafeBinding {
-                SimpleSceneInspector(scene: $0)
-                    .controlSize(.small)
+        .toolbar {
+            ToolbarItem(placement: .secondaryAction) {
+                ValueView(value: false) { isPresentedBinding in
+                    Button(title: "Snapshot", systemImage: "camera") {
+                        Task {
+                            guard let device else {
+                                return
+                            }
+                            let configuration = OffscreenRenderPassConfiguration()
+                            configuration.colorPixelFormat = .bgra8Unorm_srgb
+                            configuration.depthStencilPixelFormat = .depth16Unorm
+                            configuration.device = device
+                            configuration.update()
+                            renderPass.setup(configuration: configuration)
+                            guard let commandQueue = device.makeCommandQueue() else {
+                                fatalError()
+                            }
+                            commandQueue.withCommandBuffer(waitAfterCommit: true) { commandBuffer in
+                                renderPass.draw(configuration: configuration, commandBuffer: commandBuffer)
+                            }
+                            let cgImage = await configuration.targetTexture!.cgImage(colorSpace: CGColorSpace(name: CGColorSpace.extendedSRGB))
+                            exportImage = Image(cgImage: cgImage)
+                            isPresentedBinding.wrappedValue = true
+                        }
+                    }
+                    .fileExporter(isPresented: isPresentedBinding, item: exportImage, contentTypes: [.png, .jpeg]) { result in
+                        exportImage = nil
+                    }
+                    .fileExporterFilenameLabel("Snapshot")
+                }
             }
         }
-        .toolbar {
-            Button(title: "Show/Hide Inspector", systemImage: "sidebar.trailing") {
-                isInspectorPresented.toggle()
+        .inspector(isPresented: $isInspectorPresented) {
+            Group {
+                $renderPass.scene.withUnsafeBinding {
+                    SimpleSceneInspector(scene: $0)
+                        .controlSize(.small)
+                }
             }
-            ValueView(value: false) { isPresentedBinding in
-                Button(title: "Snapshot", systemImage: "camera") {
-                    Task {
-                        guard let device else {
-                            return
-                        }
-                        let configuration = OffscreenRenderPassConfiguration()
-                        configuration.colorPixelFormat = .bgra8Unorm_srgb
-                        configuration.depthStencilPixelFormat = .depth16Unorm
-                        configuration.device = device
-                        configuration.update()
-                        renderPass.setup(configuration: configuration)
-                        guard let commandQueue = device.makeCommandQueue() else {
-                            fatalError()
-                        }
-                        commandQueue.withCommandBuffer(waitAfterCommit: true) { commandBuffer in
-                            renderPass.draw(configuration: configuration, commandBuffer: commandBuffer)
-                        }
-                        let cgImage = await configuration.targetTexture!.cgImage(colorSpace: CGColorSpace(name: CGColorSpace.extendedSRGB))
-                        exportImage = Image(cgImage: cgImage)
-                        isPresentedBinding.wrappedValue = true
+            .inspectorColumnWidth(ideal: 300)
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button(title: "Show/Hide Inspector", systemImage: "sidebar.trailing") {
+                        isInspectorPresented.toggle()
                     }
                 }
-                .fileExporter(isPresented: isPresentedBinding, item: exportImage, contentTypes: [.png, .jpeg]) { result in
-                    exportImage = nil
-                }
-                .fileExporterFilenameLabel("Snapshot")
             }
         }
     }
@@ -163,7 +173,7 @@ struct SimpleSceneInspector: View {
             LabeledContent("Transform") {
                 TransformEditor(transform: $camera.transform, options: [.hideScale])
             }
-            LabeledContent("Projection") {
+            Section("Projection") {
                 ProjectionInspector(projection: $camera.projection)
             }
         }
@@ -182,37 +192,12 @@ struct SimpleSceneInspector: View {
         }
 
         var body: some View {
-            Group {
-                Picker("Type", selection: $type) {
-                    ForEach(Projection.Meta.allCases, id: \.self) { type in
-                        Text(describing: type).tag(type)
-                    }
-                }
-                .labelsHidden()
-                switch projection {
-                case .perspective(let projection):
-                    let projection = Binding {
-                        return projection
-                    } set: { newValue in
-                        self.projection = .perspective(newValue)
-                    }
-//                    let fieldOfView = Binding<SwiftUI.Angle>(get: { .degrees(projection.fovy) }, set: { projection.fovy = $0.radians })
-                    TextField("FOVY", value: Binding<SwiftUI.Angle>(radians: projection.fovy), format: .angle)
-                    TextField("Clipping Distance", value: projection.zClip, format: ClosedRangeFormatStyle(substyle: .number))
-                case .orthographic(let projection):
-                    let projection = Binding {
-                        return projection
-                    } set: { newValue in
-                        self.projection = .orthographic(newValue)
-                    }
-                    TextField("Left", value: projection.left, format: .number)
-                    TextField("Right", value: projection.right, format: .number)
-                    TextField("Bottom", value: projection.bottom, format: .number)
-                    TextField("Top", value: projection.top, format: .number)
-                    TextField("Near", value: projection.near, format: .number)
-                    TextField("Far", value: projection.far, format: .number)
+            Picker("Type", selection: $type) {
+                ForEach(Projection.Meta.allCases, id: \.self) { type in
+                    Text(describing: type).tag(type)
                 }
             }
+            .labelsHidden()
             .onChange(of: type) {
                 guard type != projection.meta else {
                     return
@@ -223,6 +208,29 @@ struct SimpleSceneInspector: View {
                 case .orthographic:
                     projection = .orthographic(.init(left: -1, right: 1, bottom: -1, top: 1, near: -1, far: 1))
                 }
+            }
+            switch projection {
+            case .perspective(let projection):
+                let projection = Binding {
+                    return projection
+                } set: { newValue in
+                    self.projection = .perspective(newValue)
+                }
+//                    let fieldOfView = Binding<SwiftUI.Angle>(get: { .degrees(projection.fovy) }, set: { projection.fovy = $0.radians })
+                TextField("FOVY", value: Binding<SwiftUI.Angle>(radians: projection.fovy), format: .angle)
+                TextField("Clipping Distance", value: projection.zClip, format: ClosedRangeFormatStyle(substyle: .number))
+            case .orthographic(let projection):
+                let projection = Binding {
+                    return projection
+                } set: { newValue in
+                    self.projection = .orthographic(newValue)
+                }
+                TextField("Left", value: projection.left, format: .number)
+                TextField("Right", value: projection.right, format: .number)
+                TextField("Bottom", value: projection.bottom, format: .number)
+                TextField("Top", value: projection.top, format: .number)
+                TextField("Near", value: projection.near, format: .number)
+                TextField("Far", value: projection.far, format: .number)
             }
         }
     }
