@@ -9,6 +9,7 @@ import SwiftFormats
 import SwiftFields
 import UniformTypeIdentifiers
 import CoreImage
+import CoreGraphicsGeometrySupport
 
 public struct SimpleSceneView: View {
 
@@ -39,9 +40,20 @@ public struct SimpleSceneView: View {
     public var body: some View {
         ZStack {
             RendererView(renderPass: $renderPass)
+            .ignoresSafeArea()
+            .overlay(alignment: .bottomTrailing) {
+                $renderPass.scene.withUnsafeBinding {
+                    MapView(scene: $0)
+                    .border(Color.red)
+                    .frame(width: 200, height: 200)
+                    .padding()
+                }
+            }
             .overlay(alignment: .bottomLeading) {
-                Button(mouselook ? "Disable Mouselook (⌘⎋)" : "Enable Mouselook (⌘⎋)") {
-                    mouselook.toggle()
+                Button(title: mouselook ? "Disable Mouselook (⌘⎋)" : "Enable Mouselook (⌘⎋)", systemImage: mouselook ? "computermouse.fill" : "computermouse") {
+                    withAnimation {
+                        mouselook.toggle()
+                    }
                 }
                 .buttonStyle(.borderedProminent)
                 .tint(mouselook ? Color.mint : Color.yellow)
@@ -69,7 +81,9 @@ public struct SimpleSceneView: View {
                 }
             }
         }
-        .ignoresSafeArea()
+        #if os(macOS)
+        .showFrameEditor()
+        #endif
         .onAppear {
             do {
                 guard let device else {
@@ -154,26 +168,6 @@ public struct SimpleSceneView: View {
 
     @State
     var exportImage: Image?
-}
-
-extension Button where Label == SwiftUI.Label<Text, Image> {
-    init(title: LocalizedStringKey, image: String, action: @escaping () -> Void) {
-        self.init(action: action, label: {
-            Label(title, image: image)
-        })
-    }
-}
-
-public extension Binding {
-    // TODO: Rename
-    func withUnsafeBinding<V, R>(block: (Binding<V>) throws -> R) rethrows -> R? where Value == V? {
-        if wrappedValue != nil {
-            return try block(Binding<V> { wrappedValue! } set: { wrappedValue = $0 })
-        }
-        else {
-            return nil
-        }
-    }
 }
 
 struct SimpleSceneInspector: View {
@@ -320,34 +314,6 @@ struct TransformEditor: View {
     }
 }
 
-extension Text {
-    init(describing value: Any) {
-        self = Text(verbatim: "\(value)")
-    }
-}
-
-extension Binding where Value == SwiftUI.Angle {
-    init <F>(radians: Binding<F>) where F: BinaryFloatingPoint {
-        self = .init(get: {
-            .radians(Double(radians.wrappedValue))
-        }, set: {
-            radians.wrappedValue = F($0.radians)
-        })
-    }
-}
-
-extension Binding where Value == CGColor {
-    init(simd: Binding<SIMD3<Float>>, colorSpace: CGColorSpace) {
-        self = .init(get: {
-            return CGColor(colorSpace: colorSpace, components: [CGFloat(simd.wrappedValue[0]), CGFloat(simd.wrappedValue[1]), CGFloat(simd.wrappedValue[2])])!
-        }, set: { newValue in
-            let newValue = newValue.converted(to: colorSpace, intent: .defaultIntent, options: nil)!
-            let components = newValue.components!
-            simd.wrappedValue = SIMD3<Float>(Float(components[0]), Float(components[1]), Float(components[2]))
-        })
-    }
-}
-
 struct SliderPopoverButton: View {
 
     @Binding
@@ -377,16 +343,6 @@ extension SliderPopoverButton {
     }
 }
 
-extension Binding where Value == Double {
-    init <Other>(_ binding: Binding<Other>) where Other: BinaryFloatingPoint {
-        self.init {
-            return Double(binding.wrappedValue)
-        } set: { newValue in
-            binding.wrappedValue = Other(newValue)
-        }
-    }
-}
-
 extension Camera {
     var heading: SIMDSupport.Angle<Float> {
         get {
@@ -413,5 +369,108 @@ public extension EnvironmentValues {
         set {
             self[DisplayLinkKey.self] = newValue
         }
+    }
+}
+
+struct MyDisclosureGroupStyle: DisclosureGroupStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        HStack {
+            Button {
+                withAnimation {
+                    configuration.isExpanded.toggle()
+                }
+            } label: {
+                configuration.label
+            }
+            .buttonStyle(.borderless)
+            if configuration.isExpanded {
+                configuration.content
+            }
+        }
+        .padding(4)
+    }
+}
+
+struct FrameEditorModifier: ViewModifier {
+
+    @State
+    var isExpanded: Bool = false
+
+    @State
+    var locked: Bool = false
+
+    @State
+    var lockedSize: CGSize?
+
+    func body(content: Content) -> some View {
+        content
+        .frame(width: lockedSize?.width, height: lockedSize?.height)
+        .overlay {
+            GeometryReader { proxy in
+                DisclosureGroup(isExpanded: $isExpanded) {
+                    HStack {
+                        VStack {
+                            if let lockedSize {
+                                TextField("Size", value: .constant(lockedSize), format: .size)
+                                .foregroundStyle(.black)
+                                .frame(maxWidth: 120)
+//                                Text("\(proxy.size.width / proxy.size.height, format: .number)")
+                            }
+                            else {
+                                Text("\(proxy.size, format: .size)")
+                                Text("\(proxy.size.width / proxy.size.height, format: .number)")
+                            }
+                        }
+                        Button(systemImage: locked ? "lock" : "lock.open") {
+                            withAnimation {
+                                locked.toggle()
+                                lockedSize = locked ? proxy.size : nil
+                            }
+                        }
+                        .buttonStyle(.borderless)
+                    }
+
+                } label: {
+                    Image(systemName: "rectangle.split.2x2")
+                }
+                .disclosureGroupStyle(MyDisclosureGroupStyle())
+                .foregroundStyle(Color.white)
+                .background(RoundedRectangle(cornerRadius: 4).fill(Color.mint))
+                .padding()
+                .frame(alignment: .topLeading)
+            }
+        }
+    }
+}
+
+extension View {
+    func showFrameEditor() -> some View {
+        modifier(FrameEditorModifier())
+    }
+}
+
+struct MapView: View {
+    @Binding
+    var scene: SimpleScene
+
+    var body: some View {
+        Canvas(opaque: true) { context, size in
+
+            //context.fill(Path(CGRect(size), with: .color(.gray)))
+
+            context.concatenate(.init(translation: [size.width / 2, size.height / 2]))
+
+            context.concatenate(.init(scale: [10, 10]))
+            for model in scene.models {
+                let position = model.transform.translation.xz
+                let colorVector = model.color
+                let color = Color(red: Double(colorVector.r), green: Double(colorVector.g), blue: Double(colorVector.b))
+                context.fill(Path(ellipseIn: CGRect(center: CGPoint(position), diameter: 1)), with: .color(color))
+            }
+        }
+        .background(.black)
+
+
+
     }
 }
