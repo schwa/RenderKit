@@ -10,6 +10,8 @@ import SwiftFields
 import UniformTypeIdentifiers
 import CoreImage
 import CoreGraphicsGeometrySupport
+import GameController
+import AsyncAlgorithms
 
 public struct SimpleSceneView: View {
 
@@ -50,16 +52,43 @@ public struct SimpleSceneView: View {
                 }
             }
             .overlay(alignment: .bottomLeading) {
-                Button(title: mouselook ? "Disable Mouselook (⌘⎋)" : "Enable Mouselook (⌘⎋)", systemImage: mouselook ? "computermouse.fill" : "computermouse") {
-                    withAnimation {
-                        mouselook.toggle()
+                HStack {
+                    Button(title: mouselook ? "Disable Mouselook (⌘⎋)" : "Enable Mouselook (⌘⎋)", systemImage: mouselook ? "computermouse.fill" : "computermouse") {
+                        withAnimation {
+                            mouselook.toggle()
+                        }
                     }
+                    GameControllerView()
                 }
                 .buttonStyle(.borderedProminent)
                 .tint(mouselook ? Color.mint : Color.yellow)
                 .keyboardShortcut(.init(.escape, modifiers: .command))
                 .padding()
             }
+            .task {
+                guard let controller = GCController.current else {
+                    print("No controller")
+                    return
+                }
+                let snapshot = controller.physicalInputProfile.capture()
+                let leftRight = (snapshot["Right Thumbstick"] as? GCControllerDirectionPad)?.xAxis
+                let forwardsReverse = (snapshot["Right Thumbstick"] as? GCControllerDirectionPad)?.yAxis
+                for await _ in displayLink.values {
+                    snapshot.setStateFromPhysicalInput(controller.physicalInputProfile)
+                    var movement = SIMD3<Float>.zero
+                    if let value = leftRight?.value {
+                        movement.x = -value
+                    }
+                    if let value = forwardsReverse?.value {
+                        movement.z = value
+                    }
+                    let target = renderPass.scene!.camera.target
+                    let angle = atan2(target.z, target.x) - .pi / 2
+                    let rotation = simd_quaternion(angle, [0, -1, 0])
+                    renderPass.scene!.camera.transform.translation += simd_act(rotation, movement * 0.1)
+                }
+            }
+            #if os(macOS)
             .task {
                 for await movement in WASDStream(displayLinkPublisher: displayLink) {
                     let target = renderPass.scene!.camera.target
@@ -80,6 +109,7 @@ public struct SimpleSceneView: View {
                     renderPass.scene?.camera.heading.degrees += Float(delta.x)
                 }
             }
+            #endif
         }
         #if os(macOS)
         .showFrameEditor()
@@ -100,7 +130,7 @@ public struct SimpleSceneView: View {
                 let zRange = Array<Float>(stride(from: 0, through: -10, by: -1))
 
                 let scene = SimpleScene(
-                    camera: Camera(transform: .translation([0, 0, 2]), target: [0, 0, 0], projection: .perspective(.init(fovy: Float(degrees: 90), zClip: 0.1 ... 100))),
+                    camera: Camera(transform: .translation([0, 0, 2]), target: [0, 0, -1], projection: .perspective(.init(fovy: Float(degrees: 90), zClip: 0.1 ... 100))),
                     light: .init(position: .translation([-1, 2, 1]), color: [1, 1, 1], power: 1),
                     ambientLightColor: [0, 0, 0],
                     models:
@@ -453,24 +483,163 @@ struct MapView: View {
     @Binding
     var scene: SimpleScene
 
+    let scale: CGFloat = 10
+
     var body: some View {
         Canvas(opaque: true) { context, size in
-
-            //context.fill(Path(CGRect(size), with: .color(.gray)))
-
             context.concatenate(.init(translation: [size.width / 2, size.height / 2]))
 
-            context.concatenate(.init(scale: [10, 10]))
             for model in scene.models {
-                let position = model.transform.translation.xz
+                let position = CGPoint(model.transform.translation.xz)
                 let colorVector = model.color
                 let color = Color(red: Double(colorVector.r), green: Double(colorVector.g), blue: Double(colorVector.b))
-                context.fill(Path(ellipseIn: CGRect(center: CGPoint(position), diameter: 1)), with: .color(color))
+                context.fill(Path(ellipseIn: CGRect(center: position * scale, diameter: 1 * scale)), with: .color(color.opacity(0.5)))
             }
+
+            let cameraPosition = CGPoint(scene.camera.transform.translation.xz)
+
+            if case let .perspective(perspective) = scene.camera.projection {
+                let viewCone = Path.arc(center: cameraPosition * scale, radius: 4 * scale, midAngle: .radians(Double(scene.camera.heading.radians)), width: .radians(Double(perspective.fovy)))
+                context.fill(viewCone, with: .radialGradient(Gradient(colors: [.white.opacity(0.5), .white.opacity(0.0)]), center: cameraPosition * scale, startRadius: 0, endRadius: 4 * scale))
+                context.stroke(viewCone, with: .color(.white))
+
+            }
+
+            var cameraImage = context.resolve(Image(systemName: "camera.circle.fill"))
+            cameraImage.shading = .color(.mint)
+            context.draw(cameraImage, at: cameraPosition * scale, anchor: .center)
+
+            var targetPosition = cameraPosition + CGPoint(scene.camera.target.xz)
+            var targetImage = context.resolve(Image(systemName: "scope"))
+            targetImage.shading = .color(.white)
+            context.draw(targetImage, at: targetPosition * scale, anchor: .center)
+
         }
         .background(.black)
+    }
+}
+
+extension CGSize {
+    static func / (lhs: CGFloat, rhs: CGSize) -> CGSize {
+        return CGSize(width: lhs / rhs.width, height: lhs / rhs.height)
+    }
+}
+
+extension Path {
+    static func arc(center: CGPoint, radius: CGFloat, midAngle: SwiftUI.Angle, width: SwiftUI.Angle) -> Path {
+        Path { path in
+            path.move(to: center)
+            path.addArc(center: center, radius: radius, startAngle: midAngle - width / 2, endAngle: midAngle + width / 2, clockwise: false)
+            path.closeSubpath()
+        }
+    }
+}
+
+struct GameControllerView: View {
+
+    @Observable
+    class Model {
+        var controller: GCController? = nil
+
+        init() {
+            print("INIT")
+        }
+
+        deinit {
+            print("DEINIT")
+        }
 
 
 
+        func scan() async {
+            if let controller = GCController.current ?? GCController.controllers().first {
+                self.controller = controller
+                print(controller)
+                return
+            }
+
+            let controller = Task { () -> GCController? in
+                print("WAITING FOR NOTIFS")
+                for await notification in NotificationCenter.default.notifications(named: .GCControllerDidConnect) {
+                    guard let controller = notification.object as? GCController else {
+                        continue
+                    }
+                    return controller
+                }
+                return nil
+            }
+
+            Task {
+                defer {
+                    print("stopWirelessControllerDiscovery")
+                    GCController.stopWirelessControllerDiscovery()
+                }
+                print("Not connected. Scanning for wireless…")
+                await GCController.startWirelessControllerDiscovery()
+            }
+
+            print(GCController.current)
+
+            self.controller = await controller.value
+            print(self.controller)
+        }
+    }
+
+    @State
+    var model = Model()
+
+    var body: some View {
+        Group {
+            if let controller = model.controller {
+                VStack {
+// battery.100
+//                    battery.75
+//                    battery.50
+//                    battery.25
+//                    battery.0
+                    Image(systemName: "gamecontroller.fill")
+                    Text(describing: controller.vendorName)
+                    Text(describing: controller.productCategory)
+                    Text(describing: controller.battery)
+                    HStack {
+                        ForEach(Array(controller.physicalInputProfile.allButtons), id: \.self) { button in
+                            if let systemName = button.sfSymbolsName {
+                                Image(systemName: systemName + ".fill")
+                            }
+                            else {
+                                Text("?")
+                            }
+                        }
+
+                    }
+                    //Text(describing: controller.physicalInputProfile.allButtons)
+                }
+
+            }
+            else {
+                Text("No controller")
+            }
+        }
+        .padding()
+        .background(Color.red)
+        .task {
+            print("TASK")
+                await model.scan()
+        }
+    }
+
+}
+
+extension NotificationCenter {
+    func notifications(named names: [Notification.Name]) -> AsyncChannel<Notification> {
+        let channel = AsyncChannel<Notification>()
+        for name in names {
+            Task {
+                for await notification in notifications(named: name) {
+                    await channel.send(notification)
+                }
+            }
+        }
+        return channel
     }
 }
