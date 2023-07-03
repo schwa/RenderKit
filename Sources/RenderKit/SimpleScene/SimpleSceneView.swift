@@ -12,6 +12,7 @@ import CoreImage
 import CoreGraphicsGeometrySupport
 import GameController
 import AsyncAlgorithms
+import Combine
 
 public struct SimpleSceneView: View {
 
@@ -35,6 +36,8 @@ public struct SimpleSceneView: View {
     @Environment(\.displayLink)
     var displayLink
 
+    @State
+    var movementController = MovementController()
 
     public init() {
     }
@@ -53,52 +56,109 @@ public struct SimpleSceneView: View {
             }
             .overlay(alignment: .bottomLeading) {
                 HStack {
-                    Button(title: mouselook ? "Disable Mouselook (⌘⎋)" : "Enable Mouselook (⌘⎋)", systemImage: mouselook ? "computermouse.fill" : "computermouse") {
-                        withAnimation {
-                            mouselook.toggle()
-                        }
-                    }
-                    GameControllerView()
+                    GameControllerWidget()
+
+#if os(macOS)
+//                    Button(title: mouselook ? "Disable Mouselook (⌘⎋)" : "Enable Mouselook (⌘⎋)", systemImage: mouselook ? "computermouse.fill" : "computermouse") {
+//                        withAnimation {
+//                            mouselook.toggle()
+//                        }
+//                    }
+//                    .keyboardShortcut(.init(.escape, modifiers: .command))
+//                    .buttonStyle(.borderedProminent)
+#endif
                 }
-                .buttonStyle(.borderedProminent)
-                .tint(mouselook ? Color.mint : Color.yellow)
-                .keyboardShortcut(.init(.escape, modifiers: .command))
+//                .tint(mouselook ? Color.mint : Color.yellow)
                 .padding()
             }
-            .task {
-                guard let controller = GCController.current else {
-                    print("No controller")
-                    return
-                }
-                let snapshot = controller.physicalInputProfile.capture()
-                let leftRight = (snapshot["Right Thumbstick"] as? GCControllerDirectionPad)?.xAxis
-                let forwardsReverse = (snapshot["Right Thumbstick"] as? GCControllerDirectionPad)?.yAxis
-                for await _ in displayLink.values {
-                    snapshot.setStateFromPhysicalInput(controller.physicalInputProfile)
-                    var movement = SIMD3<Float>.zero
-                    if let value = leftRight?.value {
-                        movement.x = -value
+            .task(priority: .userInitiated) {
+//                var controller = GCController.current
+                for await event in movementController.events().debounce(for: .seconds(1/60)) {
+                    switch event {
+
+                    case .movement(let movement):
+                        let target = renderPass.scene!.camera.target
+                        let angle = atan2(target.z, target.x) - .pi / 2
+                        let rotation = simd_quaternion(angle, [0, -1, 0])
+                        renderPass.scene!.camera.transform.translation += simd_act(rotation, movement * 0.1)
+                    case .rotation(let rotation):
+                        renderPass.scene?.camera.heading.degrees += Float(rotation * 2)
                     }
-                    if let value = forwardsReverse?.value {
-                        movement.z = value
-                    }
-                    let target = renderPass.scene!.camera.target
-                    let angle = atan2(target.z, target.x) - .pi / 2
-                    let rotation = simd_quaternion(angle, [0, -1, 0])
-                    renderPass.scene!.camera.transform.translation += simd_act(rotation, movement * 0.1)
+
                 }
+
+
+//                if let controller, let gamePad = controller.extendedGamepad {
+//                    let snapshot = gamePad.capture()
+//                    let turning = snapshot.rightThumbstick.xAxis
+//                    let leftRight = snapshot.leftThumbstick.xAxis
+//                    let forwardsReverse = snapshot.leftThumbstick.yAxis
+//                    for await _ in displayLink.values {
+//                        snapshot.setStateFromPhysicalInput(gamePad)
+//                        var movement = SIMD3<Float>.zero
+//                        movement.x = -leftRight.value
+//                        movement.z = forwardsReverse.value
+//                        let target = renderPass.scene!.camera.target
+//                        let angle = atan2(target.z, target.x) - .pi / 2
+//                        let rotation = simd_quaternion(angle, [0, -1, 0])
+//                        renderPass.scene!.camera.transform.translation += simd_act(rotation, movement * 0.1)
+//                        renderPass.scene?.camera.heading.degrees += Float(turning.value * 2)
+//                    }
+//                }
             }
-            #if os(macOS)
-            .task {
-                for await movement in WASDStream(displayLinkPublisher: displayLink) {
+            .task(priority: .userInitiated) {
+                for await notification in NotificationCenter.default.notifications(named: .GCKeyboardDidConnect) {
+                    break
+                }
+
+                guard let keyboard = GCKeyboard.coalesced, let keyboardInput = keyboard.keyboardInput else {
+                    fatalError()
+                }
+
+                let capturedInput = keyboardInput.capture()
+                let leftGUI = capturedInput.button(forKeyCode: .leftGUI)!
+                let keyW = capturedInput.button(forKeyCode: .keyW)!
+                let keyA = capturedInput.button(forKeyCode: .keyA)!
+                let keyS = capturedInput.button(forKeyCode: .keyS)!
+                let keyD = capturedInput.button(forKeyCode: .keyD)!
+
+                for await _ in displayLink.values {
+                    capturedInput.setStateFromPhysicalInput(keyboardInput)
+                    if leftGUI.value > 0 {
+                        continue
+                    }
+                    var delta = SIMD2<Float>.zero
+                    if keyW.value > 0 {
+                        delta += [0, -1]
+                    }
+                    if keyS.value > 0 {
+                        delta += [0, 1]
+                    }
+                    if keyA.value > 0 {
+                        delta += [-1, 0]
+                    }
+                    if keyD.value > 0 {
+                        delta += [1, 0]
+                    }
                     let target = renderPass.scene!.camera.target
                     let angle = atan2(target.z, target.x) - .pi / 2
                     let rotation = simd_quaternion(angle, [0, -1, 0])
-                    let movement = SIMD3<Float>(Float(movement.x), 0, Float(movement.y)) * [-1, 1, -1] * 0.1
+                    let movement = SIMD3<Float>(delta[0], 0, delta[1]) * [-1, 1, -1] * 0.1
                     renderPass.scene!.camera.transform.translation += simd_act(rotation, movement)
                 }
             }
-            .task {
+
+            //            .task {
+//                for await movement in WASDStream(displayLinkPublisher: displayLink) {
+//                    let target = renderPass.scene!.camera.target
+//                    let angle = atan2(target.z, target.x) - .pi / 2
+//                    let rotation = simd_quaternion(angle, [0, -1, 0])
+//                    let movement = SIMD3<Float>(Float(movement.x), 0, Float(movement.y)) * [-1, 1, -1] * 0.1
+//                    renderPass.scene!.camera.transform.translation += simd_act(rotation, movement)
+//                }
+//            }
+#if os(macOS)
+            .task(priority: .userInitiated) {
                 for await delta in CapturedMouseStream() {
                     guard mouselook else {
                         continue
@@ -112,6 +172,19 @@ public struct SimpleSceneView: View {
             #endif
         }
         #if os(macOS)
+        .onAppear {
+            NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
+                if event.modifierFlags.intersection([.command, .shift, .control, .option]).isEmpty {
+                    return nil
+                }
+                else {
+                    return event
+                }
+            }
+        }
+        #endif
+        .focusable(interactions: .automatic)
+        #if os(macOS)
         .showFrameEditor()
         #endif
         .onAppear {
@@ -119,7 +192,6 @@ public struct SimpleSceneView: View {
                 guard let device else {
                     fatalError()
                 }
-
                 let cone = try MTKMesh(mesh: MDLMesh(coneWithExtent: [0.5, 1, 0.5], segments: [20, 10], inwardNormals: false, cap: true, geometryType: .triangles, allocator: MTKMeshBufferAllocator(device: device)), device: device)
                 let sphere = try MTKMesh(mesh: MDLMesh(sphereWithExtent: [0.5, 0.5, 0.5], segments: [20, 10], inwardNormals: false, geometryType: .triangles, allocator: MTKMeshBufferAllocator(device: device)), device: device)
                 let capsule = try MTKMesh(mesh: MDLMesh(capsuleWithExtent: [0.25, 1, 0.25], cylinderSegments: [30, 10], hemisphereSegments: 5, inwardNormals: false, geometryType: .triangles, allocator: MTKMeshBufferAllocator(device: device)), device: device)
@@ -386,7 +458,6 @@ extension Camera {
     }
 }
 
-
 public struct DisplayLinkKey: EnvironmentKey {
     public static var defaultValue = DisplayLinkPublisher()
 }
@@ -535,53 +606,103 @@ extension Path {
     }
 }
 
-struct GameControllerView: View {
+struct GameControllerWidget: View {
 
     @Observable
     class Model {
-        var controller: GCController? = nil
+        var scanning = false
+
+        struct DeviceBox: Hashable, Identifiable {
+            var id: ObjectIdentifier {
+                return ObjectIdentifier(device)
+            }
+
+            static func == (lhs: GameControllerWidget.Model.DeviceBox, rhs: GameControllerWidget.Model.DeviceBox) -> Bool {
+                lhs.device === rhs.device
+            }
+
+            func hash(into hasher: inout Hasher) {
+                id.hash(into: &hasher)
+            }
+
+            let device: any GCDevice
+        }
+
+        var devices: Set<DeviceBox> = []
+
+#if os(iOS)
+        var virtualController: GCVirtualController? = nil
+        // Temporary workaround for FB12509166
+        @ObservationIgnored
+        var _virtualController: GCVirtualController? = nil
+#endif
 
         init() {
-            print("INIT")
+            devices.formUnion(GCController.controllers().map(DeviceBox.init))
+            Task {
+                for await notification in NotificationCenter.default.notifications(named: .GCControllerDidConnect) {
+                    guard let controller = notification.object as? GCDevice else {
+                        return
+                    }
+                    devices.insert(DeviceBox(device: controller))
+                }
+            }
+            Task {
+                for await notification in NotificationCenter.default.notifications(named: .GCControllerDidDisconnect) {
+                    guard let controller = notification.object as? GCDevice else {
+                        return
+                    }
+                    devices.remove(DeviceBox(device: controller))
+                }
+            }
+            Task {
+                for await notification in NotificationCenter.default.notifications(named: .GCKeyboardDidConnect) {
+                    guard let controller = notification.object as? GCDevice else {
+                        return
+                    }
+                    devices.insert(DeviceBox(device: controller))
+                }
+            }
+            Task {
+                for await notification in NotificationCenter.default.notifications(named: .GCKeyboardDidDisconnect) {
+                    guard let controller = notification.object as? GCDevice else {
+                        return
+                    }
+                    devices.remove(DeviceBox(device: controller))
+                }
+            }
+            Task {
+                for await notification in NotificationCenter.default.notifications(named: .GCMouseDidConnect) {
+                    guard let controller = notification.object as? GCDevice else {
+                        return
+                    }
+                    devices.insert(DeviceBox(device: controller))
+                }
+            }
+            Task {
+                for await notification in NotificationCenter.default.notifications(named: .GCMouseDidDisconnect) {
+                    guard let controller = notification.object as? GCDevice else {
+                        return
+                    }
+                    devices.remove(DeviceBox(device: controller))
+                }
+            }
+            startDiscovery()
         }
 
-        deinit {
-            print("DEINIT")
-        }
-
-
-
-        func scan() async {
-            if let controller = GCController.current ?? GCController.controllers().first {
-                self.controller = controller
-                print(controller)
+        func startDiscovery() {
+            guard scanning == false else {
                 return
             }
-
-            let controller = Task { () -> GCController? in
-                print("WAITING FOR NOTIFS")
-                for await notification in NotificationCenter.default.notifications(named: .GCControllerDidConnect) {
-                    guard let controller = notification.object as? GCController else {
-                        continue
-                    }
-                    return controller
-                }
-                return nil
+            scanning = true
+            GCController.startWirelessControllerDiscovery { [weak self] in
+                self?.scanning = false
             }
+        }
 
-            Task {
-                defer {
-                    print("stopWirelessControllerDiscovery")
-                    GCController.stopWirelessControllerDiscovery()
-                }
-                print("Not connected. Scanning for wireless…")
-                await GCController.startWirelessControllerDiscovery()
-            }
-
-            print(GCController.current)
-
-            self.controller = await controller.value
-            print(self.controller)
+        func stopDiscovery() {
+            GCController.stopWirelessControllerDiscovery()
+            scanning = false
         }
     }
 
@@ -589,57 +710,255 @@ struct GameControllerView: View {
     var model = Model()
 
     var body: some View {
-        Group {
-            if let controller = model.controller {
-                VStack {
-// battery.100
-//                    battery.75
-//                    battery.50
-//                    battery.25
-//                    battery.0
-                    Image(systemName: "gamecontroller.fill")
-                    Text(describing: controller.vendorName)
-                    Text(describing: controller.productCategory)
-                    Text(describing: controller.battery)
-                    HStack {
-                        ForEach(Array(controller.physicalInputProfile.allButtons), id: \.self) { button in
-                            if let systemName = button.sfSymbolsName {
-                                Image(systemName: systemName + ".fill")
-                            }
-                            else {
-                                Text("?")
-                            }
-                        }
-
+        HStack {
+//            Image(systemName: "gamecontroller").symbolEffect(.pulse.byLayer)
+//                .symbolRenderingMode(.palette)
+//                .foregroundStyle(.red, .green, .blue)
+//                .background(.white)
+            Menu{
+                if model.scanning == false {
+                    Button("Start Scanning") {
+                        model.startDiscovery()
                     }
-                    //Text(describing: controller.physicalInputProfile.allButtons)
+                }
+                else {
+                    Button("Stop Scanning") {
+                        model.stopDiscovery()
+                    }
+                }
+                #if os(iOS)
+                Divider()
+                if model.virtualController != nil {
+                    Button("Disable Touch Controller") {
+                        model.virtualController?.disconnect()
+                        model.virtualController = nil
+                    }
+                }
+                else {
+                    Button("Enable Touch Controller") {
+                        Task {
+                            let configuration = GCVirtualController.Configuration()
+                            configuration.elements = [
+                                GCInputLeftThumbstick, GCInputRightThumbstick, GCInputLeftShoulder, GCInputRightShoulder,
+                                //                        GCInputButtonA,
+                                //                        GCInputButtonB,
+                                //                        GCInputButtonX,
+                                //                        GCInputButtonY,
+                                //GCInputDirectionPad,
+                                //                        GCInputLeftTrigger,
+                                //                        GCInputRightTrigger
+                            ]
+                            let virtualController = GCVirtualController(configuration: configuration)
+                            try! await virtualController.connect()
+                            model.virtualController = virtualController
+                        }
+                    }
+                }
+                #endif
+                if !model.devices.isEmpty {
+                    Divider()
+                    ForEach(Array(model.devices), id: \.self) { box in
+                        Label {
+                            let isCurrent = (box.device as? GCController) === GCController.current
+                            Text("\(box.device.productCategory) / \(box.device.vendorName ?? "unknown controller")") + (isCurrent ? Text(" (current)") : Text(""))
+                        } icon: {
+                            box.device.sfSymbolName.map { Image(systemName: $0) } ?? Image(systemName: "questionmark.square.dashed")
+                        }
+                    }
                 }
 
+//                Button(action: {}, label: {
+//                    Image(systemName: "gamecontroller").symbolEffect(.pulse.byLayer)
+//                })
             }
-            else {
-                Text("No controller")
-            }
+        label: {
+            Label(
+                title: { Text("Game Controller") },
+                icon: {
+                    if model.devices.isEmpty {
+                        Image(systemName: "gamecontroller")
+                    }
+                    else {
+                        Image(systemName: "gamecontroller.fill")
+                    }
+                }
+            )
+            .labelStyle(.iconOnly)
         }
-        .padding()
-        .background(Color.red)
-        .task {
-            print("TASK")
-                await model.scan()
+        .fixedSize()
+        .backgroundStyle(Color.yellow)
+        }
+    }
+}
+
+extension GCDevice {
+    var sfSymbolName: String? {
+        switch self {
+        case _ as GCController:
+            return "gamecontroller"
+        case _ as GCKeyboard:
+            return "keyboard"
+        case _ as GCMouse:
+            return "mouse"
+        default:
+            return nil
+        }
+    }
+}
+
+
+@Observable
+class MovementController {
+    init(displayLink: DisplayLinkPublisher = .init()) {
+        self.displayLink = displayLink
+    }
+
+    enum Event {
+        case movement(SIMD3<Float>)
+        case rotation(Float)
+    }
+
+    struct AsyncIterator: AsyncIteratorProtocol {
+        var base: any AsyncIteratorProtocol
+        mutating func next() async throws -> Event? {
+            return try await base.next() as? Event
         }
     }
 
-}
+    var displayLink: DisplayLinkPublisher! = nil
 
-extension NotificationCenter {
-    func notifications(named names: [Notification.Name]) -> AsyncChannel<Notification> {
-        let channel = AsyncChannel<Notification>()
-        for name in names {
-            Task {
-                for await notification in notifications(named: name) {
-                    await channel.send(notification)
+    var controller: GCController? = nil {
+        didSet {
+            capturedControllerProfile = controller?.physicalInputProfile.capture()
+        }
+    }
+    var capturedControllerProfile: GCPhysicalInputProfile? = nil {
+        didSet {
+            move = capturedControllerProfile?.axes[GCElementKey.leftThumbstickYAxis.rawValue]
+            strafe = capturedControllerProfile?.axes[GCElementKey.leftThumbstickXAxis.rawValue]
+            turn = capturedControllerProfile?.axes[GCElementKey.rightThumbstickXAxis.rawValue]
+        }
+    }
+
+    var move: GCControllerAxisInput? = nil
+    var strafe: GCControllerAxisInput? = nil
+    var turn: GCControllerAxisInput? = nil
+
+    var mouse: GCMouse? = nil {
+        willSet {
+            mouse?.mouseInput?.mouseMovedHandler = nil
+        }
+        didSet {
+            mouse?.handlerQueue = DispatchQueue(label: "Mouse", qos: .userInteractive, attributes: .concurrent)
+            mouse?.mouseInput?.mouseMovedHandler = { [weak self] mouse, x, y in
+                guard let strongSelf = self else {
+                    return
+                }
+                Task(priority: .userInitiated) {
+                    await strongSelf.channel.send(.rotation(x))
                 }
             }
         }
+    }
+
+    let channel = AsyncChannel<Event>()
+
+
+    func events() -> AsyncChannel<Event> {
+        let notificationCenter = NotificationCenter.default
+        Task {
+            for await controller in notificationCenter.notifications(named: .GCControllerDidBecomeCurrent).map(\.object).cast(to: GCController.self) {
+                self.controller = controller
+            }
+        }
+        Task {
+            for await controller in notificationCenter.notifications(named: .GCControllerDidDisconnect).map(\.object).cast(to: GCController.self) {
+                if self.controller === controller {
+                    self.controller = nil
+                }
+            }
+        }
+        Task {
+            for await mouse in notificationCenter.notifications(named: .GCMouseDidConnect).map(\.object).cast(to: GCMouse.self) {
+                self.mouse = mouse
+            }
+        }
+        Task {
+            for await mouse in notificationCenter.notifications(named: .GCMouseDidDisconnect).map(\.object).cast(to: GCMouse.self) {
+                if self.mouse === mouse {
+                    self.mouse = nil
+                }
+            }
+        }
+
+        Task(priority: .userInitiated) {
+            let events = displayLink.values.flatMap { [weak self] _ in
+                return (self?.makeEvent() ?? []).async
+            }
+            for await event in events {
+                await channel.send(event)
+            }
+
+        }
         return channel
+    }
+
+    func makeEvent() -> [Event] {
+        var events: [Event] = []
+        if let controller, let capturedControllerProfile, let move, let strafe, let turn {
+            capturedControllerProfile.setStateFromPhysicalInput(controller.physicalInputProfile)
+            let movement = SIMD3<Float>(-strafe.value, 0, move.value)
+            let rotation = turn.value
+            events.append(contentsOf: [
+                movement != .zero ? Event.movement(movement) : nil,
+                rotation != .zero ? Event.rotation(rotation) : nil
+            ].compacted())
+        }
+        return events
+    }
+}
+
+//["Direction Pad X Axis", "Button A", "Right Thumbstick Down", "Direction Pad Down", "Button X", "Right Thumbstick X Axis", "Left Thumbstick Y Axis", "Direction Pad Up", "Right Trigger", "Left Thumbstick Up", "Button B", "Left Thumbstick Down", "Left Thumbstick Right", "Left Shoulder", "Direction Pad Left", "Direction Pad", "Direction Pad Y Axis", "Left Thumbstick Left", "Right Thumbstick Right", "Button Menu", "Left Thumbstick", "Right Shoulder", "Direction Pad Right", "Right Thumbstick", "Right Thumbstick Up", "Left Thumbstick X Axis", "Right Thumbstick Y Axis", "Left Trigger", "Button Y", "Right Thumbstick Left"]
+//["Left Thumbstick X Axis", "Right Thumbstick Up", "Left Thumbstick Y Axis", "Right Shoulder", "Right Trigger", "Right Thumbstick X Axis", "Direction Pad Down", "Left Thumbstick Up", "Direction Pad Left", "Left Thumbstick", "Direction Pad Y Axis", "Left Trigger", "Right Thumbstick", "Left Thumbstick Right", "Button Y", "Right Thumbstick Y Axis", "Right Thumbstick Down", "Right Thumbstick Left", "Button X", "Button B", "Direction Pad", "Right Thumbstick Right", "Direction Pad Right", "Button Menu", "Direction Pad Up", "Button A", "Left Thumbstick Left", "Direction Pad X Axis", "Left Shoulder", "Left Thumbstick Down"]
+//["Left Thumbstick Down", "Left Trigger", "Button X", "Right Thumbstick Left", "Right Thumbstick Right", "Left Thumbstick Up", "Button Y", "Right Shoulder", "Direction Pad Down", "Left Thumbstick Left", "Right Trigger", "Direction Pad Left", "Button B", "Direction Pad Right", "Left Thumbstick Right", "Button Menu", "Right Thumbstick Up", "Direction Pad Up", "Right Thumbstick Down", "Left Shoulder", "Button A"]
+//["Left Thumbstick X Axis", "Direction Pad Y Axis", "Direction Pad X Axis", "Right Thumbstick X Axis", "Left Thumbstick Y Axis", "Right Thumbstick Y Axis"]
+//["Right Thumbstick", "Direction Pad", "Left Thumbstick"]
+
+enum GCElementKey: String, CaseIterable {
+    case buttonA = "Button A"
+    case buttonB = "Button B"
+    case buttonMenu = "Button Menu"
+    case buttonX = "Button X"
+    case buttonY = "Button Y"
+    case directionPad = "Direction Pad"
+    case directionPadDown = "Direction Pad Down"
+    case directionPadLeft = "Direction Pad Left"
+    case directionPadRight = "Direction Pad Right"
+    case directionPadUp = "Direction Pad Up"
+    case directionPadXAxis = "Direction Pad X Axis"
+    case directionPadYAxis = "Direction Pad Y Axis"
+    case leftShoulder = "Left Shoulder"
+    case leftThumbstick = "Left Thumbstick"
+    case leftThumbstickDown = "Left Thumbstick Down"
+    case leftThumbstickLeft = "Left Thumbstick Left"
+    case leftThumbstickRight = "Left Thumbstick Right"
+    case leftThumbstickUp = "Left Thumbstick Up"
+    case leftThumbstickXAxis = "Left Thumbstick X Axis"
+    case leftThumbstickYAxis = "Left Thumbstick Y Axis"
+    case leftTrigger = "Left Trigger"
+    case rightShoulder = "Right Shoulder"
+    case rightThumbstick = "Right Thumbstick"
+    case rightThumbstickDown = "Right Thumbstick Down"
+    case rightThumbstickLeft = "Right Thumbstick Left"
+    case rightThumbstickRight = "Right Thumbstick Right"
+    case rightThumbstickUp = "Right Thumbstick Up"
+    case rightThumbstickXAxis = "Right Thumbstick X Axis"
+    case rightThumbstickYAxis = "Right Thumbstick Y Axis"
+    case rightTrigger = "Right Trigger"
+}
+
+extension AsyncSequence {
+    func cast <T>(to: T.Type) -> AsyncCompactMapSequence<Self, T?> {
+        compactMap { $0 as? T }
     }
 }

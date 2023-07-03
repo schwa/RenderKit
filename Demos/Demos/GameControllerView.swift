@@ -1,10 +1,3 @@
-//
-//  GameControllerView.swift
-//  Demos
-//
-//  Created by Jonathan Wight on 7/2/23.
-//
-
 import SwiftUI
 import GameController
 import SwiftFormats
@@ -15,19 +8,21 @@ struct GameControllerView: View {
     class Model {
         var currentController: GCController? = nil
         var controllers: [GCController] = []
-        
+
+        #if os(iOS)
         var virtualController: GCVirtualController? = nil
-        
+        // Temporary workaround for FB12509166
+        @ObservationIgnored
+        var _virtualController: GCVirtualController? = nil
+        #endif
+
         func scan() async {
             Task {
-                print("LISTEN")
                 for await _ in NotificationCenter.default.notifications(named: .GCControllerDidConnect) {
-                    print("A")
                     currentController = GCController.current
                     controllers = GCController.controllers()
                 }
                 for await _ in NotificationCenter.default.notifications(named: .GCControllerDidBecomeCurrent) {
-                    print("B")
                     currentController = GCController.current
                     controllers = GCController.controllers()
                 }
@@ -58,7 +53,6 @@ struct GameControllerView: View {
                             Text("isAttachedToDevice: \(controller.isAttachedToDevice, format: .bool)")
                             Text("isSnapshot: \(controller.isSnapshot, format: .bool)")
                             Text("playerIndex: \(controller.playerIndex.rawValue, format: .number)")
-                            Text("playerIndex: \(controller.playerIndex.rawValue, format: .number)")
                             //                controller.physicalInputProfile.hasRemappedElements
                             
                             PhysicalInputProfileView(physicalInputProfile: controller.physicalInputProfile)
@@ -77,17 +71,17 @@ struct GameControllerView: View {
                 Task {
                     let configuration = GCVirtualController.Configuration()
                     configuration.elements = [
-                        GCInputButtonA,
-                        GCInputButtonB,
-                        GCInputButtonX,
-                        GCInputButtonY,
+//                        GCInputButtonA,
+//                        GCInputButtonB,
+//                        GCInputButtonX,
+//                        GCInputButtonY,
                         //GCInputDirectionPad,
                         GCInputLeftThumbstick,
                         GCInputRightThumbstick,
                         GCInputLeftShoulder,
                         GCInputRightShoulder,
-                        GCInputLeftTrigger,
-                        GCInputRightTrigger
+//                        GCInputLeftTrigger,
+//                        GCInputRightTrigger
                     ]
                     let virtualController = GCVirtualController(configuration: configuration)
                     try! await virtualController.connect()
@@ -112,10 +106,8 @@ struct GameControllerView: View {
                             Text("PAD")
                         }
                     }
-
                 }
             }
-
         }
     }
 

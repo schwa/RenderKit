@@ -92,7 +92,7 @@ struct SimpleSceneRenderPass: RenderPass {
                 encoder.setVertexBuffer(model.mesh, startingIndex: 0)
                 for (fillMode, color) in modes {
                     let modelUniforms = ModelUniforms(
-                        modelViewMatrix: model.transform.matrix * scene.camera.transform.matrix.inverse,
+                        modelViewMatrix: scene.camera.transform.matrix.inverse * model.transform.matrix,
                         modelNormalMatrix: simd_float3x3(truncating: model.transform.matrix.transpose.inverse),
                         color: color ?? model.color
                     )
