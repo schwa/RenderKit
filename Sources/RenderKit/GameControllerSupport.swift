@@ -50,6 +50,8 @@ class MovementController {
     @ObservationIgnored
     let channel = AsyncChannel<Event>()
 
+//    var lastMouseUpdate: TimeInterval = 0
+
     @ObservationIgnored
     var mouse: GCMouse? = nil {
         willSet {
@@ -57,7 +59,14 @@ class MovementController {
         }
         didSet {
             mouse?.handlerQueue = DispatchQueue(label: "Mouse", qos: .userInteractive)
-            mouse?.mouseInput?.mouseMovedHandler = { [weak self] mouse, x, y in
+            mouse?.mouseInput?.mouseMovedHandler = { [weak self] mouseInput, x, y in
+
+//                let timestamp = Date.timeIntervalSinceReferenceDate
+//                print(timestamp - (self?.lastMouseUpdate ?? timestamp))
+//                self?.lastMouseUpdate = timestamp
+
+
+
                 guard x != 0 || y != 0 else {
                     return
                 }

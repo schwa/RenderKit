@@ -8,13 +8,14 @@ let logger = os.Logger()
 public struct MetalView: View {
     @Observable
     class Model: NSObject, MTKViewDelegate {
+        @ObservationIgnored
         var update: (any MetalViewConfiguration) -> Void = { _ in fatalError() }
+        @ObservationIgnored
         var drawableSizeWillChange: (CGSize) -> Void = { _ in fatalError() }
+        @ObservationIgnored
         var draw: (any MetalViewConfiguration) -> Void = { _ in fatalError() }
-
         @ObservationIgnored
         var lock = OSAllocatedUnfairLock()
-
         @ObservationIgnored
 //        let queue: DispatchQueue? = DispatchQueue(label: "MetalView", qos: .userInteractive)
         let queue: DispatchQueue? = nil
@@ -66,12 +67,13 @@ public struct MetalView: View {
             //            logger.debug("\(String(describing: type(of: self)), privacy: .public).\(#function, privacy: .public), view adaptor setup")
             let view = MTKView(frame: .zero, device: device)
             view.delegate = model
-            return view
-        } update: { view in
-            // Perform updates in a Task to allow clients to update state and avoid "Modifying state during view update, this will cause undefined behavior."
             Task {
                 model.update(view as any MetalViewConfiguration)
             }
+            return view
+        } update: { view in
+            //Self._printChanges()
+            // Perform updates in a Task to allow clients to update state and avoid "Modifying state during view update, this will cause undefined behavior."
         }
         .onAppear {
             model.update = update
