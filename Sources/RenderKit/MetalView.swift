@@ -87,62 +87,32 @@ extension MetalView {
     }
 }
 
-public protocol RenderPassConfiguration {
-    var device: MTLDevice? { get set }
-    //    var currentDrawable: CAMetalDrawable? { get }
-    //    var framebufferOnly: Bool { get set }
-    var depthStencilAttachmentTextureUsage: MTLTextureUsage { get set }
-    //    var multisampleColorAttachmentTextureUsage: MTLTextureUsage { get set }
-    //    var presentsWithTransaction: Bool { get set }
-    var colorPixelFormat: MTLPixelFormat { get set }
-    var depthStencilPixelFormat: MTLPixelFormat { get set }
-    var depthStencilStorageMode: MTLStorageMode { get set }
-    //    var sampleCount: Int { get set }
-    var clearColor: MTLClearColor { get set }
-    var clearDepth: Double { get set }
-    //    var clearStencil: UInt32 { get set }
-    var depthStencilTexture: MTLTexture? { get }
-    //    var multisampleColorTexture: MTLTexture? { get }
-    //    func releaseDrawables()
-    var currentRenderPassDescriptor: MTLRenderPassDescriptor? { get }
-    //    var preferredFramesPerSecond: Int { get set }
-    //    var enableSetNeedsDisplay: Bool { get set }
-    //    var autoResizeDrawable: Bool { get set }
-    //    var drawableSize: CGSize { get set }
-    //    var preferredDrawableSize: CGSize { get }
-    //    var preferredDevice: MTLDevice? { get }
-    //    var isPaused: Bool { get set }
-    //    var colorspace: CGColorSpace? { get set }
-
-    var size: CGSize? { get } // TODO: Rename, make optional?
-}
-
 // TODO: this needs to be paired down and replaced with better logic on MetalView
 public protocol MetalViewConfiguration: AnyObject, RenderPassConfiguration {
-    var device: MTLDevice? { get set }
+//    var device: MTLDevice? { get set }
     var currentDrawable: CAMetalDrawable? { get }
-    var framebufferOnly: Bool { get set }
-    var depthStencilAttachmentTextureUsage: MTLTextureUsage { get set }
-    var multisampleColorAttachmentTextureUsage: MTLTextureUsage { get set }
-    var presentsWithTransaction: Bool { get set }
+//    var framebufferOnly: Bool { get set }
+//    var depthStencilAttachmentTextureUsage: MTLTextureUsage { get set }
+//    var multisampleColorAttachmentTextureUsage: MTLTextureUsage { get set }
+//    var presentsWithTransaction: Bool { get set }
     var colorPixelFormat: MTLPixelFormat { get set }
     var depthStencilPixelFormat: MTLPixelFormat { get set }
     var depthStencilStorageMode: MTLStorageMode { get set }
-    var sampleCount: Int { get set }
-    var clearColor: MTLClearColor { get set }
+//    var sampleCount: Int { get set }
+//    var clearColor: MTLClearColor { get set }
     var clearDepth: Double { get set }
-    var clearStencil: UInt32 { get set }
-    var depthStencilTexture: MTLTexture? { get }
-    var multisampleColorTexture: MTLTexture? { get }
-    func releaseDrawables()
-    var currentRenderPassDescriptor: MTLRenderPassDescriptor? { get }
+//    var clearStencil: UInt32 { get set }
+//    var depthStencilTexture: MTLTexture? { get }
+//    var multisampleColorTexture: MTLTexture? { get }
+//    func releaseDrawables()
+//    var currentRenderPassDescriptor: MTLRenderPassDescriptor? { get }
     var preferredFramesPerSecond: Int { get set }
-    var enableSetNeedsDisplay: Bool { get set }
-    var autoResizeDrawable: Bool { get set }
-    var drawableSize: CGSize { get set }
-    var preferredDrawableSize: CGSize { get }
-    var preferredDevice: MTLDevice? { get }
-    var isPaused: Bool { get set }
+//    var enableSetNeedsDisplay: Bool { get set }
+//    var autoResizeDrawable: Bool { get set }
+//    var drawableSize: CGSize { get set }
+//    var preferredDrawableSize: CGSize { get }
+//    var preferredDevice: MTLDevice? { get }
+//    var isPaused: Bool { get set }
     //    var colorspace: CGColorSpace? { get set }
 }
 
@@ -152,3 +122,54 @@ extension MTKView: MetalViewConfiguration {
     }
 
 }
+
+//protocol RenderKitUpdateConfiguration {
+//    var device: MTLDevice? { get set }
+//}
+//
+//protocol RenderKitDrawConfiguration {
+//    var device: MTLDevice? { get }
+//}
+//
+//protocol MetalViewUpdateConfiguration: RenderKitUpdateConfiguration {
+//    var currentDrawable: CAMetalDrawable? { get }
+//}
+//
+//protocol MetalViewDrawConfiguration: RenderKitUpdateConfiguration {
+//    var currentDrawable: CAMetalDrawable? { get }
+//}
+//
+//struct ConcreteMetalViewConfiguration: MetalViewUpdateConfiguration, MetalViewDrawConfiguration {
+//    var currentDrawable: CAMetalDrawable?
+//    var device: MTLDevice?
+//}
+
+//public protocol RenderPassConfiguration {
+//    var device: MTLDevice? { get set }
+//    //    var currentDrawable: CAMetalDrawable? { get }
+//    //    var framebufferOnly: Bool { get set }
+//    var depthStencilAttachmentTextureUsage: MTLTextureUsage { get set }
+//    //    var multisampleColorAttachmentTextureUsage: MTLTextureUsage { get set }
+//    //    var presentsWithTransaction: Bool { get set }
+//    var colorPixelFormat: MTLPixelFormat { get set }
+//    var depthStencilPixelFormat: MTLPixelFormat { get set }
+//    var depthStencilStorageMode: MTLStorageMode { get set }
+//    //    var sampleCount: Int { get set }
+//    var clearColor: MTLClearColor { get set }
+//    var clearDepth: Double { get set }
+//    //    var clearStencil: UInt32 { get set }
+//    var depthStencilTexture: MTLTexture? { get }
+//    //    var multisampleColorTexture: MTLTexture? { get }
+//    //    func releaseDrawables()
+//    var currentRenderPassDescriptor: MTLRenderPassDescriptor? { get }
+//    //    var preferredFramesPerSecond: Int { get set }
+//    //    var enableSetNeedsDisplay: Bool { get set }
+//    //    var autoResizeDrawable: Bool { get set }
+//    //    var drawableSize: CGSize { get set }
+//    //    var preferredDrawableSize: CGSize { get }
+//    //    var preferredDevice: MTLDevice? { get }
+//    //    var isPaused: Bool { get set }
+//    //    var colorspace: CGColorSpace? { get set }
+//
+//    var size: CGSize? { get } // TODO: Rename, make optional?
+//}
