@@ -14,9 +14,9 @@ let package = Package(
             targets: ["RenderKit"]),
     ],
     dependencies: [
-//        .package(url: "https://github.com/schwa/Everything", from: "0.4.3"),
+        .package(url: "https://github.com/schwa/Everything", from: "0.4.3"),
 //        .package(url: "https://github.com/schwa/Everything", branch: "main"),
-        .package(path: "/Users/schwa/Projects/Everything"),
+//        .package(path: "/Users/schwa/Projects/Everything"),
         .package(url: "https://github.com/schwa/MetalSupport", from: "0.2.0"),
         .package(url: "https://github.com/schwa/SIMD-Support", from: "0.1.1"),
         .package(url: "https://github.com/schwa/CoreGraphicsGeometrySupport", from: "0.1.0"),
