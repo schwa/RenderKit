@@ -3,8 +3,6 @@ import MetalKit
 import Everything
 import os
 
-let logger = os.Logger()
-
 public struct MetalView: View {
     @Observable
     class Model: NSObject, MTKViewDelegate {

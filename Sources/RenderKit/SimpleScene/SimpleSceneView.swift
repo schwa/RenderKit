@@ -12,6 +12,9 @@ import CoreImage
 import CoreGraphicsGeometrySupport
 import GameController
 import AsyncAlgorithms
+import os
+
+let logger = Logger()
 
 public struct SimpleSceneView: View {
 
@@ -41,19 +44,21 @@ public struct SimpleSceneView: View {
     @FocusState
     var renderViewFocused: Bool
 
+    @State
+    var label: String?
+
     public init() {
     }
 
     public var body: some View {
         ZStack {
             RendererView(renderPass: $renderPass)
-                .onAppear {
-                    guard let displayLink else {
-                        fatalError()
-                    }
-                    movementController = MovementController(displayLink: displayLink)
+            .onAppear {
+                guard let displayLink else {
+                    fatalError()
                 }
-
+                movementController = MovementController(displayLink: displayLink)
+            }
             .focusable(interactions: .automatic)
             .focused($renderViewFocused)
             .focusEffectDisabled()
@@ -90,8 +95,14 @@ public struct SimpleSceneView: View {
                 guard let movementController else {
                     fatalError()
                 }
-                for await event in movementController.events().throttle(for: .seconds(1/60), latest: true) {
-                    switch event {
+                // .throttle(for: .seconds(1/60), latest: true)
+                for await event in movementController.events() {                    
+//                    let delta = CFAbsoluteTimeGetCurrent() - event.created
+//                    let change = delta - last
+//                    last = delta
+//                    logger.debug("\(delta) \(change)")
+
+                    switch event.payload {
                     case .movement(let movement):
                         let target = renderPass.scene!.camera.target
                         let angle = atan2(target.z, target.x) - .pi / 2

@@ -10,9 +10,21 @@ class MovementController {
 
     var focused: Bool = false
 
-    enum Event {
-        case movement(SIMD3<Float>)
-        case rotation(Float)
+    struct Event {
+        enum Payload {
+            case movement(SIMD3<Float>)
+            case rotation(Float)
+        }
+        var payload: Payload
+        var created = CFAbsoluteTimeGetCurrent()
+
+        static func movement(_ movement: SIMD3<Float>) -> Event {
+            return .init(payload: .movement(movement))
+        }
+
+        static func rotation(_ rotation: Float) -> Event {
+            return .init(payload: .rotation(rotation))
+        }
     }
 
     struct AsyncIterator: AsyncIteratorProtocol {
@@ -52,6 +64,8 @@ class MovementController {
 
 //    var lastMouseUpdate: TimeInterval = 0
 
+    var mouseMovement: SIMD2<Float> = .zero
+
     @ObservationIgnored
     var mouse: GCMouse? = nil {
         willSet {
@@ -60,13 +74,6 @@ class MovementController {
         didSet {
             mouse?.handlerQueue = DispatchQueue(label: "Mouse", qos: .userInteractive)
             mouse?.mouseInput?.mouseMovedHandler = { [weak self] mouseInput, x, y in
-
-//                let timestamp = Date.timeIntervalSinceReferenceDate
-//                print(timestamp - (self?.lastMouseUpdate ?? timestamp))
-//                self?.lastMouseUpdate = timestamp
-
-
-
                 guard x != 0 || y != 0 else {
                     return
                 }
@@ -76,9 +83,10 @@ class MovementController {
                 guard strongSelf.focused == true else {
                     return
                 }
-                Task(priority: .userInitiated) {
-                    await strongSelf.channel.send(.rotation(x))
-                }
+                strongSelf.mouseMovement += SIMD2(x, y)
+//                Task(priority: .userInitiated) {
+//                    await strongSelf.channel.send(.rotation(x))
+//                }
             }
         }
     }
@@ -113,7 +121,6 @@ class MovementController {
                 }
             }
         }
-
         Task(priority: .userInitiated) {
             let events = displayLink.events().flatMap { [weak self] _ in
                 return (self?.makeEvent() ?? []).async
@@ -121,7 +128,6 @@ class MovementController {
             for await event in events {
                 await channel.send(event)
             }
-
         }
         return channel
     }
@@ -136,6 +142,10 @@ class MovementController {
                 movement != .zero ? Event.movement(movement) : nil,
                 rotation != .zero ? Event.rotation(rotation) : nil
             ].compacted())
+        }
+        if mouseMovement != .zero {
+            events.append(.rotation(mouseMovement.x))
+            mouseMovement = .zero
         }
         return events
     }
