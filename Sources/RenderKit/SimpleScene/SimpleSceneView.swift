@@ -45,7 +45,7 @@ public struct SimpleSceneView: View {
     public var body: some View {
         ZStack {
             RendererView(renderPass: $renderPass)
-            .ignoresSafeArea()
+//            .ignoresSafeArea()
             .overlay(alignment: .bottomTrailing) {
                 $renderPass.scene.withUnsafeBinding {
                     MapView(scene: $0)
@@ -202,7 +202,7 @@ public struct SimpleSceneView: View {
                 let zRange = Array<Float>(stride(from: 0, through: -10, by: -1))
 
                 let scene = SimpleScene(
-                    camera: Camera(transform: .translation([0, 0, 2]), target: [0, 0, -1], projection: .perspective(.init(fovy: Float(degrees: 90), zClip: 0.1 ... 100))),
+                    camera: Camera(transform: .translation([0, 0, 2]), target: [0, 0, -1], projection: .perspective(.init(fovy: .degrees(90), zClip: 0.1 ... 100))),
                     light: .init(position: .translation([-1, 2, 1]), color: [1, 1, 1], power: 1),
                     ambientLightColor: [0, 0, 0],
                     models:
@@ -336,7 +336,7 @@ struct SimpleSceneInspector: View {
                 }
                 switch type {
                 case .perspective:
-                    projection = .perspective(.init(fovy: .pi / 2, zClip: 0.001 ... 1000))
+                    projection = .perspective(.init(fovy: .degrees(90), zClip: 0.001 ... 1000))
                 case .orthographic:
                     projection = .orthographic(.init(left: -1, right: 1, bottom: -1, top: 1, near: -1, far: 1))
                 }
@@ -349,7 +349,12 @@ struct SimpleSceneInspector: View {
                     self.projection = .perspective(newValue)
                 }
 //                    let fieldOfView = Binding<SwiftUI.Angle>(get: { .degrees(projection.fovy) }, set: { projection.fovy = $0.radians })
-                TextField("FOVY", value: Binding<SwiftUI.Angle>(radians: projection.fovy), format: .angle)
+                HStack {
+                    let binding = Binding<SwiftUI.Angle>(radians: projection.fovy.radians)
+                    TextField("FOVY", value: binding, format: .angle)
+                    SliderPopoverButton(value: projection.fovy.degrees, in: 0...180, minimumValueLabel: { Image(systemName: "field.of.view.wide") }, maximumValueLabel: { Image(systemName: "field.of.view.ultrawide") })
+
+                }
                 TextField("Clipping Distance", value: projection.zClip, format: ClosedRangeFormatStyle(substyle: .number))
             case .orthographic(let projection):
                 let projection = Binding {
@@ -416,10 +421,17 @@ struct TransformEditor: View {
     }
 }
 
-struct SliderPopoverButton: View {
+struct SliderPopoverButton<Label, ValueLabel> : View where Label : View, ValueLabel : View {
 
     @Binding
     var value: Double
+
+    var bounds: ClosedRange<Double>
+
+    var label: Label
+    var minimumValueLabel: ValueLabel
+    var maximumValueLabel: ValueLabel
+    var onEditingChanged: (Bool) -> Void
 
     @State
     var isPresented = false
@@ -431,17 +443,32 @@ struct SliderPopoverButton: View {
         .buttonStyle(.borderless)
         .tint(.accentColor)
         .popover(isPresented: $isPresented, content: {
-            Slider(value: $value)
+            Slider(value: $value, in: bounds, label: { label }, minimumValueLabel: { minimumValueLabel }, maximumValueLabel: { maximumValueLabel }, onEditingChanged: onEditingChanged)
             .controlSize(.mini)
-            .frame(minWidth: 40)
+            .frame(minWidth: 100)
             .padding()
         })
     }
+
+    init<V>(value: Binding<V>, in bounds: ClosedRange<V> = 0...1, @ViewBuilder label: () -> Label, @ViewBuilder minimumValueLabel: () -> ValueLabel, @ViewBuilder maximumValueLabel: () -> ValueLabel, onEditingChanged: @escaping (Bool) -> Void = { _ in }) where V: BinaryFloatingPoint, V.Stride: BinaryFloatingPoint {
+        self._value = Binding<Double>(value)
+        self.bounds = Double(bounds.lowerBound) ... Double(bounds.upperBound)
+        self.label = label()
+        self.minimumValueLabel = minimumValueLabel()
+        self.maximumValueLabel = maximumValueLabel()
+        self.onEditingChanged = onEditingChanged
+    }
 }
 
-extension SliderPopoverButton {
-    init<Value>(value: Binding<Value>) where Value: BinaryFloatingPoint {
-        self.init(value: Binding<Double>(value))
+extension SliderPopoverButton where Label == EmptyView, ValueLabel == EmptyView {
+    init<V>(value: Binding<V>, in bounds: ClosedRange<V> = 0...1, onEditingChanged: @escaping (Bool) -> Void = { _ in }) where V: BinaryFloatingPoint, V.Stride: BinaryFloatingPoint {
+        self = .init(value: value, in: bounds, label: { EmptyView() }, minimumValueLabel: { EmptyView() }, maximumValueLabel: { EmptyView() }, onEditingChanged: onEditingChanged)
+    }
+}
+
+extension SliderPopoverButton where Label == EmptyView {
+    init<V>(value: Binding<V>, in bounds: ClosedRange<V> = 0...1, @ViewBuilder minimumValueLabel: () -> ValueLabel, @ViewBuilder maximumValueLabel: () -> ValueLabel, onEditingChanged: @escaping (Bool) -> Void = { _ in }) where V: BinaryFloatingPoint, V.Stride: BinaryFloatingPoint {
+        self = .init(value: value, in: bounds, label: { EmptyView() }, minimumValueLabel: minimumValueLabel, maximumValueLabel: maximumValueLabel, onEditingChanged: onEditingChanged)
     }
 }
 
@@ -570,7 +597,7 @@ struct MapView: View {
             let cameraPosition = CGPoint(scene.camera.transform.translation.xz)
 
             if case let .perspective(perspective) = scene.camera.projection {
-                let viewCone = Path.arc(center: cameraPosition * scale, radius: 4 * scale, midAngle: .radians(Double(scene.camera.heading.radians)), width: .radians(Double(perspective.fovy)))
+                let viewCone = Path.arc(center: cameraPosition * scale, radius: 4 * scale, midAngle: .radians(Double(scene.camera.heading.radians)), width: .radians(Double(perspective.fovy.radians)))
                 context.fill(viewCone, with: .radialGradient(Gradient(colors: [.white.opacity(0.5), .white.opacity(0.0)]), center: cameraPosition * scale, startRadius: 0, endRadius: 4 * scale))
                 context.stroke(viewCone, with: .color(.white))
 

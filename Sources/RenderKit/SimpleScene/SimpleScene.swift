@@ -11,12 +11,12 @@ protocol ProjectionProtocol: Equatable {
 }
 
 struct PerspectiveProjection: ProjectionProtocol {
-    var fovy: Float
+    var fovy: SIMDSupport.Angle<Float>
     var zClip: ClosedRange<Float>
 
     func matrix(viewSize: SIMD2<Float>) -> simd_float4x4 {
         let aspect = viewSize.x / viewSize.y
-        return .perspective(aspect: aspect, fovy: fovy, near: zClip.lowerBound, far: zClip.upperBound)
+        return .perspective(aspect: aspect, fovy: fovy.radians, near: zClip.lowerBound, far: zClip.upperBound)
     }
 }
 
