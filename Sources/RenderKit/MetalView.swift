@@ -5,7 +5,7 @@ import os
 
 let logger = os.Logger()
 
-public struct MetalView2: View {
+public struct MetalView: View {
     @Observable
     class Model: NSObject, MTKViewDelegate {
         var update: (any MetalViewConfiguration) -> Void = { _ in fatalError() }
@@ -16,7 +16,7 @@ public struct MetalView2: View {
         var lock = OSAllocatedUnfairLock()
 
         @ObservationIgnored
-//        let queue: DispatchQueue? = DispatchQueue(label: "MetalView2", qos: .userInteractive)
+//        let queue: DispatchQueue? = DispatchQueue(label: "MetalView", qos: .userInteractive)
         let queue: DispatchQueue? = nil
 
         func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
@@ -78,7 +78,7 @@ public struct MetalView2: View {
     }
 }
 
-extension MetalView2 {
+extension MetalView {
     public init(update: @escaping (any MetalViewConfiguration) -> Void, draw: @escaping (any MetalViewConfiguration) -> Void) {
         self.init(update: update, drawableSizeWillChange: { _ in }, draw: draw)
     }
