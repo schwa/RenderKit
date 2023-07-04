@@ -6,7 +6,12 @@ import Everything
 import MetalSupport
 import SIMDSupport
 
-public class OffscreenRenderPassConfiguration: RenderPassConfiguration {
+// TODO: Struct?
+public struct OffscreenRenderPassConfiguration: RenderKitUpdateConfiguration, RenderKitDrawConfiguration {
+    public var currentDrawable: CAMetalDrawable?
+    
+    public var preferredFramesPerSecond: Int = 120
+    
     // TODO: INVENTED VALUES
     public var depthStencilAttachmentTextureUsage: MTLTextureUsage = .renderTarget
     public var depthStencilStorageMode: MTLStorageMode = .shared
@@ -26,7 +31,7 @@ public class OffscreenRenderPassConfiguration: RenderPassConfiguration {
     public init() {
     }
 
-    public func update() {
+    public mutating func update() {
         currentRenderPassDescriptor = nil
         targetTexture = nil
 
@@ -63,13 +68,17 @@ public class OffscreenRenderPassConfiguration: RenderPassConfiguration {
 }
 
 public protocol RenderPass {
-    mutating func setup(configuration: RenderPassConfiguration)
-    func draw(configuration: RenderPassConfiguration, commandBuffer: MTLCommandBuffer)
+
+    associatedtype UpdateConfiguration: RenderKitUpdateConfiguration
+    associatedtype DrawConfiguration: RenderKitDrawConfiguration
+
+
+    mutating func setup(configuration: inout UpdateConfiguration)
+    func draw(configuration: DrawConfiguration, commandBuffer: MTLCommandBuffer)
 }
 
 
-public struct OffscreenDemoRenderPass: RenderPass {
-
+public struct OffscreenDemoRenderPass <UpdateConfiguration, DrawConfiguration>: RenderPass where UpdateConfiguration: RenderKitUpdateConfiguration, DrawConfiguration: RenderKitDrawConfiguration {
     public var shaderToyRenderPipelineState: MTLRenderPipelineState?
     public var plane: MTKMesh?
     public var pixelate = false
@@ -83,7 +92,7 @@ public struct OffscreenDemoRenderPass: RenderPass {
     public init() {
     }
 
-    public mutating func setup(configuration: RenderPassConfiguration) {
+    public mutating func setup(configuration: inout UpdateConfiguration) {
         guard let device = configuration.device else {
             fatalError("No metal device")
         }
@@ -110,7 +119,7 @@ public struct OffscreenDemoRenderPass: RenderPass {
         self.shaderToyRenderPipelineState = shaderToyRenderPipelineState
     }
 
-    public func draw(configuration: RenderPassConfiguration, commandBuffer: MTLCommandBuffer) {
+    public func draw(configuration: DrawConfiguration, commandBuffer: MTLCommandBuffer) {
         guard let device = configuration.device, let plane, let shaderToyRenderPipelineState, let size = configuration.size else {
             logger.warning("Not ready to draw.")
             return
@@ -153,12 +162,12 @@ public struct OffscreenDemoRenderPass: RenderPass {
 public struct OffscreenDemo {
     public static func main() async throws {
         let device = MTLCreateSystemDefaultDevice()!
-        let configuration = OffscreenRenderPassConfiguration()
+        var configuration = OffscreenRenderPassConfiguration()
         configuration.colorPixelFormat = .bgra10_xr_srgb
         configuration.device = device
         configuration.update()
-        var offscreen: RenderPass = OffscreenDemoRenderPass()
-        offscreen.setup(configuration: configuration)
+        var offscreen = OffscreenDemoRenderPass<OffscreenRenderPassConfiguration, OffscreenRenderPassConfiguration>()
+        offscreen.setup(configuration: &configuration)
 
         guard let commandQueue = device.makeCommandQueue() else {
             fatalError()

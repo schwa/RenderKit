@@ -5,7 +5,7 @@ import MetalKit
 import SIMDSupport
 import Shaders
 
-struct SimpleSceneRenderPass: RenderPass {
+struct SimpleSceneRenderPass<UpdateConfiguration, DrawConfiguration>: RenderPass where UpdateConfiguration: RenderKitUpdateConfiguration, DrawConfiguration: RenderKitDrawConfiguration {
 
     var scene: SimpleScene?
     var renderPipelineState: MTLRenderPipelineState?
@@ -14,7 +14,7 @@ struct SimpleSceneRenderPass: RenderPass {
     init() {
     }
 
-    mutating func setup(configuration: RenderPassConfiguration) {
+    mutating func setup(configuration: inout UpdateConfiguration) {
         guard let device = configuration.device else {
             fatalError("No metal device")
         }
@@ -45,9 +45,13 @@ struct SimpleSceneRenderPass: RenderPass {
         }
     }
 
-    func draw(configuration: RenderPassConfiguration, commandBuffer: MTLCommandBuffer) {
-        guard let renderPassDescriptor = configuration.currentRenderPassDescriptor, let renderPipelineState, let depthStencilState, let size = configuration.size else {
-            logger.warning("No current render pass descriptor.")
+    func draw(configuration: DrawConfiguration, commandBuffer: MTLCommandBuffer) {
+        guard let renderPipelineState, let depthStencilState else {
+
+            return
+        }
+        guard let renderPassDescriptor = configuration.currentRenderPassDescriptor, let size = configuration.size else {
+            fatalError("No current render pass descriptor.")
             return
         }
         commandBuffer.withRenderCommandEncoder(descriptor: renderPassDescriptor) { encoder in

@@ -25,7 +25,7 @@ public struct SimpleSceneView: View {
     var displayLink
 
     @State
-    var renderPass = SimpleSceneRenderPass()
+    var renderPass = SimpleSceneRenderPass<ConcreteMetalViewConfiguration, ConcreteMetalViewConfiguration>()
 
     #if os(macOS)
     @State
@@ -204,25 +204,25 @@ public struct SimpleSceneView: View {
                 ValueView(value: false) { isPresentedBinding in
                     Button(title: "Snapshot", systemImage: "camera") {
                         Task {
-                            // Move this logic out
-                            guard let device else {
-                                return
-                            }
-                            let configuration = OffscreenRenderPassConfiguration()
-                            configuration.colorPixelFormat = .bgra8Unorm_srgb
-                            configuration.depthStencilPixelFormat = .depth16Unorm
-                            configuration.device = device
-                            configuration.update()
-                            renderPass.setup(configuration: configuration)
-                            guard let commandQueue = device.makeCommandQueue() else {
-                                fatalError()
-                            }
-                            commandQueue.withCommandBuffer(waitAfterCommit: true) { commandBuffer in
-                                renderPass.draw(configuration: configuration, commandBuffer: commandBuffer)
-                            }
-                            let cgImage = await configuration.targetTexture!.cgImage(colorSpace: CGColorSpace(name: CGColorSpace.extendedSRGB))
-                            exportImage = Image(cgImage: cgImage)
-                            isPresentedBinding.wrappedValue = true
+//                            // Move this logic out
+//                            guard let device else {
+//                                return
+//                            }
+//                            var configuration = OffscreenRenderPassConfiguration()
+//                            configuration.colorPixelFormat = .bgra8Unorm_srgb
+//                            configuration.depthStencilPixelFormat = .depth16Unorm
+//                            configuration.device = device
+//                            configuration.update()
+//                            renderPass.setup(configuration: configuration)
+//                            guard let commandQueue = device.makeCommandQueue() else {
+//                                fatalError()
+//                            }
+//                            commandQueue.withCommandBuffer(waitAfterCommit: true) { commandBuffer in
+//                                renderPass.draw(configuration: configuration, commandBuffer: commandBuffer)
+//                            }
+//                            let cgImage = await configuration.targetTexture!.cgImage(colorSpace: CGColorSpace(name: CGColorSpace.extendedSRGB))
+//                            exportImage = Image(cgImage: cgImage)
+//                            isPresentedBinding.wrappedValue = true
                         }
                     }
                     .fileExporter(isPresented: isPresentedBinding, item: exportImage, contentTypes: [.png, .jpeg]) { result in
@@ -289,21 +289,21 @@ struct MapView: View {
     }
 }
 
-extension RenderPass {
-    mutating func snapshot(device: MTLDevice) async throws -> CGImage {
-        let configuration = OffscreenRenderPassConfiguration()
-        configuration.colorPixelFormat = .bgra8Unorm_srgb
-        configuration.depthStencilPixelFormat = .depth16Unorm
-        configuration.device = device
-        configuration.update()
-        self.setup(configuration: configuration)
-        guard let commandQueue = device.makeCommandQueue() else {
-            fatalError()
-        }
-        commandQueue.withCommandBuffer(waitAfterCommit: true) { commandBuffer in
-            self.draw(configuration: configuration, commandBuffer: commandBuffer)
-        }
-        let cgImage = await configuration.targetTexture!.cgImage(colorSpace: CGColorSpace(name: CGColorSpace.extendedSRGB))
-        return cgImage
-    }
-}
+//extension RenderPass {
+//    mutating func snapshot(device: MTLDevice) async throws -> CGImage {
+//        let configuration = OffscreenRenderPassConfiguration()
+//        configuration.colorPixelFormat = .bgra8Unorm_srgb
+//        configuration.depthStencilPixelFormat = .depth16Unorm
+//        configuration.device = device
+//        configuration.update()
+//        self.setup(configuration: configuration)
+//        guard let commandQueue = device.makeCommandQueue() else {
+//            fatalError()
+//        }
+//        commandQueue.withCommandBuffer(waitAfterCommit: true) { commandBuffer in
+//            self.draw(configuration: configuration, commandBuffer: commandBuffer)
+//        }
+//        let cgImage = await configuration.targetTexture!.cgImage(colorSpace: CGColorSpace(name: CGColorSpace.extendedSRGB))
+//        return cgImage
+//    }
+//}
