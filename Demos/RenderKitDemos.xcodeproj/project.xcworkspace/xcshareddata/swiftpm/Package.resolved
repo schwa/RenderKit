@@ -10,15 +10,6 @@
       }
     },
     {
-      "identity" : "everything",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/schwa/Everything",
-      "state" : {
-        "revision" : "c38a4ad630a12619cbb9d86dcb0fd51eff926709",
-        "version" : "0.4.2"
-      }
-    },
-    {
       "identity" : "metalsupport",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/schwa/MetalSupport",
