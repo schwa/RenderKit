@@ -18,6 +18,9 @@ public struct SimpleSceneView: View {
     @Environment(\.metalDevice)
     var device
 
+    @Environment(\.displayLink)
+    var displayLink
+
     @State
     var renderPass = SimpleSceneRenderPass()
 
@@ -29,17 +32,14 @@ public struct SimpleSceneView: View {
     var isInspectorPresented = false
     #endif
 
-    @Environment(\.displayLink)
-    var displayLink
-
     @State
-    var movementController = MovementController(displayLink: DisplayLink())
-
-    @FocusState
-    var renderViewFocused
+    var movementController: MovementController?
 
     @State
     var exportImage: Image?
+
+    @FocusState
+    var renderViewFocused: Bool
 
     public init() {
     }
@@ -47,6 +47,13 @@ public struct SimpleSceneView: View {
     public var body: some View {
         ZStack {
             RendererView(renderPass: $renderPass)
+                .onAppear {
+                    guard let displayLink else {
+                        fatalError()
+                    }
+                    movementController = MovementController(displayLink: displayLink)
+                }
+
             .focusable(interactions: .automatic)
             .focused($renderViewFocused)
             .focusEffectDisabled()
@@ -80,9 +87,11 @@ public struct SimpleSceneView: View {
                     .padding()
             }
             .task(priority: .userInitiated) {
-                for await event in movementController.events() {
+                guard let movementController else {
+                    fatalError()
+                }
+                for await event in movementController.events().throttle(for: .seconds(1/60), latest: true) {
                     switch event {
-
                     case .movement(let movement):
                         let target = renderPass.scene!.camera.target
                         let angle = atan2(target.z, target.x) - .pi / 2
@@ -94,7 +103,9 @@ public struct SimpleSceneView: View {
                 }
             }
             .task(priority: .userInitiated) {
-                let displayLink = DisplayLink()
+                guard let displayLink else {
+                    fatalError()
+                }
                 // TODO: Move to MovementController
                 for await _ in NotificationCenter.default.notifications(named: .GCKeyboardDidConnect) {
                     break
@@ -161,7 +172,7 @@ public struct SimpleSceneView: View {
         }
         #endif
         .onChange(of: renderViewFocused) {
-            movementController.focused = renderViewFocused
+            movementController?.focused = renderViewFocused
         }
         #if os(macOS)
         .showFrameEditor()
@@ -238,19 +249,17 @@ struct MapView: View {
     var body: some View {
         Canvas(opaque: true) { context, size in
             context.concatenate(.init(translation: [size.width / 2, size.height / 2]))
-
             for model in scene.models {
                 let position = CGPoint(model.transform.translation.xz)
                 let colorVector = model.color
                 let color = Color(red: Double(colorVector.r), green: Double(colorVector.g), blue: Double(colorVector.b))
                 context.fill(Path(ellipseIn: CGRect(center: position * scale, diameter: 1 * scale)), with: .color(color.opacity(0.5)))
             }
-
             let cameraPosition = CGPoint(scene.camera.transform.translation.xz)
 
             if case let .perspective(perspective) = scene.camera.projection {
                 let viewCone = Path.arc(center: cameraPosition * scale, radius: 4 * scale, midAngle: .radians(Double(scene.camera.heading.radians)), width: .radians(Double(perspective.fovy.radians)))
-                context.fill(viewCone, with: .radialGradient(Gradient(colors: [.white.opacity(0.5), .white.opacity(0.0)]), center: cameraPosition * scale, startRadius: 0, endRadius: 4 * scale))
+//                context.fill(viewCone, with: .radialGradient(Gradient(colors: [.white.opacity(0.5), .white.opacity(0.0)]), center: cameraPosition * scale, startRadius: 0, endRadius: 4 * scale))
                 context.stroke(viewCone, with: .color(.white))
 
             }

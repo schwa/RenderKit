@@ -56,7 +56,7 @@ class MovementController {
             mouse?.mouseInput?.mouseMovedHandler = nil
         }
         didSet {
-            mouse?.handlerQueue = DispatchQueue(label: "Mouse", qos: .userInteractive, attributes: .concurrent)
+            mouse?.handlerQueue = DispatchQueue(label: "Mouse", qos: .userInteractive)
             mouse?.mouseInput?.mouseMovedHandler = { [weak self] mouse, x, y in
                 guard x != 0 || y != 0 else {
                     return

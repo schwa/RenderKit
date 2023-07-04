@@ -1,12 +1,16 @@
 import SwiftUI
 import RenderKit
+import Everything
 
 struct ContentView: View {
     var body: some View {
-//        NavigationSplitView {
+        SimpleSceneView()
+            .metalDevice(MTLCreateSystemDefaultDevice()!)
+            .displayLink(DisplayLink())
+
+        //        NavigationSplitView {
 //            List {
 //                NavigationLink("SimpleSceneView") {
-                    SimpleSceneView().metalDevice(MTLCreateSystemDefaultDevice()!)
 //                }
 //                NavigationLink("GCView") {
 //                    GameControllerView()
