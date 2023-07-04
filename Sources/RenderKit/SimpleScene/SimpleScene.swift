@@ -5,6 +5,7 @@ import simd
 import ModelIO
 import MetalKit
 import SwiftUI
+import Algorithms
 
 protocol ProjectionProtocol: Equatable {
     func matrix(viewSize: SIMD2<Float>) -> simd_float4x4
@@ -95,3 +96,43 @@ struct SimpleScene {
     var models: [Model]
 }
 
+
+
+extension Camera {
+    var heading: SIMDSupport.Angle<Float> {
+        get {
+            let degrees = Angle(from: .zero, to: target.xz).degrees
+            return Angle(degrees: degrees)
+        }
+        set {
+            let length = target.length
+            target = SIMD3<Float>(xz: SIMD2<Float>(length: length, angle: newValue))
+        }
+    }
+}
+
+extension SimpleScene {
+    static func demo(device: MTLDevice) throws -> SimpleScene {
+        let cone = try MTKMesh(mesh: MDLMesh(coneWithExtent: [0.5, 1, 0.5], segments: [20, 10], inwardNormals: false, cap: true, geometryType: .triangles, allocator: MTKMeshBufferAllocator(device: device)), device: device)
+        let sphere = try MTKMesh(mesh: MDLMesh(sphereWithExtent: [0.5, 0.5, 0.5], segments: [20, 10], inwardNormals: false, geometryType: .triangles, allocator: MTKMeshBufferAllocator(device: device)), device: device)
+        let capsule = try MTKMesh(mesh: MDLMesh(capsuleWithExtent: [0.25, 1, 0.25], cylinderSegments: [30, 10], hemisphereSegments: 5, inwardNormals: false, geometryType: .triangles, allocator: MTKMeshBufferAllocator(device: device)), device: device)
+
+        let meshes = [cone, sphere, capsule]
+
+        let xRange = Array<Float>(stride(from: -2, through: 2, by: 1))
+        let zRange = Array<Float>(stride(from: 0, through: -10, by: -1))
+
+        let scene = SimpleScene(
+            camera: Camera(transform: .translation([0, 0, 2]), target: [0, 0, -1], projection: .perspective(.init(fovy: .degrees(90), zClip: 0.1 ... 100))),
+            light: .init(position: .translation([-1, 2, 1]), color: [1, 1, 1], power: 1),
+            ambientLightColor: [0, 0, 0],
+            models:
+                product(xRange, zRange).map { x, z in
+                    let hsv: SIMD3<Float> = [Float.random(in: 0...1), 1, 1]
+                    let rgba = SIMD4<Float>(hsv.hsv2rgb(), 1.0)
+                    return Model(transform: .translation([x, 0, z]), color: rgba, mesh: meshes.randomElement()!)
+                }
+        )
+        return scene
+    }
+}

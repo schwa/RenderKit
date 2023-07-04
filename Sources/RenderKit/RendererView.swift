@@ -19,9 +19,9 @@ public struct RendererView <T>: View where T: RenderPass {
             }
         }
         draw: { configuration in
-        commandQueue?.withCommandBuffer(drawable: configuration.currentDrawable, block: { commandBuffer in
-            renderPass.draw(configuration: configuration, commandBuffer: commandBuffer)
-        })
-    }
+            commandQueue?.withCommandBuffer(drawable: configuration.currentDrawable, block: { commandBuffer in
+                renderPass.draw(configuration: configuration, commandBuffer: commandBuffer)
+            })
+        }
     }
 }

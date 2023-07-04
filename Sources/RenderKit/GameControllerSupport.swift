@@ -10,10 +10,6 @@ class MovementController {
 
     var focused: Bool = false
 
-    init(displayLink: DisplayLinkPublisher = .init()) {
-        self.displayLink = displayLink
-    }
-
     enum Event {
         case movement(SIMD3<Float>)
         case rotation(Float)
@@ -27,7 +23,7 @@ class MovementController {
     }
 
     @ObservationIgnored
-    var displayLink: DisplayLinkPublisher! = nil
+    var displayLink: DisplayLink! = nil
 
     @ObservationIgnored
     var controller: GCController? = nil {
@@ -78,6 +74,10 @@ class MovementController {
         }
     }
 
+    init(displayLink: DisplayLink) {
+        self.displayLink = displayLink
+    }
+
     func events() -> AsyncChannel<Event> {
         let notificationCenter = NotificationCenter.default
         Task {
@@ -106,7 +106,7 @@ class MovementController {
         }
 
         Task(priority: .userInitiated) {
-            let events = displayLink.values.flatMap { [weak self] _ in
+            let events = displayLink.events().flatMap { [weak self] _ in
                 return (self?.makeEvent() ?? []).async
             }
             for await event in events {

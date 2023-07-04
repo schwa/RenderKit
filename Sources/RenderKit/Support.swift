@@ -47,18 +47,6 @@ public extension MTKView {
     }
 }
 
-public struct BooleanFormatStyle: FormatStyle {
-    public func format(_ value: Bool) -> String {
-        return value ? "true" : "false"
-    }
-}
-
-public extension Bool {
-    func formatted() -> String {
-        return BooleanFormatStyle().format(self)
-    }
-}
-
 public enum RenderKitError: Error {
     case generic(String)
 }
@@ -577,44 +565,6 @@ public struct Argument: Equatable, Sendable {
     }
 }
 
-public extension Array where Element == UInt8 {
-    mutating func append <Other>(contentsOf bytes: Other, alignment: Int) where Other: Sequence, Other.Element == UInt8 {
-        let alignedPosition = align(offset: count, alignment: alignment)
-        append(contentsOf: Array(repeating: 0, count: alignedPosition - count))
-        append(contentsOf: bytes)
-    }
-}
-
-/// An object that provides access to the bytes of a value.
-/// Avoids issues where getting the bytes of an onject cast to Any is not the same as getting the bytes to the object
-public struct UnsafeBytesAccessor: Sendable {
-    private let closure: @Sendable (@Sendable (UnsafeRawBufferPointer) -> Void) -> Void
-
-    public init(_ value: some Any) {
-        closure = { (callback: (UnsafeRawBufferPointer) -> Void) in
-            Swift.withUnsafeBytes(of: value) { buffer in
-                callback(buffer)
-            }
-        }
-    }
-
-    public init(_ value: [some Any]) {
-        closure = { (callback: (UnsafeRawBufferPointer) -> Void) in
-            value.withUnsafeBytes { buffer in
-                callback(buffer)
-            }
-        }
-    }
-
-    public func withUnsafeBytes(_ body: @Sendable (UnsafeRawBufferPointer) -> Void) {
-        closure(body)
-    }
-}
-
-public func bytes <T>(of value: T) -> [UInt8] {
-    withUnsafeBytes(of: value) { return Array($0) }
-}
-
 public protocol Shape3D {
     // TODO: this is mediocre.
     func toMDLMesh(extent: SIMD3<Float>, allocator: MDLMeshBufferAllocator?) -> MDLMesh
@@ -627,7 +577,6 @@ public struct Plane: Shape3D {
         return mesh
     }
 }
-
 
 public extension MTLRenderCommandEncoder {
     func setVertexBuffer(_ mesh: MTKMesh, startingIndex: Int) {
@@ -714,21 +663,7 @@ extension Path {
     }
 }
 
-
-extension Sequence {
-    func cast <T>(to: T.Type) -> [T?] {
-        compactMap { $0 as? T }
-    }
-}
-
-
-extension AsyncSequence {
-    func cast <T>(to: T.Type) -> AsyncCompactMapSequence<Self, T?> {
-        compactMap { $0 as? T }
-    }
-}
-
-
+#if !os(tvOS)
 struct MyDisclosureGroupStyle: DisclosureGroupStyle {
     func makeBody(configuration: Configuration) -> some View {
         HStack {
@@ -796,5 +731,65 @@ extension SliderPopoverButton where Label == EmptyView, ValueLabel == EmptyView 
 extension SliderPopoverButton where Label == EmptyView {
     init<V>(value: Binding<V>, in bounds: ClosedRange<V> = 0...1, @ViewBuilder minimumValueLabel: () -> ValueLabel, @ViewBuilder maximumValueLabel: () -> ValueLabel, onEditingChanged: @escaping (Bool) -> Void = { _ in }) where V: BinaryFloatingPoint, V.Stride: BinaryFloatingPoint {
         self = .init(value: value, in: bounds, label: { EmptyView() }, minimumValueLabel: minimumValueLabel, maximumValueLabel: maximumValueLabel, onEditingChanged: onEditingChanged)
+    }
+}
+#endif
+
+
+struct FrameEditorModifier: ViewModifier {
+
+    @State
+    var isExpanded: Bool = false
+
+    @State
+    var locked: Bool = false
+
+    @State
+    var lockedSize: CGSize?
+
+    func body(content: Content) -> some View {
+        content
+            .frame(width: lockedSize?.width, height: lockedSize?.height)
+            .overlay {
+                GeometryReader { proxy in
+                    DisclosureGroup(isExpanded: $isExpanded) {
+                        HStack {
+                            VStack {
+                                if let lockedSize {
+                                    TextField("Size", value: .constant(lockedSize), format: .size)
+                                        .foregroundStyle(.black)
+                                        .frame(maxWidth: 120)
+                                    //                                Text("\(proxy.size.width / proxy.size.height, format: .number)")
+                                }
+                                else {
+                                    Text("\(proxy.size, format: .size)")
+                                    Text("\(proxy.size.width / proxy.size.height, format: .number)")
+                                }
+                            }
+                            Button(systemImage: locked ? "lock" : "lock.open") {
+                                withAnimation {
+                                    locked.toggle()
+                                    lockedSize = locked ? proxy.size : nil
+                                }
+                            }
+                            .buttonStyle(.borderless)
+                        }
+
+                    } label: {
+                        Image(systemName: "rectangle.split.2x2")
+                    }
+                    .disclosureGroupStyle(MyDisclosureGroupStyle())
+                    .foregroundStyle(Color.white)
+                    .background(RoundedRectangle(cornerRadius: 4).fill(Color.mint))
+                    .padding()
+                    .frame(alignment: .topLeading)
+                }
+            }
+    }
+}
+
+extension View {
+    func showFrameEditor() -> some View {
+        modifier(FrameEditorModifier())
     }
 }

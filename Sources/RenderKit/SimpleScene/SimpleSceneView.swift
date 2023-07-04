@@ -33,7 +33,7 @@ public struct SimpleSceneView: View {
     var displayLink
 
     @State
-    var movementController = MovementController()
+    var movementController = MovementController(displayLink: DisplayLink())
 
     @FocusState
     var renderViewFocused
@@ -52,6 +52,10 @@ public struct SimpleSceneView: View {
             .focusEffectDisabled()
             .defaultFocus($renderViewFocused, true)
 //            .ignoresSafeArea()
+            .onKeyPress(.escape, action: {
+                renderViewFocused = false
+                return .handled
+            })
             .overlay(alignment: .topTrailing) {
                 Group {
                     if renderViewFocused {
@@ -76,7 +80,7 @@ public struct SimpleSceneView: View {
                     .padding()
             }
             .task(priority: .userInitiated) {
-                for await event in movementController.events().debounce(for: .seconds(1/60)) {
+                for await event in movementController.events() {
                     switch event {
 
                     case .movement(let movement):
@@ -90,6 +94,7 @@ public struct SimpleSceneView: View {
                 }
             }
             .task(priority: .userInitiated) {
+                let displayLink = DisplayLink()
                 // TODO: Move to MovementController
                 for await _ in NotificationCenter.default.notifications(named: .GCKeyboardDidConnect) {
                     break
@@ -104,8 +109,9 @@ public struct SimpleSceneView: View {
                 let keyS = capturedInput.button(forKeyCode: .keyS)!
                 let keyD = capturedInput.button(forKeyCode: .keyD)!
 
-                for await _ in displayLink.values {
+                for await _ in displayLink.events() {
                     guard renderViewFocused else {
+                        print("Skipping")
                         return
                     }
                     capturedInput.setStateFromPhysicalInput(keyboardInput)
@@ -135,13 +141,22 @@ public struct SimpleSceneView: View {
         }
         #if os(macOS)
         .onAppear {
+            // Move to MovementController
             NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
-                if renderViewFocused && event.modifierFlags.intersection([.command, .shift, .control, .option]).isEmpty {
-                    return nil
-                }
-                else {
+                // If we're not focused return everything.
+                guard renderViewFocused else {
                     return event
                 }
+                // If a modifier is down
+                guard event.modifierFlags.intersection([.command, .shift, .control, .option]).isEmpty else {
+                    return event
+                }
+                // If we're not a WASD key
+                guard ["w", "a", "s", "d"].contains(event.characters) else {
+                    return event
+                }
+                // Consume the key
+                return nil
             }
         }
         #endif
@@ -156,27 +171,7 @@ public struct SimpleSceneView: View {
                 guard let device else {
                     fatalError()
                 }
-                let cone = try MTKMesh(mesh: MDLMesh(coneWithExtent: [0.5, 1, 0.5], segments: [20, 10], inwardNormals: false, cap: true, geometryType: .triangles, allocator: MTKMeshBufferAllocator(device: device)), device: device)
-                let sphere = try MTKMesh(mesh: MDLMesh(sphereWithExtent: [0.5, 0.5, 0.5], segments: [20, 10], inwardNormals: false, geometryType: .triangles, allocator: MTKMeshBufferAllocator(device: device)), device: device)
-                let capsule = try MTKMesh(mesh: MDLMesh(capsuleWithExtent: [0.25, 1, 0.25], cylinderSegments: [30, 10], hemisphereSegments: 5, inwardNormals: false, geometryType: .triangles, allocator: MTKMeshBufferAllocator(device: device)), device: device)
-
-                let meshes = [cone, sphere, capsule]
-
-                let xRange = Array<Float>(stride(from: -2, through: 2, by: 1))
-                let zRange = Array<Float>(stride(from: 0, through: -10, by: -1))
-
-                let scene = SimpleScene(
-                    camera: Camera(transform: .translation([0, 0, 2]), target: [0, 0, -1], projection: .perspective(.init(fovy: .degrees(90), zClip: 0.1 ... 100))),
-                    light: .init(position: .translation([-1, 2, 1]), color: [1, 1, 1], power: 1),
-                    ambientLightColor: [0, 0, 0],
-                    models:
-                        product(xRange, zRange).map { x, z in
-                            let hsv: SIMD3<Float> = [Float.random(in: 0...1), 1, 1]
-                            let rgba = SIMD4<Float>(hsv.hsv2rgb(), 1.0)
-                            return Model(transform: .translation([x, 0, z]), color: rgba, mesh: meshes.randomElement()!)
-                        }
-                )
-                self.renderPass.scene = scene
+                self.renderPass.scene = try .demo(device: device)
             }
             catch {
                 print(error)
@@ -187,6 +182,7 @@ public struct SimpleSceneView: View {
                 ValueView(value: false) { isPresentedBinding in
                     Button(title: "Snapshot", systemImage: "camera") {
                         Task {
+                            // Move this logic out
                             guard let device else {
                                 return
                             }
@@ -233,243 +229,6 @@ public struct SimpleSceneView: View {
     }
 }
 
-struct SimpleSceneInspector: View {
-    @Binding
-    var scene: SimpleScene
-
-    let colorSpace = CGColorSpace(name: CGColorSpace.linearSRGB)!
-
-    var body: some View {
-        Form {
-            Section("Camera") {
-                CameraInspector(camera: $scene.camera)
-            }
-            Section("Light #0") {
-                LightInspector(light: $scene.light)
-            }
-            Section("Ambient Light") {
-                ColorPicker("Ambient Light", selection: Binding<CGColor>(simd: $scene.ambientLightColor, colorSpace: colorSpace), supportsOpacity: false)
-            }
-            Section("Models") {
-                Text(String(describing: scene.models.count))
-            }
-        }
-    }
-
-    struct CameraInspector: View {
-        @Binding
-        var camera: Camera
-
-        var body: some View {
-            Section("Transform") {
-                TransformEditor(transform: $camera.transform, options: [.hideScale])
-                TextField("Heading", value: $camera.heading.degrees, format: .number)
-                TextField("Target", value: $camera.target, format: .vector)
-            }
-            Section("Projection") {
-                ProjectionInspector(projection: $camera.projection)
-            }
-        }
-    }
-
-    struct ProjectionInspector: View {
-        @State
-        var type: Projection.Meta
-
-        @Binding
-        var projection: Projection
-        
-        init(projection: Binding<Projection>) {
-            self.type = projection.wrappedValue.meta
-            self._projection = projection
-        }
-
-        var body: some View {
-            Picker("Type", selection: $type) {
-                ForEach(Projection.Meta.allCases, id: \.self) { type in
-                    Text(describing: type).tag(type)
-                }
-            }
-            .labelsHidden()
-            .onChange(of: type) {
-                guard type != projection.meta else {
-                    return
-                }
-                switch type {
-                case .perspective:
-                    projection = .perspective(.init(fovy: .degrees(90), zClip: 0.001 ... 1000))
-                case .orthographic:
-                    projection = .orthographic(.init(left: -1, right: 1, bottom: -1, top: 1, near: -1, far: 1))
-                }
-            }
-            switch projection {
-            case .perspective(let projection):
-                let projection = Binding {
-                    return projection
-                } set: { newValue in
-                    self.projection = .perspective(newValue)
-                }
-//                    let fieldOfView = Binding<SwiftUI.Angle>(get: { .degrees(projection.fovy) }, set: { projection.fovy = $0.radians })
-                HStack {
-                    let binding = Binding<SwiftUI.Angle>(radians: projection.fovy.radians)
-                    TextField("FOVY", value: binding, format: .angle)
-                    SliderPopoverButton(value: projection.fovy.degrees, in: 0...180, minimumValueLabel: { Image(systemName: "field.of.view.wide") }, maximumValueLabel: { Image(systemName: "field.of.view.ultrawide") })
-
-                }
-                TextField("Clipping Distance", value: projection.zClip, format: ClosedRangeFormatStyle(substyle: .number))
-            case .orthographic(let projection):
-                let projection = Binding {
-                    return projection
-                } set: { newValue in
-                    self.projection = .orthographic(newValue)
-                }
-                TextField("Left", value: projection.left, format: .number)
-                TextField("Right", value: projection.right, format: .number)
-                TextField("Bottom", value: projection.bottom, format: .number)
-                TextField("Top", value: projection.top, format: .number)
-                TextField("Near", value: projection.near, format: .number)
-                TextField("Far", value: projection.far, format: .number)
-            }
-        }
-    }
-
-    struct LightInspector: View {
-
-        @Binding
-        var light: Light
-
-        let colorSpace = CGColorSpace(name: CGColorSpace.linearSRGB)!
-
-        var body: some View {
-            LabeledContent("Power") {
-                HStack {
-                    TextField("Power", value: $light.power, format: .number)
-                    .labelsHidden()
-                    SliderPopoverButton(value: $light.power)
-                }
-            }
-            ColorPicker("Color", selection: Binding<CGColor>(simd: $light.color, colorSpace: colorSpace), supportsOpacity: false)
-            //TextField("Position", value: $light.position, format: .vector)
-            TransformEditor(transform: $light.position, options: [.hideScale])
-        }
-    }
-}
-
-struct TransformEditor: View {
-    struct Options: OptionSet {
-        let rawValue: Int
-        static let hideScale = Self(rawValue: 1 << 0)
-
-        static let `default` = Self([])
-    }
-
-    @Binding
-    var transform: Transform
-
-    let options: Options
-
-    init(transform: Binding<Transform>, options: Options = .default) {
-        self._transform = transform
-        self.options = options
-    }
-
-    var body: some View {
-        if !options.contains(.hideScale) {
-            TextField("Scale", value: $transform.scale, format: .vector)
-        }
-        TextField("Rotation", value: $transform.rotation, format: .quaternion)
-        TextField("Translation", value: $transform.translation, format: .vector)
-    }
-}
-
-
-
-extension Camera {
-    var heading: SIMDSupport.Angle<Float> {
-        get {
-            let degrees = Angle(from: .zero, to: target.xz).degrees
-            return Angle(degrees: degrees)
-        }
-        set {
-            let length = target.length
-            target = SIMD3<Float>(xz: SIMD2<Float>(length: length, angle: newValue))
-        }
-    }
-}
-
-public struct DisplayLinkKey: EnvironmentKey {
-    public static var defaultValue = DisplayLinkPublisher()
-}
-
-public extension EnvironmentValues {
-    var displayLink: DisplayLinkPublisher {
-        get {
-            self[DisplayLinkKey.self]
-        }
-        set {
-            self[DisplayLinkKey.self] = newValue
-        }
-    }
-}
-
-struct FrameEditorModifier: ViewModifier {
-
-    @State
-    var isExpanded: Bool = false
-
-    @State
-    var locked: Bool = false
-
-    @State
-    var lockedSize: CGSize?
-
-    func body(content: Content) -> some View {
-        content
-        .frame(width: lockedSize?.width, height: lockedSize?.height)
-        .overlay {
-            GeometryReader { proxy in
-                DisclosureGroup(isExpanded: $isExpanded) {
-                    HStack {
-                        VStack {
-                            if let lockedSize {
-                                TextField("Size", value: .constant(lockedSize), format: .size)
-                                .foregroundStyle(.black)
-                                .frame(maxWidth: 120)
-//                                Text("\(proxy.size.width / proxy.size.height, format: .number)")
-                            }
-                            else {
-                                Text("\(proxy.size, format: .size)")
-                                Text("\(proxy.size.width / proxy.size.height, format: .number)")
-                            }
-                        }
-                        Button(systemImage: locked ? "lock" : "lock.open") {
-                            withAnimation {
-                                locked.toggle()
-                                lockedSize = locked ? proxy.size : nil
-                            }
-                        }
-                        .buttonStyle(.borderless)
-                    }
-
-                } label: {
-                    Image(systemName: "rectangle.split.2x2")
-                }
-                .disclosureGroupStyle(MyDisclosureGroupStyle())
-                .foregroundStyle(Color.white)
-                .background(RoundedRectangle(cornerRadius: 4).fill(Color.mint))
-                .padding()
-                .frame(alignment: .topLeading)
-            }
-        }
-    }
-}
-
-extension View {
-    func showFrameEditor() -> some View {
-        modifier(FrameEditorModifier())
-    }
-}
-
 struct MapView: View {
     @Binding
     var scene: SimpleScene
@@ -500,7 +259,7 @@ struct MapView: View {
             cameraImage.shading = .color(.mint)
             context.draw(cameraImage, at: cameraPosition * scale, anchor: .center)
 
-            var targetPosition = cameraPosition + CGPoint(scene.camera.target.xz)
+            let targetPosition = cameraPosition + CGPoint(scene.camera.target.xz)
             var targetImage = context.resolve(Image(systemName: "scope"))
             targetImage.shading = .color(.white)
             context.draw(targetImage, at: targetPosition * scale, anchor: .center)
@@ -510,4 +269,21 @@ struct MapView: View {
     }
 }
 
-
+extension RenderPass {
+    mutating func snapshot(device: MTLDevice) async throws -> CGImage {
+        let configuration = OffscreenRenderPassConfiguration()
+        configuration.colorPixelFormat = .bgra8Unorm_srgb
+        configuration.depthStencilPixelFormat = .depth16Unorm
+        configuration.device = device
+        configuration.update()
+        self.setup(configuration: configuration)
+        guard let commandQueue = device.makeCommandQueue() else {
+            fatalError()
+        }
+        commandQueue.withCommandBuffer(waitAfterCommit: true) { commandBuffer in
+            self.draw(configuration: configuration, commandBuffer: commandBuffer)
+        }
+        let cgImage = await configuration.targetTexture!.cgImage(colorSpace: CGColorSpace(name: CGColorSpace.extendedSRGB))
+        return cgImage
+    }
+}

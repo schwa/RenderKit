@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/schwa/Everything",
       "state" : {
-        "revision" : "b910f4bee63bf4422d9c66b3db16f455e8f39037",
-        "version" : "0.3.0"
+        "revision" : "c38a4ad630a12619cbb9d86dcb0fd51eff926709",
+        "version" : "0.4.2"
       }
     },
     {
@@ -77,8 +77,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/schwa/swiftfields",
       "state" : {
-        "revision" : "bac046ccfa7454a475da4768e84431dd62283d5b",
-        "version" : "0.1.2"
+        "revision" : "8a9715b88509c93557833018f335397153f194bb",
+        "version" : "0.1.3"
       }
     },
     {
