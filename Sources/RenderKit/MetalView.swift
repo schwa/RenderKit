@@ -68,7 +68,10 @@ public struct MetalView: View {
             view.delegate = model
             return view
         } update: { view in
-            model.update(view as any MetalViewConfiguration)
+            // Perform updates in a Task to allow clients to update state and avoid "Modifying state during view update, this will cause undefined behavior."
+            Task {
+                model.update(view as any MetalViewConfiguration)
+            }
         }
         .onAppear {
             model.update = update

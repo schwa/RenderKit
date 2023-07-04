@@ -14,13 +14,10 @@ public struct ShaderToyView: View {
 
     public var body: some View {
         MetalView { configuration in
-            Task {
-                configuration.preferredFramesPerSecond = 120
-                configuration.colorPixelFormat = .bgra10_xr_srgb
-                configuration.depthStencilPixelFormat = .depth32Float // TODO: Overkill
-
-                offscreen.setup(configuration: configuration)
-            }
+            configuration.preferredFramesPerSecond = 120
+            configuration.colorPixelFormat = .bgra10_xr_srgb
+            configuration.depthStencilPixelFormat = .depth32Float // TODO: Overkill
+            offscreen.setup(configuration: configuration)
         }
         draw: { configuration in
             let commandQueue = configuration.device!.makeCommandQueue()
