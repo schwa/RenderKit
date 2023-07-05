@@ -25,7 +25,7 @@ public struct SimpleSceneView: View {
     var displayLink
 
     @State
-    var renderPass = SimpleSceneRenderPass<ConcreteMetalViewConfiguration, ConcreteMetalViewConfiguration>()
+    var renderPass = SimpleSceneRenderPass<MetalViewConfiguration>()
 
     #if os(macOS)
     @State
@@ -96,7 +96,9 @@ public struct SimpleSceneView: View {
                     fatalError()
                 }
                 // .throttle(for: .seconds(1/60), latest: true)
-                for await event in movementController.events() {                    
+                for await event in movementController.events() {
+                    Counters.shared.increment(counter: "Consumption")
+
 //                    let delta = CFAbsoluteTimeGetCurrent() - event.created
 //                    let change = delta - last
 //                    last = delta
@@ -114,6 +116,7 @@ public struct SimpleSceneView: View {
                 }
             }
             .task(priority: .userInitiated) {
+                return
                 guard let displayLink else {
                     fatalError()
                 }
@@ -233,12 +236,7 @@ public struct SimpleSceneView: View {
             }
         }
         .inspector(isPresented: $isInspectorPresented) {
-            Group {
-                $renderPass.scene.withUnsafeBinding {
-                    SimpleSceneInspector(scene: $0)
-                        .controlSize(.small)
-                }
-            }
+            MyTabView(renderPass: $renderPass)
             .inspectorColumnWidth(ideal: 300)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
@@ -307,3 +305,41 @@ struct MapView: View {
 //        return cgImage
 //    }
 //}
+
+struct MyTabView: View {
+
+    enum Tab: Hashable {
+        case inspector
+        case counters
+    }
+
+    @State
+    var tab: Tab = .inspector
+
+    @Binding
+    var renderPass: SimpleSceneRenderPass<MetalViewConfiguration>
+
+    var body: some View {
+        VStack {
+            Picker("Picker", selection: $tab) {
+                Image(systemName: "slider.horizontal.3").tag(Tab.inspector)
+                Image(systemName: "tablecells").tag(Tab.counters)
+            }
+            .labelsHidden()
+            .fixedSize()
+            .pickerStyle(.palette)
+            Divider()
+            switch tab {
+            case .inspector:
+                Group {
+                    $renderPass.scene.withUnsafeBinding {
+                        SimpleSceneInspector(scene: $0)
+                            .controlSize(.small)
+                    }
+                }
+            case .counters:
+                CountersView()
+            }
+        }
+    }
+}

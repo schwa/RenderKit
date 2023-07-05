@@ -7,7 +7,10 @@ import MetalSupport
 import SIMDSupport
 
 // TODO: Struct?
-public struct OffscreenRenderPassConfiguration: RenderKitUpdateConfiguration, RenderKitDrawConfiguration {
+public struct OffscreenRenderPassConfiguration: RenderKitConfiguration, RenderKitUpdateConfiguration, RenderKitDrawConfiguration {
+    public typealias Update = Self
+    public typealias Draw = Self
+
     public var currentDrawable: CAMetalDrawable?
     
     public var preferredFramesPerSecond: Int = 120
@@ -69,16 +72,14 @@ public struct OffscreenRenderPassConfiguration: RenderKitUpdateConfiguration, Re
 
 public protocol RenderPass {
 
-    associatedtype UpdateConfiguration: RenderKitUpdateConfiguration
-    associatedtype DrawConfiguration: RenderKitDrawConfiguration
+    associatedtype Configuration: RenderKitConfiguration
 
-
-    mutating func setup(configuration: inout UpdateConfiguration)
-    func draw(configuration: DrawConfiguration, commandBuffer: MTLCommandBuffer)
+    mutating func setup(configuration: inout Configuration.Update)
+    func draw(configuration: Configuration.Draw, commandBuffer: MTLCommandBuffer)
 }
 
 
-public struct OffscreenDemoRenderPass <UpdateConfiguration, DrawConfiguration>: RenderPass where UpdateConfiguration: RenderKitUpdateConfiguration, DrawConfiguration: RenderKitDrawConfiguration {
+public struct OffscreenDemoRenderPass <Configuration>: RenderPass where Configuration: RenderKitConfiguration {
     public var shaderToyRenderPipelineState: MTLRenderPipelineState?
     public var plane: MTKMesh?
     public var pixelate = false
@@ -92,7 +93,7 @@ public struct OffscreenDemoRenderPass <UpdateConfiguration, DrawConfiguration>: 
     public init() {
     }
 
-    public mutating func setup(configuration: inout UpdateConfiguration) {
+    public mutating func setup(configuration: inout Configuration.Update) {
         guard let device = configuration.device else {
             fatalError("No metal device")
         }
@@ -119,7 +120,7 @@ public struct OffscreenDemoRenderPass <UpdateConfiguration, DrawConfiguration>: 
         self.shaderToyRenderPipelineState = shaderToyRenderPipelineState
     }
 
-    public func draw(configuration: DrawConfiguration, commandBuffer: MTLCommandBuffer) {
+    public func draw(configuration: Configuration.Draw, commandBuffer: MTLCommandBuffer) {
         guard let device = configuration.device, let plane, let shaderToyRenderPipelineState, let size = configuration.size else {
             logger.warning("Not ready to draw.")
             return
@@ -166,7 +167,7 @@ public struct OffscreenDemo {
         configuration.colorPixelFormat = .bgra10_xr_srgb
         configuration.device = device
         configuration.update()
-        var offscreen = OffscreenDemoRenderPass<OffscreenRenderPassConfiguration, OffscreenRenderPassConfiguration>()
+        var offscreen = OffscreenDemoRenderPass<OffscreenRenderPassConfiguration>()
         offscreen.setup(configuration: &configuration)
 
         guard let commandQueue = device.makeCommandQueue() else {

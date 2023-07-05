@@ -1,6 +1,6 @@
 import SwiftUI
 
-public struct RendererView <T>: View where T: RenderPass, T.DrawConfiguration == ConcreteMetalViewConfiguration, T.UpdateConfiguration == ConcreteMetalViewConfiguration {
+public struct RendererView <T>: View where T: RenderPass, T.Configuration.Update == ConcreteMetalViewConfiguration, T.Configuration.Draw == ConcreteMetalViewConfiguration {
     @Binding
     var renderPass: T
 

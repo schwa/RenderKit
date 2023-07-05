@@ -92,7 +92,12 @@ extension MetalView {
 
 // MARK: -
 
-public protocol RenderKitUpdateConfiguration: Sendable {
+public protocol RenderKitConfiguration {
+    associatedtype Update: RenderKitUpdateConfiguration
+    associatedtype Draw: RenderKitDrawConfiguration
+}
+
+public protocol RenderKitUpdateConfiguration {
     var colorPixelFormat: MTLPixelFormat { get set }
     var depthStencilPixelFormat: MTLPixelFormat { get set }
     var depthStencilStorageMode: MTLStorageMode { get set }
@@ -124,7 +129,13 @@ public protocol MetalViewDrawConfiguration: RenderKitDrawConfiguration {
     var currentDrawable: CAMetalDrawable? { get }
 }
 
-public struct ConcreteMetalViewConfiguration: MetalViewUpdateConfiguration, MetalViewDrawConfiguration, @unchecked Sendable {
+public struct MetalViewConfiguration: RenderKitConfiguration {
+    public typealias Update = ConcreteMetalViewConfiguration
+
+    public typealias Draw = ConcreteMetalViewConfiguration
+}
+
+public struct ConcreteMetalViewConfiguration: MetalViewUpdateConfiguration, MetalViewDrawConfiguration {
     public var currentDrawable: CAMetalDrawable?
     public var colorPixelFormat: MTLPixelFormat = .invalid
     public var depthStencilPixelFormat: MTLPixelFormat = .invalid

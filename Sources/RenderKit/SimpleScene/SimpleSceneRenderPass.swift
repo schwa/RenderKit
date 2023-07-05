@@ -5,7 +5,7 @@ import MetalKit
 import SIMDSupport
 import Shaders
 
-struct SimpleSceneRenderPass<UpdateConfiguration, DrawConfiguration>: RenderPass where UpdateConfiguration: RenderKitUpdateConfiguration, DrawConfiguration: RenderKitDrawConfiguration {
+struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: RenderKitConfiguration {
 
     var scene: SimpleScene?
     var renderPipelineState: MTLRenderPipelineState?
@@ -14,7 +14,7 @@ struct SimpleSceneRenderPass<UpdateConfiguration, DrawConfiguration>: RenderPass
     init() {
     }
 
-    mutating func setup(configuration: inout UpdateConfiguration) {
+    mutating func setup(configuration: inout Configuration.Update) {
         guard let device = configuration.device else {
             fatalError("No metal device")
         }
@@ -45,7 +45,7 @@ struct SimpleSceneRenderPass<UpdateConfiguration, DrawConfiguration>: RenderPass
         }
     }
 
-    func draw(configuration: DrawConfiguration, commandBuffer: MTLCommandBuffer) {
+    func draw(configuration: Configuration.Draw, commandBuffer: MTLCommandBuffer) {
         guard let renderPipelineState, let depthStencilState else {
 
             return

@@ -83,10 +83,11 @@ class MovementController {
                 guard strongSelf.focused == true else {
                     return
                 }
-                strongSelf.mouseMovement += SIMD2(x, y)
-//                Task(priority: .userInitiated) {
-//                    await strongSelf.channel.send(.rotation(x))
-//                }
+//                strongSelf.mouseMovement += SIMD2(x, y)
+                Counters.shared.increment(counter: "Production")
+                Task {
+                    await strongSelf.channel.send(.rotation(x))
+                }
             }
         }
     }
@@ -123,9 +124,12 @@ class MovementController {
         }
         Task(priority: .userInitiated) {
             let events = displayLink.events().flatMap { [weak self] _ in
+                Counters.shared.increment(counter: "DisplayLink")
+
                 return (self?.makeEvent() ?? []).async
             }
             for await event in events {
+                Counters.shared.increment(counter: "Production")
                 await channel.send(event)
             }
         }
