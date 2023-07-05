@@ -91,31 +91,35 @@ public struct SimpleSceneView: View {
                 GameControllerWidget()
                     .padding()
             }
-            .task(priority: .userInitiated) {
-                guard let movementController else {
-                    fatalError()
-                }
-                // .throttle(for: .seconds(1/60), latest: true)
-                for await event in movementController.events() {
-                    Counters.shared.increment(counter: "Consumption")
-
-//                    let delta = CFAbsoluteTimeGetCurrent() - event.created
-//                    let change = delta - last
-//                    last = delta
-//                    logger.debug("\(delta) \(change)")
-
-                    switch event.payload {
-                    case .movement(let movement):
-                        let target = renderPass.scene!.camera.target
-                        let angle = atan2(target.z, target.x) - .pi / 2
-                        let rotation = simd_quaternion(angle, [0, -1, 0])
-                        renderPass.scene!.camera.transform.translation += simd_act(rotation, movement * 0.1)
-                    case .rotation(let rotation):
-                        renderPass.scene?.camera.heading.degrees += Float(rotation * 2)
+            .task() {
+                Task.detached {
+                    guard let movementController else {
+                        fatalError()
+                    }
+                    // .throttle(for: .seconds(1/60), latest: true)
+                    for await event in movementController.events() {
+                        Counters.shared.increment(counter: "Consumption")
+                        switch event.payload {
+                        case .movement(let movement):
+                            let target = renderPass.scene!.camera.target
+                            let angle = atan2(target.z, target.x) - .pi / 2
+                            let rotation = simd_quaternion(angle, [0, -1, 0])
+                            Task {
+                                await MainActor.run {
+                                    renderPass.scene!.camera.transform.translation += simd_act(rotation, movement * 0.1)
+                                }
+                            }
+                        case .rotation(let rotation):
+                            Task {
+                                await MainActor.run {
+                                    renderPass.scene?.camera.heading.degrees += Float(rotation * 2)
+                                }
+                            }
+                        }
                     }
                 }
             }
-            .task(priority: .userInitiated) {
+            .task() {
                 return
                 guard let displayLink else {
                     fatalError()

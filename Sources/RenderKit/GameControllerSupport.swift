@@ -84,8 +84,9 @@ class MovementController {
                     return
                 }
 //                strongSelf.mouseMovement += SIMD2(x, y)
-                Counters.shared.increment(counter: "Production")
+//                Counters.shared.increment(counter: "Mouse (Delta)")
                 Task {
+                    Counters.shared.increment(counter: "Mouse Moved")
                     await strongSelf.channel.send(.rotation(x))
                 }
             }
@@ -98,60 +99,72 @@ class MovementController {
 
     func events() -> AsyncChannel<Event> {
         let notificationCenter = NotificationCenter.default
-        Task {
-            for await controller in notificationCenter.notifications(named: .GCControllerDidBecomeCurrent).map(\.object).cast(to: GCController.self) {
-                self.controller = controller
-            }
-        }
-        Task {
-            for await controller in notificationCenter.notifications(named: .GCControllerDidDisconnect).map(\.object).cast(to: GCController.self) {
-                if self.controller === controller {
-                    self.controller = nil
+
+        let controllerNotificationsTask = Task {
+            await withDiscardingTaskGroup { group in
+                group.addTask {
+                    for await controller in notificationCenter.notifications(named: .GCControllerDidBecomeCurrent).compactMap(\.object).cast(to: GCController.self) {
+                        self.controller = controller
+                    }
+                }
+                group.addTask {
+                    for await controller in notificationCenter.notifications(named: .GCControllerDidDisconnect).compactMap(\.object).cast(to: GCController.self) {
+                        if self.controller === controller {
+                            self.controller = nil
+                        }
+                    }
+                }
+                group.addTask {
+                    for await mouse in notificationCenter.notifications(named: .GCMouseDidConnect).compactMap(\.object).cast(to: GCMouse.self) {
+                        self.mouse = mouse
+                    }
+                }
+                group.addTask {
+                    for await mouse in notificationCenter.notifications(named: .GCMouseDidDisconnect).compactMap(\.object).cast(to: GCMouse.self) {
+                        if self.mouse === mouse {
+                            self.mouse = nil
+                        }
+                    }
                 }
             }
         }
-        Task {
-            for await mouse in notificationCenter.notifications(named: .GCMouseDidConnect).map(\.object).cast(to: GCMouse.self) {
-                self.mouse = mouse
-            }
-        }
-        Task {
-            for await mouse in notificationCenter.notifications(named: .GCMouseDidDisconnect).map(\.object).cast(to: GCMouse.self) {
-                if self.mouse === mouse {
-                    self.mouse = nil
-                }
-            }
-        }
-        Task(priority: .userInitiated) {
+
+        Task() {
             let events = displayLink.events().flatMap { [weak self] _ in
                 Counters.shared.increment(counter: "DisplayLink")
-
                 return (self?.makeEvent() ?? []).async
             }
             for await event in events {
-                Counters.shared.increment(counter: "Production")
+                Counters.shared.increment(counter: "Relay")
                 await channel.send(event)
             }
+            controllerNotificationsTask.cancel()
         }
         return channel
     }
 
     private func makeEvent() -> [Event] {
-        var events: [Event] = []
+        var allEvents: [Event] = []
         if let controller, let capturedControllerProfile, let move, let strafe, let turn {
             capturedControllerProfile.setStateFromPhysicalInput(controller.physicalInputProfile)
             let movement = SIMD3<Float>(-strafe.value, 0, move.value)
             let rotation = turn.value
-            events.append(contentsOf: [
+            let events = [
                 movement != .zero ? Event.movement(movement) : nil,
                 rotation != .zero ? Event.rotation(rotation) : nil
-            ].compacted())
+            ].compacted()
+
+            Counters.shared.increment(counter: "Poll: GC")
+
+            allEvents += events
+
         }
         if mouseMovement != .zero {
-            events.append(.rotation(mouseMovement.x))
+            Counters.shared.increment(counter: "Poll: Mouse")
+            allEvents.append(.rotation(mouseMovement.x))
             mouseMovement = .zero
         }
-        return events
+        return allEvents
     }
 }
 

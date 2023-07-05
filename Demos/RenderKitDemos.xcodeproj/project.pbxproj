@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		45389ABD2A5236BF008FE8F9 /* GameControllerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45389ABC2A5236BF008FE8F9 /* GameControllerView.swift */; };
 		453D32B82A48D06500FCEE29 /* DemosApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453D32B72A48D06500FCEE29 /* DemosApp.swift */; };
 		453D32BA2A48D06500FCEE29 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453D32B92A48D06500FCEE29 /* ContentView.swift */; };
 		453D32BC2A48D06600FCEE29 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 453D32BB2A48D06600FCEE29 /* Assets.xcassets */; };
@@ -34,7 +33,6 @@
 
 /* Begin PBXFileReference section */
 		451196902A520D1F00F4F2DE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		45389ABC2A5236BF008FE8F9 /* GameControllerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GameControllerView.swift; sourceTree = "<group>"; };
 		453D32B42A48D06500FCEE29 /* Demos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demos.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		453D32B72A48D06500FCEE29 /* DemosApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemosApp.swift; sourceTree = "<group>"; };
 		453D32B92A48D06500FCEE29 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -105,7 +103,6 @@
 				45A147BB2A4B1B7300C06FE1 /* xcconfig */,
 				453D32B72A48D06500FCEE29 /* DemosApp.swift */,
 				453D32B92A48D06500FCEE29 /* ContentView.swift */,
-				45389ABC2A5236BF008FE8F9 /* GameControllerView.swift */,
 				453D32BB2A48D06600FCEE29 /* Assets.xcassets */,
 				453D32BD2A48D06600FCEE29 /* Demos.entitlements */,
 				453D32BE2A48D06600FCEE29 /* Preview Content */,
@@ -258,7 +255,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				453D32BA2A48D06500FCEE29 /* ContentView.swift in Sources */,
-				45389ABD2A5236BF008FE8F9 /* GameControllerView.swift in Sources */,
 				453D32B82A48D06500FCEE29 /* DemosApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
