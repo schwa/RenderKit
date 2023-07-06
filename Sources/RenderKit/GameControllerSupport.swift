@@ -5,6 +5,9 @@ import GameController
 import Everything
 import AsyncAlgorithms
 
+// TODO: This needs to be massively cleaned-up and turned into an actor.
+// TODO: We need good support for pausing/resuming inputs
+// TODO: we need to be able to reliably find devices and handle disconnect/reconnect gracefully
 @Observable
 class MovementController {
 
@@ -66,6 +69,25 @@ class MovementController {
 
     var mouseMovement: SIMD2<Float> = .zero
 
+    public func disableUIKeys() {
+        NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
+            // If we're not focused return everything.
+            guard self?.focused == true else {
+                return event
+            }
+            // If a modifier is down
+            guard event.modifierFlags.intersection([.command, .shift, .control, .option]).isEmpty else {
+                return event
+            }
+            // If we're not a WASD key
+            guard ["w", "a", "s", "d"].contains(event.characters) else {
+                return event
+            }
+            // Consume the key
+            return nil
+        }
+    }
+
     @ObservationIgnored
     var mouse: GCMouse? = nil {
         willSet {
@@ -95,6 +117,9 @@ class MovementController {
 
     init(displayLink: DisplayLink) {
         self.displayLink = displayLink
+        Task {
+            await keyboard()
+        }
     }
 
     func events() -> AsyncChannel<Event> {
@@ -141,6 +166,51 @@ class MovementController {
             controllerNotificationsTask.cancel()
         }
         return channel
+    }
+
+    func keyboard() async {
+        guard let displayLink else {
+            fatalError()
+        }
+        // TODO: Move to MovementController
+        for await _ in NotificationCenter.default.notifications(named: .GCKeyboardDidConnect) {
+            break
+        }
+        guard let keyboard = GCKeyboard.coalesced, let keyboardInput = keyboard.keyboardInput else {
+            fatalError()
+        }
+        let capturedInput = keyboardInput.capture()
+        let leftGUI = capturedInput.button(forKeyCode: .leftGUI)!
+        let keyW = capturedInput.button(forKeyCode: .keyW)!
+        let keyA = capturedInput.button(forKeyCode: .keyA)!
+        let keyS = capturedInput.button(forKeyCode: .keyS)!
+        let keyD = capturedInput.button(forKeyCode: .keyD)!
+
+        for await _ in displayLink.events() {
+            guard focused else {
+                print("Skipping")
+                return
+            }
+            capturedInput.setStateFromPhysicalInput(keyboardInput)
+            if leftGUI.value > 0 {
+                continue
+            }
+            var delta = SIMD2<Float>.zero
+            if keyW.value > 0 {
+                delta += [0, 1]
+            }
+            if keyS.value > 0 {
+                delta += [0, -1]
+            }
+            if keyA.value > 0 {
+                delta += [1, 0]
+            }
+            if keyD.value > 0 {
+                delta += [-1, 0]
+            }
+            await channel.send(.movement(SIMD3(delta.x, 0, delta.y)))
+        }
+
     }
 
     private func makeEvent() -> [Event] {

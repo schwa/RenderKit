@@ -92,6 +92,7 @@ public struct SimpleSceneView: View {
                     .padding()
             }
             .task() {
+                // TODO: We're not managing this.
                 Task.detached {
                     guard let movementController else {
                         fatalError()
@@ -119,74 +120,10 @@ public struct SimpleSceneView: View {
                     }
                 }
             }
-            .task() {
-                return
-                guard let displayLink else {
-                    fatalError()
-                }
-                // TODO: Move to MovementController
-                for await _ in NotificationCenter.default.notifications(named: .GCKeyboardDidConnect) {
-                    break
-                }
-                guard let keyboard = GCKeyboard.coalesced, let keyboardInput = keyboard.keyboardInput else {
-                    fatalError()
-                }
-                let capturedInput = keyboardInput.capture()
-                let leftGUI = capturedInput.button(forKeyCode: .leftGUI)!
-                let keyW = capturedInput.button(forKeyCode: .keyW)!
-                let keyA = capturedInput.button(forKeyCode: .keyA)!
-                let keyS = capturedInput.button(forKeyCode: .keyS)!
-                let keyD = capturedInput.button(forKeyCode: .keyD)!
-
-                for await _ in displayLink.events() {
-                    guard renderViewFocused else {
-                        print("Skipping")
-                        return
-                    }
-                    capturedInput.setStateFromPhysicalInput(keyboardInput)
-                    if leftGUI.value > 0 {
-                        continue
-                    }
-                    var delta = SIMD2<Float>.zero
-                    if keyW.value > 0 {
-                        delta += [0, -1]
-                    }
-                    if keyS.value > 0 {
-                        delta += [0, 1]
-                    }
-                    if keyA.value > 0 {
-                        delta += [-1, 0]
-                    }
-                    if keyD.value > 0 {
-                        delta += [1, 0]
-                    }
-                    let target = renderPass.scene!.camera.target
-                    let angle = atan2(target.z, target.x) - .pi / 2
-                    let rotation = simd_quaternion(angle, [0, -1, 0])
-                    let movement = SIMD3<Float>(delta[0], 0, delta[1]) * [-1, 1, -1] * 0.1
-                    renderPass.scene!.camera.transform.translation += simd_act(rotation, movement)
-                }
-            }
         }
         #if os(macOS)
         .onAppear {
-            // Move to MovementController
-            NSEvent.addLocalMonitorForEvents(matching: .keyDown) { event in
-                // If we're not focused return everything.
-                guard renderViewFocused else {
-                    return event
-                }
-                // If a modifier is down
-                guard event.modifierFlags.intersection([.command, .shift, .control, .option]).isEmpty else {
-                    return event
-                }
-                // If we're not a WASD key
-                guard ["w", "a", "s", "d"].contains(event.characters) else {
-                    return event
-                }
-                // Consume the key
-                return nil
-            }
+            movementController?.disableUIKeys()
         }
         #endif
         .onChange(of: renderViewFocused) {
@@ -211,25 +148,10 @@ public struct SimpleSceneView: View {
                 ValueView(value: false) { isPresentedBinding in
                     Button(title: "Snapshot", systemImage: "camera") {
                         Task {
-//                            // Move this logic out
-//                            guard let device else {
-//                                return
-//                            }
-//                            var configuration = OffscreenRenderPassConfiguration()
-//                            configuration.colorPixelFormat = .bgra8Unorm_srgb
-//                            configuration.depthStencilPixelFormat = .depth16Unorm
-//                            configuration.device = device
-//                            configuration.update()
-//                            renderPass.setup(configuration: configuration)
-//                            guard let commandQueue = device.makeCommandQueue() else {
-//                                fatalError()
-//                            }
-//                            commandQueue.withCommandBuffer(waitAfterCommit: true) { commandBuffer in
-//                                renderPass.draw(configuration: configuration, commandBuffer: commandBuffer)
-//                            }
-//                            let cgImage = await configuration.targetTexture!.cgImage(colorSpace: CGColorSpace(name: CGColorSpace.extendedSRGB))
-//                            exportImage = Image(cgImage: cgImage)
-//                            isPresentedBinding.wrappedValue = true
+                            guard let device else {
+                                fatalError()
+                            }
+                            exportImage = Image(cgImage: try await renderPass.snapshot(device: device))
                         }
                     }
                     .fileExporter(isPresented: isPresentedBinding, item: exportImage, contentTypes: [.png, .jpeg]) { result in
@@ -291,14 +213,16 @@ struct MapView: View {
     }
 }
 
-//extension RenderPass {
-//    mutating func snapshot(device: MTLDevice) async throws -> CGImage {
-//        let configuration = OffscreenRenderPassConfiguration()
+extension RenderPass {
+    mutating func snapshot(device: MTLDevice) async throws -> CGImage {
+        fatalError("Unimplemented")
+        // TODO: RenderPasses are now bound to Render Configurations now. We can't just re-render. Need to recreate the render pass with new configuration?
+//        var configuration = OffscreenRenderPassConfiguration()
 //        configuration.colorPixelFormat = .bgra8Unorm_srgb
 //        configuration.depthStencilPixelFormat = .depth16Unorm
 //        configuration.device = device
 //        configuration.update()
-//        self.setup(configuration: configuration)
+//        setup(configuration: configuration)
 //        guard let commandQueue = device.makeCommandQueue() else {
 //            fatalError()
 //        }
@@ -307,8 +231,8 @@ struct MapView: View {
 //        }
 //        let cgImage = await configuration.targetTexture!.cgImage(colorSpace: CGColorSpace(name: CGColorSpace.extendedSRGB))
 //        return cgImage
-//    }
-//}
+    }
+}
 
 struct MyTabView: View {
 
@@ -347,3 +271,4 @@ struct MyTabView: View {
         }
     }
 }
+
