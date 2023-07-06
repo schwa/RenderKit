@@ -103,7 +103,6 @@ public struct SimpleSceneView: View {
                     guard let movementController else {
                         fatalError()
                     }
-                    // .throttle(for: .seconds(1/60), latest: true)
                     for await event in movementController.events() {
                         Counters.shared.increment(counter: "Consumption")
                         switch event.payload {
