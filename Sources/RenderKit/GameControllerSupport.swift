@@ -8,10 +8,9 @@ import AsyncAlgorithms
 // TODO: This needs to be massively cleaned-up and turned into an actor.
 // TODO: We need good support for pausing/resuming inputs
 // TODO: we need to be able to reliably find devices and handle disconnect/reconnect gracefully
+// TODO: So many retain cycles here.
 @Observable
 class MovementController {
-
-    var focused: Bool = false
 
     struct Event {
         enum Payload {
@@ -30,12 +29,7 @@ class MovementController {
         }
     }
 
-    struct AsyncIterator: AsyncIteratorProtocol {
-        var base: any AsyncIteratorProtocol
-        mutating func next() async throws -> Event? {
-            return try await base.next() as? Event
-        }
-    }
+    var focused: Bool = false
 
     @ObservationIgnored
     var displayLink: DisplayLink! = nil
@@ -115,100 +109,112 @@ class MovementController {
         }
     }
 
+    @ObservationIgnored
+    var keyboardTask: Task<(), Never>? = nil
+
+    @ObservationIgnored
+    var relayTask: Task<(), Never>? = nil
+
     init(displayLink: DisplayLink) {
         self.displayLink = displayLink
-        Task {
-            await keyboard()
-        }
+        keyboard()
     }
 
     func events() -> AsyncChannel<Event> {
-        let notificationCenter = NotificationCenter.default
-
-        let controllerNotificationsTask = Task {
-            await withDiscardingTaskGroup { group in
-                group.addTask {
+        let controllerNotificationsTask = Task { [weak self] in
+            await withDiscardingTaskGroup { [weak self] group in
+                let notificationCenter = NotificationCenter.default
+                group.addTask { [weak self] in
                     for await controller in notificationCenter.notifications(named: .GCControllerDidBecomeCurrent).compactMap(\.object).cast(to: GCController.self) {
-                        self.controller = controller
+                        self?.controller = controller
                     }
                 }
-                group.addTask {
+                group.addTask { [weak self] in
                     for await controller in notificationCenter.notifications(named: .GCControllerDidDisconnect).compactMap(\.object).cast(to: GCController.self) {
-                        if self.controller === controller {
-                            self.controller = nil
+                        if self?.controller === controller {
+                            self?.controller = nil
                         }
                     }
                 }
-                group.addTask {
+                group.addTask { [weak self] in
                     for await mouse in notificationCenter.notifications(named: .GCMouseDidConnect).compactMap(\.object).cast(to: GCMouse.self) {
-                        self.mouse = mouse
+                        self?.mouse = mouse
                     }
                 }
-                group.addTask {
+                group.addTask { [weak self] in
                     for await mouse in notificationCenter.notifications(named: .GCMouseDidDisconnect).compactMap(\.object).cast(to: GCMouse.self) {
-                        if self.mouse === mouse {
-                            self.mouse = nil
+                        if self?.mouse === mouse {
+                            self?.mouse = nil
                         }
                     }
                 }
             }
+            print("DONE")
         }
 
-        Task() {
-            let events = displayLink.events().flatMap { [weak self] _ in
+        self.relayTask = Task() { [weak self] in
+            let events = self?.displayLink.events().flatMap { [weak self] _ in
                 Counters.shared.increment(counter: "DisplayLink")
                 return (self?.makeEvent() ?? []).async
             }
-            for await event in events {
-                Counters.shared.increment(counter: "Relay")
-                await channel.send(event)
+            guard let events else {
+                return
             }
-            controllerNotificationsTask.cancel()
+
+            for await event in events {
+                print("TICK 1", Date.now)
+                Counters.shared.increment(counter: "Relay")
+                await self?.channel.send(event)
+            }
         }
         return channel
     }
 
-    func keyboard() async {
-        guard let displayLink else {
-            fatalError()
-        }
-        // TODO: Move to MovementController
-        for await _ in NotificationCenter.default.notifications(named: .GCKeyboardDidConnect) {
-            break
-        }
-        guard let keyboard = GCKeyboard.coalesced, let keyboardInput = keyboard.keyboardInput else {
-            fatalError()
-        }
-        let capturedInput = keyboardInput.capture()
-        let leftGUI = capturedInput.button(forKeyCode: .leftGUI)!
-        let keyW = capturedInput.button(forKeyCode: .keyW)!
-        let keyA = capturedInput.button(forKeyCode: .keyA)!
-        let keyS = capturedInput.button(forKeyCode: .keyS)!
-        let keyD = capturedInput.button(forKeyCode: .keyD)!
+    func keyboard() {
+        self.keyboardTask = Task { [weak self] in
 
-        for await _ in displayLink.events() {
-            guard focused else {
-                print("Skipping")
-                return
+            guard let displayLink = self?.displayLink else {
+                fatalError()
             }
-            capturedInput.setStateFromPhysicalInput(keyboardInput)
-            if leftGUI.value > 0 {
-                continue
+            // TODO: Move to MovementController
+            for await _ in NotificationCenter.default.notifications(named: .GCKeyboardDidConnect) {
+                break
             }
-            var delta = SIMD2<Float>.zero
-            if keyW.value > 0 {
-                delta += [0, 1]
+            guard let keyboard = GCKeyboard.coalesced, let keyboardInput = keyboard.keyboardInput else {
+                fatalError()
             }
-            if keyS.value > 0 {
-                delta += [0, -1]
+            let capturedInput = keyboardInput.capture()
+            let leftGUI = capturedInput.button(forKeyCode: .leftGUI)!
+            let keyW = capturedInput.button(forKeyCode: .keyW)!
+            let keyA = capturedInput.button(forKeyCode: .keyA)!
+            let keyS = capturedInput.button(forKeyCode: .keyS)!
+            let keyD = capturedInput.button(forKeyCode: .keyD)!
+            
+            for await _ in displayLink.events() {
+                print("TICK 2", Date.now)
+                guard self?.focused == true else {
+                    print("Skipping")
+                    return
+                }
+                capturedInput.setStateFromPhysicalInput(keyboardInput)
+                if leftGUI.value > 0 {
+                    continue
+                }
+                var delta = SIMD2<Float>.zero
+                if keyW.value > 0 {
+                    delta += [0, 1]
+                }
+                if keyS.value > 0 {
+                    delta += [0, -1]
+                }
+                if keyA.value > 0 {
+                    delta += [1, 0]
+                }
+                if keyD.value > 0 {
+                    delta += [-1, 0]
+                }
+                await self?.channel.send(.movement(SIMD3(delta.x, 0, delta.y)))
             }
-            if keyA.value > 0 {
-                delta += [1, 0]
-            }
-            if keyD.value > 0 {
-                delta += [-1, 0]
-            }
-            await channel.send(.movement(SIMD3(delta.x, 0, delta.y)))
         }
 
     }
@@ -275,7 +281,7 @@ enum GCElementKey: String, CaseIterable {
 struct GameControllerWidget: View {
 
     @Observable
-    class Model {
+    class GameControllerWidgetModel {
         var scanning = false
 
         struct DeviceBox: Hashable, Identifiable {
@@ -283,7 +289,7 @@ struct GameControllerWidget: View {
                 return ObjectIdentifier(device)
             }
 
-            static func == (lhs: GameControllerWidget.Model.DeviceBox, rhs: GameControllerWidget.Model.DeviceBox) -> Bool {
+            static func == (lhs: GameControllerWidget.GameControllerWidgetModel.DeviceBox, rhs: GameControllerWidget.GameControllerWidgetModel.DeviceBox) -> Bool {
                 lhs.device === rhs.device
             }
 
@@ -303,57 +309,52 @@ struct GameControllerWidget: View {
         var _virtualController: GCVirtualController? = nil
 #endif
 
+        @ObservationIgnored
+        var monitorTask: Task<(), Never>? = nil
+
         init() {
             devices.formUnion(GCController.controllers().map(DeviceBox.init))
-            Task {
-                for await notification in NotificationCenter.default.notifications(named: .GCControllerDidConnect) {
-                    guard let controller = notification.object as? GCDevice else {
-                        return
+
+            monitorTask = Task { [weak self] in
+                await withDiscardingTaskGroup { [weak self] group in
+                    let notificationCenter = NotificationCenter.default
+                    group.addTask { [weak self] in
+                        for await device in notificationCenter.notifications(named: .GCControllerDidConnect).compactMap(\.object).cast(to: GCDevice.self) {
+                            self?.devices.insert(DeviceBox(device: device!))
+                        }
                     }
-                    devices.insert(DeviceBox(device: controller))
-                }
-            }
-            Task {
-                for await notification in NotificationCenter.default.notifications(named: .GCControllerDidDisconnect) {
-                    guard let controller = notification.object as? GCDevice else {
-                        return
+                    group.addTask { [weak self] in
+                        for await device in notificationCenter.notifications(named: .GCControllerDidDisconnect).compactMap(\.object).cast(to: GCDevice.self) {
+                            self?.devices.remove(DeviceBox(device: device!))
+                        }
                     }
-                    devices.remove(DeviceBox(device: controller))
-                }
-            }
-            Task {
-                for await notification in NotificationCenter.default.notifications(named: .GCKeyboardDidConnect) {
-                    guard let controller = notification.object as? GCDevice else {
-                        return
+                    group.addTask { [weak self] in
+                        for await device in notificationCenter.notifications(named: .GCKeyboardDidConnect).compactMap(\.object).cast(to: GCDevice.self) {
+                            self?.devices.insert(DeviceBox(device: device!))
+                        }
                     }
-                    devices.insert(DeviceBox(device: controller))
-                }
-            }
-            Task {
-                for await notification in NotificationCenter.default.notifications(named: .GCKeyboardDidDisconnect) {
-                    guard let controller = notification.object as? GCDevice else {
-                        return
+                    group.addTask { [weak self] in
+                        for await device in notificationCenter.notifications(named: .GCKeyboardDidDisconnect).compactMap(\.object).cast(to: GCDevice.self) {
+                            self?.devices.remove(DeviceBox(device: device!))
+                        }
                     }
-                    devices.remove(DeviceBox(device: controller))
-                }
-            }
-            Task {
-                for await notification in NotificationCenter.default.notifications(named: .GCMouseDidConnect) {
-                    guard let controller = notification.object as? GCDevice else {
-                        return
+                    group.addTask { [weak self] in
+                        for await device in notificationCenter.notifications(named: .GCMouseDidConnect).compactMap(\.object).cast(to: GCDevice.self) {
+                            self?.devices.insert(DeviceBox(device: device!))
+                        }
                     }
-                    devices.insert(DeviceBox(device: controller))
-                }
-            }
-            Task {
-                for await notification in NotificationCenter.default.notifications(named: .GCMouseDidDisconnect) {
-                    guard let controller = notification.object as? GCDevice else {
-                        return
+                    group.addTask { [weak self] in
+                        for await device in notificationCenter.notifications(named: .GCMouseDidDisconnect).compactMap(\.object).cast(to: GCDevice.self) {
+                            self?.devices.remove(DeviceBox(device: device!))
+                        }
                     }
-                    devices.remove(DeviceBox(device: controller))
                 }
             }
             startDiscovery()
+        }
+
+        deinit {
+            monitorTask?.cancel()
         }
 
         func startDiscovery() {
@@ -373,7 +374,7 @@ struct GameControllerWidget: View {
     }
 
     @State
-    var model = Model()
+    var model = GameControllerWidgetModel()
 
     var body: some View {
         HStack {

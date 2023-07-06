@@ -47,6 +47,9 @@ public struct SimpleSceneView: View {
     @State
     var label: String?
 
+    @State
+    var movementConsumerTask: Task<(), Never>?
+
     public init() {
     }
 
@@ -58,6 +61,10 @@ public struct SimpleSceneView: View {
                     fatalError()
                 }
                 movementController = MovementController(displayLink: displayLink)
+            }
+            .onDisappear {
+                movementConsumerTask?.cancel()
+                movementConsumerTask = nil
             }
             .focusable(interactions: .automatic)
             .focused($renderViewFocused)
@@ -92,8 +99,7 @@ public struct SimpleSceneView: View {
                     .padding()
             }
             .task() {
-                // TODO: We're not managing this.
-                Task.detached {
+                movementConsumerTask = Task.detached {
                     guard let movementController else {
                         fatalError()
                     }

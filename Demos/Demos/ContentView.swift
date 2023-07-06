@@ -3,24 +3,28 @@ import RenderKit
 import Everything
 
 struct ContentView: View {
+
+    @State
+    var showUI = true
+
+
     var body: some View {
-        SimpleSceneView()
-            .metalDevice(MTLCreateSystemDefaultDevice()!)
-            .displayLink(DisplayLink())
-
-        //        NavigationSplitView {
-//            List {
-//                NavigationLink("SimpleSceneView") {
-//                }
-//                NavigationLink("GCView") {
-//                    GameControllerView()
-//                }
-//            }
-//        } detail: {
-//
-//        }
-
-
-        //ShaderToyView().metalDevice(MTLCreateSystemDefaultDevice()!)
+        Group {
+            if showUI {
+                SimpleSceneView()
+                    .metalDevice(MTLCreateSystemDefaultDevice()!)
+                    .displayLink(DisplayLink())
+            }
+            else {
+                ContentUnavailableView("Nothing here", systemImage: "cloud")
+            }
+        }
+        .toolbar {
+            ToolbarItem(placement: .navigation) {
+                Button(title: "poof", systemImage: "cloud") {
+                    showUI = false
+                }
+            }
+        }
     }
 }
