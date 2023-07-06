@@ -4,42 +4,40 @@ import AppKit
 import UIKit
 #endif
 
+// TODO: Downsides: Only one AsyncStream can be consumed at once. Each new events() creates a new AsyncStream.
 public struct DisplayLink2 {
     private class Helper: NSObject {
-        let callback: () -> Void
-        init(_ callback: @escaping () -> Void) {
-            self.callback = callback
-        }
+        var callback: (() -> Void)? = nil
         @objc func callCallback() {
-            callback()
+            callback?()
         }
     }
 
     private let runloop: RunLoop
     private let mode: RunLoop.Mode
-    private let displayLinkFactory: (@escaping () -> Void) -> CADisplayLink
+    private let helper: Helper
+    private let displayLink: CADisplayLink
+    public var isPaused: Bool {
+        get {
+            return displayLink.isPaused
+        }
+        set {
+            displayLink.isPaused = newValue
+        }
+    }
 
-    internal init(runloop: RunLoop, mode: RunLoop.Mode, displayLinkFactory: @escaping (@escaping () -> Void) -> CADisplayLink) {
+    internal init(runloop: RunLoop = .current, mode: RunLoop.Mode = .default) {
         self.runloop = runloop
         self.mode = mode
-        self.displayLinkFactory = displayLinkFactory
+
+        self.helper = Helper()
+        self.displayLink = NSScreen.screens[0].displayLink(target: helper, selector: #selector(Helper.callCallback))
     }
 
-    public init(runloop: RunLoop = .current, mode: RunLoop.Mode = .default) {
-#if os(macOS)
-        self = Self(runloop: runloop, mode: mode, source: NSScreen.screens[0])
-#else
-        self = Self(runloop: runloop, mode: mode) = { callback in
-            let helper = Helper(callback)
-            return CADisplayLink(target: helper, selector: #selector(Helper.callCallback))
-        }
-#endif
-    }
-
-    public func events() -> AsyncStream<()> {
+    public func events() -> AsyncStream<(CFTimeInterval, CFTimeInterval)> {
         return AsyncStream { continuation in
-            let displayLink = displayLinkFactory {
-                continuation.yield(())
+            helper.callback = {
+                continuation.yield((displayLink.timestamp, displayLink.duration))
             }
             continuation.onTermination = { @Sendable _ in
                 displayLink.invalidate()
@@ -49,25 +47,12 @@ public struct DisplayLink2 {
     }
 }
 
-extension DisplayLink2 {
-    init(runloop: RunLoop = .current, mode: RunLoop.Mode = .default, source: NSScreen) {
-        self = Self(runloop: runloop, mode: mode) { callback in
-            let helper = Helper(callback)
-            return source.displayLink(target: helper, selector: #selector(Helper.callCallback))
-        }
+
+func test() async {
+
+    let displayLink = DisplayLink2()
+    for await event in displayLink.events() {
+        print(event)
     }
 
-    init(runloop: RunLoop = .current, mode: RunLoop.Mode = .default, source: NSWindow) {
-        self = Self(runloop: runloop, mode: mode) { callback in
-            let helper = Helper(callback)
-            return source.displayLink(target: helper, selector: #selector(Helper.callCallback))
-        }
-    }
-
-    init(runloop: RunLoop = .current, mode: RunLoop.Mode = .default, source: NSView) {
-        self = Self(runloop: runloop, mode: mode) { callback in
-            let helper = Helper(callback)
-            return source.displayLink(target: helper, selector: #selector(Helper.callCallback))
-        }
-    }
 }
