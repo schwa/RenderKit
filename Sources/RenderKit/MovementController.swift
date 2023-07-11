@@ -34,7 +34,7 @@ class MovementController {
     var focused: Bool = false
 
     @ObservationIgnored
-    var displayLink: DisplayLink! = nil
+    var displayLink: DisplayLink2! = nil
 
     @ObservationIgnored
     var controller: GCController? = nil {
@@ -118,7 +118,7 @@ class MovementController {
     @ObservationIgnored
     var controllerNotificationsTask: Task<(), Never>? = nil
 
-    init(displayLink: DisplayLink) {
+    init(displayLink: DisplayLink2) {
         self.displayLink = displayLink
         keyboard()
     }
@@ -152,11 +152,10 @@ class MovementController {
                     }
                 }
             }
-            print("DONE")
         }
 
         relayTask = Task() { [weak self] in
-            let events = self?.displayLink.events().flatMap { [weak self] _ in
+            let events = self?.displayLink.events().flatMap { [weak self] event in
                 Counters.shared.increment(counter: "DisplayLink")
                 return (self?.makeEvent() ?? []).async
             }
@@ -165,7 +164,6 @@ class MovementController {
             }
 
             for await event in events {
-                print("TICK 1", Date.now)
                 Counters.shared.increment(counter: "Relay")
                 await self?.channel.send(event)
             }
@@ -194,7 +192,6 @@ class MovementController {
             let keyD = capturedInput.button(forKeyCode: .keyD)!
             
             for await _ in displayLink.events() {
-                print("TICK 2", Date.now)
                 guard self?.focused == true else {
                     print("Skipping")
                     return

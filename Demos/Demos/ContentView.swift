@@ -13,7 +13,7 @@ struct ContentView: View {
             if showUI {
                 SimpleSceneView()
                     .metalDevice(MTLCreateSystemDefaultDevice()!)
-                    .displayLink(DisplayLink())
+                    .displayLink(DisplayLink2())
             }
             else {
                 ContentUnavailableView("Nothing here", systemImage: "cloud")
