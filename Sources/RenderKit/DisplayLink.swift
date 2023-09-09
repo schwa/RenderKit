@@ -60,7 +60,7 @@ public class DisplayLink2 {
 #if os(macOS)
         self.init(runloop: runloop, mode: mode, source: NSScreen.screens[0])
 #else
-        self = Self(runloop: runloop, mode: mode) {
+        self.init(runloop: runloop, mode: mode) {
             CADisplayLink(target: $0, selector: #selector(Helper.callCallback))
         }
 #endif

@@ -64,6 +64,7 @@ class MovementController {
 //    var lastMouseUpdate: TimeInterval = 0
 
     public func disableUIKeys() {
+        #if os(macOS)
         NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
             // If we're not focused return everything.
             guard self?.focused == true else {
@@ -80,6 +81,7 @@ class MovementController {
             // Consume the key
             return nil
         }
+        #endif
     }
 
     @ObservationIgnored

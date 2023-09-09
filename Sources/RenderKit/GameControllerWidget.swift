@@ -28,8 +28,6 @@ struct GameControllerWidget: View {
 #if os(iOS)
         var virtualController: GCVirtualController? = nil
         // Temporary workaround for FB12509166
-        @ObservationIgnored
-        var _virtualController: GCVirtualController? = nil
 #endif
 
         @ObservationIgnored
