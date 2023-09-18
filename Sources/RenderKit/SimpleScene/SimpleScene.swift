@@ -12,6 +12,13 @@ public struct SimpleScene {
     public var light: Light
     public var ambientLightColor: SIMD3<Float>
     public var models: [Model]
+    
+    public init(camera: Camera, light: Light, ambientLightColor: SIMD3<Float>, models: [Model]) {
+        self.camera = camera
+        self.light = light
+        self.ambientLightColor = ambientLightColor
+        self.models = models
+    }
 }
 
 // MARK: -
@@ -25,6 +32,12 @@ public struct Camera {
         }
     }
     public var projection: Projection
+    
+    public init(transform: Transform, target: SIMD3<Float>, projection: Projection) {
+        self.transform = transform
+        self.target = target
+        self.projection = projection
+    }
 }
 
 extension Camera: Equatable {
@@ -49,6 +62,12 @@ public struct Light {
     public var position: Transform
     public var color: SIMD3<Float>
     public var power: Float
+    
+    public init(position: Transform, color: SIMD3<Float>, power: Float) {
+        self.position = position
+        self.color = color
+        self.power = power
+    }
 }
 
 extension Light: Equatable {
@@ -56,10 +75,17 @@ extension Light: Equatable {
 
 // MARK: -
 
-public struct Model {
+public struct Model: Identifiable {
+    public var id = LOLID2(prefix: "Model")
     public var transform: Transform
     public var color: SIMD4<Float>
     public var mesh: (MTLDevice) throws -> MTKMesh
+    
+    public init(transform: Transform, color: SIMD4<Float>, mesh: @escaping (MTLDevice) throws -> MTKMesh) {
+        self.transform = transform
+        self.color = color
+        self.mesh = mesh
+    }
 }
 
 // MARK: -

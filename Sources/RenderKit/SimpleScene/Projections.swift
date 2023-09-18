@@ -9,6 +9,11 @@ public struct PerspectiveProjection: ProjectionProtocol {
     public var fovy: SIMDSupport.Angle<Float>
     public var zClip: ClosedRange<Float>
 
+    public init(fovy: SIMDSupport.Angle<Float>, zClip: ClosedRange<Float>) {
+        self.fovy = fovy
+        self.zClip = zClip
+    }
+    
     public func matrix(viewSize: SIMD2<Float>) -> simd_float4x4 {
         let aspect = viewSize.x / viewSize.y
         return .perspective(aspect: aspect, fovy: fovy.radians, near: zClip.lowerBound, far: zClip.upperBound)
@@ -23,6 +28,15 @@ public struct OrthographicProjection: ProjectionProtocol {
     public var near: Float
     public var far: Float
 
+    public init(left: Float, right: Float, bottom: Float, top: Float, near: Float, far: Float) {
+        self.left = left
+        self.right = right
+        self.bottom = bottom
+        self.top = top
+        self.near = near
+        self.far = far
+    }
+    
     public func matrix(viewSize: SIMD2<Float>) -> simd_float4x4 {
         .orthographic(left: left, right: right, bottom: bottom, top: top, near: near, far: far)
     }

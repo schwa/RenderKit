@@ -10,7 +10,8 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
     var scene: SimpleScene?
     var renderPipelineState: MTLRenderPipelineState?
     var depthStencilState: MTLDepthStencilState?
-
+    var cache = Cache<String, MTKMesh>()
+    
     init() {
     }
 
@@ -43,6 +44,12 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
             depthStencilDescriptor.isDepthWriteEnabled = true
             depthStencilState = device.makeDepthStencilState(descriptor: depthStencilDescriptor)
         }
+        
+        // Warm cache
+        for model in scene!.models {
+            cache.insert(key: "model:\(model.id):mesh", value: try! model.mesh(device))
+        }
+
     }
 
     func draw(configuration: Configuration.Draw, commandBuffer: MTLCommandBuffer) {
@@ -53,7 +60,7 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
             guard let renderPassDescriptor = configuration.currentRenderPassDescriptor, let size = configuration.size else {
                 fatalError("No current render pass descriptor.")
             }
-            try commandBuffer.withRenderCommandEncoder(descriptor: renderPassDescriptor) { encoder in
+            commandBuffer.withRenderCommandEncoder(descriptor: renderPassDescriptor) { encoder in
                 encoder.setRenderPipelineState(renderPipelineState)
                 encoder.setDepthStencilState(depthStencilState)
                 
@@ -93,7 +100,9 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
                 
                 // TODO: Instancing
                 for model in scene.models {
-                    let mesh = try model.mesh(encoder.device)
+                    guard let mesh = cache.get(key: "model:\(model.id):mesh") else {
+                        fatalError()
+                    }
                     encoder.setVertexBuffer(mesh, startingIndex: 0)
                     for (fillMode, color) in modes {
                         let modelUniforms = ModelUniforms(
