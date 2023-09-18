@@ -16,7 +16,7 @@ import os
 
 let logger = Logger()
 
-public struct FPSSceneView: View {
+public struct FPSSceneView: ViewModifier {
     
     @Environment(\.displayLink)
     var displayLink
@@ -32,9 +32,9 @@ public struct FPSSceneView: View {
 
     @Binding
     var scene: SimpleScene
-    
-    public var body: some View {
-        SimpleSceneView()
+
+    public func body(content: Content) -> some View {
+        content
             .onAppear {
                 guard let displayLink else {
                     fatalError()
@@ -116,6 +116,9 @@ public struct SimpleSceneView: View {
     @Environment(\.displayLink)
     var displayLink
 
+    @Binding
+    var scene: SimpleScene
+        
     @State
     var renderPass = SimpleSceneRenderPass<MetalViewConfiguration>()
 
@@ -142,9 +145,10 @@ public struct SimpleSceneView: View {
     @State
     var movementConsumerTask: Task<(), Never>?
 
-    public init() {
+    public init(scene: Binding<SimpleScene>) {
+        self._scene = scene
     }
-
+    
     public var body: some View {
         ZStack {
             RendererView(renderPass: $renderPass)
@@ -230,15 +234,7 @@ public struct SimpleSceneView: View {
         .showFrameEditor()
         #endif
         .onAppear {
-            do {
-                guard let device else {
-                    fatalError()
-                }
-                self.renderPass.scene = try .demo(device: device)
-            }
-            catch {
-                print(error)
-            }
+            renderPass.scene = scene
         }
         .toolbar {
             ToolbarItem(placement: .secondaryAction) {

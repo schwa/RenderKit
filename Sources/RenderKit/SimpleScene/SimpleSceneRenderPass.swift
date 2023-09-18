@@ -46,66 +46,72 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
     }
 
     func draw(configuration: Configuration.Draw, commandBuffer: MTLCommandBuffer) {
-        guard let renderPipelineState, let depthStencilState else {
-            return
-        }
-        guard let renderPassDescriptor = configuration.currentRenderPassDescriptor, let size = configuration.size else {
-            fatalError("No current render pass descriptor.")
-        }
-        commandBuffer.withRenderCommandEncoder(descriptor: renderPassDescriptor) { encoder in
-            encoder.setRenderPipelineState(renderPipelineState)
-            encoder.setDepthStencilState(depthStencilState)
-
-            guard let scene else {
+        do {
+            guard let renderPipelineState, let depthStencilState else {
                 return
             }
-
-            let modes: [(MTLTriangleFillMode, SIMD4<Float>?)] = [
-                (.fill, nil),
-                (.lines, [1, 1, 1, 1]),
-            ]
-
-            let cameraUniforms = CameraUniforms(projectionMatrix: scene.camera.projection.matrix(viewSize: SIMD2<Float>(size)))
-            encoder.setVertexBytes(of: cameraUniforms, index: 1)
-
-//            struct LightUniforms {
-//                var lightPosition: SIMD3<Float>
-//                var lightColor: SIMD3<Float>
-//                var lightPower: Float
-//                var ambientLightColor: SIMD3<Float>
-//
-//                // TODO: make a macro of this!
-//                var b: [UInt8] {
-//                    var result: [UInt8] = []
-//                    result.append(contentsOf: bytes(of: lightPosition), alignment: 4)
-//                    result.append(contentsOf: bytes(of: lightColor), alignment: 4)
-//                    result.append(contentsOf: bytes(of: lightPower), alignment: 4)
-//                    result.append(contentsOf: bytes(of: ambientLightColor), alignment: 4)
-//                    result.append(contentsOf: Array(repeating: 0, count: 12), alignment: 4)
-//                    return result
-//                }
-//            }
-
-
-            let lightUniforms = LightUniforms(lightPosition: scene.light.position.translation, lightColor: scene.light.color, lightPower: scene.light.power, ambientLightColor: scene.ambientLightColor)
-            encoder.setFragmentBytes(of: lightUniforms, index: 3)
-
-            // TODO: Instancing
-            for model in scene.models {
-                encoder.setVertexBuffer(model.mesh, startingIndex: 0)
-                for (fillMode, color) in modes {
-                    let modelUniforms = ModelUniforms(
-                        modelViewMatrix: scene.camera.transform.matrix.inverse * model.transform.matrix,
-                        modelNormalMatrix: simd_float3x3(truncating: model.transform.matrix.transpose.inverse),
-                        color: color ?? model.color
-                    )
-                    encoder.setTriangleFillMode(fillMode)
-
-                    encoder.setVertexBytes(of: modelUniforms, index: 2)
-
-                    encoder.draw(model.mesh)
+            guard let renderPassDescriptor = configuration.currentRenderPassDescriptor, let size = configuration.size else {
+                fatalError("No current render pass descriptor.")
+            }
+            try commandBuffer.withRenderCommandEncoder(descriptor: renderPassDescriptor) { encoder in
+                encoder.setRenderPipelineState(renderPipelineState)
+                encoder.setDepthStencilState(depthStencilState)
+                
+                guard let scene else {
+                    return
+                }
+                
+                let modes: [(MTLTriangleFillMode, SIMD4<Float>?)] = [
+                    (.fill, nil),
+                    (.lines, [1, 1, 1, 1]),
+                ]
+                
+                let cameraUniforms = CameraUniforms(projectionMatrix: scene.camera.projection.matrix(viewSize: SIMD2<Float>(size)))
+                encoder.setVertexBytes(of: cameraUniforms, index: 1)
+                
+                //            struct LightUniforms {
+                //                var lightPosition: SIMD3<Float>
+                //                var lightColor: SIMD3<Float>
+                //                var lightPower: Float
+                //                var ambientLightColor: SIMD3<Float>
+                //
+                //                // TODO: make a macro of this!
+                //                var b: [UInt8] {
+                //                    var result: [UInt8] = []
+                //                    result.append(contentsOf: bytes(of: lightPosition), alignment: 4)
+                //                    result.append(contentsOf: bytes(of: lightColor), alignment: 4)
+                //                    result.append(contentsOf: bytes(of: lightPower), alignment: 4)
+                //                    result.append(contentsOf: bytes(of: ambientLightColor), alignment: 4)
+                //                    result.append(contentsOf: Array(repeating: 0, count: 12), alignment: 4)
+                //                    return result
+                //                }
+                //            }
+                
+                
+                let lightUniforms = LightUniforms(lightPosition: scene.light.position.translation, lightColor: scene.light.color, lightPower: scene.light.power, ambientLightColor: scene.ambientLightColor)
+                encoder.setFragmentBytes(of: lightUniforms, index: 3)
+                
+                // TODO: Instancing
+                for model in scene.models {
+                    let mesh = try model.mesh(encoder.device)
+                    encoder.setVertexBuffer(mesh, startingIndex: 0)
+                    for (fillMode, color) in modes {
+                        let modelUniforms = ModelUniforms(
+                            modelViewMatrix: scene.camera.transform.matrix.inverse * model.transform.matrix,
+                            modelNormalMatrix: simd_float3x3(truncating: model.transform.matrix.transpose.inverse),
+                            color: color ?? model.color
+                        )
+                        encoder.setTriangleFillMode(fillMode)
+                        
+                        encoder.setVertexBytes(of: modelUniforms, index: 2)
+                        
+                        encoder.draw(mesh)
+                    }
                 }
             }
+        }
+        catch {
+            logger.error("Render error: \(error)")
         }
     }
 }

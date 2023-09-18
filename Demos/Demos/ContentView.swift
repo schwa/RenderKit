@@ -6,6 +6,9 @@ struct ContentView: View {
 
     let texture: MTLTexture
     
+    @State
+    var scene = SimpleScene.demo()
+    
     init() {
         let url = Bundle.main.resourceURL!.appendingPathComponent("StanfordVolumeData/CThead")
         let volumeData = VolumeData(directoryURL: url, size: [256, 256, 113])
@@ -14,7 +17,7 @@ struct ContentView: View {
     }
     
     var body: some View {
-        SimpleSceneView()
+        SimpleSceneView(scene: $scene)
             .metalDevice(MTLCreateSystemDefaultDevice()!)
             .displayLink(DisplayLink2())
     }
