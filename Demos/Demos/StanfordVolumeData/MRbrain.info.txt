@@ -1,0 +1,10 @@
+Description:    MR study of head with skull partially removed to reveal brain
+Dimensions:	109 slices of 256 x 256 pixels,
+		voxel grid is rectangular, and
+		X:Y:Z shape of each voxel is 1:1:2
+Files:		109 binary files, one file per slice
+File format:    16-bit integers (Mac byte ordering), file contains no header
+Data source:    acquired on a Siemens Magnetom and provided courtesy of
+                Siemens Medical Systems, Inc., Iselin, NJ.  Data edited 
+                (skull removed) by Dr. Julian Rosenman, North Carolina
+                Memorial Hospital

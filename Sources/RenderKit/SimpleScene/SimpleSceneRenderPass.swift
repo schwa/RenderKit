@@ -47,12 +47,10 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
 
     func draw(configuration: Configuration.Draw, commandBuffer: MTLCommandBuffer) {
         guard let renderPipelineState, let depthStencilState else {
-
             return
         }
         guard let renderPassDescriptor = configuration.currentRenderPassDescriptor, let size = configuration.size else {
             fatalError("No current render pass descriptor.")
-            return
         }
         commandBuffer.withRenderCommandEncoder(descriptor: renderPassDescriptor) { encoder in
             encoder.setRenderPipelineState(renderPipelineState)
@@ -92,6 +90,7 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
             let lightUniforms = LightUniforms(lightPosition: scene.light.position.translation, lightColor: scene.light.color, lightPower: scene.light.power, ambientLightColor: scene.ambientLightColor)
             encoder.setFragmentBytes(of: lightUniforms, index: 3)
 
+            // TODO: Instancing
             for model in scene.models {
                 encoder.setVertexBuffer(model.mesh, startingIndex: 0)
                 for (fillMode, color) in modes {

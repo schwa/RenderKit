@@ -4,27 +4,18 @@ import Everything
 
 struct ContentView: View {
 
-    @State
-    var showUI = true
-
-
+    let texture: MTLTexture
+    
+    init() {
+        let url = Bundle.main.resourceURL!.appendingPathComponent("StanfordVolumeData/CThead")
+        let volumeData = VolumeData(directoryURL: url, size: [256, 256, 113])
+        let load = try! volumeData.load()
+        texture = try! load(MTLCreateSystemDefaultDevice()!)
+    }
+    
     var body: some View {
-        Group {
-            if showUI {
-                SimpleSceneView()
-                    .metalDevice(MTLCreateSystemDefaultDevice()!)
-                    .displayLink(DisplayLink2())
-            }
-            else {
-                ContentUnavailableView("Nothing here", systemImage: "cloud")
-            }
-        }
-        .toolbar {
-            ToolbarItem(placement: .navigation) {
-                Button(title: "poof", systemImage: "cloud") {
-                    showUI = false
-                }
-            }
-        }
+        SimpleSceneView()
+            .metalDevice(MTLCreateSystemDefaultDevice()!)
+            .displayLink(DisplayLink2())
     }
 }
