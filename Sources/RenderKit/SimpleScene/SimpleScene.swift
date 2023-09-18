@@ -51,6 +51,9 @@ public struct Light {
     public var power: Float
 }
 
+extension Light: Equatable {
+}
+
 // MARK: -
 
 public struct Model {

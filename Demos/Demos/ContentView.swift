@@ -19,6 +19,7 @@ struct ContentView: View {
     var body: some View {
         SimpleSceneView(scene: $scene)
             .metalDevice(MTLCreateSystemDefaultDevice()!)
+            .firstPersonInteractive(scene: $scene)
             .displayLink(DisplayLink2())
     }
 }
