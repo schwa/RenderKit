@@ -11,9 +11,6 @@
 		453D32BA2A48D06500FCEE29 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453D32B92A48D06500FCEE29 /* ContentView.swift */; };
 		453D32BC2A48D06600FCEE29 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 453D32BB2A48D06600FCEE29 /* Assets.xcassets */; };
 		453D32C02A48D06600FCEE29 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 453D32BF2A48D06600FCEE29 /* Preview Assets.xcassets */; };
-		459E2E1E2A48D0D900E98F70 /* Everything in Frameworks */ = {isa = PBXBuildFile; productRef = 459E2E1D2A48D0D900E98F70 /* Everything */; };
-		459E2E232A48D5A000E98F70 /* MetalSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 459E2E222A48D5A000E98F70 /* MetalSupport */; };
-		459E2E262A48D5B900E98F70 /* SIMDSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 459E2E252A48D5B900E98F70 /* SIMDSupport */; };
 		459EDA582A494C0700F9211C /* CLI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459EDA572A494C0700F9211C /* CLI.swift */; };
 		459F48652A50779C00623EEE /* RenderKit in Frameworks */ = {isa = PBXBuildFile; productRef = 459F48642A50779C00623EEE /* RenderKit */; };
 		459F48672A5077A300623EEE /* RenderKit in Frameworks */ = {isa = PBXBuildFile; productRef = 459F48662A5077A300623EEE /* RenderKit */; };
@@ -58,10 +55,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				459E2E262A48D5B900E98F70 /* SIMDSupport in Frameworks */,
 				459F48652A50779C00623EEE /* RenderKit in Frameworks */,
-				459E2E232A48D5A000E98F70 /* MetalSupport in Frameworks */,
-				459E2E1E2A48D0D900E98F70 /* Everything in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -166,9 +160,6 @@
 			);
 			name = Demos;
 			packageProductDependencies = (
-				459E2E1D2A48D0D900E98F70 /* Everything */,
-				459E2E222A48D5A000E98F70 /* MetalSupport */,
-				459E2E252A48D5B900E98F70 /* SIMDSupport */,
 				459F48642A50779C00623EEE /* RenderKit */,
 			);
 			productName = Demos;
@@ -223,9 +214,6 @@
 			);
 			mainGroup = 453D32AB2A48D06500FCEE29;
 			packageReferences = (
-				459E2E1C2A48D0D900E98F70 /* XCRemoteSwiftPackageReference "Everything" */,
-				459E2E212A48D5A000E98F70 /* XCRemoteSwiftPackageReference "MetalSupport" */,
-				459E2E242A48D5B900E98F70 /* XCRemoteSwiftPackageReference "SIMD-Support" */,
 			);
 			productRefGroup = 453D32B52A48D06500FCEE29 /* Products */;
 			projectDirPath = "";
@@ -362,49 +350,7 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		459E2E1C2A48D0D900E98F70 /* XCRemoteSwiftPackageReference "Everything" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/schwa/Everything";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.2;
-			};
-		};
-		459E2E212A48D5A000E98F70 /* XCRemoteSwiftPackageReference "MetalSupport" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/schwa/MetalSupport";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.2.0;
-			};
-		};
-		459E2E242A48D5B900E98F70 /* XCRemoteSwiftPackageReference "SIMD-Support" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/schwa/SIMD-Support";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.1;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
 /* Begin XCSwiftPackageProductDependency section */
-		459E2E1D2A48D0D900E98F70 /* Everything */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 459E2E1C2A48D0D900E98F70 /* XCRemoteSwiftPackageReference "Everything" */;
-			productName = Everything;
-		};
-		459E2E222A48D5A000E98F70 /* MetalSupport */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 459E2E212A48D5A000E98F70 /* XCRemoteSwiftPackageReference "MetalSupport" */;
-			productName = MetalSupport;
-		};
-		459E2E252A48D5B900E98F70 /* SIMDSupport */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 459E2E242A48D5B900E98F70 /* XCRemoteSwiftPackageReference "SIMD-Support" */;
-			productName = SIMDSupport;
-		};
 		459F48642A50779C00623EEE /* RenderKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = RenderKit;

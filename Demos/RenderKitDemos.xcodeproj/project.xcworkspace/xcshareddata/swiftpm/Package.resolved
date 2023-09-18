@@ -1,12 +1,12 @@
 {
   "pins" : [
     {
-      "identity" : "coregraphicsgeometrysupport",
+      "identity" : "approximateequality",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/schwa/CoreGraphicsGeometrySupport",
+      "location" : "https://github.com/schwa/ApproximateEquality",
       "state" : {
-        "revision" : "bdfd61e3dc130c0c73b1c9ba401f7bb0df161cd3",
-        "version" : "0.1.0"
+        "revision" : "13ae17c1b1eb3bab0912bb29b264d3be2ea38115",
+        "version" : "0.2.1"
       }
     },
     {
@@ -14,26 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/schwa/Everything",
       "state" : {
-        "revision" : "4feab6bd6b8a7f42db887a313eab66faa37b2977",
-        "version" : "0.4.4"
-      }
-    },
-    {
-      "identity" : "metalsupport",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/schwa/MetalSupport",
-      "state" : {
-        "revision" : "28cdfc952493e217b0b68ad4ddce01e6c207b915",
-        "version" : "0.2.0"
-      }
-    },
-    {
-      "identity" : "simd-support",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/schwa/SIMD-Support",
-      "state" : {
-        "revision" : "a7d1f9585c56f27494599b82ca51fb2cf2d0eb57",
-        "version" : "0.1.1"
+        "branch" : "jwight/downsizing",
+        "revision" : "6f667bb989c5e45f79fdc1fcf71e8063b525ae76"
       }
     },
     {
@@ -73,6 +55,15 @@
       }
     },
     {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-syntax.git",
+      "state" : {
+        "revision" : "74203046135342e4a4a627476dd6caf8b28fe11b",
+        "version" : "509.0.0"
+      }
+    },
+    {
       "identity" : "swiftfields",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/schwa/swiftfields",
@@ -88,6 +79,15 @@
       "state" : {
         "revision" : "de0d13b019b9a0b68b1d6a83e1f48db3c4d06512",
         "version" : "0.3.3"
+      }
+    },
+    {
+      "identity" : "swiftgraphics",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/schwa/SwiftGraphics",
+      "state" : {
+        "branch" : "jwight/develop",
+        "revision" : "5feaf2654d8bd5c6368ae724ba7ff7368dbfa13e"
       }
     }
   ],

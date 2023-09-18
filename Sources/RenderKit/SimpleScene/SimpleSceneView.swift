@@ -9,7 +9,7 @@ import SwiftFormats
 import SwiftFields
 import UniformTypeIdentifiers
 import CoreImage
-import CoreGraphicsGeometrySupport
+import CoreGraphicsSupport
 import GameController
 import AsyncAlgorithms
 import os

@@ -9,6 +9,7 @@ import Metal
 import ModelIO
 import MetalPerformanceShaders
 import SIMDSupport
+import CoreGraphicsSupport
 
 public extension MTKView {
     var betterDebugDescription: String {
@@ -49,27 +50,6 @@ public extension MTKView {
 
 public enum RenderKitError: Error {
     case generic(String)
-}
-
-public struct MetalDeviceKey: EnvironmentKey {
-    public static var defaultValue: MTLDevice?
-}
-
-public extension EnvironmentValues {
-    var metalDevice: MTLDevice? {
-        get {
-            self[MetalDeviceKey.self]
-        }
-        set {
-            self[MetalDeviceKey.self] = newValue
-        }
-    }
-}
-
-public extension View {
-    func metalDevice(_ device: MTLDevice) -> some View {
-        environment(\.metalDevice, device)
-    }
 }
 
 public extension MTLTexture {
