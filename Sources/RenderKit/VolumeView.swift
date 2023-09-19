@@ -228,7 +228,8 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
                 encoder.setFragmentTexture(texture, index: 0)
                 encoder.setFragmentTexture(transferFunctionTexture, index: 1)
 
-                var fragmentUniforms = VolumeFragmentUniforms(instanceCount: UInt16(instanceCount))
+                // TODO: Hard coded
+                let fragmentUniforms = VolumeFragmentUniforms(instanceCount: UInt16(instanceCount), maxValue: 3272)
                 encoder.setFragmentBytes(of: fragmentUniforms, index: 0)
                 
                 encoder.draw(mesh2, instanceCount: instanceCount)

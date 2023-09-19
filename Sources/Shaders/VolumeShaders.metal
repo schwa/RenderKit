@@ -73,15 +73,15 @@ float4 volumeFragmentShader(
         ) {
         discard_fragment();
     }
-    const unsigned short textureColor = texture.sample(sampler, in.textureCoordinate).r;
+    const float normalizedValue = texture.sample(sampler, in.textureCoordinate).r / float(uniforms.maxValue);
 
-    auto color = float4(1, 1, 1, textureColor / 3272.0 / float(uniforms.instanceCount));
-    //auto color = transferFunction(textureColor, 1.0 * 10 / float(uniforms.instanceCount));
-    return color;
+    //    // TODO: commented out transferFunctionTexture for now
+    auto alpha = transferFunctionTexture.sample(sampler, normalizedValue).r;
 
-//    // TODO: commented out transferFunctionTexture for now
-//    const float value = float(texture.sample(sampler, in.textureCoordinate).r / 3272); // TODO: Magic number
-//    auto alpha = transferFunctionTexture.sample(sampler, value).r;
-//    return float4(1, 1, 1, float(alpha) / float(uniforms.instanceCount));
+    
+    //const float alpha = normalizedValue;
+    
+    // Return color with alpha adjusted by number of instances so we don't blow the brightness.
+    return float4(1, 1, 1, alpha / float(uniforms.instanceCount));
 }
 

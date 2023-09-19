@@ -11,6 +11,7 @@ struct VolumeTransforms {
 #pragma pack(push, 1)
 struct VolumeFragmentUniforms {
     unsigned short instanceCount;
+    unsigned short maxValue;
 };
 #pragma pack(pop)
 
