@@ -58,7 +58,10 @@ public struct VolumeView: View {
         print("CHANGE")
         let values = alphaTransferFunction.map { Float16($0)}
         values.withUnsafeBytes { buffer in
-            renderPass.transferFunctionTexture.buffer!.contents().copyMemory(from: buffer.baseAddress!, byteCount: buffer.count)
+            //renderPass.transferFunctionTexture.buffer!.contents().copyMemory(from: buffer.baseAddress!, byteCount: buffer.count)
+            
+            let region = MTLRegion(origin: [0, 0, 0], size: [256, 1, 1]) // TODO: Hardcoded
+            renderPass.transferFunctionTexture.replace(region: region, mipmapLevel: 0, slice: 0, withBytes: buffer.baseAddress!, bytesPerRow: buffer.count, bytesPerImage: 0)
         }
     }
 }
@@ -83,19 +86,15 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
         logger?.debug("\(id): \(#function)")
 
         // TODO: Hardcoded
-        guard let buffer = device.makeBuffer(length: 256 * 2) else {
-            fatalError()
-        }
-        
         let textureDescriptor = MTLTextureDescriptor()
         // We actually only need this texture to be 1D but Metal doesn't allow buffer backed 1D textures which seems assinine. Maybe we don't need it to be buffer backed and just need to call texture.copy each update?
-        textureDescriptor.textureType = .type2D
+        textureDescriptor.textureType = .type1D
         textureDescriptor.width = 256 // TODO: Hardcoded
         textureDescriptor.height = 1
         textureDescriptor.depth = 1
         textureDescriptor.pixelFormat = .r16Float
         textureDescriptor.storageMode = .shared
-        guard let texture = buffer.makeTexture(descriptor: textureDescriptor, offset: 0, bytesPerRow: buffer.length) else {
+        guard let texture = device.makeTexture(descriptor: textureDescriptor) else {
             fatalError()
         }
         transferFunctionTexture = texture
@@ -404,3 +403,10 @@ struct TransferFunctionEditor: View {
         }
     }
 }
+
+extension MTLOrigin: ExpressibleByArrayLiteral {
+    public init(arrayLiteral elements: Int...) {
+        self = .init(x: elements[0], y: elements[2], z: elements[2])
+    }
+}
+

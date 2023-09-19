@@ -7,10 +7,6 @@
 
 using namespace metal;
 
-float4 transferFunction(ushort f, float m) {
-    return float4(1, 1, 1, float(f) / 3272 * m);
-}
-
 struct VertexOut {
     float4 position [[position]]; // in projection space
     float3 textureCoordinate;
@@ -65,7 +61,7 @@ VertexOut volumeVertexShader(
 float4 volumeFragmentShader(
     FragmentIn in [[stage_in]],
     texture3d<unsigned short, access::sample> texture [[texture(0)]],
-    texture2d<half, access::sample> transferFunctionTexture [[texture(1)]],
+    texture1d<half, access::sample> transferFunctionTexture [[texture(1)]],
     sampler sampler [[sampler(0)]],
     constant VolumeFragmentUniforms &uniforms [[buffer(0)]]
     )
@@ -78,12 +74,14 @@ float4 volumeFragmentShader(
         discard_fragment();
     }
     const unsigned short textureColor = texture.sample(sampler, in.textureCoordinate).r;
-    auto color = transferFunction(textureColor, 1.0 * 10 / float(uniforms.instanceCount));
+
+    auto color = float4(1, 1, 1, textureColor / 3272.0 / float(uniforms.instanceCount));
+    //auto color = transferFunction(textureColor, 1.0 * 10 / float(uniforms.instanceCount));
     return color;
 
-    // TODO: commented out transferFunctionTexture for now
+//    // TODO: commented out transferFunctionTexture for now
 //    const float value = float(texture.sample(sampler, in.textureCoordinate).r / 3272); // TODO: Magic number
-//    auto alpha = transferFunctionTexture.sample(sampler, float2(value, 0) ).r;
+//    auto alpha = transferFunctionTexture.sample(sampler, value).r;
 //    return float4(1, 1, 1, float(alpha) / float(uniforms.instanceCount));
 }
 
