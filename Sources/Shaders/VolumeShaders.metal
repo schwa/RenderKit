@@ -7,7 +7,9 @@
 
 using namespace metal;
 
-float4 transferFunction(ushort f);
+float4 transferFunction(ushort f, float m) {
+    return float4(s, 1, 1, float(f) / 3272 * m);
+}
 
 struct VertexOut {
     float4 position [[position]]; // in projection space
@@ -27,11 +29,11 @@ VertexOut volumeVertexShader(
     )
 {
     const VolumeInstance instance = instances[instance_id];
-    const float4 modelVertex = modelUniforms.modelViewMatrix * float4(in.position, 1.0);
+    const float4 offset = float4(0, 0, instance.offsetZ, 1.0);
+    const float4 modelVertex = modelUniforms.modelViewMatrix * float4(in.position + offset.xyz, 1.0);
     const float4 clipSpace = cameraUniforms.projectionMatrix * modelVertex;
-    const float4 clipSpaceOffset = float4(0, 0, instance.offsetZ, 1.0);
     return {
-        .position = clipSpace + clipSpaceOffset,
+        .position = clipSpace,
         .textureCoordinate = float3(in.textureCoordinate, instance.textureZ),
     };
 }
@@ -40,28 +42,31 @@ VertexOut volumeVertexShader(
 float4 volumeFragmentShader(
     FragmentIn in [[stage_in]],
     texture3d<unsigned short, access::sample> texture [[texture(0)]],
-    sampler sampler [[sampler(0)]]
+    sampler sampler [[sampler(0)]],
+    constant TransferFunctionParameters &transferFunctionParameters [[buffer(0)]]
     )
 {
-//    return float4(1, 0, 0, 1.0 - in.textureCoordinate.z);
-
-    const float4 badColor = float4(1, 0, 1, 0.25);
+    const float4 badColor = float4(0, 0.5, 0.5, 1);
     const unsigned short textureColor = texture.sample(sampler, in.textureCoordinate).r;
     
-    if (in.textureCoordinate.x < 0.0 || in.textureCoordinate.y < 0.0) {
+    const float w = 0.0125;
+    if (
+        in.textureCoordinate.x <= w && in.textureCoordinate.y <= w
+        || in.textureCoordinate.x <= w && in.textureCoordinate.z <= w
+        || in.textureCoordinate.y <= w && in.textureCoordinate.z <= w
+        || in.textureCoordinate.x >= 1 - w && in.textureCoordinate.y >= 1 - w
+        || in.textureCoordinate.x >= 1 - w && in.textureCoordinate.z >= 1 - w
+        || in.textureCoordinate.y >= 1 - w && in.textureCoordinate.z >= 1 - w
+        ) {
         //discard_fragment();
         return badColor;
     }
-    else if (in.textureCoordinate.x > 1.0 || in.textureCoordinate.y > 1.0) {
-        return badColor;
-    }
-    else if (in.textureCoordinate.x == 0.5 || in.textureCoordinate.y == 0.5) {
-        return badColor;
-    }
 
-    return transferFunction(textureColor);
+    auto color = transferFunction(textureColor, transferFunctionParameters.m);
+//    if (in.textureCoordinate.z < 0.1) {
+//        color *= float4(0, 1, 0, 1);
+//    }
+    
+    return color;
 }
 
-float4 transferFunction(ushort f) {
-    return float4(1, 0, 0, float(f) / 3272);
-}

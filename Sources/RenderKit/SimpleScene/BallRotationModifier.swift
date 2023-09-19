@@ -97,8 +97,8 @@ public struct BallRotationModifier: ViewModifier {
             fatalError()
         }
         var rotation = initialGestureRotation
-        rotation.pitch = clamp(rotation.pitch + .degrees(translation.dx * interactionScale.dx), in: pitchLimit)
-        rotation.yaw = clamp(rotation.yaw + .degrees(translation.dy * interactionScale.dy), in: yawLimit)
+        rotation.pitch = clamp(rotation.pitch + .degrees(translation.dy * interactionScale.dy), in: pitchLimit)
+        rotation.yaw = clamp(rotation.yaw + .degrees(translation.dx * interactionScale.dx), in: yawLimit)
         return rotation
     }
 }

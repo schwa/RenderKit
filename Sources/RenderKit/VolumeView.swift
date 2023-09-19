@@ -17,6 +17,9 @@ public struct VolumeView: View {
     @State
     var rotation = Rotation.zero
     
+    @State
+    var transferFunctionParameters = TransferFunctionParameters(m: 1 / 50)
+    
     public init() {
     }
     
@@ -25,6 +28,17 @@ public struct VolumeView: View {
             .ballRotation($rotation)
             .onChange(of: rotation) {
                 renderPass.rotation = rotation
+            }
+            .onChange(of: transferFunctionParameters) {
+                renderPass.transferFunctionParameters = transferFunctionParameters
+            }
+            .overlay(alignment: .bottom) {
+                Slider(value: $transferFunctionParameters.m, in: 0.01 ... 0.2)
+                .frame(maxWidth: 100)
+                .padding()
+                .background(.thickMaterial)
+                .padding()
+                .controlSize(.small)
             }
     }
 }
@@ -37,7 +51,8 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
     var texture: MTLTexture
     var cache = Cache<String, Any>()
     var rotation: Rotation = .zero
-    
+    var transferFunctionParameters = TransferFunctionParameters(m: 1 / 50)
+
     init() {
         let url = Bundle.main.resourceURL!.appendingPathComponent("StanfordVolumeData/CThead")
         let volumeData = VolumeData(directoryURL: url, size: [256, 256, 113])
@@ -119,7 +134,7 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
 
                 let camera = Camera(transform: .init( translation: [0, 0, 2]), target: .zero, projection: .perspective(PerspectiveProjection(fovy: .degrees(90), zClip: 0.01 ... 10)))
 
-                let modelTransform = Transform(rotation: rotation.quaternion)
+                let modelTransform = Transform(scale: [1.5, 1.5, 1.5], rotation: rotation.quaternion)
                 
                 let mesh2 = try cache.get(key: "mesh2", of: SimpleMesh.self) {
                     let rect = CGRect(center: .zero, radius: 0.5)
@@ -150,9 +165,8 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
                 
                 let instances = cache.get(key: "instance_data", of: MTLBuffer.self) {
                     let instances = (0..<texture.depth).map { slice in
-                        let slice = Float(slice) / Float(texture.depth - 1)
-                        let z = slice
-                        return VolumeInstance(offsetZ: 1 - z - 1, textureZ: 1 - z)
+                        let z = Float(slice) / Float(texture.depth - 1)
+                        return VolumeInstance(offsetZ: z - 0.5, textureZ: 1 - z)
                     }
                     let buffer = configuration.device!.makeBuffer(bytesOf: instances, options: .storageModeShared)!
                     buffer.label = "instances"
@@ -170,9 +184,12 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
                     samplerDescriptor.mipFilter = .linear
                     return configuration.device!.makeSamplerState(descriptor: samplerDescriptor)!
                 }
-
                 encoder.setFragmentSamplerState(sampler, index: 0)
                 encoder.setFragmentTexture(texture, index: 0)
+                
+                encoder.setFragmentBytes(of: transferFunctionParameters, index: 0)
+                
+                
 
 //                encoder.setTriangleFillMode(.lines)
 //                print(texture.depth)
@@ -308,5 +325,11 @@ extension MTLRenderCommandEncoder {
     
     func draw(_ mesh: SimpleMesh, instanceCount: Int) {
         drawIndexedPrimitives(type: mesh.primitiveType, indexCount: mesh.indexCount, indexType: mesh.indexType, indexBuffer: mesh.indexBuffer, indexBufferOffset: mesh.indexBufferOffset, instanceCount: instanceCount)
+    }
+}
+
+extension TransferFunctionParameters: Equatable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        return lhs.m == rhs.m
     }
 }
