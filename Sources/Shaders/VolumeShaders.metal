@@ -35,6 +35,7 @@ VertexOut volumeVertexShader(
     // Kill rotation from modelView matrix.
     // TODO: This also kills scale.
     float4x4 modelViewMatrix = transforms.modelViewMatrix;
+    // TODO: Hack the scale in here until i can bothered to fix this.
     modelViewMatrix[0][0] = 2.0;
     modelViewMatrix[0][1] = 0.0;
     modelViewMatrix[0][2] = 0.0;
