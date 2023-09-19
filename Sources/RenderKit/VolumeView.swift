@@ -49,9 +49,6 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
                 let vertexFunction = library.makeFunction(name: "volumeVertexShader")!
                 let fragmentFunction = library.makeFunction(name: "volumeFragmentShader")
 
-                // TODO: This is silly...
-                let plane = try! MTKMesh(mesh: Plane().toMDLMesh(extent: [2, 2, 0], allocator: MTKMeshBufferAllocator(device: device)), device: device)
-
                 let renderPipelineDescriptor = MTLRenderPipelineDescriptor()
                 renderPipelineDescriptor.vertexFunction = vertexFunction
                 renderPipelineDescriptor.fragmentFunction = fragmentFunction
@@ -66,7 +63,7 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
                 renderPipelineDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
 
                 renderPipelineDescriptor.depthAttachmentPixelFormat = configuration.depthStencilPixelFormat
-                renderPipelineDescriptor.vertexDescriptor = MTLVertexDescriptor(plane.vertexDescriptor)
+                renderPipelineDescriptor.vertexDescriptor = SimpleMesh.vertexDescriptor
                 renderPipelineState = try! device.makeRenderPipelineState(descriptor: renderPipelineDescriptor)
             }
 
@@ -112,19 +109,16 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
 
                 let camera = Camera(transform: .translation([0, 0, 2]), target: .zero, projection: .perspective(PerspectiveProjection(fovy: .degrees(90), zClip: 0.1 ... 100)))
 
-                // Vertex Buffer Index 0
-//                let mesh = try cache.get(key: "cube", of: MTKMesh.self) {
-//                    let allocator = MTKMeshBufferAllocator(device: configuration.device!)
-//                    let mdlMesh = Cube().toMDLMesh(extent: [1, 1, 1], allocator: allocator)
-//                    return try MTKMesh(mesh: mdlMesh, device: configuration.device!)
-//                }
-//                encoder.setVertexBuffer(mesh, startingIndex: 0)
-
                 let mesh2 = try cache.get(key: "mesh2", of: SimpleMesh.self) {
                     let rect = CGRect(center: .zero, radius: 0.5)
                     let circle = LegacyGraphics.Circle(containing: rect)
                     let triangle = Triangle(containing: circle)
-                    return try SimpleMesh(label: "triangle", triangle: triangle, device: configuration.device!)
+                    return try SimpleMesh(label: "triangle", triangle: triangle, device: configuration.device!) {
+                        SIMD2<Float>($0) + [0.5, 0.5]
+                    }
+//                    return try SimpleMesh(label: "rectangle", rectangle: rect, device: configuration.device!) {
+//                        SIMD2<Float>($0) + [0.5, 0.5]
+//                    }
                 }
                 encoder.setVertexBuffer(mesh2, index: 0)
 
@@ -159,11 +153,7 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
                 encoder.setFragmentSamplerState(sampler, index: 0)
                 encoder.setFragmentTexture(texture, index: 0)
 
-                
-//                for submesh in mesh.submeshes {
-//                    encoder.drawIndexedPrimitives(type: submesh.primitiveType, indexCount: submesh.indexCount, indexType: submesh.indexType, indexBuffer: submesh.indexBuffer.buffer, indexBufferOffset: submesh.indexBuffer.offset, instanceCount: instances.count)
-//                }
-
+//                encoder.setTriangleFillMode(.lines)
                 encoder.draw(mesh2, instanceCount: 1)
             }
         }
@@ -206,11 +196,20 @@ struct SimpleMesh {
     var indexType: MTLIndexType { .uint16 }
     var indexBufferOffset: Int { 0 }
     var vertexBufferOffset: Int { 0 }
-//    var vertexDescriptor: MTLVertexDescriptor = {
-//        let d = MTLVertexDescriptor()
-//        fatalError()
-//        return d
-//    }()
+    static var vertexDescriptor: MTLVertexDescriptor = {
+        assert(MemoryLayout<Vertex>.size == 40)
+
+        let vertexDescriptor = MTLVertexDescriptor()
+        vertexDescriptor.layouts[0].stepFunction = .perVertex
+        vertexDescriptor.layouts[0].stride = 40
+        vertexDescriptor.attributes[0].offset = 0
+        vertexDescriptor.attributes[0].format = .float3
+        vertexDescriptor.attributes[1].offset = 16
+        vertexDescriptor.attributes[1].format = .float3
+        vertexDescriptor.attributes[2].offset = 32
+        vertexDescriptor.attributes[2].format = .float2
+        return vertexDescriptor
+    }()
 
     
     init(label: String? = nil, indexCount: Int, indexBuffer: MTLBuffer, vertexBuffer: MTLBuffer) {
@@ -233,25 +232,54 @@ extension SimpleMesh {
         guard let vertexBuffer = device.makeBuffer(bytesOf: vertices, options: .storageModePrivate) else {
             fatalError()
         }
+        assert(vertexBuffer.length == vertices.count * 40)
         self = .init(label: label, indexCount: indices.count, indexBuffer: indexBuffer, vertexBuffer: vertexBuffer)
     }
 }
 
 extension SimpleMesh {
-    init(label: String? = nil, triangle: Triangle, transform: simd_float3x2 = simd_float3x2([1, 0], [0, 0], [0, 1]), device: MTLDevice) throws {
+    init(label: String? = nil, rectangle: CGRect, transform: simd_float3x2 = simd_float3x2([1, 0], [0, 1], [0, 0]), device: MTLDevice, textureCoordinate: (CGPoint) -> SIMD2<Float>) throws {
+        // 1---3
+        // |\  |
+        // | \ |
+        // |  \|
+        // 0---2
+
         let vertices = [
-            SIMD2<Float>(triangle.vertex.0),
-            SIMD2<Float>(triangle.vertex.1),
-            SIMD2<Float>(triangle.vertex.2),
+            rectangle.minXMinY,
+            rectangle.minXMaxY,
+            rectangle.maxXMinY,
+            rectangle.maxXMaxY,
         ]
         .map {
             // TODO; Normal not impacted by transform. It should be.
-            Vertex(position: $0 * transform, normal: [0, 0, 1], textureCoordinate: $0)
+            Vertex(position: SIMD2<Float>($0) * transform, normal: [0, 0, 1], textureCoordinate: textureCoordinate($0))
         }
-        print(vertices)
+        for v in vertices {
+            print(v)
+        }
+        self = try .init(label: label, indices: [0, 1, 2, 1, 3, 2], vertices: vertices, device: device)
+    }
+}
+
+extension SimpleMesh {
+    init(label: String? = nil, triangle: Triangle, transform: simd_float3x2 = simd_float3x2([1, 0], [0, 1], [0, 0]), device: MTLDevice, textureCoordinate: (CGPoint) -> SIMD2<Float>) throws {
+        let vertices = [
+            triangle.vertex.0,
+            triangle.vertex.1,
+            triangle.vertex.2,
+        ]
+        .map {
+            // TODO; Normal not impacted by transform. It should be.
+            Vertex(position: SIMD2<Float>($0) * transform, normal: [0, 0, 1], textureCoordinate: textureCoordinate($0))
+        }
+        for v in vertices {
+            print(v.textureCoordinate)
+        }
         self = try .init(label: label, indices: [0, 1, 2], vertices: vertices, device: device)
     }
 }
+
 
 extension MTLRenderCommandEncoder {
     func setVertexBuffer(_ mesh: SimpleMesh, index: Int) {

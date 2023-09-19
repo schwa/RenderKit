@@ -7,6 +7,8 @@
 
 using namespace metal;
 
+float4 transferFunction(ushort f);
+
 struct Fragment {
     float4 position [[position]]; // in projection space
     float3 modelPosition;
@@ -39,7 +41,7 @@ Fragment volumeVertexShader(
 }
 
 [[fragment]]
-vector_float4 volumeFragmentShader(
+float4 volumeFragmentShader(
     Fragment in [[stage_in]],
     texture3d<unsigned short, access::sample> texture [[texture(0)]],
     sampler sampler [[sampler(0)]]
@@ -47,7 +49,21 @@ vector_float4 volumeFragmentShader(
 {
     const auto textureColor = texture.sample(sampler, in.textureCoordinate);
     
-    
-    
-    return float4(float(textureColor.r) / 200, 0.1, 0.1, 1);
+    if (in.textureCoordinate.x < 0.0 || in.textureCoordinate.y < 0.0) {
+        return float4(1, 1, 0, 0.25);
+    }
+    else if (in.textureCoordinate.x > 1.0 || in.textureCoordinate.y > 1.0) {
+        return float4(1, 1, 0, 0.25);
+    }
+    else if (in.textureCoordinate.x == 0.5 || in.textureCoordinate.y == 0.5) {
+        return float4(0, 1, 0, 0.25);
+    }
+
+    return transferFunction(textureColor.r);
+//    return float4(1, 0, 0, 1);
+}
+
+float4 transferFunction(ushort f) {
+    return float4(1, 0.1, 0.1, float(f) / 500);
+//
 }
