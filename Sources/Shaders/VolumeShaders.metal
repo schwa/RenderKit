@@ -63,5 +63,5 @@ float4 volumeFragmentShader(
 }
 
 float4 transferFunction(ushort f) {
-    return float4(1, 0.1, 0.1, float(f) / 400);
+    return float4(1, 0.1, 0.1, float(f) / 3272 * 10);
 }
