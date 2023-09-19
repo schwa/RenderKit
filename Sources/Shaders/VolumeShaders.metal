@@ -65,6 +65,7 @@ VertexOut volumeVertexShader(
 float4 volumeFragmentShader(
     FragmentIn in [[stage_in]],
     texture3d<unsigned short, access::sample> texture [[texture(0)]],
+    texture2d<half, access::sample> transferFunctionTexture [[texture(1)]],
     sampler sampler [[sampler(0)]],
     constant TransferFunctionParameters &transferFunctionParameters [[buffer(0)]]
     )
@@ -74,11 +75,15 @@ float4 volumeFragmentShader(
         || in.textureCoordinate.y < 0 || in.textureCoordinate.y > 1.0
         || in.textureCoordinate.z < 0 || in.textureCoordinate.z > 1.0
         ) {
-//        return float4(1, 0, 0, 0.01);
         discard_fragment();
     }
     const unsigned short textureColor = texture.sample(sampler, in.textureCoordinate).r;
     auto color = transferFunction(textureColor, transferFunctionParameters.m);
     return color;
+
+    // TODO: commented out transferFunctionTexture for now
+//    const float value = float(texture.sample(sampler, in.textureCoordinate).r / 3272); // TODO: Magic number
+//    auto alpha = transferFunctionTexture.sample(sampler, float2(value, 0)).r;
+//    return float4(1, 1, 1, float(alpha));
 }
 

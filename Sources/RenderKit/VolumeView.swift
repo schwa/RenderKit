@@ -35,6 +35,9 @@ public struct VolumeView: View {
     public var body: some View {
         RendererView(renderPass: $renderPass)
             .ballRotation($rotation)
+            .onAppear {
+                updateTransferFunctionTexture()
+            }
             .onChange(of: rotation) {
                 renderPass.rotation = rotation
             }
@@ -42,14 +45,7 @@ public struct VolumeView: View {
                 renderPass.transferFunctionParameters = transferFunctionParameters
             }
             .onChange(of: alphaTransferFunction) {
-        
-                let values = alphaTransferFunction.map { Float16($0)}
-                values.withUnsafeBytes { buffer in
-                    renderPass.transferFunctionTexture.buffer!.contents().copyMemory(from: buffer.baseAddress!, byteCount: buffer.count)
-
-                }
-                
-                
+                updateTransferFunctionTexture()
             }
             .overlay(alignment: .bottom) {
                 VStack {
@@ -62,6 +58,14 @@ public struct VolumeView: View {
                 .padding()
                 .controlSize(.small)
             }
+    }
+    
+    func updateTransferFunctionTexture() {
+        print("CHANGE")
+        let values = alphaTransferFunction.map { Float16($0)}
+        values.withUnsafeBytes { buffer in
+            renderPass.transferFunctionTexture.buffer!.contents().copyMemory(from: buffer.baseAddress!, byteCount: buffer.count)
+        }
     }
 }
 
@@ -91,6 +95,7 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
         
         
         let textureDescriptor = MTLTextureDescriptor()
+        textureDescriptor.textureType = .type2D
         textureDescriptor.width = 256
         textureDescriptor.height = 1
         textureDescriptor.depth = 1
@@ -204,14 +209,17 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
                 
                 // Vertex Buffer Index 3
                 
+                let instanceCount = 256
+                
                 let instances = cache.get(key: "instance_data", of: MTLBuffer.self) {
-                    let instances = (0..<texture.depth).map { slice in
-                        let z = Float(slice) / Float(texture.depth - 1)
+                    
+                    let instances = (0..<instanceCount).map { slice in
+                        let z = Float(slice) / Float(instanceCount - 1)
                         return VolumeInstance(offsetZ: z - 0.5, textureZ: 1 - z)
                     }
                     let buffer = configuration.device!.makeBuffer(bytesOf: instances, options: .storageModeShared)!
                     buffer.label = "instances"
-                    assert(buffer.length == 8 * texture.depth)
+                    assert(buffer.length == 8 * instanceCount)
                     return buffer
                 }
                 encoder.setVertexBuffer(instances, offset: 0, index: 3)
@@ -227,14 +235,11 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
                 }
                 encoder.setFragmentSamplerState(sampler, index: 0)
                 encoder.setFragmentTexture(texture, index: 0)
-                
+                encoder.setFragmentTexture(transferFunctionTexture, index: 1)
+
                 encoder.setFragmentBytes(of: transferFunctionParameters, index: 0)
                 
-                
-
-//                encoder.setTriangleFillMode(.lines)
-//                print(texture.depth)
-                encoder.draw(mesh2, instanceCount: texture.depth)
+                encoder.draw(mesh2, instanceCount: instanceCount)
             }
         }
         catch {
@@ -389,7 +394,6 @@ struct TransferFunctionEditor: View {
     var body: some View {
         GeometryReader { proxy in
             Canvas { context, size in
-                print(size)
                 context.scaleBy(x: 1, y: -1)
                 context.translateBy(x: 0, y: -size.height)
                 context.scaleBy(x: size.width / Double(values.count), y: 1)
