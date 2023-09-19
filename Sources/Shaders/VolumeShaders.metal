@@ -61,7 +61,7 @@ VertexOut volumeVertexShader(
 float4 volumeFragmentShader(
     FragmentIn in [[stage_in]],
     texture3d<unsigned short, access::sample> texture [[texture(0)]],
-    texture1d<half, access::sample> transferFunctionTexture [[texture(1)]],
+    texture1d<float, access::sample> transferFunctionTexture [[texture(1)]],
     sampler sampler [[sampler(0)]],
     constant VolumeFragmentUniforms &uniforms [[buffer(0)]]
     )
@@ -74,14 +74,9 @@ float4 volumeFragmentShader(
         discard_fragment();
     }
     const float normalizedValue = texture.sample(sampler, in.textureCoordinate).r / float(uniforms.maxValue);
+    auto color = transferFunctionTexture.sample(sampler, normalizedValue);
 
-    //    // TODO: commented out transferFunctionTexture for now
-    auto alpha = transferFunctionTexture.sample(sampler, normalizedValue).r;
-
-    
-    //const float alpha = normalizedValue;
-    
-    // Return color with alpha adjusted by number of instances so we don't blow the brightness.
-    return float4(1, 1, 1, alpha / float(uniforms.instanceCount));
+    // Alpha adjusted by number of instances so we don't blow out the brightness.
+    return color * float4(1, 1, 1, 1 / float(uniforms.instanceCount));
 }
 

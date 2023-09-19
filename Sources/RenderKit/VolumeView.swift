@@ -21,8 +21,13 @@ public struct VolumeView: View {
     var volumeData = VolumeData(named: "CThead", size: [256, 256, 113])
     
     @State
+    var redTransferFunction: [Float] = Array(repeating: 1.0, count: 256)
+    @State
+    var greenTransferFunction: [Float] = Array(repeating: 1.0, count: 256)
+    @State
+    var blueTransferFunction: [Float] = Array(repeating: 1.0, count: 256)
+    @State
     var alphaTransferFunction: [Float] = (0..<256).map({ Float($0) / Float(255) })
-    //var alphaTransferFunction: [Float] = Array(repeating: 0.1, count: 256)
 
     @Environment(\.metalDevice)
     var device
@@ -39,15 +44,29 @@ public struct VolumeView: View {
             .onChange(of: rotation) {
                 renderPass.rotation = rotation
             }
+            .onChange(of: redTransferFunction) {
+                updateTransferFunctionTexture()
+            }
+            .onChange(of: greenTransferFunction) {
+                updateTransferFunctionTexture()
+            }
+            .onChange(of: blueTransferFunction) {
+                updateTransferFunctionTexture()
+            }
             .onChange(of: alphaTransferFunction) {
                 updateTransferFunctionTexture()
             }
             .overlay(alignment: .bottom) {
                 VStack {
-                    TransferFunctionEditor(width: 1024, values: $alphaTransferFunction)
+                    TransferFunctionEditor(width: 1024, values: $redTransferFunction, color: .red)
+                        .frame(maxHeight: 20)
+                    TransferFunctionEditor(width: 1024, values: $greenTransferFunction, color: .green)
+                        .frame(maxHeight: 20)
+                    TransferFunctionEditor(width: 1024, values: $blueTransferFunction, color: .blue)
+                        .frame(maxHeight: 20)
+                    TransferFunctionEditor(width: 1024, values: $alphaTransferFunction, color: .white)
+                        .frame(maxHeight: 20)
                 }
-                .frame(maxHeight: 50)
-                .padding()
                 .background(.ultraThinMaterial)
                 .padding()
                 .controlSize(.small)
@@ -55,13 +74,24 @@ public struct VolumeView: View {
     }
     
     func updateTransferFunctionTexture() {
-        print("CHANGE")
-        let values = alphaTransferFunction.map { Float16($0)}
+
+        let values = (0...255).map {
+            SIMD4<Float>(
+                redTransferFunction[$0],
+                greenTransferFunction[$0],
+                blueTransferFunction[$0],
+                alphaTransferFunction[$0]
+            )
+        }
+        .map { $0 * 255.0 }
+        .map { SIMD4<UInt8>($0) }
+        
         values.withUnsafeBytes { buffer in
-            //renderPass.transferFunctionTexture.buffer!.contents().copyMemory(from: buffer.baseAddress!, byteCount: buffer.count)
-            
             let region = MTLRegion(origin: [0, 0, 0], size: [256, 1, 1]) // TODO: Hardcoded
-            renderPass.transferFunctionTexture.replace(region: region, mipmapLevel: 0, slice: 0, withBytes: buffer.baseAddress!, bytesPerRow: buffer.count, bytesPerImage: 0)
+            let bytesPerRow = 256 * MemoryLayout<SIMD4<UInt8>>.stride
+            
+            
+            renderPass.transferFunctionTexture.replace(region: region, mipmapLevel: 0, slice: 0, withBytes: buffer.baseAddress!, bytesPerRow: bytesPerRow, bytesPerImage: 0)
         }
     }
 }
@@ -92,11 +122,12 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
         textureDescriptor.width = 256 // TODO: Hardcoded
         textureDescriptor.height = 1
         textureDescriptor.depth = 1
-        textureDescriptor.pixelFormat = .r16Float
+        textureDescriptor.pixelFormat = .rgba8Unorm
         textureDescriptor.storageMode = .shared
         guard let texture = device.makeTexture(descriptor: textureDescriptor) else {
             fatalError()
         }
+        texture.label = "transfer function"
         transferFunctionTexture = texture
     }
     
@@ -375,9 +406,13 @@ struct TransferFunctionEditor: View {
     @Binding
     var values: [Float]
     
+    let color: Color
+    
     @State
     var lastLocation: CGFloat?
 
+    let coordinateSpace = NamedCoordinateSpace.named(ObjectIdentifier(Self.self))
+    
     var body: some View {
         GeometryReader { proxy in
             Canvas { context, size in
@@ -392,17 +427,31 @@ struct TransferFunctionEditor: View {
                     path.addLine(to: CGPoint(x: 1023, y: 0))
                     path.closeSubpath()
                 }
-                context.fill(path, with: .color(Color.white))
+                context.fill(path, with: .color(color))
             }
-            .gesture(DragGesture().onChanged({ value in
-                let column = max(min(Int(value.location.x * Double(values.count - 1) / proxy.size.width), values.count - 1), 0)
-                let value = 1 - Float(value.location.y / proxy.size.height)
+            .coordinateSpace(coordinateSpace)
+            .gesture(DragGesture(coordinateSpace: coordinateSpace ).onChanged({ value in
+                let column = clamp(Int(value.location.x * Double(values.count - 1) / proxy.size.width), in: 0...(values.count - 1))
+                let value = clamp(1 - Float(value.location.y / proxy.size.height), in: 0...1)
                 values[column] = value
-                
-                
             }))
         }
+        .contextMenu {
+            Button("Clear") {
+                values = Array(repeating: 0, count: values.count)
+            }
+            Button("Set") {
+                values = Array(repeating: 1, count: values.count)
+            }
+            Button("Ramp Up") {
+                values = (0..<values.count).map { Float($0) / Float(values.count) }
+            }
+            Button("Ramp Down") {
+                values = (0..<values.count).map { 1 - Float($0) / Float(values.count) }
+            }
+        }
     }
+    
 }
 
 extension MTLOrigin: ExpressibleByArrayLiteral {
