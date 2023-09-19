@@ -14,7 +14,6 @@
 		459EDA582A494C0700F9211C /* CLI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459EDA572A494C0700F9211C /* CLI.swift */; };
 		459F48652A50779C00623EEE /* RenderKit in Frameworks */ = {isa = PBXBuildFile; productRef = 459F48642A50779C00623EEE /* RenderKit */; };
 		459F48672A5077A300623EEE /* RenderKit in Frameworks */ = {isa = PBXBuildFile; productRef = 459F48662A5077A300623EEE /* RenderKit */; };
-		45CC35622AB81E9900C33779 /* Scratch.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45CC35612AB81E9900C33779 /* Scratch.swift */; };
 		45CC35642AB8240F00C33779 /* StanfordVolumeData in Resources */ = {isa = PBXBuildFile; fileRef = 45CC35632AB8240F00C33779 /* StanfordVolumeData */; };
 /* End PBXBuildFile section */
 
@@ -50,7 +49,6 @@
 		45A147C22A4B1B7300C06FE1 /* Demos-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Demos-Release.xcconfig"; sourceTree = "<group>"; };
 		45A147C32A4B1B7300C06FE1 /* Project-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Project-Debug.xcconfig"; sourceTree = "<group>"; };
 		45A147C42A4B1B7300C06FE1 /* CLI-Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "CLI-Shared.xcconfig"; sourceTree = "<group>"; };
-		45CC35612AB81E9900C33779 /* Scratch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scratch.swift; sourceTree = "<group>"; };
 		45CC35632AB8240F00C33779 /* StanfordVolumeData */ = {isa = PBXFileReference; lastKnownFileType = folder; path = StanfordVolumeData; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -101,7 +99,6 @@
 				45A147BB2A4B1B7300C06FE1 /* xcconfig */,
 				453D32B72A48D06500FCEE29 /* DemosApp.swift */,
 				453D32B92A48D06500FCEE29 /* ContentView.swift */,
-				45CC35612AB81E9900C33779 /* Scratch.swift */,
 				453D32BB2A48D06600FCEE29 /* Assets.xcassets */,
 				453D32BD2A48D06600FCEE29 /* Demos.entitlements */,
 				45CC35632AB8240F00C33779 /* StanfordVolumeData */,
@@ -250,7 +247,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				453D32BA2A48D06500FCEE29 /* ContentView.swift in Sources */,
-				45CC35622AB81E9900C33779 /* Scratch.swift in Sources */,
 				453D32B82A48D06500FCEE29 /* DemosApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
