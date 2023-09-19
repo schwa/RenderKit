@@ -6,6 +6,7 @@ import SIMDSupport
 import Shaders
 import Everything
 import MetalSupport
+import os
 
 // https://www.youtube.com/watch?v=y4KdxaMC69w&t=1761s
 
@@ -37,7 +38,7 @@ public struct VolumeView: View {
     
     public var body: some View {
         RendererView(renderPass: $renderPass)
-            .ballRotation($rotation)
+            .ballRotation($rotation, pitchLimit: .degrees(-.infinity) ... .degrees(.infinity), yawLimit: .degrees(-.infinity) ... .degrees(.infinity))
             .onAppear {
                 updateTransferFunctionTexture()
             }
@@ -105,7 +106,8 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
     var cache = Cache<String, Any>()
     var rotation: Rotation = .zero
     var transferFunctionTexture: MTLTexture
-
+    var logger: Logger? = nil
+    
     init() {
         let device = MTLCreateSystemDefaultDevice()! // TODO: Naughty
         let volumeData = VolumeData(named: "CThead", size: [256, 256, 113]) // TODO: Hardcoded

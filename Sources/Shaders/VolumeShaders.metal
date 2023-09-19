@@ -43,10 +43,7 @@ VertexOut volumeVertexShader(
     modelViewMatrix[2][2] = 2.0;
     
     float4x4 textureMatrix = transforms.textureMatrix;
-    
-    float3 rotatedTextureCoordinate = (textureMatrix * float4(textureCoordinate, 1.0)).xyz;
-    
-    
+    float3 rotatedTextureCoordinate = (textureMatrix * float4(textureCoordinate.xyz, 1.0)).xzy;
     const float4 modelVertex = modelViewMatrix * float4(in.position + offset.xyz, 1.0);
     const float4 clipSpace = cameraUniforms.projectionMatrix * modelVertex;
     return {
