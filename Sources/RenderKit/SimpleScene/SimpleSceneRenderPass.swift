@@ -22,7 +22,7 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
         }
 
         if renderPipelineState == nil {
-            let library = try! device.makeDefaultLibrary(bundle: .shaders)
+            let library = try! device.makeDefaultLibrary(bundle: .shadersBundle)
             let constants = MTLFunctionConstantValues()
             let vertexFunction = library.makeFunction(name: "flatShaderVertexShader")!
             let fragmentFunction = try! library.makeFunction(name: "flatShaderFragmentShader", constantValues: constants)

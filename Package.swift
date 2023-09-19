@@ -24,6 +24,7 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-async-algorithms", from: "0.1.0"),
         .package(url: "https://github.com/schwa/swiftformats", from: "0.3.3"),
         .package(url: "https://github.com/schwa/swiftfields", from: "0.1.3"),
+        .package(url: "https://github.com/schwa/MetalCompilerPlugin", from: "0.0.2"),
     ],
     targets: [
         .target(
@@ -48,9 +49,11 @@ let package = Package(
                 .enableExperimentalFeature("VariadicGenerics")
             ]
         ),
-        .target(name: "Shaders"),
-        .testTarget(
-            name: "RenderKitTests",
-            dependencies: ["RenderKit"]),
+        .target(name: "Shaders",
+            plugins: [
+                .plugin(name: "MetalCompilerPlugin", package: "MetalCompilerPlugin")
+            ]
+        ),
+        .testTarget(name: "RenderKitTests", dependencies: ["RenderKit"])
     ]
 )

@@ -1,7 +1,9 @@
 #import "Support.h"
 
+
+#pragma pack(push, 1)
 struct VolumeInstance {
-    unsigned short slice;
+    float offsetZ;
     float textureZ;
-    simd_float3 offset;
 };
+#pragma pack(pop)

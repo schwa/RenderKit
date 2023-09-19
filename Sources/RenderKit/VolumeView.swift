@@ -7,16 +7,25 @@ import Shaders
 import Everything
 import MetalSupport
 
+// https://www.youtube.com/watch?v=y4KdxaMC69w&t=1761s
+
 public struct VolumeView: View {
     
     @State
     var renderPass = VolumeRenderPass<MetalViewConfiguration>()
+    
+    @State
+    var rotation = Rotation.zero
     
     public init() {
     }
     
     public var body: some View {
         RendererView(renderPass: $renderPass)
+            .ballRotation($rotation)
+            .onChange(of: rotation) {
+                renderPass.rotation = rotation
+            }
     }
 }
 
@@ -27,7 +36,8 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
     var depthStencilState: MTLDepthStencilState?
     var texture: MTLTexture
     var cache = Cache<String, Any>()
-
+    var rotation: Rotation = .zero
+    
     init() {
         let url = Bundle.main.resourceURL!.appendingPathComponent("StanfordVolumeData/CThead")
         let volumeData = VolumeData(directoryURL: url, size: [256, 256, 113])
@@ -45,7 +55,7 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
         }
         do {
             if renderPipelineState == nil {
-                let library = try! device.makeDefaultLibrary(bundle: .shaders)
+                let library = try! device.makeDebugLibrary(bundle: .shadersBundle)
                 let vertexFunction = library.makeFunction(name: "volumeVertexShader")!
                 let fragmentFunction = library.makeFunction(name: "volumeFragmentShader")
 
@@ -107,18 +117,20 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
                 encoder.setRenderPipelineState(renderPipelineState)
                 encoder.setDepthStencilState(depthStencilState)
 
-                let camera = Camera(transform: .translation([0, 0, 2]), target: .zero, projection: .perspective(PerspectiveProjection(fovy: .degrees(90), zClip: 0.1 ... 100)))
+                let camera = Camera(transform: .init( translation: [0, 0, 2]), target: .zero, projection: .perspective(PerspectiveProjection(fovy: .degrees(90), zClip: 0.01 ... 10)))
 
+                let modelTransform = Transform(rotation: rotation.quaternion)
+                
                 let mesh2 = try cache.get(key: "mesh2", of: SimpleMesh.self) {
                     let rect = CGRect(center: .zero, radius: 0.5)
                     let circle = LegacyGraphics.Circle(containing: rect)
                     let triangle = Triangle(containing: circle)
-                    return try SimpleMesh(label: "triangle", triangle: triangle, device: configuration.device!) {
-                        SIMD2<Float>($0) + [0.5, 0.5]
-                    }
-//                    return try SimpleMesh(label: "rectangle", rectangle: rect, device: configuration.device!) {
+//                    return try SimpleMesh(label: "triangle", triangle: triangle, device: configuration.device!) {
 //                        SIMD2<Float>($0) + [0.5, 0.5]
 //                    }
+                    return try SimpleMesh(label: "rectangle", rectangle: rect, device: configuration.device!) {
+                        SIMD2<Float>($0) + [0.5, 0.5]
+                    }
                 }
                 encoder.setVertexBuffer(mesh2, index: 0)
 
@@ -128,17 +140,25 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
 
                 // Vertex Buffer Index 2
                 let modelUniforms = ModelUniforms(
-                    modelViewMatrix: camera.transform.matrix.inverse * .identity,
-                    modelNormalMatrix: simd_float3x3(truncating: .identity.transpose.inverse),
+                    modelViewMatrix: camera.transform.matrix.inverse * modelTransform.matrix,
+                    modelNormalMatrix: simd_float3x3(truncating: modelTransform.matrix.transpose.inverse),
                     color: [1, 0, 0, 0]
                 )
                 encoder.setVertexBytes(of: modelUniforms, index: 2)
                 
                 // Vertex Buffer Index 3
-                let instances = [
-                    VolumeInstance(slice: 0, textureZ: 0.0, offset: .zero),
-                ]
-                encoder.setVertexBytes(of: instances, index: 3)
+                
+                let instances = cache.get(key: "instance_data", of: MTLBuffer.self) {
+                    let instances = (0..<texture.depth).map { slice in
+                        let z = Float(slice) / Float(texture.depth - 1)
+                        return VolumeInstance(offsetZ: z, textureZ: z)
+                    }
+                    let buffer = configuration.device!.makeBuffer(bytesOf: instances, options: .storageModeShared)!
+                    buffer.label = "instances"
+                    assert(buffer.length == 8 * texture.depth)
+                    return buffer
+                }
+                encoder.setVertexBuffer(instances, offset: 0, index: 3)
 
                 let sampler = cache.get(key: "sampler", of: MTLSamplerState.self) {
                     let samplerDescriptor = MTLSamplerDescriptor()
@@ -154,7 +174,8 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
                 encoder.setFragmentTexture(texture, index: 0)
 
 //                encoder.setTriangleFillMode(.lines)
-                encoder.draw(mesh2, instanceCount: 1)
+//                print(texture.depth)
+                encoder.draw(mesh2, instanceCount: texture.depth)
             }
         }
         catch {
@@ -255,9 +276,6 @@ extension SimpleMesh {
             // TODO; Normal not impacted by transform. It should be.
             Vertex(position: SIMD2<Float>($0) * transform, normal: [0, 0, 1], textureCoordinate: textureCoordinate($0))
         }
-        for v in vertices {
-            print(v)
-        }
         self = try .init(label: label, indices: [0, 1, 2, 1, 3, 2], vertices: vertices, device: device)
     }
 }
@@ -272,9 +290,6 @@ extension SimpleMesh {
         .map {
             // TODO; Normal not impacted by transform. It should be.
             Vertex(position: SIMD2<Float>($0) * transform, normal: [0, 0, 1], textureCoordinate: textureCoordinate($0))
-        }
-        for v in vertices {
-            print(v.textureCoordinate)
         }
         self = try .init(label: label, indices: [0, 1, 2], vertices: vertices, device: device)
     }

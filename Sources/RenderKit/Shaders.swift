@@ -7,15 +7,18 @@
 
 import Foundation
 
-extension Bundle {
+public extension Bundle {
+    static var shadersBundle: Bundle = {
+        // Step 1. Find the bundle as a child of main bundle.
+        if let shadersBundleURL = Bundle.main.url(forResource: "RenderKit_Shaders", withExtension: "bundle"), let bundle = Bundle(url: shadersBundleURL) {
+            return bundle
+        }
+        // Step 2. Find the bundle as peer to the current `Bundle.module`
+        if let bundle = Bundle(url: Bundle.module.bundleURL.deletingLastPathComponent().appendingPathComponent("RenderKit_Shaders.bundle")) {
+            return bundle
+        }
+        // Fail.
+        fatalError("Could not find shaders bundle")
+    }()
 
-    static var shaders: Bundle {
-        guard let url = Bundle.main.url(forResource: "RenderKit_Shaders", withExtension: "bundle") else {
-            fatalError()
-        }
-        guard let shaders = Bundle(url: url) else {
-            fatalError()
-        }
-        return shaders
-    }
 }

@@ -101,7 +101,7 @@ public struct OffscreenDemoRenderPass <Configuration>: RenderPass where Configur
         guard let device = configuration.device else {
             fatalError("No metal device")
         }
-        let library = try! device.makeDefaultLibrary(bundle: .shaders)
+        let library = try! device.makeDefaultLibrary(bundle: .shadersBundle)
         let constants = MTLFunctionConstantValues()
 
         let textureLoader = MTKTextureLoader(device: device)

@@ -781,3 +781,19 @@ extension View {
         modifier(FrameEditorModifier())
     }
 }
+
+internal extension MTLDevice {
+    func makeDebugLibrary(bundle: Bundle) throws -> MTLLibrary {
+        if let url = bundle.url(forResource: "debug", withExtension: "metallib") {
+            logger?.debug("Found debug metal library.")
+            return try makeLibrary(URL: url)
+        }
+        else if let url = bundle.url(forResource: "default", withExtension: "metallib") {
+            logger?.debug("Note: Found default metal library. Will be unable to debug metal.")
+            return try makeLibrary(URL: url)
+        }
+        else {
+            fatalError("Could not find metalib within shaders bundle \(bundle)")
+        }
+    }
+}
