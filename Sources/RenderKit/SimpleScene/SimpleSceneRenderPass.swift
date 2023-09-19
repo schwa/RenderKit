@@ -6,15 +6,17 @@ import SIMDSupport
 import Shaders
 
 struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: RenderKitConfiguration {
-    var scene: SimpleScene?
+    var scene: SimpleScene
     var renderPipelineState: MTLRenderPipelineState?
     var depthStencilState: MTLDepthStencilState?
     var cache = Cache<String, MTKMesh>()
     
-    init() {
+    init(scene: SimpleScene) {
+        self.scene = scene
     }
 
     mutating func setup(configuration: inout Configuration.Update) {
+        logger?.debug("\(#function)")
         guard let device = configuration.device else {
             fatalError("No metal device")
         }
@@ -45,7 +47,7 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
         }
         
         // Warm cache
-        for model in scene!.models {
+        for model in scene.models {
             cache.insert(key: "model:\(model.id):mesh", value: try! model.mesh(device))
         }
 
@@ -65,11 +67,6 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
             commandBuffer.withRenderCommandEncoder(descriptor: renderPassDescriptor) { encoder in
                 encoder.setRenderPipelineState(renderPipelineState)
                 encoder.setDepthStencilState(depthStencilState)
-                
-                guard let scene else {
-                    return
-                }
-                
                 let modes: [(MTLTriangleFillMode, SIMD4<Float>?)] = [
                     (.fill, nil),
                     (.lines, [1, 1, 1, 1]),
@@ -122,7 +119,7 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
             }
         }
         catch {
-            logger.error("Render error: \(error)")
+            logger?.error("Render error: \(error)")
         }
     }
 }

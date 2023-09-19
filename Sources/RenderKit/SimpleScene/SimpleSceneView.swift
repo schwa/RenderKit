@@ -13,7 +13,7 @@ import CoreGraphicsSupport
 import AsyncAlgorithms
 import os
 
-let logger = Logger()
+let logger: Logger? = Logger()
 
 public struct SimpleSceneView: View {
 
@@ -24,7 +24,7 @@ public struct SimpleSceneView: View {
     var scene: SimpleScene
         
     @State
-    var renderPass = SimpleSceneRenderPass<MetalViewConfiguration>()
+    var renderPass: SimpleSceneRenderPass<MetalViewConfiguration>
 
     #if os(macOS)
     @State
@@ -42,18 +42,18 @@ public struct SimpleSceneView: View {
 
     public init(scene: Binding<SimpleScene>) {
         self._scene = scene
+        self.renderPass = SimpleSceneRenderPass<MetalViewConfiguration>(scene: scene.wrappedValue)
     }
     
     public var body: some View {
         ZStack {
             RendererView(renderPass: $renderPass)
-            .overlay(alignment: .bottomTrailing) {
-                $renderPass.scene.withUnsafeBinding {
-                    SimpleSceneMapView(scene: $0)
-                    .border(Color.red)
-                    .frame(width: 200, height: 200)
-                    .padding()
-                }
+                .overlay(alignment: .bottomTrailing) {
+                    SimpleSceneMapView(scene: $scene)
+                        .border(Color.red)
+                        .frame(width: 200, height: 200)
+                        .padding()
+                
             }
         }
         #if os(macOS)
@@ -84,7 +84,7 @@ public struct SimpleSceneView: View {
             }
         }
         .inspector(isPresented: $isInspectorPresented) {
-            MyTabView(renderPass: $renderPass)
+            MyTabView(scene: $scene)
             .inspectorColumnWidth(ideal: 300)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
@@ -109,7 +109,7 @@ struct MyTabView: View {
     var tab: Tab = .inspector
 
     @Binding
-    var renderPass: SimpleSceneRenderPass<MetalViewConfiguration>
+    var scene: SimpleScene
 
     var body: some View {
         VStack {
@@ -124,10 +124,8 @@ struct MyTabView: View {
             switch tab {
             case .inspector:
                 Group {
-                    $renderPass.scene.withUnsafeBinding {
-                        SimpleSceneInspector(scene: $0)
-                            .controlSize(.small)
-                    }
+                    SimpleSceneInspector(scene: $scene)
+                        .controlSize(.small)
                 }
             case .counters:
                 CountersView()
@@ -135,4 +133,3 @@ struct MyTabView: View {
         }
     }
 }
-

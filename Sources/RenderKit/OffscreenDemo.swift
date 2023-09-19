@@ -132,7 +132,7 @@ public struct OffscreenDemoRenderPass <Configuration>: RenderPass where Configur
 
     public func draw(configuration: Configuration.Draw, commandBuffer: MTLCommandBuffer) {
         guard let device = configuration.device, let plane, let shaderToyRenderPipelineState, let size = configuration.size else {
-            logger.warning("Not ready to draw.")
+            logger?.warning("Not ready to draw.")
             return
         }
 
@@ -147,7 +147,7 @@ public struct OffscreenDemoRenderPass <Configuration>: RenderPass where Configur
         }
 
         guard let renderPassDescriptor = configuration.currentRenderPassDescriptor else {
-            logger.warning("No current render pass descriptor.")
+            logger?.warning("No current render pass descriptor.")
             return
         }
         commandBuffer.withRenderCommandEncoder(descriptor: renderPassDescriptor) { encoder in
