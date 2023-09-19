@@ -8,7 +8,7 @@
 using namespace metal;
 
 float4 transferFunction(ushort f, float m) {
-    return float4(s, 1, 1, float(f) / 3272 * m);
+    return float4(1, 1, 1, float(f) / 3272 * m);
 }
 
 struct VertexOut {
@@ -23,20 +23,42 @@ typedef VertexOut FragmentIn;
 VertexOut volumeVertexShader(
     Vertex in [[stage_in]],
     constant CameraUniforms &cameraUniforms [[buffer(1)]],
-    constant ModelUniforms &modelUniforms [[buffer(2)]],
+    constant VolumeTransforms &transforms [[buffer(2)]],
     constant VolumeInstance *instances [[buffer(3)]],
     ushort instance_id [[instance_id]]
     )
 {
     const VolumeInstance instance = instances[instance_id];
     const float4 offset = float4(0, 0, instance.offsetZ, 1.0);
-    const float4 modelVertex = modelUniforms.modelViewMatrix * float4(in.position + offset.xyz, 1.0);
+    const float3 textureCoordinate = float3(in.textureCoordinate, instance.textureZ);
+
+    // Kill rotation from modelView matrix.
+    // TODO: This also kills scale.
+    float4x4 modelViewMatrix = transforms.modelViewMatrix;
+    modelViewMatrix[0][0] = 2.0;
+    modelViewMatrix[0][1] = 0.0;
+    modelViewMatrix[0][2] = 0.0;
+    modelViewMatrix[1][0] = 0.0;
+    modelViewMatrix[1][1] = 2.0;
+    modelViewMatrix[1][2] = 0.0;
+    modelViewMatrix[2][0] = 0.0;
+    modelViewMatrix[2][1] = 0.0;
+    modelViewMatrix[2][2] = 2.0;
+    
+    float4x4 textureMatrix = transforms.textureMatrix;
+    
+    float3 rotatedTextureCoordinate = (textureMatrix * float4(textureCoordinate, 1.0)).xyz;
+    
+    
+    const float4 modelVertex = modelViewMatrix * float4(in.position + offset.xyz, 1.0);
     const float4 clipSpace = cameraUniforms.projectionMatrix * modelVertex;
     return {
         .position = clipSpace,
-        .textureCoordinate = float3(in.textureCoordinate, instance.textureZ),
+        .textureCoordinate = rotatedTextureCoordinate,
     };
 }
+
+// MARK: -
 
 [[fragment]]
 float4 volumeFragmentShader(
@@ -46,27 +68,16 @@ float4 volumeFragmentShader(
     constant TransferFunctionParameters &transferFunctionParameters [[buffer(0)]]
     )
 {
-    const float4 badColor = float4(0, 0.5, 0.5, 1);
-    const unsigned short textureColor = texture.sample(sampler, in.textureCoordinate).r;
-    
-    const float w = 0.0125;
     if (
-        in.textureCoordinate.x <= w && in.textureCoordinate.y <= w
-        || in.textureCoordinate.x <= w && in.textureCoordinate.z <= w
-        || in.textureCoordinate.y <= w && in.textureCoordinate.z <= w
-        || in.textureCoordinate.x >= 1 - w && in.textureCoordinate.y >= 1 - w
-        || in.textureCoordinate.x >= 1 - w && in.textureCoordinate.z >= 1 - w
-        || in.textureCoordinate.y >= 1 - w && in.textureCoordinate.z >= 1 - w
+        in.textureCoordinate.x < 0 || in.textureCoordinate.x > 1.0
+        || in.textureCoordinate.y < 0 || in.textureCoordinate.y > 1.0
+        || in.textureCoordinate.z < 0 || in.textureCoordinate.z > 1.0
         ) {
-        //discard_fragment();
-        return badColor;
+//        return float4(1, 0, 0, 0.01);
+        discard_fragment();
     }
-
+    const unsigned short textureColor = texture.sample(sampler, in.textureCoordinate).r;
     auto color = transferFunction(textureColor, transferFunctionParameters.m);
-//    if (in.textureCoordinate.z < 0.1) {
-//        color *= float4(0, 1, 0, 1);
-//    }
-    
     return color;
 }
 
