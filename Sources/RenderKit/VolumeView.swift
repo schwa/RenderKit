@@ -67,8 +67,8 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
                 renderPipelineDescriptor.colorAttachments[0].isBlendingEnabled = true
                 renderPipelineDescriptor.colorAttachments[0].rgbBlendOperation = .add
                 renderPipelineDescriptor.colorAttachments[0].alphaBlendOperation = .add
-                renderPipelineDescriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha;
-                renderPipelineDescriptor.colorAttachments[0].sourceAlphaBlendFactor = .sourceAlpha;
+                renderPipelineDescriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
+                renderPipelineDescriptor.colorAttachments[0].sourceAlphaBlendFactor = .sourceAlpha
                 renderPipelineDescriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
                 renderPipelineDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
 
@@ -150,8 +150,9 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
                 
                 let instances = cache.get(key: "instance_data", of: MTLBuffer.self) {
                     let instances = (0..<texture.depth).map { slice in
-                        let z = Float(slice) / Float(texture.depth - 1)
-                        return VolumeInstance(offsetZ: z, textureZ: z)
+                        let slice = Float(slice) / Float(texture.depth - 1)
+                        let z = slice
+                        return VolumeInstance(offsetZ: 1 - z - 1, textureZ: 1 - z)
                     }
                     let buffer = configuration.device!.makeBuffer(bytesOf: instances, options: .storageModeShared)!
                     buffer.label = "instances"
