@@ -9,17 +9,18 @@ public struct MetalView: View {
         @ObservationIgnored
         var update: (inout ConcreteMetalViewConfiguration) -> Void = { _ in fatalError() }
         @ObservationIgnored
-        var drawableSizeWillChange: (CGSize) -> Void = { _ in fatalError() }
+        var drawableSizeWillChange: (inout ConcreteMetalViewConfiguration, CGSize) -> Void = { _, _ in fatalError() }
         @ObservationIgnored
         var draw: (ConcreteMetalViewConfiguration) -> Void = { _ in fatalError() }
         @ObservationIgnored
         var lock = OSAllocatedUnfairLock()
+
         @ObservationIgnored
 //        let queue: DispatchQueue? = DispatchQueue(label: "MetalView", qos: .userInteractive)
         let queue: DispatchQueue? = nil
 
         func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
-            drawableSizeWillChange(size)
+            drawableSizeWillChange(&view.concreteMetalViewConfiguration, size)
         }
 
         func draw(in view: MTKView) {
@@ -45,10 +46,10 @@ public struct MetalView: View {
     private var model = Model()
 
     var update: (inout ConcreteMetalViewConfiguration) -> Void
-    var drawableSizeWillChange: (CGSize) -> Void
+    var drawableSizeWillChange: (inout ConcreteMetalViewConfiguration, CGSize) -> Void
     var draw: (ConcreteMetalViewConfiguration) -> Void
 
-    public init(update: @escaping (inout ConcreteMetalViewConfiguration) -> Void, drawableSizeWillChange: @escaping (CGSize) -> Void, draw: @escaping (ConcreteMetalViewConfiguration) -> Void) {
+    public init(update: @escaping (inout ConcreteMetalViewConfiguration) -> Void, drawableSizeWillChange: @escaping (inout ConcreteMetalViewConfiguration, CGSize) -> Void, draw: @escaping (ConcreteMetalViewConfiguration) -> Void) {
         self.update = update
         self.drawableSizeWillChange = drawableSizeWillChange
         self.draw = draw
@@ -86,7 +87,7 @@ public struct MetalView: View {
 
 extension MetalView {
     public init(update: @escaping (inout ConcreteMetalViewConfiguration) -> Void, draw: @escaping (ConcreteMetalViewConfiguration) -> Void) {
-        self.init(update: update, drawableSizeWillChange: { _ in }, draw: draw)
+        self.init(update: update, drawableSizeWillChange: { _, _ in }, draw: draw)
     }
 }
 

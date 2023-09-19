@@ -6,7 +6,6 @@ import SIMDSupport
 import Shaders
 
 struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: RenderKitConfiguration {
-
     var scene: SimpleScene?
     var renderPipelineState: MTLRenderPipelineState?
     var depthStencilState: MTLDepthStencilState?
@@ -52,6 +51,9 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
 
     }
 
+    mutating func resized(configuration: inout Configuration.Update, size: CGSize) {
+    }
+    
     func draw(configuration: Configuration.Draw, commandBuffer: MTLCommandBuffer) {
         do {
             guard let renderPipelineState, let depthStencilState else {

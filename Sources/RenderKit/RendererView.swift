@@ -17,6 +17,9 @@ public struct RendererView <T>: View where T: RenderPass, T.Configuration.Update
             renderPass.setup(configuration: &configuration)
             commandQueue = configuration.device!.makeCommandQueue()
         }
+        drawableSizeWillChange: { configuration, size in
+//            renderPass.resized(configuration: &configuration, size: size)
+        }
         draw: { configuration in
             commandQueue?.withCommandBuffer(drawable: configuration.currentDrawable, block: { commandBuffer in
                 renderPass.draw(configuration: configuration, commandBuffer: commandBuffer)

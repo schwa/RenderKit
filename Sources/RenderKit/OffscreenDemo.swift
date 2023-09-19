@@ -75,9 +75,14 @@ public protocol RenderPass {
     associatedtype Configuration: RenderKitConfiguration
 
     mutating func setup(configuration: inout Configuration.Update)
+    mutating func resized(configuration: inout Configuration.Update, size: CGSize)
     func draw(configuration: Configuration.Draw, commandBuffer: MTLCommandBuffer)
 }
 
+extension RenderPass {
+    mutating func resized(configuration: inout Configuration.Update, size: CGSize) {
+    }
+}
 
 public struct OffscreenDemoRenderPass <Configuration>: RenderPass where Configuration: RenderKitConfiguration {
     public var shaderToyRenderPipelineState: MTLRenderPipelineState?
@@ -119,6 +124,11 @@ public struct OffscreenDemoRenderPass <Configuration>: RenderPass where Configur
         self.plane = plane
         self.shaderToyRenderPipelineState = shaderToyRenderPipelineState
     }
+    
+    public mutating func resized(configuration: inout Configuration.Update, size: CGSize) {
+        
+    }
+
 
     public func draw(configuration: Configuration.Draw, commandBuffer: MTLCommandBuffer) {
         guard let device = configuration.device, let plane, let shaderToyRenderPipelineState, let size = configuration.size else {
