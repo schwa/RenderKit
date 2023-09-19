@@ -67,7 +67,7 @@ float4 volumeFragmentShader(
     texture3d<unsigned short, access::sample> texture [[texture(0)]],
     texture2d<half, access::sample> transferFunctionTexture [[texture(1)]],
     sampler sampler [[sampler(0)]],
-    constant TransferFunctionParameters &transferFunctionParameters [[buffer(0)]]
+    constant VolumeFragmentUniforms &uniforms [[buffer(0)]]
     )
 {
     if (
@@ -78,12 +78,12 @@ float4 volumeFragmentShader(
         discard_fragment();
     }
     const unsigned short textureColor = texture.sample(sampler, in.textureCoordinate).r;
-    auto color = transferFunction(textureColor, transferFunctionParameters.m);
+    auto color = transferFunction(textureColor, 1.0 * 10 / float(uniforms.instanceCount));
     return color;
 
     // TODO: commented out transferFunctionTexture for now
 //    const float value = float(texture.sample(sampler, in.textureCoordinate).r / 3272); // TODO: Magic number
-//    auto alpha = transferFunctionTexture.sample(sampler, float2(value, 0)).r;
-//    return float4(1, 1, 1, float(alpha));
+//    auto alpha = transferFunctionTexture.sample(sampler, float2(value, 0) ).r;
+//    return float4(1, 1, 1, float(alpha) / float(uniforms.instanceCount));
 }
 

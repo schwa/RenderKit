@@ -18,14 +18,12 @@ public struct VolumeView: View {
     var rotation = Rotation.zero
     
     @State
-    var transferFunctionParameters = TransferFunctionParameters(m: 1 / 50)
-
-    @State
     var volumeData = VolumeData(named: "CThead", size: [256, 256, 113])
     
     @State
     var alphaTransferFunction: [Float] = (0..<256).map({ Float($0) / Float(255) })
-    
+    //var alphaTransferFunction: [Float] = Array(repeating: 0.1, count: 256)
+
     @Environment(\.metalDevice)
     var device
     
@@ -41,15 +39,11 @@ public struct VolumeView: View {
             .onChange(of: rotation) {
                 renderPass.rotation = rotation
             }
-            .onChange(of: transferFunctionParameters) {
-                renderPass.transferFunctionParameters = transferFunctionParameters
-            }
             .onChange(of: alphaTransferFunction) {
                 updateTransferFunctionTexture()
             }
             .overlay(alignment: .bottom) {
                 VStack {
-//                    Slider(value: $transferFunctionParameters.m, in: 0.01 ... 0.2)
                     TransferFunctionEditor(width: 1024, values: $alphaTransferFunction)
                 }
                 .frame(maxHeight: 50)
@@ -77,7 +71,6 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
     var texture: MTLTexture
     var cache = Cache<String, Any>()
     var rotation: Rotation = .zero
-    var transferFunctionParameters = TransferFunctionParameters(m: 1 / 50)
     var transferFunctionTexture: MTLTexture
 
     init() {
@@ -208,8 +201,7 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
                 
                 // Vertex Buffer Index 3
                 
-                let instanceCount = 256 // TODO: Random - numbers as low as 32 work. But lower numbers make the image less bright.
-                // TODO: We need to adjust brightness based on number of instances
+                let instanceCount = 256 // TODO: Random - numbers as low as 32 - but you will see layering in the image.
                 
                 let instances = cache.get(key: "instance_data", of: MTLBuffer.self) {
                     
@@ -237,7 +229,8 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
                 encoder.setFragmentTexture(texture, index: 0)
                 encoder.setFragmentTexture(transferFunctionTexture, index: 1)
 
-                encoder.setFragmentBytes(of: transferFunctionParameters, index: 0)
+                var fragmentUniforms = VolumeFragmentUniforms(instanceCount: UInt16(instanceCount))
+                encoder.setFragmentBytes(of: fragmentUniforms, index: 0)
                 
                 encoder.draw(mesh2, instanceCount: instanceCount)
             }
@@ -371,12 +364,6 @@ extension MTLRenderCommandEncoder {
     
     func draw(_ mesh: SimpleMesh, instanceCount: Int) {
         drawIndexedPrimitives(type: mesh.primitiveType, indexCount: mesh.indexCount, indexType: mesh.indexType, indexBuffer: mesh.indexBuffer, indexBufferOffset: mesh.indexBufferOffset, instanceCount: instanceCount)
-    }
-}
-
-extension TransferFunctionParameters: Equatable {
-    public static func == (lhs: Self, rhs: Self) -> Bool {
-        return lhs.m == rhs.m
     }
 }
 

@@ -2,15 +2,15 @@
 
 
 #pragma pack(push, 1)
-struct TransferFunctionParameters {
-    float m;
+struct VolumeTransforms {
+    simd_float4x4 modelViewMatrix;
+    simd_float4x4 textureMatrix;
 };
 #pragma pack(pop)
 
 #pragma pack(push, 1)
-struct VolumeTransforms {
-    simd_float4x4 modelViewMatrix;
-    simd_float4x4 textureMatrix;
+struct VolumeFragmentUniforms {
+    unsigned short instanceCount;
 };
 #pragma pack(pop)
 
