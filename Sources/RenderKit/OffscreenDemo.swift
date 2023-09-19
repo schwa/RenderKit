@@ -71,11 +71,10 @@ public struct OffscreenRenderPassConfiguration: RenderKitConfiguration, RenderKi
 }
 
 public protocol RenderPass {
-
     associatedtype Configuration: RenderKitConfiguration
 
     mutating func setup(configuration: inout Configuration.Update)
-    mutating func resized(configuration: inout Configuration.Update, size: CGSize)
+    mutating func resized(configuration: inout Configuration.Update, size: CGSize) // TODO: Rename
     func draw(configuration: Configuration.Draw, commandBuffer: MTLCommandBuffer)
 }
 

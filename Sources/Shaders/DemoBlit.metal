@@ -1,5 +1,5 @@
-#include <metal_stdlib>
-#include <simd/simd.h>
+#import <metal_stdlib>
+#import <simd/simd.h>
 
 using namespace metal;
 

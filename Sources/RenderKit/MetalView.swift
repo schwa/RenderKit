@@ -20,7 +20,6 @@ public struct MetalView: View {
         let queue: DispatchQueue? = nil
 
         func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
-            logger?.debug("\(#function)")
             drawableSizeWillChange(&view.concreteMetalViewConfiguration, size)
         }
 

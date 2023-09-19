@@ -1,8 +1,8 @@
-#include <metal_stdlib>
-#include <simd/simd.h>
-#include <metal_geometric>
+#import <metal_stdlib>
+#import <simd/simd.h>
+#import <metal_geometric>
 
-#include "include/Shaders.h"
+#import "include/Shaders.h"
 
 using namespace metal;
 

@@ -11,7 +11,7 @@ struct ContentView: View {
     }
     
     var body: some View {
-        if true {
+        if false {
             SimpleSceneView(scene: $scene)
                 .metalDevice(MTLCreateSystemDefaultDevice()!)
                 .firstPersonInteractive(scene: $scene)

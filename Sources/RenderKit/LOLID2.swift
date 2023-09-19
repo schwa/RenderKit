@@ -24,3 +24,8 @@ public struct LOLID2: Hashable {
     }
 }
 
+extension LOLID2: CustomStringConvertible {
+    public var description: String {
+        return rawValue
+    }
+}

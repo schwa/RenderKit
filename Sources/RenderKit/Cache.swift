@@ -130,3 +130,10 @@ public extension Cache where Key == String {
         }
     }
 }
+
+public extension Cache where Value == Any {
+    public func get<T>(key: Key, of: T.Type, default: () throws -> T) rethrows -> T {
+        try get(key: key, default: `default`) as! T
+    }
+    
+}
