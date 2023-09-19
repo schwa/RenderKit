@@ -17,7 +17,6 @@ public struct VolumeData {
     public init(directoryURL: URL, size: MTLSize) {
         self.directoryURL = directoryURL
         self.size = size
-        print(try! self.statistics().max)
     }
     
     public init(named name: String, size: MTLSize) {

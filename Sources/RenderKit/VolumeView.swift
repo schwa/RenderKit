@@ -19,6 +19,15 @@ public struct VolumeView: View {
     
     @State
     var transferFunctionParameters = TransferFunctionParameters(m: 1 / 50)
+
+    @State
+    var volumeData = VolumeData(named: "CThead", size: [256, 256, 113])
+    
+    @State
+    var alphaTransferFunction: [Float] = (0..<256).map({ Float($0) / Float(255) })
+    
+    @Environment(\.metalDevice)
+    var device
     
     public init() {
     }
@@ -32,11 +41,24 @@ public struct VolumeView: View {
             .onChange(of: transferFunctionParameters) {
                 renderPass.transferFunctionParameters = transferFunctionParameters
             }
+            .onChange(of: alphaTransferFunction) {
+        
+                let values = alphaTransferFunction.map { Float16($0)}
+                values.withUnsafeBytes { buffer in
+                    renderPass.transferFunctionTexture.buffer!.contents().copyMemory(from: buffer.baseAddress!, byteCount: buffer.count)
+
+                }
+                
+                
+            }
             .overlay(alignment: .bottom) {
-                Slider(value: $transferFunctionParameters.m, in: 0.01 ... 0.2)
-                .frame(maxWidth: 100)
+                VStack {
+//                    Slider(value: $transferFunctionParameters.m, in: 0.01 ... 0.2)
+                    TransferFunctionEditor(width: 1024, values: $alphaTransferFunction)
+                }
+                .frame(maxHeight: 50)
                 .padding()
-                .background(.thickMaterial)
+                .background(.ultraThinMaterial)
                 .padding()
                 .controlSize(.small)
             }
@@ -52,14 +74,34 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
     var cache = Cache<String, Any>()
     var rotation: Rotation = .zero
     var transferFunctionParameters = TransferFunctionParameters(m: 1 / 50)
+    var transferFunctionTexture: MTLTexture
 
     init() {
+        let device = MTLCreateSystemDefaultDevice()! // TODO: Naughty
         let volumeData = VolumeData(named: "CThead", size: [256, 256, 113])
 //        let volumeData = VolumeData(named: "MRBrain", size: [256, 256, 109])
         let load = try! volumeData.load()
-        texture = try! load(MTLCreateSystemDefaultDevice()!)
+        texture = try! load(device)
         let id = id
         logger?.debug("\(id): \(#function)")
+
+        guard let buffer = device.makeBuffer(length: 256 * 2) else {
+            fatalError()
+        }
+        
+        
+        let textureDescriptor = MTLTextureDescriptor()
+        textureDescriptor.width = 256
+        textureDescriptor.height = 1
+        textureDescriptor.depth = 1
+        textureDescriptor.pixelFormat = .r16Float
+        textureDescriptor.storageMode = .shared
+        guard let texture = buffer.makeTexture(descriptor: textureDescriptor, offset: 0, bytesPerRow: buffer.length) else {
+            fatalError()
+        }
+        transferFunctionTexture = texture
+
+
     }
     
     mutating func setup(configuration: inout Configuration.Update) {
@@ -330,5 +372,44 @@ extension MTLRenderCommandEncoder {
 extension TransferFunctionParameters: Equatable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         return lhs.m == rhs.m
+    }
+}
+
+struct TransferFunctionEditor: View {
+    
+    
+    let width: Int
+    
+    @Binding
+    var values: [Float]
+    
+    @State
+    var lastLocation: CGFloat?
+
+    var body: some View {
+        GeometryReader { proxy in
+            Canvas { context, size in
+                print(size)
+                context.scaleBy(x: 1, y: -1)
+                context.translateBy(x: 0, y: -size.height)
+                context.scaleBy(x: size.width / Double(values.count), y: 1)
+                let path = Path { path in
+                    path.move(to: .zero)
+                    for (index, value) in values.enumerated() {
+                        path.addLine(to: CGPoint(Double(index), Double(value) * size.height))
+                    }
+                    path.addLine(to: CGPoint(x: 1023, y: 0))
+                    path.closeSubpath()
+                }
+                context.fill(path, with: .color(Color.white))
+            }
+            .gesture(DragGesture().onChanged({ value in
+                let column = max(min(Int(value.location.x * Double(values.count - 1) / proxy.size.width), values.count - 1), 0)
+                let value = 1 - Float(value.location.y / proxy.size.height)
+                values[column] = value
+                
+                
+            }))
+        }
     }
 }
