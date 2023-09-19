@@ -82,21 +82,22 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
 
     init() {
         let device = MTLCreateSystemDefaultDevice()! // TODO: Naughty
-        let volumeData = VolumeData(named: "CThead", size: [256, 256, 113])
+        let volumeData = VolumeData(named: "CThead", size: [256, 256, 113]) // TODO: Hardcoded
 //        let volumeData = VolumeData(named: "MRBrain", size: [256, 256, 109])
         let load = try! volumeData.load()
         texture = try! load(device)
         let id = id
         logger?.debug("\(id): \(#function)")
 
+        // TODO: Hardcoded
         guard let buffer = device.makeBuffer(length: 256 * 2) else {
             fatalError()
         }
         
-        
         let textureDescriptor = MTLTextureDescriptor()
+        // We actually only need this texture to be 1D but Metal doesn't allow buffer backed 1D textures which seems assinine. Maybe we don't need it to be buffer backed and just need to call texture.copy each update?
         textureDescriptor.textureType = .type2D
-        textureDescriptor.width = 256
+        textureDescriptor.width = 256 // TODO: Hardcoded
         textureDescriptor.height = 1
         textureDescriptor.depth = 1
         textureDescriptor.pixelFormat = .r16Float
@@ -105,8 +106,6 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
             fatalError()
         }
         transferFunctionTexture = texture
-
-
     }
     
     mutating func setup(configuration: inout Configuration.Update) {
@@ -209,7 +208,8 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
                 
                 // Vertex Buffer Index 3
                 
-                let instanceCount = 256
+                let instanceCount = 256 // TODO: Random - numbers as low as 32 work. But lower numbers make the image less bright.
+                // TODO: We need to adjust brightness based on number of instances
                 
                 let instances = cache.get(key: "instance_data", of: MTLBuffer.self) {
                     
