@@ -20,6 +20,11 @@ public struct VolumeData {
         print(try! self.statistics().max)
     }
     
+    public init(named name: String, size: MTLSize) {
+        let url = Bundle.main.resourceURL!.appendingPathComponent("StanfordVolumeData/\(name)")
+        self = .init(directoryURL: url, size: size)
+    }
+    
     func slices() throws -> [[UInt16]] {
         let slices = try FileManager().contentsOfDirectory(atPath: directoryURL.path)
             .map { directoryURL.appendingPathComponent($0) }

@@ -54,8 +54,8 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
     var transferFunctionParameters = TransferFunctionParameters(m: 1 / 50)
 
     init() {
-        let url = Bundle.main.resourceURL!.appendingPathComponent("StanfordVolumeData/CThead")
-        let volumeData = VolumeData(directoryURL: url, size: [256, 256, 113])
+        let volumeData = VolumeData(named: "CThead", size: [256, 256, 113])
+//        let volumeData = VolumeData(named: "MRBrain", size: [256, 256, 109])
         let load = try! volumeData.load()
         texture = try! load(MTLCreateSystemDefaultDevice()!)
         let id = id
@@ -134,18 +134,18 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
 
                 let camera = Camera(transform: .init( translation: [0, 0, 2]), target: .zero, projection: .perspective(PerspectiveProjection(fovy: .degrees(90), zClip: 0.01 ... 10)))
 
-                let modelTransform = Transform(scale: [1.5, 1.5, 1.5], rotation: rotation.quaternion)
+                let modelTransform = Transform(scale: [2, 2, 2], rotation: rotation.quaternion)
                 
                 let mesh2 = try cache.get(key: "mesh2", of: SimpleMesh.self) {
                     let rect = CGRect(center: .zero, radius: 0.5)
                     let circle = LegacyGraphics.Circle(containing: rect)
                     let triangle = Triangle(containing: circle)
-//                    return try SimpleMesh(label: "triangle", triangle: triangle, device: configuration.device!) {
-//                        SIMD2<Float>($0) + [0.5, 0.5]
-//                    }
-                    return try SimpleMesh(label: "rectangle", rectangle: rect, device: configuration.device!) {
+                    return try SimpleMesh(label: "triangle", triangle: triangle, device: configuration.device!) {
                         SIMD2<Float>($0) + [0.5, 0.5]
                     }
+//                    return try SimpleMesh(label: "rectangle", rectangle: rect, device: configuration.device!) {
+//                        SIMD2<Float>($0) + [0.5, 0.5]
+//                    }
                 }
                 encoder.setVertexBuffer(mesh2, index: 0)
 
@@ -154,10 +154,9 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
                 encoder.setVertexBytes(of: cameraUniforms, index: 1)
 
                 // Vertex Buffer Index 2
-                let modelUniforms = ModelUniforms(
+                let modelUniforms = VolumeTransforms(
                     modelViewMatrix: camera.transform.matrix.inverse * modelTransform.matrix,
-                    modelNormalMatrix: simd_float3x3(truncating: modelTransform.matrix.transpose.inverse),
-                    color: [1, 0, 0, 0]
+                    textureMatrix: simd_float4x4(translate: [0.5, 0.5, 0.5]) * rotation.matrix * simd_float4x4(translate: [-0.5, -0.5, -0.5])
                 )
                 encoder.setVertexBytes(of: modelUniforms, index: 2)
                 
