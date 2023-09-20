@@ -30,6 +30,7 @@ let package = Package(
         .target(
             name: "RenderKit",
             dependencies: [
+//                "DcmSwift",
                 "Everything",
                 "Shaders",
                 .product(name: "CoreGraphicsSupport", package: "SwiftGraphics"),

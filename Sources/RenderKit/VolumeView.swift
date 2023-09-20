@@ -13,13 +13,14 @@ import os
 public struct VolumeView: View {
     
     @State
-    var renderPass = VolumeRenderPass<MetalViewConfiguration>()
+    var renderPass = VolumeRenderPass<MetalViewConfiguration>(volumeData: try! VolumeData(named: "COVID/meta.json"))
     
     @State
     var rotation = Rotation.zero
     
-    @State
-    var volumeData = VolumeData(named: "CThead", size: [256, 256, 113])
+//    @State
+//    //var volumeData = VolumeData(named: "CThead", size: [256, 256, 113])
+//    var volumeData = try! VolumeData(named: "COVID/meta.json")
     
     @State
     var redTransferFunction: [Float] = Array(repeating: 1.0, count: 256)
@@ -98,6 +99,7 @@ public struct VolumeView: View {
 }
 
 struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKitConfiguration {
+    let volumeData: VolumeData
     let id = LOLID2(prefix: "VolumeRenderPass")
     var scene: SimpleScene?
     var renderPipelineState: MTLRenderPipelineState?
@@ -108,9 +110,10 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
     var transferFunctionTexture: MTLTexture
     var logger: Logger? = nil
     
-    init() {
+    init(volumeData: VolumeData) {
+        self.volumeData = volumeData
         let device = MTLCreateSystemDefaultDevice()! // TODO: Naughty
-        let volumeData = VolumeData(named: "CThead", size: [256, 256, 113]) // TODO: Hardcoded
+//        let volumeData = VolumeData(named: "CThead", size: [256, 256, 113]) // TODO: Hardcoded
 //        let volumeData = VolumeData(named: "MRBrain", size: [256, 256, 109])
         let load = try! volumeData.load()
         texture = try! load(device)
@@ -262,7 +265,7 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
                 encoder.setFragmentTexture(transferFunctionTexture, index: 1)
 
                 // TODO: Hard coded
-                let fragmentUniforms = VolumeFragmentUniforms(instanceCount: UInt16(instanceCount), maxValue: 3272, alpha: 10.0)
+                let fragmentUniforms = VolumeFragmentUniforms(instanceCount: UInt16(instanceCount), maxValue: 4095, alpha: 1.0)
                 encoder.setFragmentBytes(of: fragmentUniforms, index: 0)
                 
                 encoder.draw(mesh2, instanceCount: instanceCount)

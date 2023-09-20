@@ -11,38 +11,66 @@ import Metal
 //                courtesy of North Carolina Memorial Hospital
 
 public struct VolumeData {
-    public var directoryURL: URL
+//    public var directoryURL: URL
     public var size: MTLSize
+    public var sliceURLs: [URL]
+
+    struct Meta: Decodable {
+        var shape: [Int]
+        var files: [String]
+        //var largest_value: Int
+    }
     
-    public init(directoryURL: URL, size: MTLSize) {
-        self.directoryURL = directoryURL
+    public init(size: MTLSize, sliceURLs: [URL]) {
         self.size = size
+        self.sliceURLs = sliceURLs
+    }
+
+    public init(metaURL: URL) throws {
+        let data = try Data(contentsOf: metaURL)
+        let meta = try JSONDecoder().decode(Meta.self, from: data)
+        let size = MTLSize(meta.shape[0], meta.shape[1], meta.shape[2])
+        let sliceURLs = meta.files.map { metaURL.deletingLastPathComponent().appendingPathComponent($0) }
+        self = .init(size: size, sliceURLs: sliceURLs)
     }
     
-    public init(named name: String, size: MTLSize) {
-        let url = Bundle.main.resourceURL!.appendingPathComponent("StanfordVolumeData/\(name)")
-        self = .init(directoryURL: url, size: size)
+    public init(named name: String) throws {
+        let url = Bundle.main.resourceURL!.appendingPathComponent("VolumeData/\(name)")
+        self = try .init(metaURL: url)
     }
+
     
+    
+//    public init(directoryURL: URL, size: MTLSize) {
+//        self.directoryURL = directoryURL
+//        self.size = size
+//    }
+//    
+//    public init(named name: String, size: MTLSize) {
+//        let url = Bundle.main.resourceURL!.appendingPathComponent("StanfordVolumeData/\(name)")
+//        self = .init(directoryURL: url, size: size)
+//    }
+
+//    let slices = try FileManager().contentsOfDirectory(atPath: directoryURL.path)
+//        .map { directoryURL.appendingPathComponent($0) }
+//        .sorted { lhs, rhs in
+//            let lhs = Int(lhs.pathExtension)!
+//            let rhs = Int(rhs.pathExtension)!
+//            return lhs < rhs
+//        }
+
     func slices() throws -> [[UInt16]] {
-        let slices = try FileManager().contentsOfDirectory(atPath: directoryURL.path)
-            .map { directoryURL.appendingPathComponent($0) }
-            .sorted { lhs, rhs in
-                let lhs = Int(lhs.pathExtension)!
-                let rhs = Int(rhs.pathExtension)!
-                return lhs < rhs
-            }
-            .map {
-                let data = try Data(contentsOf: $0)
-                .withUnsafeBytes { buffer in
-                    buffer.bindMemory(to: UInt16.self).map {
-                        UInt16(bigEndian: $0)
-                    }
+        let slices = try sliceURLs.map {
+            let data = try Data(contentsOf: $0)
+            .withUnsafeBytes { buffer in
+                buffer.bindMemory(to: UInt16.self).map {
+                    UInt16(bigEndian: $0)
                 }
-                // TODO: align data to device.minimumLinearTextureAlignment(for: .r16UInt)
-                assert(data.count == size.width * size.height)
-                return data
             }
+            // TODO: align data to device.minimumLinearTextureAlignment(for: .r16UInt)
+            assert(data.count == size.width * size.height)
+            return data
+        }
         assert(slices.count == size.depth)
         return slices
     }
@@ -72,7 +100,7 @@ public struct VolumeData {
             guard let texture = device.makeTexture(descriptor: textureDescriptor) else {
                 fatalError()
             }
-            texture.label = directoryURL.lastPathComponent
+            //texture.label = "texture"
             let bytesPerRow = size.width * 2
             let bytesPerImage = size.width * size.height * 2
             for (index, slice) in slices.enumerated() {
