@@ -74,6 +74,6 @@ float4 volumeFragmentShader(
     auto color = transferFunctionTexture.sample(sampler, normalizedValue);
 
     // Alpha adjusted by number of instances so we don't blow out the brightness.
-    return color * float4(1, 1, 1, 1 / float(uniforms.instanceCount));
+    return color * float4(1, 1, 1, 1 / float(uniforms.instanceCount) * uniforms.alpha);
 }
 
