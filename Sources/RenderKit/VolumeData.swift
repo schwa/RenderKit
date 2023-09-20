@@ -64,6 +64,8 @@ public struct VolumeData {
             let textureDescriptor = MTLTextureDescriptor()
             textureDescriptor.textureType = .type3D
             textureDescriptor.pixelFormat = .r16Uint
+            textureDescriptor.storageMode = .shared
+            
             textureDescriptor.width = size.width
             textureDescriptor.height = size.height
             textureDescriptor.depth = size.depth
@@ -77,7 +79,37 @@ public struct VolumeData {
                 let region = MTLRegionMake3D(0, 0, index, size.width, size.height, 1)
                 texture.replace(region: region, mipmapLevel: 0, slice: 0, withBytes: slice, bytesPerRow: bytesPerRow, bytesPerImage: bytesPerImage)
             }
-            return texture
+            return device.makePrivateCopy(of: texture)
         }
+    }
+}
+
+extension MTLDevice {
+    /// "To copy your data to a private texture, copy your data to a temporary texture with non-private storage, and then use an MTLBlitCommandEncoder to copy the data to the private texture for GPU use."
+    func makePrivateCopy(of source: MTLTexture) -> MTLTexture {
+        let textureDescriptor = MTLTextureDescriptor()
+        textureDescriptor.textureType = source.textureType
+        textureDescriptor.pixelFormat = source.pixelFormat
+        textureDescriptor.storageMode = .private
+        
+        textureDescriptor.width = source.width
+        textureDescriptor.height = source.height
+        textureDescriptor.depth = source.depth
+        guard let destination = makeTexture(descriptor: textureDescriptor) else {
+            fatalError()
+        }
+        destination.label = source.label.map { "\($0)-private-copy" }
+
+        guard let commandQueue = makeCommandQueue() else {
+            fatalError()
+        }
+        commandQueue.withCommandBuffer(waitAfterCommit: true) { commandBuffer in
+            guard let encoder = commandBuffer.makeBlitCommandEncoder() else {
+                fatalError()
+            }
+            encoder.copy(from: source, to: destination)
+            encoder.endEncoding()
+        }
+        return destination
     }
 }

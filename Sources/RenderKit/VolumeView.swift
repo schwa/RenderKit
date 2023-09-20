@@ -337,10 +337,10 @@ struct SimpleMesh {
 
 extension SimpleMesh {
     init(label: String? = nil, indices: [UInt16], vertices: [Vertex], device: MTLDevice) throws {
-        guard let indexBuffer = device.makeBuffer(bytesOf: indices, options: .storageModePrivate) else {
+        guard let indexBuffer = device.makeBuffer(bytesOf: indices, options: .storageModeShared) else {
             fatalError()
         }
-        guard let vertexBuffer = device.makeBuffer(bytesOf: vertices, options: .storageModePrivate) else {
+        guard let vertexBuffer = device.makeBuffer(bytesOf: vertices, options: .storageModeShared) else {
             fatalError()
         }
         assert(vertexBuffer.length == vertices.count * 40)
