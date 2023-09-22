@@ -50,4 +50,3 @@ vector_float4 demoBlitFragmentShader(
 {
     return texture.sample(sampler, fragmentIn.textureCoords);
 }
-

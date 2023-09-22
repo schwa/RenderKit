@@ -5,7 +5,7 @@
 //using namespace metal;
 //
 //struct CurvePayload {
-//    
+//
 //};
 //
 //[[object]]

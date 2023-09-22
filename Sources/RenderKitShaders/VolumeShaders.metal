@@ -41,7 +41,7 @@ VertexOut volumeVertexShader(
     modelViewMatrix[2][0] = 0.0;
     modelViewMatrix[2][1] = 0.0;
     modelViewMatrix[2][2] = 2.0;
-    
+
     float4x4 textureMatrix = transforms.textureMatrix;
     float3 rotatedTextureCoordinate = (textureMatrix * float4(textureCoordinate.xyz, 1.0)).xzy;
     const float4 modelVertex = modelViewMatrix * float4(in.position + offset.xyz, 1.0);
@@ -76,4 +76,3 @@ float4 volumeFragmentShader(
     // Alpha adjusted by number of instances so we don't blow out the brightness.
     return color * float4(1, 1, 1, 1 / float(uniforms.instanceCount) * uniforms.alpha);
 }
-

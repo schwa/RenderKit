@@ -48,4 +48,3 @@ typedef struct
 } UniformsArray;
 
 #endif /* ShaderTypes_h */
-
