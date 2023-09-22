@@ -4,6 +4,7 @@ import Metal
 import MetalKit
 import SIMDSupport
 import RenderKitShaders
+import RenderKit
 
 struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: RenderKitConfiguration {
     var scene: SimpleScene

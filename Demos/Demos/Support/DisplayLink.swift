@@ -84,11 +84,13 @@ public extension DisplayLink2 {
             source.displayLink(target: $0, selector: #selector(Helper.callCallback))
         }
     }
+    @MainActor
     convenience init(runloop: RunLoop = .current, mode: RunLoop.Mode = .default, source: NSWindow) {
         self.init(runloop: runloop, mode: mode) {
             source.displayLink(target: $0, selector: #selector(Helper.callCallback))
         }
     }
+    @MainActor
     convenience init(runloop: RunLoop = .current, mode: RunLoop.Mode = .default, source: NSView) {
         self.init(runloop: runloop, mode: mode) {
             source.displayLink(target: $0, selector: #selector(Helper.callCallback))

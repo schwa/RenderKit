@@ -149,4 +149,3 @@ struct TransformEditor: View {
         TextField("Translation", value: $transform.translation, format: .vector)
     }
 }
-

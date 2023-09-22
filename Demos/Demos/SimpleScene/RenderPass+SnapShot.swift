@@ -1,5 +1,6 @@
 import Metal
 import CoreGraphics
+import RenderKit
 
 extension RenderPass {
     mutating func snapshot(device: MTLDevice) async throws -> CGImage {

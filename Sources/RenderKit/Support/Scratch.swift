@@ -1,5 +1,6 @@
-import Foundation
 import Metal
+import SwiftUI
+import Everything
 
 @resultBuilder
 struct StageBuilder {
@@ -102,6 +103,7 @@ struct RenderEnvironment {
     let materials = ""
 }
 
+
 struct BlinnPhong: RenderPipeline {
     let debug = false
 
@@ -122,12 +124,70 @@ struct BlinnPhong: RenderPipeline {
     }
 }
 
-// TODO: Move
-extension CGVector {
-    init(_ dx: CGFloat, _ dy: CGFloat) {
-        self = CGVector(dx: dx, dy: dy)
+
+public struct Argument: Equatable, Sendable {
+    let bytes: [UInt8]
+
+    init(bytes: [UInt8]) {
+        self.bytes = bytes
     }
-    init(_ size: CGSize) {
-        self = CGVector(dx: size.width, dy: size.height)
+
+    public static func float<T>(_ x: T) -> Self where T: BinaryFloatingPoint {
+        return withUnsafeBytes(of: x) {
+            return Argument(bytes: Array($0))
+        }
+    }
+
+    public static func float2<T>(_ x: T, _ y: T) -> Self where T: BinaryFloatingPoint {
+        return withUnsafeBytes(of: (x, y)) {
+            return Argument(bytes: Array($0))
+        }
+    }
+
+    public static func float3<T>(_ x: T, _ y: T, _ z: T) -> Self where T: BinaryFloatingPoint {
+        return withUnsafeBytes(of: (x, y, z)) {
+            return Argument(bytes: Array($0))
+        }
+    }
+
+    public static func float4<T>(_ x: T, _ y: T, _ z: T, _ w: T) -> Self where T: BinaryFloatingPoint {
+        return withUnsafeBytes(of: (x, y, z, w)) {
+            return Argument(bytes: Array($0))
+        }
+    }
+
+    public static func float2(_ point: CGPoint) -> Self {
+        return .float2(Float(point.x), Float(point.y))
+    }
+
+    public static func float2(_ size: CGSize) -> Self {
+        return .float2(Float(size.width), Float(size.height))
+    }
+
+    public static func float2(_ vector: CGVector) -> Self {
+        return .float2(Float(vector.dx), Float(vector.dy))
+    }
+
+    public static func floatArray(_ array: [Float]) -> Self {
+        array.withUnsafeBytes {
+            return Argument(bytes: Array($0))
+        }
+    }
+
+    public static func color(_ color: Color) -> Self {
+        //        let cgColor = color.resolve(in: EnvironmentValues())
+        unimplemented()
+    }
+
+    public static func colorArray(_ array: [Color]) -> Self {
+        unimplemented()
+    }
+
+    public static func image(_ image: Image) -> Self {
+        unimplemented()
+    }
+
+    public static func data(_ data: Data) -> Self {
+        unimplemented()
     }
 }

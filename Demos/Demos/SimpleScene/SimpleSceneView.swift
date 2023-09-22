@@ -1,4 +1,5 @@
 #if !os(visionOS)
+import RenderKit
 import SwiftUI
 import MetalKit
 import ModelIO

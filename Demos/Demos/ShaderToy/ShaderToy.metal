@@ -57,4 +57,3 @@ vector_float4 shaderToyFragmentShader(Fragment fragmentIn [[stage_in]], constant
     const auto b = sin((vert.x + step.y) * scale) + cos((vert.y + step.y) * scale);
     return vector_float4(r, g, b, 1.0);
 }
-

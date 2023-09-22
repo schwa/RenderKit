@@ -6,6 +6,7 @@ import ModelIO
 import MetalKit
 import SwiftUI
 import Algorithms
+import RenderKit
 
 public struct SimpleScene {
     public var camera: Camera

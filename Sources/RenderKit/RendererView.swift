@@ -8,6 +8,10 @@ public struct RendererView <T>: View where T: RenderPass, T.Configuration.Update
     @State
     var commandQueue: MTLCommandQueue?
 
+    public init(renderPass: Binding<T>) {
+        self._renderPass = renderPass
+    }
+
     public var body: some View {
         MetalView { configuration in
             configuration.preferredFramesPerSecond = 120
