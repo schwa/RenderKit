@@ -795,3 +795,25 @@ internal extension MTLDevice {
         }
     }
 }
+
+extension MTLRenderCommandEncoder {
+    func setVertexBuffersFrom(mesh: MTKMesh) {
+        for (index, element) in mesh.vertexDescriptor.layouts.enumerated() {
+            guard let layout = element as? MDLVertexBufferLayout else {
+                return
+            }
+            if layout.stride != 0 {
+                let buffer = mesh.vertexBuffers[index]
+                setVertexBuffer(buffer.buffer, offset: buffer.offset, index: index)
+            }
+        }
+    }
+
+    func withDebugGroup<R>(_ string: String, block: () throws -> R) rethrows -> R {
+        pushDebugGroup(string)
+        defer {
+            popDebugGroup()
+        }
+        return try block()
+    }
+}

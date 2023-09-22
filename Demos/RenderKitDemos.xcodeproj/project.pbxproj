@@ -11,6 +11,7 @@
 		453D32BA2A48D06500FCEE29 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453D32B92A48D06500FCEE29 /* ContentView.swift */; };
 		453D32BC2A48D06600FCEE29 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 453D32BB2A48D06600FCEE29 /* Assets.xcassets */; };
 		453D32C02A48D06600FCEE29 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 453D32BF2A48D06600FCEE29 /* Preview Assets.xcassets */; };
+		4555A0372ABE017A0088CFFB /* DemosApp-VisionOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4555A0362ABE017A0088CFFB /* DemosApp-VisionOS.swift */; };
 		457D4F1F2ABD1634004CCD9D /* ContentView-VisionOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */; };
 		459EDA582A494C0700F9211C /* CLI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459EDA572A494C0700F9211C /* CLI.swift */; };
 		459F48672A5077A300623EEE /* RenderKit in Frameworks */ = {isa = PBXBuildFile; productRef = 459F48662A5077A300623EEE /* RenderKit */; };
@@ -38,6 +39,7 @@
 		453D32BB2A48D06600FCEE29 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		453D32BD2A48D06600FCEE29 /* Demos.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Demos.entitlements; sourceTree = "<group>"; };
 		453D32BF2A48D06600FCEE29 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		4555A0362ABE017A0088CFFB /* DemosApp-VisionOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemosApp-VisionOS.swift"; sourceTree = "<group>"; };
 		457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView-VisionOS.swift"; sourceTree = "<group>"; };
 		459EDA552A494C0600F9211C /* CLI */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CLI; sourceTree = BUILT_PRODUCTS_DIR; };
 		459EDA572A494C0700F9211C /* CLI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLI.swift; sourceTree = "<group>"; };
@@ -100,6 +102,7 @@
 				451196902A520D1F00F4F2DE /* Info.plist */,
 				45A147BB2A4B1B7300C06FE1 /* xcconfig */,
 				453D32B72A48D06500FCEE29 /* DemosApp.swift */,
+				4555A0362ABE017A0088CFFB /* DemosApp-VisionOS.swift */,
 				453D32B92A48D06500FCEE29 /* ContentView.swift */,
 				457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */,
 				453D32BB2A48D06600FCEE29 /* Assets.xcassets */,
@@ -251,6 +254,7 @@
 			files = (
 				453D32BA2A48D06500FCEE29 /* ContentView.swift in Sources */,
 				457D4F1F2ABD1634004CCD9D /* ContentView-VisionOS.swift in Sources */,
+				4555A0372ABE017A0088CFFB /* DemosApp-VisionOS.swift in Sources */,
 				453D32B82A48D06500FCEE29 /* DemosApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

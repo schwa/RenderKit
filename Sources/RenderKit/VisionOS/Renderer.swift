@@ -57,7 +57,10 @@ public class Renderer {
         let depthStateDescriptor = MTLDepthStencilDescriptor(depthCompareFunction: .greater, isDepthWriteEnabled: true)
         depthState = device.makeDepthStencilState(descriptor: depthStateDescriptor)!
         mesh = try Renderer.buildMesh(device: device, mtlVertexDescriptor: mtlVertexDescriptor)
-        colorMap = try Renderer.loadTexture(device: device, textureName: "ColorMap")
+        colorMap = try MTKTextureLoader(device: device).newTexture(name: "ColorMap", scaleFactor: 1.0, bundle: Bundle.module, options: [
+            .textureUsage: NSNumber(value: MTLTextureUsage.shaderRead.rawValue),
+            .textureStorageMode: NSNumber(value: MTLStorageMode.`private`.rawValue)
+        ])
         worldTracking = WorldTrackingProvider()
         arSession = ARKitSession()
     }
@@ -77,68 +80,9 @@ public class Renderer {
         }
     }
 
-    class func buildMetalVertexDescriptor() -> MTLVertexDescriptor {
-        let mtlVertexDescriptor = MTLVertexDescriptor()
-
-        mtlVertexDescriptor.attributes[VertexAttribute.position.rawValue].format = MTLVertexFormat.float3
-        mtlVertexDescriptor.attributes[VertexAttribute.position.rawValue].offset = 0
-        mtlVertexDescriptor.attributes[VertexAttribute.position.rawValue].bufferIndex = BufferIndex.meshPositions.rawValue
-
-        mtlVertexDescriptor.attributes[VertexAttribute.texcoord.rawValue].format = MTLVertexFormat.float2
-        mtlVertexDescriptor.attributes[VertexAttribute.texcoord.rawValue].offset = 0
-        mtlVertexDescriptor.attributes[VertexAttribute.texcoord.rawValue].bufferIndex = BufferIndex.meshGenerics.rawValue
-
-        mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stride = 12
-        mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stepRate = 1
-        mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stepFunction = MTLVertexStepFunction.perVertex
-
-        mtlVertexDescriptor.layouts[BufferIndex.meshGenerics.rawValue].stride = 8
-        mtlVertexDescriptor.layouts[BufferIndex.meshGenerics.rawValue].stepRate = 1
-        mtlVertexDescriptor.layouts[BufferIndex.meshGenerics.rawValue].stepFunction = MTLVertexStepFunction.perVertex
-
-        return mtlVertexDescriptor
-    }
-
-    class func buildRenderPipelineWithDevice(device: MTLDevice, layerRenderer: LayerRenderer, mtlVertexDescriptor: MTLVertexDescriptor) throws -> MTLRenderPipelineState {
-        let library = try device.makeDefaultLibrary(bundle: .shadersBundle)
-        let vertexFunction = library.makeFunction(name: "vertexShader")
-        let fragmentFunction = library.makeFunction(name: "fragmentShader")
-        let pipelineDescriptor = MTLRenderPipelineDescriptor()
-        pipelineDescriptor.label = "RenderPipeline"
-        pipelineDescriptor.vertexFunction = vertexFunction
-        pipelineDescriptor.fragmentFunction = fragmentFunction
-        pipelineDescriptor.vertexDescriptor = mtlVertexDescriptor
-        pipelineDescriptor.colorAttachments[0].pixelFormat = layerRenderer.configuration.colorFormat
-        pipelineDescriptor.depthAttachmentPixelFormat = layerRenderer.configuration.depthFormat
-        pipelineDescriptor.maxVertexAmplificationCount = layerRenderer.properties.viewCount
-        return try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
-    }
-
-    class func buildMesh(device: MTLDevice, mtlVertexDescriptor: MTLVertexDescriptor) throws -> MTKMesh {
-        let metalAllocator = MTKMeshBufferAllocator(device: device)
-        let mdlMesh = MDLMesh.newBox(withDimensions: SIMD3<Float>(4, 4, 4), segments: SIMD3<UInt32>(2, 2, 2), geometryType: MDLGeometryType.triangles, inwardNormals: false, allocator: metalAllocator)
-        let mdlVertexDescriptor = MTKModelIOVertexDescriptorFromMetal(mtlVertexDescriptor)
-        guard let attributes = mdlVertexDescriptor.attributes as? [MDLVertexAttribute] else {
-            fatalError()
-        }
-        attributes[VertexAttribute.position.rawValue].name = MDLVertexAttributePosition
-        attributes[VertexAttribute.texcoord.rawValue].name = MDLVertexAttributeTextureCoordinate
-        mdlMesh.vertexDescriptor = mdlVertexDescriptor
-        return try MTKMesh(mesh: mdlMesh, device: device)
-    }
-
-    class func loadTexture(device: MTLDevice, textureName: String) throws -> MTLTexture {
-        let textureLoader = MTKTextureLoader(device: device)
-        return try textureLoader.newTexture(name: textureName, scaleFactor: 1.0, bundle: Bundle.module, options: [
-            .textureUsage: NSNumber(value: MTLTextureUsage.shaderRead.rawValue),
-            .textureStorageMode: NSNumber(value: MTLStorageMode.`private`.rawValue)
-        ])
-    }
-
     private func updateGameState(drawable: LayerRenderer.Drawable, deviceAnchor: DeviceAnchor?) {
         /// Update any game state before rendering
-        let rotationAxis = SIMD3<Float>(1, 1, 0)
-        let modelRotationMatrix = simd_float4x4(rotationAngle: rotation, axis: rotationAxis)
+        let modelRotationMatrix = simd_float4x4(rotationAngle: rotation, axis: [1, 1, 0])
         let modelTranslationMatrix = simd_float4x4(translate: [0, 0, -8])
         let modelMatrix = modelTranslationMatrix * modelRotationMatrix
         let simdDeviceAnchor = deviceAnchor?.originFromAnchorTransform ?? matrix_identity_float4x4
@@ -155,13 +99,13 @@ public class Renderer {
         rotation += 0.01
     }
 
-    func renderFrame() {
+    private func renderFrame() {
         /// Per frame updates hare
         guard let frame = layerRenderer.queryNextFrame() else {
             return
         }
-        frame.update {
-        }
+        frame.startUpdate()
+        frame.endUpdate()
 
         guard let timing = frame.predictTiming() else {
             return
@@ -229,21 +173,75 @@ public class Renderer {
         }
     }
 
-    func renderLoop() {
+    private func renderLoop() {
         while true {
-            if layerRenderer.state == .invalidated {
+            switch layerRenderer.state {
+            case .invalidated:
                 print("Layer is invalidated")
                 return
-            } else if layerRenderer.state == .paused {
+            case .paused:
                 layerRenderer.waitUntilRunning()
-                continue
-            } else {
+            default:
                 autoreleasepool {
                     self.renderFrame()
                 }
             }
         }
     }
+}
+
+extension Renderer {
+
+    class func buildMetalVertexDescriptor() -> MTLVertexDescriptor {
+        let mtlVertexDescriptor = MTLVertexDescriptor()
+
+        mtlVertexDescriptor.attributes[VertexAttribute.position.rawValue].format = MTLVertexFormat.float3
+        mtlVertexDescriptor.attributes[VertexAttribute.position.rawValue].offset = 0
+        mtlVertexDescriptor.attributes[VertexAttribute.position.rawValue].bufferIndex = BufferIndex.meshPositions.rawValue
+
+        mtlVertexDescriptor.attributes[VertexAttribute.texcoord.rawValue].format = MTLVertexFormat.float2
+        mtlVertexDescriptor.attributes[VertexAttribute.texcoord.rawValue].offset = 0
+        mtlVertexDescriptor.attributes[VertexAttribute.texcoord.rawValue].bufferIndex = BufferIndex.meshGenerics.rawValue
+
+        mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stride = 12
+        mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stepRate = 1
+        mtlVertexDescriptor.layouts[BufferIndex.meshPositions.rawValue].stepFunction = MTLVertexStepFunction.perVertex
+
+        mtlVertexDescriptor.layouts[BufferIndex.meshGenerics.rawValue].stride = 8
+        mtlVertexDescriptor.layouts[BufferIndex.meshGenerics.rawValue].stepRate = 1
+        mtlVertexDescriptor.layouts[BufferIndex.meshGenerics.rawValue].stepFunction = MTLVertexStepFunction.perVertex
+
+        return mtlVertexDescriptor
+    }
+
+    class func buildRenderPipelineWithDevice(device: MTLDevice, layerRenderer: LayerRenderer, mtlVertexDescriptor: MTLVertexDescriptor) throws -> MTLRenderPipelineState {
+        let library = try device.makeDefaultLibrary(bundle: .shadersBundle)
+        let vertexFunction = library.makeFunction(name: "vertexShader")
+        let fragmentFunction = library.makeFunction(name: "fragmentShader")
+        let pipelineDescriptor = MTLRenderPipelineDescriptor()
+        pipelineDescriptor.label = "RenderPipeline"
+        pipelineDescriptor.vertexFunction = vertexFunction
+        pipelineDescriptor.fragmentFunction = fragmentFunction
+        pipelineDescriptor.vertexDescriptor = mtlVertexDescriptor
+        pipelineDescriptor.colorAttachments[0].pixelFormat = layerRenderer.configuration.colorFormat
+        pipelineDescriptor.depthAttachmentPixelFormat = layerRenderer.configuration.depthFormat
+        pipelineDescriptor.maxVertexAmplificationCount = layerRenderer.properties.viewCount
+        return try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
+    }
+
+    class func buildMesh(device: MTLDevice, mtlVertexDescriptor: MTLVertexDescriptor) throws -> MTKMesh {
+        let metalAllocator = MTKMeshBufferAllocator(device: device)
+        let mdlMesh = MDLMesh.newBox(withDimensions: SIMD3<Float>(4, 4, 4), segments: SIMD3<UInt32>(2, 2, 2), geometryType: MDLGeometryType.triangles, inwardNormals: false, allocator: metalAllocator)
+        let mdlVertexDescriptor = MTKModelIOVertexDescriptorFromMetal(mtlVertexDescriptor)
+        guard let attributes = mdlVertexDescriptor.attributes as? [MDLVertexAttribute] else {
+            fatalError()
+        }
+        attributes[VertexAttribute.position.rawValue].name = MDLVertexAttributePosition
+        attributes[VertexAttribute.texcoord.rawValue].name = MDLVertexAttributeTextureCoordinate
+        mdlMesh.vertexDescriptor = mdlVertexDescriptor
+        return try MTKMesh(mesh: mdlMesh, device: device)
+    }
+
 }
 
 extension LayerRenderer.Clock.Instant.Duration {
@@ -270,25 +268,3 @@ extension LayerRenderer.Frame {
     }
 }
 #endif
-
-extension MTLRenderCommandEncoder {
-    func setVertexBuffersFrom(mesh: MTKMesh) {
-        for (index, element) in mesh.vertexDescriptor.layouts.enumerated() {
-            guard let layout = element as? MDLVertexBufferLayout else {
-                return
-            }
-            if layout.stride != 0 {
-                let buffer = mesh.vertexBuffers[index]
-                setVertexBuffer(buffer.buffer, offset: buffer.offset, index: index)
-            }
-        }
-    }
-
-    func withDebugGroup<R>(_ string: String, block: () throws -> R) rethrows -> R {
-        pushDebugGroup(string)
-        defer {
-            popDebugGroup()
-        }
-        return try block()
-    }
-}

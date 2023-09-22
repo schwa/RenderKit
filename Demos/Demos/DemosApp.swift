@@ -1,28 +1,15 @@
+#if !os(visionOS)
 import SwiftUI
-#if os(visionOS)
 import CompositorServices
 import RenderKit
-#endif
+
 
 @main
 struct DemosApp: App {
     var body: some Scene {
-        #if !os(visionOS)
         WindowGroup {
             ContentView()
         }
-        #else
-        WindowGroup {
-            ContentView()
-        }.windowStyle(.volumetric)
-        ImmersiveSpace(id: "ImmersiveSpace") {
-            CompositorLayer(configuration: ContentStageConfiguration()) { layerRenderer in
-                try! Renderer(layerRenderer).startRenderLoop()
-            }
-        }
-        .immersionStyle(selection: .constant(.full), in: .full)
-        #endif
-
         #if os(macOS)
         Settings {
             Form {
@@ -115,4 +102,5 @@ extension FileManager.SearchPathDirectory: CustomStringConvertible {
         }
     }
 }
+#endif
 #endif
