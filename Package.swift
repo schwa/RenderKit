@@ -49,7 +49,8 @@ let package = Package(
                 .process("VisionOS/Assets.xcassets"),
             ],
             swiftSettings: [
-                .enableExperimentalFeature("VariadicGenerics")
+                .enableExperimentalFeature("VariadicGenerics"),
+                .enableUpcomingFeature("StrictConcurrency"),
             ]
         ),
         .target(name: "RenderKitShaders",

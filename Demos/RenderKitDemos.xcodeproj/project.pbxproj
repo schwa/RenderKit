@@ -36,6 +36,8 @@
 		457D4F1F2ABD1634004CCD9D /* ContentView-VisionOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */; };
 		459EDA582A494C0700F9211C /* CLI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459EDA572A494C0700F9211C /* CLI.swift */; };
 		459F48672A5077A300623EEE /* RenderKit in Frameworks */ = {isa = PBXBuildFile; productRef = 459F48662A5077A300623EEE /* RenderKit */; };
+		45BEC1212ABE3480001730AB /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45BEC11F2ABE3480001730AB /* Cache.swift */; };
+		45BEC1222ABE3480001730AB /* LOLID2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45BEC1202ABE3480001730AB /* LOLID2.swift */; };
 		45CC35642AB8240F00C33779 /* StanfordVolumeData in Resources */ = {isa = PBXBuildFile; fileRef = 45CC35632AB8240F00C33779 /* StanfordVolumeData */; };
 		45F588142ABD4BD700ADE82B /* RenderKit in Frameworks */ = {isa = PBXBuildFile; productRef = 45F588132ABD4BD700ADE82B /* RenderKit */; };
 /* End PBXBuildFile section */
@@ -95,6 +97,8 @@
 		45A147C22A4B1B7300C06FE1 /* Demos-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Demos-Release.xcconfig"; sourceTree = "<group>"; };
 		45A147C32A4B1B7300C06FE1 /* Project-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Project-Debug.xcconfig"; sourceTree = "<group>"; };
 		45A147C42A4B1B7300C06FE1 /* CLI-Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "CLI-Shared.xcconfig"; sourceTree = "<group>"; };
+		45BEC11F2ABE3480001730AB /* Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
+		45BEC1202ABE3480001730AB /* LOLID2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LOLID2.swift; sourceTree = "<group>"; };
 		45CC35632AB8240F00C33779 /* StanfordVolumeData */ = {isa = PBXFileReference; lastKnownFileType = folder; path = StanfordVolumeData; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -141,9 +145,9 @@
 		453D32B62A48D06500FCEE29 /* Demos */ = {
 			isa = PBXGroup;
 			children = (
+				45A147BB2A4B1B7300C06FE1 /* xcconfig */,
 				451196902A520D1F00F4F2DE /* Info.plist */,
 				4555A03A2ABE0B310088CFFB /* Info-visionOS.plist */,
-				45A147BB2A4B1B7300C06FE1 /* xcconfig */,
 				453D32B72A48D06500FCEE29 /* DemosApp.swift */,
 				4555A0362ABE017A0088CFFB /* DemosApp-VisionOS.swift */,
 				453D32B92A48D06500FCEE29 /* ContentView.swift */,
@@ -206,6 +210,8 @@
 		4555A0672ABE2F740088CFFB /* Support */ = {
 			isa = PBXGroup;
 			children = (
+				45BEC11F2ABE3480001730AB /* Cache.swift */,
+				45BEC1202ABE3480001730AB /* LOLID2.swift */,
 				4555A0652ABE2E7E0088CFFB /* Support.swift */,
 				4555A0632ABE2E2E0088CFFB /* SwiftUI+Support.swift */,
 				4555A0612ABE2D590088CFFB /* Logging.swift */,
@@ -351,6 +357,7 @@
 				4555A0532ABE2CD80088CFFB /* SimpleSceneMapView.swift in Sources */,
 				4555A0562ABE2CDD0088CFFB /* ShaderToy.metal in Sources */,
 				453D32BA2A48D06500FCEE29 /* ContentView.swift in Sources */,
+				45BEC1222ABE3480001730AB /* LOLID2.swift in Sources */,
 				4555A0622ABE2D590088CFFB /* Logging.swift in Sources */,
 				4555A0522ABE2CD80088CFFB /* FirstPersonInteractiveViewModifier.swift in Sources */,
 				4555A0662ABE2E7E0088CFFB /* Support.swift in Sources */,
@@ -369,6 +376,7 @@
 				4555A0552ABE2CDD0088CFFB /* ShaderToyView.swift in Sources */,
 				4555A05E2ABE2D100088CFFB /* GameControllerWidget.swift in Sources */,
 				453D32B82A48D06500FCEE29 /* DemosApp.swift in Sources */,
+				45BEC1212ABE3480001730AB /* Cache.swift in Sources */,
 				4555A0502ABE2CD80088CFFB /* Projections.swift in Sources */,
 				4555A0572ABE2CE20088CFFB /* VolumeView.swift in Sources */,
 				4555A04E2ABE2CD80088CFFB /* SimpleSceneInspector.swift in Sources */,

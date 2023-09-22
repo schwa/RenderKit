@@ -1,7 +1,7 @@
 import Foundation
 import Observation
 import SwiftUI
-import GameController
+@preconcurrency import GameController
 import Everything
 import AsyncAlgorithms
 

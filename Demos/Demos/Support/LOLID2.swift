@@ -1,8 +1,8 @@
 import Foundation
 import os
 
-public struct LOLID2: Hashable {
-    private static var nextIndexByPrefix = OSAllocatedUnfairLock(initialState: [String: Int]())
+public struct LOLID2: Hashable, Sendable {
+    private static let nextIndexByPrefix = OSAllocatedUnfairLock(initialState: [String: Int]())
 
     public static func generate(prefix: String) -> Self {
         nextIndexByPrefix.withLock { nextIndexByPrefix in

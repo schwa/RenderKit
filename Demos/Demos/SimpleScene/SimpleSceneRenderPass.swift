@@ -1,7 +1,7 @@
 import SwiftUI
 import ModelIO
 import Metal
-import MetalKit
+@preconcurrency import MetalKit
 import SIMDSupport
 import RenderKitShaders
 import RenderKit

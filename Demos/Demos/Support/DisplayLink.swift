@@ -13,7 +13,7 @@ public class DisplayLink2 {
         public var duration: CFTimeInterval
     }
 
-    private class Helper: NSObject {
+    private class Helper: NSObject, @unchecked Sendable {
         var continuations: [UUID: AsyncStream<Event>.Continuation] = [:]
 
         deinit {

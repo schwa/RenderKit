@@ -5,7 +5,7 @@ import os
 import UIKit
 #endif
 
-public class Cache <Key, Value> where Key: Hashable & Sendable {
+public class Cache <Key, Value> where Key: Hashable & Sendable, Value: Sendable {
     public let label: String?
 
     internal var storage = OSAllocatedUnfairLock(initialState: [Key: Value]())
@@ -49,13 +49,13 @@ public class Cache <Key, Value> where Key: Hashable & Sendable {
         }
     }
 
-    public func get(key: Key, default: () throws -> Value) rethrows -> Value {
-        try storage.withLock { storage in
+    public func get(key: Key, default: @Sendable () throws -> Value) rethrows -> Value {
+        return try storage.withLock { storage in
             if let value = storage[key] {
                 return value
             }
             else {
-                logger?.info("Cache miss: \(String(describing: key)).")
+//                logger?.info("Cache miss: \(String(describing: key)).")
                 let value = try `default`()
                 storage[key] = value
                 return value
@@ -131,7 +131,7 @@ public extension Cache where Key == String {
 }
 
 public extension Cache where Value == Any {
-    public func get<T>(key: Key, of: T.Type, default: () throws -> T) rethrows -> T {
+    func get<T>(key: Key, of: T.Type, default: @Sendable () throws -> T) rethrows -> T {
         try get(key: key, default: `default`) as! T
     }
 }
