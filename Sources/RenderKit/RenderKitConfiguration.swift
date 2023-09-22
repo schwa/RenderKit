@@ -1,7 +1,9 @@
 import Metal
 import QuartzCore
 
+// TODO: Rename to RendererConfiguration
 public protocol RenderKitConfiguration {
+    // TODO: It's silly that this has to be broken in two.
     associatedtype Update: RenderKitUpdateConfiguration
     associatedtype Draw: RenderKitDrawConfiguration
 }

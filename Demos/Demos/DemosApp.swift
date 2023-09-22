@@ -1,8 +1,6 @@
 #if !os(visionOS)
 import SwiftUI
-import CompositorServices
 import RenderKit
-
 
 @main
 struct DemosApp: App {
