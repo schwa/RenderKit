@@ -10,7 +10,7 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
     var renderPipelineState: MTLRenderPipelineState?
     var depthStencilState: MTLDepthStencilState?
     var cache = Cache<String, MTKMesh>()
-    
+
     init(scene: SimpleScene) {
         self.scene = scene
     }
@@ -45,17 +45,16 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
             depthStencilDescriptor.isDepthWriteEnabled = true
             depthStencilState = device.makeDepthStencilState(descriptor: depthStencilDescriptor)
         }
-        
+
         // Warm cache
         for model in scene.models {
             cache.insert(key: "model:\(model.id):mesh", value: try! model.mesh(device))
         }
-
     }
 
     mutating func resized(configuration: inout Configuration.Update, size: CGSize) {
     }
-    
+
     func draw(configuration: Configuration.Draw, commandBuffer: MTLCommandBuffer) {
         do {
             guard let renderPipelineState, let depthStencilState else {
@@ -71,10 +70,10 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
                     (.fill, nil),
                     (.lines, [1, 1, 1, 1]),
                 ]
-                
+
                 let cameraUniforms = CameraUniforms(projectionMatrix: scene.camera.projection.matrix(viewSize: SIMD2<Float>(size)))
                 encoder.setVertexBytes(of: cameraUniforms, index: 1)
-                
+
                 //            struct LightUniforms {
                 //                var lightPosition: SIMD3<Float>
                 //                var lightColor: SIMD3<Float>
@@ -92,11 +91,10 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
                 //                    return result
                 //                }
                 //            }
-                
-                
+
                 let lightUniforms = LightUniforms(lightPosition: scene.light.position.translation, lightColor: scene.light.color, lightPower: scene.light.power, ambientLightColor: scene.ambientLightColor)
                 encoder.setFragmentBytes(of: lightUniforms, index: 3)
-                
+
                 // TODO: Instancing
                 for model in scene.models {
                     guard let mesh = cache.get(key: "model:\(model.id):mesh") else {
@@ -110,9 +108,9 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
                             color: color ?? model.color
                         )
                         encoder.setTriangleFillMode(fillMode)
-                        
+
                         encoder.setVertexBytes(of: modelUniforms, index: 2)
-                        
+
                         encoder.draw(mesh)
                     }
                 }

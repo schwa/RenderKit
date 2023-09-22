@@ -13,17 +13,17 @@ import Metal
 public struct VolumeData {
     public var directoryURL: URL
     public var size: MTLSize
-    
+
     public init(directoryURL: URL, size: MTLSize) {
         self.directoryURL = directoryURL
         self.size = size
     }
-    
+
     public init(named name: String, size: MTLSize) {
         let url = Bundle.main.resourceURL!.appendingPathComponent("StanfordVolumeData/\(name)")
         self = .init(directoryURL: url, size: size)
     }
-    
+
     func slices() throws -> [[UInt16]] {
         let slices = try FileManager().contentsOfDirectory(atPath: directoryURL.path)
             .map { directoryURL.appendingPathComponent($0) }
@@ -46,7 +46,7 @@ public struct VolumeData {
         assert(slices.count == size.depth)
         return slices
     }
-    
+
     func statistics() throws -> (histogram: [Int], min: UInt16, max: UInt16) {
         var counts = Array(repeating: 0, count: Int(UInt16.max))
         let slices = try slices()
@@ -54,10 +54,10 @@ public struct VolumeData {
         values.forEach { value in
             counts[Int(value)] += 1
         }
-        
+
         return (histogram: counts, min: values.min()!, max: values.max()!)
     }
-    
+
     public func load() throws -> (MTLDevice) throws -> MTLTexture {
         return { device in
             let slices = try slices()
@@ -65,7 +65,7 @@ public struct VolumeData {
             textureDescriptor.textureType = .type3D
             textureDescriptor.pixelFormat = .r16Uint
             textureDescriptor.storageMode = .shared
-            
+
             textureDescriptor.width = size.width
             textureDescriptor.height = size.height
             textureDescriptor.depth = size.depth
@@ -91,7 +91,7 @@ extension MTLDevice {
         textureDescriptor.textureType = source.textureType
         textureDescriptor.pixelFormat = source.pixelFormat
         textureDescriptor.storageMode = .private
-        
+
         textureDescriptor.width = source.width
         textureDescriptor.height = source.height
         textureDescriptor.depth = source.depth

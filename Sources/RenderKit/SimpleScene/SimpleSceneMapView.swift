@@ -23,7 +23,6 @@ struct SimpleSceneMapView: View {
                 let viewCone = Path.arc(center: cameraPosition * scale, radius: 4 * scale, midAngle: .radians(Double(scene.camera.heading.radians)), width: .radians(Double(perspective.fovy.radians)))
 //                context.fill(viewCone, with: .radialGradient(Gradient(colors: [.white.opacity(0.5), .white.opacity(0.0)]), center: cameraPosition * scale, startRadius: 0, endRadius: 4 * scale))
                 context.stroke(viewCone, with: .color(.white))
-
             }
 
             var cameraImage = context.resolve(Image(systemName: "camera.circle.fill"))
@@ -34,7 +33,6 @@ struct SimpleSceneMapView: View {
             var targetImage = context.resolve(Image(systemName: "scope"))
             targetImage.shading = .color(.white)
             context.draw(targetImage, at: targetPosition * scale, anchor: .center)
-
         }
         .background(.black)
     }

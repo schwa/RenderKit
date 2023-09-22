@@ -6,13 +6,13 @@ public struct Rotation: Hashable {
     public var pitch: Angle
     public var yaw: Angle
     public var roll: Angle
-    
+
     public init(pitch: Angle = .zero, yaw: Angle = .zero, roll: Angle = .zero) {
         self.pitch = pitch
         self.yaw = yaw
         self.roll = roll
     }
-    
+
     static let zero = Rotation(pitch: .zero, yaw: .zero, roll: .zero)
 }
 

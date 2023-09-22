@@ -22,7 +22,7 @@ struct DemosApp: App {
         }
         .immersionStyle(selection: .constant(.full), in: .full)
         #endif
-        
+
         #if os(macOS)
         Settings {
             Form {

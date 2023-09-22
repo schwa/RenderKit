@@ -2,7 +2,7 @@ import Foundation
 import os
 
 public struct LOLID2: Hashable {
-    private static var nextIndexByPrefix = OSAllocatedUnfairLock(initialState: [String:Int]())
+    private static var nextIndexByPrefix = OSAllocatedUnfairLock(initialState: [String: Int]())
 
     public static func generate(prefix: String) -> Self {
         nextIndexByPrefix.withLock { nextIndexByPrefix in
@@ -14,11 +14,11 @@ public struct LOLID2: Hashable {
     }
 
     internal let rawValue: String
-    
+
     internal init(rawValue: String) {
         self.rawValue = rawValue
     }
-    
+
     public init(prefix: String) {
         self = LOLID2.generate(prefix: prefix)
     }

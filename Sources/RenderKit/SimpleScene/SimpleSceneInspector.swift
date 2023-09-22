@@ -84,7 +84,6 @@ struct SimpleSceneInspector: View {
                     let binding = Binding<SwiftUI.Angle>(radians: projection.fovy.radians)
                     TextField("FOVY", value: binding, format: .angle)
                     SliderPopoverButton(value: projection.fovy.degrees, in: 0...180, minimumValueLabel: { Image(systemName: "field.of.view.wide") }, maximumValueLabel: { Image(systemName: "field.of.view.ultrawide") })
-
                 }
                 TextField("Clipping Distance", value: projection.zClip, format: ClosedRangeFormatStyle(substyle: .number))
             case .orthographic(let projection):
@@ -104,7 +103,6 @@ struct SimpleSceneInspector: View {
     }
 
     struct LightInspector: View {
-
         @Binding
         var light: Light
 
@@ -151,6 +149,4 @@ struct TransformEditor: View {
         TextField("Translation", value: $transform.translation, format: .vector)
     }
 }
-
-
 

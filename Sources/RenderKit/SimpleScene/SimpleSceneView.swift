@@ -16,13 +16,12 @@ import os
 let logger: Logger? = Logger()
 
 public struct SimpleSceneView: View {
-
     @Environment(\.metalDevice)
     var device
 
     @Binding
     var scene: SimpleScene
-        
+
     @State
     var renderPass: SimpleSceneRenderPass<MetalViewConfiguration>
 
@@ -44,7 +43,7 @@ public struct SimpleSceneView: View {
         self._scene = scene
         self.renderPass = SimpleSceneRenderPass<MetalViewConfiguration>(scene: scene.wrappedValue)
     }
-    
+
     public var body: some View {
         ZStack {
             #if !os(visionOS)
@@ -54,7 +53,7 @@ public struct SimpleSceneView: View {
                         .border(Color.red)
                         .frame(width: 200, height: 200)
                         .padding()
-            }
+                }
             #endif
         }
         #if os(macOS)
@@ -77,7 +76,7 @@ public struct SimpleSceneView: View {
                             exportImage = Image(cgImage: try await renderPass.snapshot(device: device))
                         }
                     }
-                    .fileExporter(isPresented: isPresentedBinding, item: exportImage, contentTypes: [.png, .jpeg]) { result in
+                    .fileExporter(isPresented: isPresentedBinding, item: exportImage, contentTypes: [.png, .jpeg]) { _ in
                         exportImage = nil
                     }
                     .fileExporterFilenameLabel("Snapshot")
@@ -100,9 +99,7 @@ public struct SimpleSceneView: View {
     }
 }
 
-
 struct MyTabView: View {
-
     enum Tab: Hashable {
         case inspector
         case counters

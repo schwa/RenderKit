@@ -9,10 +9,9 @@ import SwiftUI
 import SIMDSupport
 
 public struct ContentStageConfiguration: CompositorLayerConfiguration {
-    
     public init() {
     }
-    
+
     public func makeConfiguration(capabilities: LayerRenderer.Capabilities, configuration: inout LayerRenderer.Configuration) {
         configuration.depthFormat = .depth32Float
         configuration.colorFormat = .bgra8Unorm_srgb
@@ -43,26 +42,26 @@ public class Renderer {
     var rotation: Float = 0
     let arSession: ARKitSession
     let worldTracking: WorldTrackingProvider
-    
+
     public init(_ layerRenderer: LayerRenderer) throws {
         self.layerRenderer = layerRenderer
         device = layerRenderer.device
         self.commandQueue = device.makeCommandQueue()!
         inFlightSemaphore = DispatchSemaphore(value: maxBuffersInFlight)
         let uniformBufferSize = alignedUniformsSize * maxBuffersInFlight
-        dynamicUniformBuffer = self.device.makeBuffer(length:uniformBufferSize, options: [MTLResourceOptions.storageModeShared])!
+        dynamicUniformBuffer = self.device.makeBuffer(length: uniformBufferSize, options: [MTLResourceOptions.storageModeShared])!
         dynamicUniformBuffer.label = "UniformBuffer"
-        uniforms = UnsafeMutableRawPointer(dynamicUniformBuffer.contents()).bindMemory(to:UniformsArray.self, capacity:1)
+        uniforms = UnsafeMutableRawPointer(dynamicUniformBuffer.contents()).bindMemory(to: UniformsArray.self, capacity: 1)
         let mtlVertexDescriptor = Renderer.buildMetalVertexDescriptor()
         pipelineState = try Renderer.buildRenderPipelineWithDevice(device: device, layerRenderer: layerRenderer, mtlVertexDescriptor: mtlVertexDescriptor)
         let depthStateDescriptor = MTLDepthStencilDescriptor(depthCompareFunction: .greater, isDepthWriteEnabled: true)
-        self.depthState = device.makeDepthStencilState(descriptor:depthStateDescriptor)!
+        self.depthState = device.makeDepthStencilState(descriptor: depthStateDescriptor)!
         mesh = try Renderer.buildMesh(device: device, mtlVertexDescriptor: mtlVertexDescriptor)
         colorMap = try Renderer.loadTexture(device: device, textureName: "ColorMap")
         worldTracking = WorldTrackingProvider()
         arSession = ARKitSession()
     }
-    
+
     public func startRenderLoop() {
         Task {
             do {
@@ -116,13 +115,13 @@ public class Renderer {
         pipelineDescriptor.depthAttachmentPixelFormat = layerRenderer.configuration.depthFormat
 
         pipelineDescriptor.maxVertexAmplificationCount = layerRenderer.properties.viewCount
-        
+
         return try device.makeRenderPipelineState(descriptor: pipelineDescriptor)
     }
 
     class func buildMesh(device: MTLDevice, mtlVertexDescriptor: MTLVertexDescriptor) throws -> MTKMesh {
         let metalAllocator = MTKMeshBufferAllocator(device: device)
-        let mdlMesh = MDLMesh.newBox(withDimensions: SIMD3<Float>(4, 4, 4), segments: SIMD3<UInt32>(2, 2, 2), geometryType: MDLGeometryType.triangles, inwardNormals:false, allocator: metalAllocator)
+        let mdlMesh = MDLMesh.newBox(withDimensions: SIMD3<Float>(4, 4, 4), segments: SIMD3<UInt32>(2, 2, 2), geometryType: MDLGeometryType.triangles, inwardNormals: false, allocator: metalAllocator)
         let mdlVertexDescriptor = MTKModelIOVertexDescriptorFromMetal(mtlVertexDescriptor)
         guard let attributes = mdlVertexDescriptor.attributes as? [MDLVertexAttribute] else {
             fatalError()
@@ -130,7 +129,7 @@ public class Renderer {
         attributes[VertexAttribute.position.rawValue].name = MDLVertexAttributePosition
         attributes[VertexAttribute.texcoord.rawValue].name = MDLVertexAttributeTextureCoordinate
         mdlMesh.vertexDescriptor = mdlVertexDescriptor
-        return try MTKMesh(mesh:mdlMesh, device:device)
+        return try MTKMesh(mesh: mdlMesh, device: device)
     }
 
     class func loadTexture(device: MTLDevice, textureName: String) throws -> MTLTexture {
@@ -145,7 +144,7 @@ public class Renderer {
         /// Update the state of our uniform buffers before rendering
         uniformBufferIndex = (uniformBufferIndex + 1) % maxBuffersInFlight
         uniformBufferOffset = alignedUniformsSize * uniformBufferIndex
-        uniforms = UnsafeMutableRawPointer(dynamicUniformBuffer.contents() + uniformBufferOffset).bindMemory(to:UniformsArray.self, capacity:1)
+        uniforms = UnsafeMutableRawPointer(dynamicUniformBuffer.contents() + uniformBufferOffset).bindMemory(to: UniformsArray.self, capacity: 1)
     }
 
     private func updateGameState(drawable: LayerRenderer.Drawable, deviceAnchor: DeviceAnchor?) {
@@ -158,7 +157,7 @@ public class Renderer {
         func uniforms(forViewIndex viewIndex: Int) -> Uniforms {
             let view = drawable.views[viewIndex]
             let viewMatrix = (simdDeviceAnchor * view.transform).inverse
-            let projection = ProjectiveTransform3D(leftTangent: Double(view.tangents[0]), rightTangent: Double(view.tangents[1]), topTangent: Double(view.tangents[2]), bottomTangent: Double(view.tangents[3]), nearZ: Double(drawable.depthRange.y), farZ: Double(drawable.depthRange.x),reverseZ: true)
+            let projection = ProjectiveTransform3D(leftTangent: Double(view.tangents[0]), rightTangent: Double(view.tangents[1]), topTangent: Double(view.tangents[2]), bottomTangent: Double(view.tangents[3]), nearZ: Double(drawable.depthRange.y), farZ: Double(drawable.depthRange.x), reverseZ: true)
             return Uniforms(projectionMatrix: .init(projection), modelViewMatrix: viewMatrix * modelMatrix)
         }
         self.uniforms[0].uniforms.0 = uniforms(forViewIndex: 0)
@@ -174,7 +173,7 @@ public class Renderer {
             return
         }
         frame.startUpdate()
-        
+
         // Perform frame independent work
         frame.endUpdate()
         guard let timing = frame.predictTiming() else {
@@ -193,7 +192,7 @@ public class Renderer {
         let deviceAnchor = worldTracking.queryDeviceAnchor(atTimestamp: time)
         drawable.deviceAnchor = deviceAnchor
         let semaphore = inFlightSemaphore
-        commandBuffer.addCompletedHandler { (_ commandBuffer)-> Swift.Void in
+        commandBuffer.addCompletedHandler { _ -> Swift.Void in
             semaphore.signal()
         }
         self.updateDynamicBufferState()
@@ -221,10 +220,10 @@ public class Renderer {
         renderEncoder.setFrontFacing(.counterClockwise)
         renderEncoder.setRenderPipelineState(pipelineState)
         renderEncoder.setDepthStencilState(depthState)
-        renderEncoder.setVertexBuffer(dynamicUniformBuffer, offset:uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
+        renderEncoder.setVertexBuffer(dynamicUniformBuffer, offset: uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
         let viewports = drawable.views.map { $0.textureMap.viewport }
         renderEncoder.setViewports(viewports)
-        
+
         if drawable.views.count > 1 {
             var viewMappings = (0..<drawable.views.count).map {
                 MTLVertexAmplificationViewMapping(viewportArrayIndexOffset: UInt32($0),
@@ -239,26 +238,26 @@ public class Renderer {
             }
             if layout.stride != 0 {
                 let buffer = mesh.vertexBuffers[index]
-                renderEncoder.setVertexBuffer(buffer.buffer, offset:buffer.offset, index: index)
+                renderEncoder.setVertexBuffer(buffer.buffer, offset: buffer.offset, index: index)
             }
         }
-        
+
         renderEncoder.setFragmentTexture(colorMap, index: TextureIndex.color.rawValue)
         for submesh in mesh.submeshes {
-            renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType, indexCount: submesh.indexCount, indexType: submesh.indexType, indexBuffer: submesh.indexBuffer.buffer,indexBufferOffset: submesh.indexBuffer.offset)
+            renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType, indexCount: submesh.indexCount, indexType: submesh.indexType, indexBuffer: submesh.indexBuffer.buffer, indexBufferOffset: submesh.indexBuffer.offset)
         }
-        
+
         renderEncoder.popDebugGroup()
-        
+
         renderEncoder.endEncoding()
-        
+
         drawable.encodePresent(commandBuffer: commandBuffer)
-        
+
         commandBuffer.commit()
-        
+
         frame.endSubmission()
     }
-    
+
     func renderLoop() {
         while true {
             if layerRenderer.state == .invalidated {

@@ -8,7 +8,6 @@ import SwiftUI
 
 @available(macOS 14, iOS 15, tvOS 16, *)
 public class DisplayLink2 {
-
     public struct Event {
         public var timestamp: CFTimeInterval
         public var duration: CFTimeInterval
@@ -100,7 +99,7 @@ public extension DisplayLink2 {
 
 @available(macOS 14, iOS 15, tvOS 16, *)
 public struct DisplayLinkKey: EnvironmentKey {
-    public static var defaultValue: DisplayLink2? = nil
+    public static var defaultValue: DisplayLink2?
 }
 
 @available(macOS 14, iOS 15, tvOS 16, *)

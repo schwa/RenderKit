@@ -12,7 +12,7 @@ public struct SimpleScene {
     public var light: Light
     public var ambientLightColor: SIMD3<Float>
     public var models: [Model]
-    
+
     public init(camera: Camera, light: Light, ambientLightColor: SIMD3<Float>, models: [Model]) {
         self.camera = camera
         self.light = light
@@ -32,7 +32,7 @@ public struct Camera {
         }
     }
     public var projection: Projection
-    
+
     public init(transform: Transform, target: SIMD3<Float>, projection: Projection) {
         self.transform = transform
         self.target = target
@@ -62,7 +62,7 @@ public struct Light {
     public var position: Transform
     public var color: SIMD3<Float>
     public var power: Float
-    
+
     public init(position: Transform, color: SIMD3<Float>, power: Float) {
         self.position = position
         self.color = color
@@ -80,7 +80,7 @@ public struct Model: Identifiable {
     public var transform: Transform
     public var color: SIMD4<Float>
     public var mesh: (MTLDevice) throws -> MTKMesh
-    
+
     public init(transform: Transform, color: SIMD4<Float>, mesh: @escaping (MTLDevice) throws -> MTKMesh) {
         self.transform = transform
         self.color = color
@@ -98,8 +98,8 @@ public extension SimpleScene {
 
         let meshes = [cone, sphere, capsule]
 
-        let xRange = Array<Float>(stride(from: -2, through: 2, by: 1))
-        let zRange = Array<Float>(stride(from: 0, through: -10, by: -1))
+        let xRange = [Float](stride(from: -2, through: 2, by: 1))
+        let zRange = [Float](stride(from: 0, through: -10, by: -1))
 
         let scene = SimpleScene(
             camera: Camera(transform: .translation([0, 0, 2]), target: [0, 0, -1], projection: .perspective(.init(fovy: .degrees(90), zClip: 0.1 ... 100))),

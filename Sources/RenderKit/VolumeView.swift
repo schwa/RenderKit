@@ -12,16 +12,15 @@ import os
 // https://www.youtube.com/watch?v=y4KdxaMC69w&t=1761s
 
 public struct VolumeView: View {
-    
     @State
     var renderPass = VolumeRenderPass<MetalViewConfiguration>()
-    
+
     @State
     var rotation = Rotation.zero
-    
+
     @State
     var volumeData = VolumeData(named: "CThead", size: [256, 256, 113])
-    
+
     @State
     var redTransferFunction: [Float] = Array(repeating: 1.0, count: 256)
     @State
@@ -33,10 +32,10 @@ public struct VolumeView: View {
 
     @Environment(\.metalDevice)
     var device
-    
+
     public init() {
     }
-    
+
     public var body: some View {
         RendererView(renderPass: $renderPass)
             .ballRotation($rotation, pitchLimit: .degrees(-.infinity) ... .degrees(.infinity), yawLimit: .degrees(-.infinity) ... .degrees(.infinity))
@@ -74,9 +73,8 @@ public struct VolumeView: View {
                 .controlSize(.small)
             }
     }
-    
-    func updateTransferFunctionTexture() {
 
+    func updateTransferFunctionTexture() {
         let values = (0...255).map {
             SIMD4<Float>(
                 redTransferFunction[$0],
@@ -87,12 +85,11 @@ public struct VolumeView: View {
         }
         .map { $0 * 255.0 }
         .map { SIMD4<UInt8>($0) }
-        
+
         values.withUnsafeBytes { buffer in
             let region = MTLRegion(origin: [0, 0, 0], size: [256, 1, 1]) // TODO: Hardcoded
             let bytesPerRow = 256 * MemoryLayout<SIMD4<UInt8>>.stride
-            
-            
+
             renderPass.transferFunctionTexture.replace(region: region, mipmapLevel: 0, slice: 0, withBytes: buffer.baseAddress!, bytesPerRow: bytesPerRow, bytesPerImage: 0)
         }
     }
@@ -107,8 +104,8 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
     var cache = Cache<String, Any>()
     var rotation: Rotation = .zero
     var transferFunctionTexture: MTLTexture
-    var logger: Logger? = nil
-    
+    var logger: Logger?
+
     init() {
         let device = MTLCreateSystemDefaultDevice()! // TODO: Naughty
         let volumeData = VolumeData(named: "CThead", size: [256, 256, 113]) // TODO: Hardcoded
@@ -133,7 +130,7 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
         texture.label = "transfer function"
         transferFunctionTexture = texture
     }
-    
+
     mutating func setup(configuration: inout Configuration.Update) {
         let id = id
         logger?.debug("\(id): \(#function)")
@@ -170,14 +167,12 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
                 depthStencilDescriptor.isDepthWriteEnabled = true
                 depthStencilState = device.makeDepthStencilState(descriptor: depthStencilDescriptor)
             }
-
         }
         catch {
             fatalError()
         }
-        
     }
-    
+
     mutating func resized(configuration: inout Configuration.Update, size: CGSize) {
         let id = id
         logger?.debug("\(id): \(#function)")
@@ -188,7 +183,6 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
         }
     }
 
-    
     func draw(configuration: Configuration.Draw, commandBuffer: MTLCommandBuffer) {
 //        logger?.debug("\(#function)")
         do {
@@ -207,7 +201,7 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
                 let camera = Camera(transform: .init( translation: [0, 0, 2]), target: .zero, projection: .perspective(PerspectiveProjection(fovy: .degrees(90), zClip: 0.01 ... 10)))
 
                 let modelTransform = Transform(scale: [2, 2, 2], rotation: rotation.quaternion)
-                
+
                 let mesh2 = try cache.get(key: "mesh2", of: SimpleMesh.self) {
                     let rect = CGRect(center: .zero, radius: 0.5)
                     let circle = LegacyGraphics.Circle(containing: rect)
@@ -231,13 +225,12 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
                     textureMatrix: simd_float4x4(translate: [0.5, 0.5, 0.5]) * rotation.matrix * simd_float4x4(translate: [-0.5, -0.5, -0.5])
                 )
                 encoder.setVertexBytes(of: modelUniforms, index: 2)
-                
+
                 // Vertex Buffer Index 3
-                
+
                 let instanceCount = 256 // TODO: Random - numbers as low as 32 - but you will see layering in the image.
-                
+
                 let instances = cache.get(key: "instance_data", of: MTLBuffer.self) {
-                    
                     let instances = (0..<instanceCount).map { slice in
                         let z = Float(slice) / Float(instanceCount - 1)
                         return VolumeInstance(offsetZ: z - 0.5, textureZ: 1 - z)
@@ -265,7 +258,7 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
                 // TODO: Hard coded
                 let fragmentUniforms = VolumeFragmentUniforms(instanceCount: UInt16(instanceCount), maxValue: 3272, alpha: 10.0)
                 encoder.setFragmentBytes(of: fragmentUniforms, index: 0)
-                
+
                 encoder.draw(mesh2, instanceCount: instanceCount)
             }
         }
@@ -294,8 +287,6 @@ extension Triangle {
     }
 }
 
-
-
 struct SimpleMesh {
     let label: String?
     var indexCount: Int
@@ -323,7 +314,6 @@ struct SimpleMesh {
         return vertexDescriptor
     }()
 
-    
     init(label: String? = nil, indexCount: Int, indexBuffer: MTLBuffer, vertexBuffer: MTLBuffer) {
         self.label = label
         self.indexCount = indexCount
@@ -386,36 +376,33 @@ extension SimpleMesh {
     }
 }
 
-
 extension MTLRenderCommandEncoder {
     func setVertexBuffer(_ mesh: SimpleMesh, index: Int) {
         setVertexBuffer(mesh.vertexBuffer, offset: mesh.vertexBufferOffset, index: index)
     }
-    
+
     func draw(_ mesh: SimpleMesh) {
         drawIndexedPrimitives(type: mesh.primitiveType, indexCount: mesh.indexCount, indexType: mesh.indexType, indexBuffer: mesh.indexBuffer, indexBufferOffset: mesh.indexBufferOffset)
     }
-    
+
     func draw(_ mesh: SimpleMesh, instanceCount: Int) {
         drawIndexedPrimitives(type: mesh.primitiveType, indexCount: mesh.indexCount, indexType: mesh.indexType, indexBuffer: mesh.indexBuffer, indexBufferOffset: mesh.indexBufferOffset, instanceCount: instanceCount)
     }
 }
 
 struct TransferFunctionEditor: View {
-    
-    
     let width: Int
-    
+
     @Binding
     var values: [Float]
-    
+
     let color: Color
-    
+
     @State
     var lastLocation: CGFloat?
 
     let coordinateSpace = NamedCoordinateSpace.named(ObjectIdentifier(Self.self))
-    
+
     var body: some View {
         GeometryReader { proxy in
             Canvas { context, size in
@@ -454,7 +441,6 @@ struct TransferFunctionEditor: View {
             }
         }
     }
-    
 }
 
 extension MTLOrigin: ExpressibleByArrayLiteral {

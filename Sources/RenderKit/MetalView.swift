@@ -74,7 +74,7 @@ public struct MetalView: View {
                 view.concreteMetalViewConfiguration = configuration
             }
             return view
-        } update: { view in
+        } update: { _ in
             //Self._printChanges()
             // Perform updates in a Task to allow clients to update state and avoid "Modifying state during view update, this will cause undefined behavior."
         }

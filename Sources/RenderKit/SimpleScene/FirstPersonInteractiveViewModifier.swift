@@ -4,7 +4,6 @@ import GameController
 import simd
 
 public struct FirstPersonInteractiveViewModifier: ViewModifier {
-    
     @Environment(\.displayLink)
     var displayLink
 

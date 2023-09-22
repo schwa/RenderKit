@@ -2,7 +2,6 @@ import SwiftUI
 import GameController
 
 struct GameControllerWidget: View {
-
     @Observable
     class GameControllerWidgetModel {
         var scanning = false
@@ -26,12 +25,12 @@ struct GameControllerWidget: View {
         var devices: Set<DeviceBox> = []
 
 #if os(iOS)
-        var virtualController: GCVirtualController? = nil
+        var virtualController: GCVirtualController?
         // Temporary workaround for FB12509166
 #endif
 
         @ObservationIgnored
-        var monitorTask: Task<(), Never>? = nil
+        var monitorTask: Task<(), Never>?
 
         init() {
             devices.formUnion(GCController.controllers().map(DeviceBox.init))
@@ -103,7 +102,7 @@ struct GameControllerWidget: View {
             //                .symbolRenderingMode(.palette)
             //                .foregroundStyle(.red, .green, .blue)
             //                .background(.white)
-            Menu{
+            Menu {
                 if model.scanning == false {
                     Button("Start Scanning") {
                         model.startDiscovery()
@@ -172,7 +171,7 @@ struct GameControllerWidget: View {
                 }
             )
             .labelStyle(.iconOnly)
-        }
+            }
         .fixedSize()
         .backgroundStyle(Color.yellow)
         }
@@ -193,7 +192,6 @@ extension GCDevice {
         }
     }
 }
-
 
 enum GCElementKey: String, CaseIterable {
     case buttonA = "Button A"

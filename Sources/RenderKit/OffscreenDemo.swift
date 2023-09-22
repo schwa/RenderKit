@@ -12,9 +12,9 @@ public struct OffscreenRenderPassConfiguration: RenderKitConfiguration, RenderKi
     public typealias Draw = Self
 
     public var currentDrawable: CAMetalDrawable?
-    
+
     public var preferredFramesPerSecond: Int = 120
-    
+
     // TODO: INVENTED VALUES
     public var depthStencilAttachmentTextureUsage: MTLTextureUsage = .renderTarget
     public var depthStencilStorageMode: MTLStorageMode = .shared
@@ -123,7 +123,7 @@ public struct OffscreenDemoRenderPass <Configuration>: RenderPass where Configur
         self.plane = plane
         self.shaderToyRenderPipelineState = shaderToyRenderPipelineState
     }
-    
+
     public mutating func resized(configuration: inout Configuration.Update, size: CGSize) {
     }
 
@@ -184,7 +184,6 @@ public struct OffscreenDemo {
         commandQueue.withCommandBuffer(waitAfterCommit: true) { commandBuffer in
             offscreen.draw(configuration: configuration, commandBuffer: commandBuffer)
         }
-
 
         let histogram = configuration.targetTexture!.histogram()
 

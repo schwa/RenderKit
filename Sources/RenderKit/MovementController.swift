@@ -13,7 +13,6 @@ import AsyncAlgorithms
 // TODO: That notification thing is f-ing hideous
 @Observable
 class MovementController {
-
     struct Event {
         enum Payload {
             case movement(SIMD3<Float>)
@@ -31,19 +30,19 @@ class MovementController {
         }
     }
 
-    var focused: Bool = false
+    var focused = false
 
     @ObservationIgnored
     var displayLink: DisplayLink2! = nil
 
     @ObservationIgnored
-    var controller: GCController? = nil {
+    var controller: GCController? {
         didSet {
             capturedControllerProfile = controller?.physicalInputProfile.capture()
         }
     }
     @ObservationIgnored
-    var capturedControllerProfile: GCPhysicalInputProfile? = nil {
+    var capturedControllerProfile: GCPhysicalInputProfile? {
         didSet {
             move = capturedControllerProfile?.axes[GCElementKey.leftThumbstickYAxis.rawValue]
             strafe = capturedControllerProfile?.axes[GCElementKey.leftThumbstickXAxis.rawValue]
@@ -52,18 +51,18 @@ class MovementController {
     }
 
     @ObservationIgnored
-    var move: GCControllerAxisInput? = nil
+    var move: GCControllerAxisInput?
     @ObservationIgnored
-    var strafe: GCControllerAxisInput? = nil
+    var strafe: GCControllerAxisInput?
     @ObservationIgnored
-    var turn: GCControllerAxisInput? = nil
+    var turn: GCControllerAxisInput?
 
     @ObservationIgnored
     let channel = AsyncChannel<Event>()
 
 //    var lastMouseUpdate: TimeInterval = 0
 
-    public func disableUIKeys() {
+    func disableUIKeys() {
         #if os(macOS)
         NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
             // If we're not focused return everything.
@@ -85,13 +84,13 @@ class MovementController {
     }
 
     @ObservationIgnored
-    var mouse: GCMouse? = nil {
+    var mouse: GCMouse? {
         willSet {
             mouse?.mouseInput?.mouseMovedHandler = nil
         }
         didSet {
             mouse?.handlerQueue = DispatchQueue(label: "Mouse", qos: .userInteractive)
-            mouse?.mouseInput?.mouseMovedHandler = { [weak self] mouseInput, x, y in
+            mouse?.mouseInput?.mouseMovedHandler = { [weak self] _, x, y in
                 guard x != 0 || y != 0 else {
                     return
                 }
@@ -112,13 +111,13 @@ class MovementController {
     }
 
     @ObservationIgnored
-    var keyboardTask: Task<(), Never>? = nil
+    var keyboardTask: Task<(), Never>?
 
     @ObservationIgnored
-    var relayTask: Task<(), Never>? = nil
+    var relayTask: Task<(), Never>?
 
     @ObservationIgnored
-    var controllerNotificationsTask: Task<(), Never>? = nil
+    var controllerNotificationsTask: Task<(), Never>?
 
     init(displayLink: DisplayLink2) {
         self.displayLink = displayLink
@@ -157,7 +156,7 @@ class MovementController {
         }
 
         relayTask = Task() { [weak self] in
-            let events = self?.displayLink.events().flatMap { [weak self] event in
+            let events = self?.displayLink.events().flatMap { [weak self] _ in
                 Counters.shared.increment(counter: "DisplayLink")
                 return (self?.makeEvent() ?? []).async
             }
@@ -175,7 +174,6 @@ class MovementController {
 
     func keyboard() {
         self.keyboardTask = Task { [weak self] in
-
             guard let displayLink = self?.displayLink else {
                 fatalError()
             }
@@ -192,7 +190,7 @@ class MovementController {
             let keyA = capturedInput.button(forKeyCode: .keyA)!
             let keyS = capturedInput.button(forKeyCode: .keyS)!
             let keyD = capturedInput.button(forKeyCode: .keyD)!
-            
+
             for await _ in displayLink.events() {
                 guard self?.focused == true else {
                     print("Skipping")
@@ -234,7 +232,6 @@ class MovementController {
             Counters.shared.increment(counter: "Poll: GC")
 
             allEvents += events
-
         }
         return allEvents
     }
@@ -258,7 +255,7 @@ actor MouseMonitor {
 extension GCMouseInput {
     func events() -> AsyncStream<SIMD2<Float>> {
         return AsyncStream { continuation in
-            self.mouseMovedHandler = { mouse, x, y in
+            self.mouseMovedHandler = { _, x, y in
                 continuation.yield([x, y])
             }
             continuation.onTermination = { @Sendable _ in

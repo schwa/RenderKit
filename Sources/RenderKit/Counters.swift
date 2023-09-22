@@ -50,12 +50,11 @@ actor Counters {
 }
 
 struct CountersView: View {
-    
     let startDate = Date.now
-    
+
     @State
     var records: [Counters.Record] = []
-    
+
     var body: some View {
         VStack {
             Table(records) {
@@ -92,7 +91,7 @@ struct CountersView: View {
             }
             .controlSize(.small)
         }
-        
+
         .task {
             do {
                 while true {

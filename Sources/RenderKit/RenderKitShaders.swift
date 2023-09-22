@@ -20,5 +20,4 @@ public extension Bundle {
         // Fail.
         fatalError("Could not find shaders bundle")
     }()
-
 }

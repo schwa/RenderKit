@@ -61,7 +61,6 @@ struct TextureReference: Parameter {
     init<T>(index: T, texture: PartialKeyPath<RenderEnvironment>) where T: RawRepresentable, T.RawValue == ParameterIndex {
         self.index = index.rawValue
         self.texture = .keyPath(texture)
-
     }
 }
 
@@ -103,9 +102,7 @@ struct RenderEnvironment {
     let materials = ""
 }
 
-
 struct BlinnPhong: RenderPipeline {
-
     let debug = false
 
     @StageBuilder
@@ -124,7 +121,6 @@ struct BlinnPhong: RenderPipeline {
         FunctionConstant(index: CommonBindings.debug, value: debug)
     }
 }
-
 
 // TODO: Move
 extension CGVector {

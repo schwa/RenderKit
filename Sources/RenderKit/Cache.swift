@@ -6,13 +6,12 @@ import UIKit
 #endif
 
 public class Cache <Key, Value> where Key: Hashable & Sendable {
-
     public let label: String?
 
-    internal var storage = OSAllocatedUnfairLock(initialState: Dictionary<Key, Value>())
+    internal var storage = OSAllocatedUnfairLock(initialState: [Key: Value]())
 //    var task: Task<(), Never>?    
     internal var logger: Logger?
-    
+
     public init(label: String? = nil) {
         self.label = label
 //        let q = DispatchQueue.init(label: "test")
@@ -43,13 +42,13 @@ public class Cache <Key, Value> where Key: Hashable & Sendable {
 //        }
 //        #endif
     }
-    
+
     public func get(key: Key) -> Value? {
         storage.withLock { storage in
             storage[key]
         }
     }
-    
+
     public func get(key: Key, default: () throws -> Value) rethrows -> Value {
         try storage.withLock { storage in
             if let value = storage[key] {
@@ -63,7 +62,7 @@ public class Cache <Key, Value> where Key: Hashable & Sendable {
             }
         }
     }
-    
+
     @discardableResult
     public func insert(key: Key, value: Value) -> Value? {
         storage.withLock { storage in
@@ -72,7 +71,7 @@ public class Cache <Key, Value> where Key: Hashable & Sendable {
             return old
         }
     }
-    
+
     @discardableResult
     public func remove(key: Key) -> Value? {
         storage.withLock { storage in
@@ -81,13 +80,13 @@ public class Cache <Key, Value> where Key: Hashable & Sendable {
             return old
         }
     }
-        
+
     public func contains(key: Key) -> Bool {
         storage.withLock { storage in
             storage[key] != nil
         }
     }
-    
+
     public var allKeys: [Key] {
         storage.withLock { storage in
             Array(storage.keys)
@@ -135,5 +134,4 @@ public extension Cache where Value == Any {
     public func get<T>(key: Key, of: T.Type, default: () throws -> T) rethrows -> T {
         try get(key: key, default: `default`) as! T
     }
-    
 }

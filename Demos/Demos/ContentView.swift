@@ -4,13 +4,12 @@ import RenderKit
 import Everything
 
 struct ContentView: View {
-
     @State
     var scene = SimpleScene.demo()
-    
+
     init() {
     }
-    
+
     var body: some View {
         if false {
             SimpleSceneView(scene: $scene)

@@ -673,8 +673,7 @@ struct MyDisclosureGroupStyle: DisclosureGroupStyle {
     }
 }
 
-struct SliderPopoverButton<Label, ValueLabel> : View where Label : View, ValueLabel : View {
-
+struct SliderPopoverButton<Label, ValueLabel>: View where Label: View, ValueLabel: View {
     @Binding
     var value: Double
 
@@ -725,14 +724,12 @@ extension SliderPopoverButton where Label == EmptyView {
 }
 #endif
 
-
 struct FrameEditorModifier: ViewModifier {
+    @State
+    var isExpanded = false
 
     @State
-    var isExpanded: Bool = false
-
-    @State
-    var locked: Bool = false
+    var locked = false
 
     @State
     var lockedSize: CGSize?
@@ -764,7 +761,6 @@ struct FrameEditorModifier: ViewModifier {
                             }
                             .buttonStyle(.borderless)
                         }
-
                     } label: {
                         Image(systemName: "rectangle.split.2x2")
                     }
