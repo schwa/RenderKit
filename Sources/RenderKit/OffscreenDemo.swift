@@ -70,6 +70,7 @@ public struct OffscreenRenderPassConfiguration: RenderKitConfiguration, RenderKi
     }
 }
 
+// MARK: -
 
 public struct OffscreenDemoRenderPass <Configuration>: RenderPass where Configuration: RenderKitConfiguration {
     public var shaderToyRenderPipelineState: MTLRenderPipelineState?

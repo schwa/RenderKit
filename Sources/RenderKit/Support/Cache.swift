@@ -9,7 +9,7 @@ public class Cache <Key, Value> where Key: Hashable & Sendable {
     public let label: String?
 
     internal var storage = OSAllocatedUnfairLock(initialState: [Key: Value]())
-//    var task: Task<(), Never>?    
+//    var task: Task<(), Never>?
     internal var logger: Logger?
 
     public init(label: String? = nil) {
@@ -29,11 +29,11 @@ public class Cache <Key, Value> where Key: Hashable & Sendable {
 //                default:
 //                    break
 //                }
-//                
+//
 //            }
 //            source.resume()
 //        }
-//        
+//
 //        #if os(iOS)
 //        task = Task { [weak self] in
 //            for await _ in await NotificationCenter.default.notifications(named: UIApplication.didReceiveMemoryWarningNotification) {

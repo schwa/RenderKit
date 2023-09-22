@@ -1,9 +1,9 @@
+#if !os(visionOS)
 import SwiftUI
 import MetalKit
 import Everything
 import os
 
-#if !os(visionOS)
 public struct MetalView: View {
     @Observable
     class Model: NSObject, MTKViewDelegate {
@@ -143,5 +143,4 @@ public struct ConcreteMetalViewConfiguration: MetalViewUpdateConfiguration, Meta
     public var size: CGSize?
     public var currentRenderPassDescriptor: MTLRenderPassDescriptor?
 }
-
 #endif
