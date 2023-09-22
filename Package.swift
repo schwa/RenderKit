@@ -46,7 +46,7 @@ let package = Package(
             ],
             resources: [
                 .process("Media.xcassets"),
-                .process("Assets.xcassets"),
+                .process("VisionOS/Assets.xcassets"),
             ],
             swiftSettings: [
                 .enableExperimentalFeature("VariadicGenerics")
