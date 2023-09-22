@@ -24,7 +24,7 @@ Post-multiplication, Column-Major, Right-handed, Y up
 * More type-safety. Especially pipeline attributes
 * Async. (Good luck)
 * Outputs
-  * A unified "renderable" system. Can render to any of multiple locations - MTKView, "raw" CAMetalLayer, offscreen textures, VistionKit immersive spaces etc
+  * A unified "renderable" system. Can render to any of multiple locations - MTKView, "raw" CAMetalLayer, offscreen textures, VistionKit immersive spaces etc.
   * ~~Built-in offscreen renderer~~ (Working but API can be fixed)
   * Built-in support for ~~MTKView~~ and CAMetalLayer
   * VisionKit 'CPSceneSessionRoleImmersiveSpaceApplication' output
