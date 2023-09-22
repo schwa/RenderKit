@@ -31,14 +31,13 @@ public class Renderer {
     let inFlightSemaphore: DispatchSemaphore
     let dynamicUniformBuffer: MTLBuffer
     let alignedUniformsSize = (MemoryLayout<UniformsArray>.size + 0xFF) & -0x100
-    var uniforms: UnsafeMutablePointer<UniformsArray>
+    var uniforms: UnsafeMutableBufferPointer<UniformsArray>
     let pipelineState: MTLRenderPipelineState
     let depthState: MTLDepthStencilState
     let mesh: MTKMesh
     let colorMap: MTLTexture
 
-    var uniformBufferOffset = 0
-    var uniformBufferIndex = 0
+    var uniformsBufferIndex = 0
     var rotation: Float = 0
     let arSession: ARKitSession
     let worldTracking: WorldTrackingProvider
@@ -47,11 +46,12 @@ public class Renderer {
         self.layerRenderer = layerRenderer
         device = layerRenderer.device
         commandQueue = device.makeCommandQueue()!
+        print(MemoryLayout<UniformsArray>.size)
         inFlightSemaphore = DispatchSemaphore(value: maxBuffersInFlight)
         let uniformBufferSize = alignedUniformsSize * maxBuffersInFlight
         dynamicUniformBuffer = device.makeBuffer(length: uniformBufferSize, options: [MTLResourceOptions.storageModeShared])!
         dynamicUniformBuffer.label = "UniformBuffer"
-        uniforms = UnsafeMutableRawPointer(dynamicUniformBuffer.contents()).bindMemory(to: UniformsArray.self, capacity: 1)
+        uniforms = UnsafeMutableRawBufferPointer(start: dynamicUniformBuffer.contents(), count: uniformBufferSize).bindMemory(to: UniformsArray.self)
         let mtlVertexDescriptor = Renderer.buildMetalVertexDescriptor()
         pipelineState = try Renderer.buildRenderPipelineWithDevice(device: device, layerRenderer: layerRenderer, mtlVertexDescriptor: mtlVertexDescriptor)
         let depthStateDescriptor = MTLDepthStencilDescriptor(depthCompareFunction: .greater, isDepthWriteEnabled: true)
@@ -135,13 +135,6 @@ public class Renderer {
         ])
     }
 
-    private func updateDynamicBufferState() {
-        /// Update the state of our uniform buffers before rendering
-        uniformBufferIndex = (uniformBufferIndex + 1) % maxBuffersInFlight
-        uniformBufferOffset = alignedUniformsSize * uniformBufferIndex
-        uniforms = UnsafeMutableRawPointer(dynamicUniformBuffer.contents() + uniformBufferOffset).bindMemory(to: UniformsArray.self, capacity: 1)
-    }
-
     private func updateGameState(drawable: LayerRenderer.Drawable, deviceAnchor: DeviceAnchor?) {
         /// Update any game state before rendering
         let rotationAxis = SIMD3<Float>(1, 1, 0)
@@ -155,9 +148,9 @@ public class Renderer {
             let projection = ProjectiveTransform3D(leftTangent: Double(view.tangents[0]), rightTangent: Double(view.tangents[1]), topTangent: Double(view.tangents[2]), bottomTangent: Double(view.tangents[3]), nearZ: Double(drawable.depthRange.y), farZ: Double(drawable.depthRange.x), reverseZ: true)
             return Uniforms(projectionMatrix: .init(projection), modelViewMatrix: viewMatrix * modelMatrix)
         }
-        self.uniforms[0].uniforms.0 = uniforms(forViewIndex: 0)
+        self.uniforms[uniformsBufferIndex].uniforms.0 = uniforms(forViewIndex: 0)
         if drawable.views.count > 1 {
-            self.uniforms[0].uniforms.1 = uniforms(forViewIndex: 1)
+            self.uniforms[uniformsBufferIndex].uniforms.1 = uniforms(forViewIndex: 1)
         }
         rotation += 0.01
     }
@@ -174,12 +167,15 @@ public class Renderer {
             return
         }
         LayerRenderer.Clock().wait(until: timing.optimalInputTime)
+
         guard let commandBuffer = commandQueue.makeCommandBuffer() else {
             fatalError("Failed to create command buffer")
         }
+
         guard let drawable = frame.queryDrawable() else {
             return
         }
+
         _ = inFlightSemaphore.wait(timeout: DispatchTime.distantFuture)
         frame.submit {
             let time = LayerRenderer.Clock.Instant.epoch.duration(to: drawable.frameTiming.presentationTime).timeInterval
@@ -189,7 +185,7 @@ public class Renderer {
             commandBuffer.addCompletedHandler { _ in
                 _ = semaphore.signal()
             }
-            updateDynamicBufferState()
+            uniformsBufferIndex = (uniformsBufferIndex + 1) % maxBuffersInFlight
             updateGameState(drawable: drawable, deviceAnchor: deviceAnchor)
             let renderPassDescriptor = MTLRenderPassDescriptor()
             renderPassDescriptor.colorAttachments[0].texture = drawable.colorTextures[0]
@@ -204,49 +200,31 @@ public class Renderer {
             if layerRenderer.configuration.layout == .layered {
                 renderPassDescriptor.renderTargetArrayLength = drawable.views.count
             }
-            /// Final pass rendering code here
-            guard let renderEncoder = commandBuffer.makeRenderCommandEncoder(descriptor: renderPassDescriptor) else {
-                fatalError("Failed to create render encoder")
-            }
-            renderEncoder.label = "Primary Render Encoder"
-            renderEncoder.pushDebugGroup("Draw Box")
-            renderEncoder.setCullMode(.back)
-            renderEncoder.setFrontFacing(.counterClockwise)
-            renderEncoder.setRenderPipelineState(pipelineState)
-            renderEncoder.setDepthStencilState(depthState)
-            renderEncoder.setVertexBuffer(dynamicUniformBuffer, offset: uniformBufferOffset, index: BufferIndex.uniforms.rawValue)
-            let viewports = drawable.views.map { $0.textureMap.viewport }
-            renderEncoder.setViewports(viewports)
-
-            if drawable.views.count > 1 {
-                var viewMappings = (0..<drawable.views.count).map {
-                    MTLVertexAmplificationViewMapping(viewportArrayIndexOffset: UInt32($0),
-                                                      renderTargetArrayIndexOffset: UInt32($0))
-                }
-                renderEncoder.setVertexAmplificationCount(viewports.count, viewMappings: &viewMappings)
-            }
-
-            for (index, element) in mesh.vertexDescriptor.layouts.enumerated() {
-                guard let layout = element as? MDLVertexBufferLayout else {
-                    return
-                }
-                if layout.stride != 0 {
-                    let buffer = mesh.vertexBuffers[index]
-                    renderEncoder.setVertexBuffer(buffer.buffer, offset: buffer.offset, index: index)
+            commandBuffer.withRenderCommandEncoder(descriptor: renderPassDescriptor) { renderEncoder in
+                renderEncoder.label = "Primary Render Encoder"
+                renderEncoder.withDebugGroup("Draw Box") {
+                    renderEncoder.setCullMode(.back)
+                    renderEncoder.setFrontFacing(.counterClockwise)
+                    renderEncoder.setRenderPipelineState(pipelineState)
+                    renderEncoder.setDepthStencilState(depthState)
+                    renderEncoder.setVertexBuffer(dynamicUniformBuffer, offset: alignedUniformsSize * uniformsBufferIndex, index: BufferIndex.uniforms.rawValue)
+                    let viewports = drawable.views.map { $0.textureMap.viewport }
+                    renderEncoder.setViewports(viewports)
+                    if drawable.views.count > 1 {
+                        var viewMappings = (0..<drawable.views.count).map {
+                            MTLVertexAmplificationViewMapping(viewportArrayIndexOffset: UInt32($0), renderTargetArrayIndexOffset: UInt32($0))
+                        }
+                        renderEncoder.setVertexAmplificationCount(viewports.count, viewMappings: &viewMappings)
+                    }
+                    renderEncoder.setVertexBuffersFrom(mesh: mesh)
+                    renderEncoder.setFragmentTexture(colorMap, index: TextureIndex.color.rawValue)
+                    for submesh in mesh.submeshes {
+                        renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType, indexCount: submesh.indexCount, indexType: submesh.indexType, indexBuffer: submesh.indexBuffer.buffer, indexBufferOffset: submesh.indexBuffer.offset)
+                    }
                 }
             }
-
-            renderEncoder.setFragmentTexture(colorMap, index: TextureIndex.color.rawValue)
-            for submesh in mesh.submeshes {
-                renderEncoder.drawIndexedPrimitives(type: submesh.primitiveType, indexCount: submesh.indexCount, indexType: submesh.indexType, indexBuffer: submesh.indexBuffer.buffer, indexBufferOffset: submesh.indexBuffer.offset)
-            }
-
-            renderEncoder.popDebugGroup()
-
-            renderEncoder.endEncoding()
 
             drawable.encodePresent(commandBuffer: commandBuffer)
-
             commandBuffer.commit()
         }
     }
@@ -292,3 +270,25 @@ extension LayerRenderer.Frame {
     }
 }
 #endif
+
+extension MTLRenderCommandEncoder {
+    func setVertexBuffersFrom(mesh: MTKMesh) {
+        for (index, element) in mesh.vertexDescriptor.layouts.enumerated() {
+            guard let layout = element as? MDLVertexBufferLayout else {
+                return
+            }
+            if layout.stride != 0 {
+                let buffer = mesh.vertexBuffers[index]
+                setVertexBuffer(buffer.buffer, offset: buffer.offset, index: index)
+            }
+        }
+    }
+
+    func withDebugGroup<R>(_ string: String, block: () throws -> R) rethrows -> R {
+        pushDebugGroup(string)
+        defer {
+            popDebugGroup()
+        }
+        return try block()
+    }
+}
