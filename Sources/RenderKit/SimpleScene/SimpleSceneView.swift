@@ -47,14 +47,15 @@ public struct SimpleSceneView: View {
     
     public var body: some View {
         ZStack {
+            #if !os(visionOS)
             RendererView(renderPass: $renderPass)
                 .overlay(alignment: .bottomTrailing) {
                     SimpleSceneMapView(scene: $scene)
                         .border(Color.red)
                         .frame(width: 200, height: 200)
                         .padding()
-                
             }
+            #endif
         }
         #if os(macOS)
         .showFrameEditor()
@@ -83,6 +84,7 @@ public struct SimpleSceneView: View {
                 }
             }
         }
+        #if !os(visionOS)
         .inspector(isPresented: $isInspectorPresented) {
             MyTabView(scene: $scene)
             .inspectorColumnWidth(ideal: 300)
@@ -94,6 +96,7 @@ public struct SimpleSceneView: View {
                 }
             }
         }
+        #endif
     }
 }
 

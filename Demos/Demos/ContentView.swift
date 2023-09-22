@@ -1,3 +1,4 @@
+#if !os(visionOS)
 import SwiftUI
 import RenderKit
 import Everything
@@ -23,3 +24,4 @@ struct ContentView: View {
         }
     }
 }
+#endif

@@ -3,6 +3,7 @@ import MetalKit
 import Everything
 import os
 
+#if !os(visionOS)
 public struct MetalView: View {
     @Observable
     class Model: NSObject, MTKViewDelegate {
@@ -90,6 +91,7 @@ extension MetalView {
         self.init(update: update, drawableSizeWillChange: { _, _ in }, draw: draw)
     }
 }
+#endif
 
 // MARK: -
 
@@ -178,8 +180,8 @@ public struct ConcreteMetalViewConfiguration: MetalViewUpdateConfiguration, Meta
 //    var size: CGSize? { get } // TODO: Rename, make optional?
 //}
 
+#if !os(visionOS)
 extension MTKView {
-
     var concreteMetalViewConfiguration: ConcreteMetalViewConfiguration {
         get {
             var configuration = ConcreteMetalViewConfiguration()
@@ -204,3 +206,4 @@ extension MTKView {
         }
     }
 }
+#endif

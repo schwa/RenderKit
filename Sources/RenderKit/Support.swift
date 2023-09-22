@@ -11,6 +11,7 @@ import MetalPerformanceShaders
 import SIMDSupport
 import CoreGraphicsSupport
 
+#if !os(visionOS)
 public extension MTKView {
     var betterDebugDescription: String {
         let attributes: [(String, String?)] = [
@@ -47,6 +48,7 @@ public extension MTKView {
         return "\(self) (\n\(formattedAttributes)\n)"
     }
 }
+#endif
 
 public enum RenderKitError: Error {
     case generic(String)

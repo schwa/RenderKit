@@ -11,6 +11,8 @@
 		453D32BA2A48D06500FCEE29 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453D32B92A48D06500FCEE29 /* ContentView.swift */; };
 		453D32BC2A48D06600FCEE29 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 453D32BB2A48D06600FCEE29 /* Assets.xcassets */; };
 		453D32C02A48D06600FCEE29 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 453D32BF2A48D06600FCEE29 /* Preview Assets.xcassets */; };
+		457D4F1F2ABD1634004CCD9D /* ContentView-VisionOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */; };
+		457D4F212ABD16B6004CCD9D /* RenderKitImmersive in Frameworks */ = {isa = PBXBuildFile; productRef = 457D4F202ABD16B6004CCD9D /* RenderKitImmersive */; };
 		459EDA582A494C0700F9211C /* CLI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459EDA572A494C0700F9211C /* CLI.swift */; };
 		459F48652A50779C00623EEE /* RenderKit in Frameworks */ = {isa = PBXBuildFile; productRef = 459F48642A50779C00623EEE /* RenderKit */; };
 		459F48672A5077A300623EEE /* RenderKit in Frameworks */ = {isa = PBXBuildFile; productRef = 459F48662A5077A300623EEE /* RenderKit */; };
@@ -37,6 +39,7 @@
 		453D32BB2A48D06600FCEE29 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		453D32BD2A48D06600FCEE29 /* Demos.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Demos.entitlements; sourceTree = "<group>"; };
 		453D32BF2A48D06600FCEE29 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView-VisionOS.swift"; sourceTree = "<group>"; };
 		459EDA552A494C0600F9211C /* CLI */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CLI; sourceTree = BUILT_PRODUCTS_DIR; };
 		459EDA572A494C0700F9211C /* CLI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLI.swift; sourceTree = "<group>"; };
 		459F48632A50776C00623EEE /* RenderKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = RenderKit; path = ..; sourceTree = "<group>"; };
@@ -58,6 +61,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				459F48652A50779C00623EEE /* RenderKit in Frameworks */,
+				457D4F212ABD16B6004CCD9D /* RenderKitImmersive in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -99,6 +103,7 @@
 				45A147BB2A4B1B7300C06FE1 /* xcconfig */,
 				453D32B72A48D06500FCEE29 /* DemosApp.swift */,
 				453D32B92A48D06500FCEE29 /* ContentView.swift */,
+				457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */,
 				453D32BB2A48D06600FCEE29 /* Assets.xcassets */,
 				453D32BD2A48D06600FCEE29 /* Demos.entitlements */,
 				45CC35632AB8240F00C33779 /* StanfordVolumeData */,
@@ -164,6 +169,7 @@
 			name = Demos;
 			packageProductDependencies = (
 				459F48642A50779C00623EEE /* RenderKit */,
+				457D4F202ABD16B6004CCD9D /* RenderKitImmersive */,
 			);
 			productName = Demos;
 			productReference = 453D32B42A48D06500FCEE29 /* Demos.app */;
@@ -247,6 +253,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				453D32BA2A48D06500FCEE29 /* ContentView.swift in Sources */,
+				457D4F1F2ABD1634004CCD9D /* ContentView-VisionOS.swift in Sources */,
 				453D32B82A48D06500FCEE29 /* DemosApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -266,6 +273,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 45A147C32A4B1B7300C06FE1 /* Project-Debug.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Debug;
 		};
@@ -273,6 +281,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 45A147BD2A4B1B7300C06FE1 /* Project-Release.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Release;
 		};
@@ -280,15 +289,17 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 45A147C12A4B1B7300C06FE1 /* Demos-Debug.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 				INFOPLIST_FILE = Demos/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_STRICT_CONCURRENCY = complete;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,7";
 			};
 			name = Debug;
 		};
@@ -296,15 +307,17 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 45A147C22A4B1B7300C06FE1 /* Demos-Release.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 				INFOPLIST_FILE = Demos/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_STRICT_CONCURRENCY = complete;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = "1,2,7";
 			};
 			name = Release;
 		};
@@ -312,6 +325,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 45A147BE2A4B1B7300C06FE1 /* CLI-Debug.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Debug;
 		};
@@ -319,6 +333,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 45A147BC2A4B1B7300C06FE1 /* CLI-Release.xcconfig */;
 			buildSettings = {
+				DEAD_CODE_STRIPPING = YES;
 			};
 			name = Release;
 		};
@@ -355,6 +370,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		457D4F202ABD16B6004CCD9D /* RenderKitImmersive */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RenderKitImmersive;
+		};
 		459F48642A50779C00623EEE /* RenderKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = RenderKit;

@@ -5,13 +5,16 @@ import PackageDescription
 let package = Package(
     name: "RenderKit",
     platforms: [
+        .iOS(.v15),
         .macOS(.v14),
-        .iOS(.v17),
+        .macCatalyst(.v15),
+//        .tvOS(.v16),
+        .visionOS(.v1),
     ],
     products: [
-        .library(
-            name: "RenderKit",
-            targets: ["RenderKit"]),
+        .library(name: "RenderKit", targets: ["RenderKit"]),
+        .library(name: "RenderKitShaders", targets: ["Shaders"]),
+        .library(name: "RenderKitImmersive", targets: ["RenderKitImmersive"]),
     ],
     dependencies: [
         .package(url: "https://github.com/schwa/Everything", branch: "jwight/downsizing"),
@@ -51,7 +54,16 @@ let package = Package(
         ),
         .target(name: "Shaders",
             plugins: [
-                .plugin(name: "MetalCompilerPlugin", package: "MetalCompilerPlugin")
+//                .plugin(name: "MetalCompilerPlugin", package: "MetalCompilerPlugin")
+            ]
+        ),
+        .target(name: "RenderKitImmersive",
+            dependencies: [
+                "RenderKit",
+                "Shaders",
+            ],
+            resources: [
+                .process("Assets.xcassets")
             ]
         ),
         .testTarget(name: "RenderKitTests", dependencies: ["RenderKit"])

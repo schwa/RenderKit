@@ -16,6 +16,7 @@ typedef simd_float4 float4;
 #import "Support.h"
 #import "FlatShader.h"
 #import "VolumeShaders.h"
+#import "ImmsersiveShadersTypes.h"
 
 #ifdef __METAL_VERSION__
 struct Vertex {

@@ -1,5 +1,6 @@
 import SwiftUI
 
+#if !os(visionOS)
 public struct RendererView <T>: View where T: RenderPass, T.Configuration.Update == ConcreteMetalViewConfiguration, T.Configuration.Draw == ConcreteMetalViewConfiguration {
     @Binding
     var renderPass: T
@@ -27,4 +28,4 @@ public struct RendererView <T>: View where T: RenderPass, T.Configuration.Update
         }
     }
 }
-
+#endif

@@ -44,11 +44,7 @@ public struct BallRotationModifier: ViewModifier {
     let interactionScale: CGVector
     let coordinateSpace = ObjectIdentifier(Self.self)
 
-    #if os(macOS)
     public static let defaultInteractionScale = CGVector(1 / .pi, 1 / .pi)
-    #elseif os(iOS)
-    public static let defaultInteractionScale = CGVector(1 / .pi, 1 / .pi)
-    #endif
 
     @State
     var initialGestureRotation: Rotation?

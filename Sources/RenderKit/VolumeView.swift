@@ -1,3 +1,4 @@
+#if !os(visionOS)
 import SwiftUI
 import ModelIO
 import Metal
@@ -461,4 +462,4 @@ extension MTLOrigin: ExpressibleByArrayLiteral {
         self = .init(x: elements[0], y: elements[2], z: elements[2])
     }
 }
-
+#endif

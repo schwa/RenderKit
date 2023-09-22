@@ -15,7 +15,7 @@
       "location" : "https://github.com/schwa/Everything",
       "state" : {
         "branch" : "jwight/downsizing",
-        "revision" : "6f667bb989c5e45f79fdc1fcf71e8063b525ae76"
+        "revision" : "768e107f22f3c2824797a5fa7f168d3fdadaf0c8"
       }
     },
     {
@@ -105,7 +105,7 @@
       "location" : "https://github.com/schwa/SwiftGraphics",
       "state" : {
         "branch" : "jwight/develop",
-        "revision" : "1fa04803ec8e17a13662875072684b754850b23c"
+        "revision" : "74c330884cd0e6c9e110fb437d72488878b2307a"
       }
     }
   ],
