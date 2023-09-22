@@ -1,6 +1,6 @@
 #if os(visionOS)
 import SwiftUI
-import RenderKitImmersive
+import RenderKit
 
 struct ContentView: View {
     @State private var showImmersiveSpace = false

@@ -125,9 +125,7 @@ public struct OffscreenDemoRenderPass <Configuration>: RenderPass where Configur
     }
     
     public mutating func resized(configuration: inout Configuration.Update, size: CGSize) {
-        
     }
-
 
     public func draw(configuration: Configuration.Draw, commandBuffer: MTLCommandBuffer) {
         guard let device = configuration.device, let plane, let shaderToyRenderPipelineState, let size = configuration.size else {

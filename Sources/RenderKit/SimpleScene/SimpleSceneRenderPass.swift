@@ -3,7 +3,7 @@ import ModelIO
 import Metal
 import MetalKit
 import SIMDSupport
-import Shaders
+import RenderKitShaders
 
 struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: RenderKitConfiguration {
     var scene: SimpleScene

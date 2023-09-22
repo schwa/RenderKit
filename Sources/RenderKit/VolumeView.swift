@@ -4,7 +4,7 @@ import ModelIO
 import Metal
 import MetalKit
 import SIMDSupport
-import Shaders
+import RenderKitShaders
 import Everything
 import MetalSupport
 import os

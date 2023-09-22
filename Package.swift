@@ -13,8 +13,7 @@ let package = Package(
     ],
     products: [
         .library(name: "RenderKit", targets: ["RenderKit"]),
-        .library(name: "RenderKitShaders", targets: ["Shaders"]),
-        .library(name: "RenderKitImmersive", targets: ["RenderKitImmersive"]),
+        .library(name: "RenderKitShaders", targets: ["RenderKitShaders"]),
     ],
     dependencies: [
         .package(url: "https://github.com/schwa/Everything", branch: "jwight/downsizing"),
@@ -34,7 +33,7 @@ let package = Package(
             name: "RenderKit",
             dependencies: [
                 "Everything",
-                "Shaders",
+                "RenderKitShaders",
                 .product(name: "CoreGraphicsSupport", package: "SwiftGraphics"),
                 .product(name: "MetalSupport", package: "SwiftGraphics"),
                 .product(name: "MetalSupportUnsafeConformances", package: "SwiftGraphics"),
@@ -46,24 +45,16 @@ let package = Package(
                 .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
             ],
             resources: [
-                .process("Media.xcassets")
+                .process("Media.xcassets"),
+                .process("Assets.xcassets"),
             ],
             swiftSettings: [
                 .enableExperimentalFeature("VariadicGenerics")
             ]
         ),
-        .target(name: "Shaders",
+        .target(name: "RenderKitShaders",
             plugins: [
 //                .plugin(name: "MetalCompilerPlugin", package: "MetalCompilerPlugin")
-            ]
-        ),
-        .target(name: "RenderKitImmersive",
-            dependencies: [
-                "RenderKit",
-                "Shaders",
-            ],
-            resources: [
-                .process("Assets.xcassets")
             ]
         ),
         .testTarget(name: "RenderKitTests", dependencies: ["RenderKit"])
