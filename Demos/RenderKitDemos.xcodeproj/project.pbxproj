@@ -12,6 +12,7 @@
 		453D32BC2A48D06600FCEE29 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 453D32BB2A48D06600FCEE29 /* Assets.xcassets */; };
 		453D32C02A48D06600FCEE29 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 453D32BF2A48D06600FCEE29 /* Preview Assets.xcassets */; };
 		4555A0372ABE017A0088CFFB /* DemosApp-VisionOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4555A0362ABE017A0088CFFB /* DemosApp-VisionOS.swift */; };
+		4555A03B2ABE0B310088CFFB /* Info-visionOS.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4555A03A2ABE0B310088CFFB /* Info-visionOS.plist */; };
 		457D4F1F2ABD1634004CCD9D /* ContentView-VisionOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */; };
 		459EDA582A494C0700F9211C /* CLI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459EDA572A494C0700F9211C /* CLI.swift */; };
 		459F48672A5077A300623EEE /* RenderKit in Frameworks */ = {isa = PBXBuildFile; productRef = 459F48662A5077A300623EEE /* RenderKit */; };
@@ -40,6 +41,7 @@
 		453D32BD2A48D06600FCEE29 /* Demos.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Demos.entitlements; sourceTree = "<group>"; };
 		453D32BF2A48D06600FCEE29 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		4555A0362ABE017A0088CFFB /* DemosApp-VisionOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemosApp-VisionOS.swift"; sourceTree = "<group>"; };
+		4555A03A2ABE0B310088CFFB /* Info-visionOS.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-visionOS.plist"; sourceTree = "<group>"; };
 		457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView-VisionOS.swift"; sourceTree = "<group>"; };
 		459EDA552A494C0600F9211C /* CLI */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CLI; sourceTree = BUILT_PRODUCTS_DIR; };
 		459EDA572A494C0700F9211C /* CLI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLI.swift; sourceTree = "<group>"; };
@@ -100,6 +102,7 @@
 			isa = PBXGroup;
 			children = (
 				451196902A520D1F00F4F2DE /* Info.plist */,
+				4555A03A2ABE0B310088CFFB /* Info-visionOS.plist */,
 				45A147BB2A4B1B7300C06FE1 /* xcconfig */,
 				453D32B72A48D06500FCEE29 /* DemosApp.swift */,
 				4555A0362ABE017A0088CFFB /* DemosApp-VisionOS.swift */,
@@ -239,6 +242,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4555A03B2ABE0B310088CFFB /* Info-visionOS.plist in Resources */,
 				453D32C02A48D06600FCEE29 /* Preview Assets.xcassets in Resources */,
 				45CC35642AB8240F00C33779 /* StanfordVolumeData in Resources */,
 				453D32BC2A48D06600FCEE29 /* Assets.xcassets in Resources */,
@@ -290,6 +294,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 45A147C12A4B1B7300C06FE1 /* Demos-Debug.xcconfig */;
 			buildSettings = {
+				"INFOPLIST_FILE[sdk=xros*]" = "Demos/Info-visionOS.plist";
 			};
 			name = Debug;
 		};
@@ -297,6 +302,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 45A147C22A4B1B7300C06FE1 /* Demos-Release.xcconfig */;
 			buildSettings = {
+				"INFOPLIST_FILE[sdk=xros*]" = "Demos/Info-visionOS.plist";
 			};
 			name = Release;
 		};

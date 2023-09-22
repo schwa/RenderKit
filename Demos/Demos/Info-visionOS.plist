@@ -8,6 +8,8 @@
 		<dict/>
 		<key>UIApplicationSupportsMultipleScenes</key>
 		<true/>
+		<key>UIApplicationPreferredDefaultSceneSessionRole</key>
+		<string>UIWindowSceneSessionRoleVolumetricApplication</string>
 	</dict>
 	<key>GCSupportedGameControllers</key>
 	<array>

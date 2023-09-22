@@ -802,6 +802,7 @@ extension MTLRenderCommandEncoder {
             guard let layout = element as? MDLVertexBufferLayout else {
                 return
             }
+            // TODO: Is this a reliable test on any vertex descriptor?
             if layout.stride != 0 {
                 let buffer = mesh.vertexBuffers[index]
                 setVertexBuffer(buffer.buffer, offset: buffer.offset, index: index)
