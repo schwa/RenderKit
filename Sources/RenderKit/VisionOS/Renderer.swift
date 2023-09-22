@@ -248,7 +248,6 @@ public class Renderer {
             drawable.encodePresent(commandBuffer: commandBuffer)
 
             commandBuffer.commit()
-
         }
     }
 
