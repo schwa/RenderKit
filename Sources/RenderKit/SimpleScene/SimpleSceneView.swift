@@ -1,3 +1,4 @@
+#if !os(visionOS)
 import SwiftUI
 import MetalKit
 import ModelIO
@@ -11,9 +12,6 @@ import UniformTypeIdentifiers
 import CoreImage
 import CoreGraphicsSupport
 import AsyncAlgorithms
-import os
-
-let logger: Logger? = Logger()
 
 public struct SimpleSceneView: View {
     @Environment(\.metalDevice)
@@ -133,3 +131,4 @@ struct MyTabView: View {
         }
     }
 }
+#endif

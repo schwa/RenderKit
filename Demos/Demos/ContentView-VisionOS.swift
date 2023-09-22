@@ -12,7 +12,7 @@ struct ContentView: View {
     var body: some View {
         VStack {
             VStack {
-                Toggle("Show Immersive Space", isOn: $showImmersiveSpace)
+                Toggle("Show/Hide Immersive Space", isOn: $showImmersiveSpace)
                     .toggleStyle(.button)
             }.padding().glassBackgroundEffect()
         }

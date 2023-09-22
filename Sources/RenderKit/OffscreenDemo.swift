@@ -13,7 +13,7 @@ public struct OffscreenRenderPassConfiguration: RenderKitConfiguration, RenderKi
 
     public var currentDrawable: CAMetalDrawable?
 
-    public var preferredFramesPerSecond: Int = 120
+    public var preferredFramesPerSecond: Int = 120 // TODO: What?
 
     // TODO: INVENTED VALUES
     public var depthStencilAttachmentTextureUsage: MTLTextureUsage = .renderTarget
@@ -70,18 +70,6 @@ public struct OffscreenRenderPassConfiguration: RenderKitConfiguration, RenderKi
     }
 }
 
-public protocol RenderPass {
-    associatedtype Configuration: RenderKitConfiguration
-
-    mutating func setup(configuration: inout Configuration.Update)
-    mutating func resized(configuration: inout Configuration.Update, size: CGSize) // TODO: Rename
-    func draw(configuration: Configuration.Draw, commandBuffer: MTLCommandBuffer)
-}
-
-extension RenderPass {
-    mutating func resized(configuration: inout Configuration.Update, size: CGSize) {
-    }
-}
 
 public struct OffscreenDemoRenderPass <Configuration>: RenderPass where Configuration: RenderKitConfiguration {
     public var shaderToyRenderPipelineState: MTLRenderPipelineState?
@@ -199,4 +187,3 @@ public struct OffscreenDemo {
     }
 }
 #endif
-
