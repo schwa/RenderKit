@@ -36,4 +36,12 @@ SDKROOT                                                                      = a
 SUPPORTED_PLATFORMS                                                          = iphoneos iphonesimulator macosx
 SWIFT_EMIT_LOC_STRINGS                                                       = YES
 SWIFT_VERSION                                                                = 5.0
-TARGETED_DEVICE_FAMILY                                                       = 1,2
+
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator macosx xros xrsimulator
+INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
+INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight
+INFOPLIST_FILE = Demos/Info.plist
+SUPPORTS_MACCATALYST = NO
+SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO
+SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = YES
+TARGETED_DEVICE_FAMILY = 1,2,7

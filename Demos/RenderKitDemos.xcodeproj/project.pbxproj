@@ -12,7 +12,7 @@
 		453D32BC2A48D06600FCEE29 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 453D32BB2A48D06600FCEE29 /* Assets.xcassets */; };
 		453D32C02A48D06600FCEE29 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 453D32BF2A48D06600FCEE29 /* Preview Assets.xcassets */; };
 		457D4F1F2ABD1634004CCD9D /* ContentView-VisionOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */; };
-		457D4F212ABD16B6004CCD9D /* RenderKitImmersive in Frameworks */ = {isa = PBXBuildFile; productRef = 457D4F202ABD16B6004CCD9D /* RenderKitImmersive */; };
+		457D4F212ABD16B6004CCD9D /* RenderKitImmersive in Frameworks */ = {isa = PBXBuildFile; platformFilters = (xros, ); productRef = 457D4F202ABD16B6004CCD9D /* RenderKitImmersive */; };
 		459EDA582A494C0700F9211C /* CLI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459EDA572A494C0700F9211C /* CLI.swift */; };
 		459F48652A50779C00623EEE /* RenderKit in Frameworks */ = {isa = PBXBuildFile; productRef = 459F48642A50779C00623EEE /* RenderKit */; };
 		459F48672A5077A300623EEE /* RenderKit in Frameworks */ = {isa = PBXBuildFile; productRef = 459F48662A5077A300623EEE /* RenderKit */; };
@@ -138,15 +138,15 @@
 		45A147BB2A4B1B7300C06FE1 /* xcconfig */ = {
 			isa = PBXGroup;
 			children = (
-				45A147BC2A4B1B7300C06FE1 /* CLI-Release.xcconfig */,
-				45A147BD2A4B1B7300C06FE1 /* Project-Release.xcconfig */,
-				45A147BE2A4B1B7300C06FE1 /* CLI-Debug.xcconfig */,
 				45A147BF2A4B1B7300C06FE1 /* Project-Shared.xcconfig */,
+				45A147C32A4B1B7300C06FE1 /* Project-Debug.xcconfig */,
+				45A147BD2A4B1B7300C06FE1 /* Project-Release.xcconfig */,
+				45A147C42A4B1B7300C06FE1 /* CLI-Shared.xcconfig */,
+				45A147BE2A4B1B7300C06FE1 /* CLI-Debug.xcconfig */,
+				45A147BC2A4B1B7300C06FE1 /* CLI-Release.xcconfig */,
 				45A147C02A4B1B7300C06FE1 /* Demos-Shared.xcconfig */,
 				45A147C12A4B1B7300C06FE1 /* Demos-Debug.xcconfig */,
 				45A147C22A4B1B7300C06FE1 /* Demos-Release.xcconfig */,
-				45A147C32A4B1B7300C06FE1 /* Project-Debug.xcconfig */,
-				45A147C42A4B1B7300C06FE1 /* CLI-Shared.xcconfig */,
 			);
 			path = xcconfig;
 			sourceTree = SOURCE_ROOT;
@@ -289,17 +289,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 45A147C12A4B1B7300C06FE1 /* Demos-Debug.xcconfig */;
 			buildSettings = {
-				DEAD_CODE_STRIPPING = YES;
-				INFOPLIST_FILE = Demos/Info.plist;
-				INFOPLIST_KEY_LSApplicationCategoryType = "";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_STRICT_CONCURRENCY = complete;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
 			};
 			name = Debug;
 		};
@@ -307,17 +296,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 45A147C22A4B1B7300C06FE1 /* Demos-Release.xcconfig */;
 			buildSettings = {
-				DEAD_CODE_STRIPPING = YES;
-				INFOPLIST_FILE = Demos/Info.plist;
-				INFOPLIST_KEY_LSApplicationCategoryType = "";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
-				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
-				SWIFT_STRICT_CONCURRENCY = complete;
-				TARGETED_DEVICE_FAMILY = "1,2,7";
 			};
 			name = Release;
 		};

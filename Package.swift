@@ -5,9 +5,9 @@ import PackageDescription
 let package = Package(
     name: "RenderKit",
     platforms: [
-        .iOS(.v15),
+        .iOS(.v17),
         .macOS(.v14),
-        .macCatalyst(.v15),
+        .macCatalyst(.v17),
 //        .tvOS(.v16),
         .visionOS(.v1),
     ],

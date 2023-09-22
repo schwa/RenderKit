@@ -48,3 +48,6 @@ GCC_WARN_UNUSED_FUNCTION                                     = YES
 GCC_WARN_UNUSED_VARIABLE                                     = YES
 LOCALIZATION_PREFERS_STRING_CATALOGS                         = YES
 MTL_FAST_MATH                                                = YES
+
+DEAD_CODE_STRIPPING = YES
+SWIFT_STRICT_CONCURRENCY = complete
