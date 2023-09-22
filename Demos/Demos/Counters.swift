@@ -8,7 +8,7 @@ import Algorithms
 actor Counters {
     static let shared = Counters()
 
-    struct Record: Identifiable {
+    struct Record: Identifiable, Sendable {
         var id: String
         var count: Int = 0
         var first: TimeInterval

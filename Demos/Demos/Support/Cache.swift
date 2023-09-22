@@ -5,10 +5,11 @@ import os
 import UIKit
 #endif
 
-public class Cache <Key, Value> where Key: Hashable & Sendable, Value: Sendable {
+public class Cache <Key, Value> where Key: Hashable & Sendable {
     public let label: String?
 
-    internal var storage = OSAllocatedUnfairLock(initialState: [Key: Value]())
+    internal var lock = OSAllocatedUnfairLock()
+    internal var storage = [Key: Value]()
 //    var task: Task<(), Never>?
     internal var logger: Logger?
 
@@ -44,13 +45,13 @@ public class Cache <Key, Value> where Key: Hashable & Sendable, Value: Sendable 
     }
 
     public func get(key: Key) -> Value? {
-        storage.withLock { storage in
+        lock.withUnsafeLock {
             storage[key]
         }
     }
 
-    public func get(key: Key, default: @Sendable () throws -> Value) rethrows -> Value {
-        return try storage.withLock { storage in
+    public func get(key: Key, default: () throws -> Value) rethrows -> Value {
+        return try lock.withUnsafeLock {
             if let value = storage[key] {
                 return value
             }
@@ -65,7 +66,7 @@ public class Cache <Key, Value> where Key: Hashable & Sendable, Value: Sendable 
 
     @discardableResult
     public func insert(key: Key, value: Value) -> Value? {
-        storage.withLock { storage in
+        lock.withUnsafeLock {
             let old = storage[key]
             storage[key] = value
             return old
@@ -74,7 +75,7 @@ public class Cache <Key, Value> where Key: Hashable & Sendable, Value: Sendable 
 
     @discardableResult
     public func remove(key: Key) -> Value? {
-        storage.withLock { storage in
+        lock.withUnsafeLock {
             let old = storage[key]
             storage[key] = nil
             return old
@@ -82,13 +83,13 @@ public class Cache <Key, Value> where Key: Hashable & Sendable, Value: Sendable 
     }
 
     public func contains(key: Key) -> Bool {
-        storage.withLock { storage in
+        lock.withUnsafeLock {
             storage[key] != nil
         }
     }
 
     public var allKeys: [Key] {
-        storage.withLock { storage in
+        lock.withUnsafeLock {
             Array(storage.keys)
         }
     }
@@ -98,7 +99,7 @@ public class Cache <Key, Value> where Key: Hashable & Sendable, Value: Sendable 
 
 public extension Cache {
     func get(key: Key, default: () async throws -> Value) async rethrows -> Value {
-        let value = storage.withLock { storage in
+        let value = lock.withUnsafeLock {
             return storage[key]
         }
         if let value {
@@ -108,7 +109,7 @@ public extension Cache {
             // TODO: Potential race condition here if storage[key] chanes while `default` is in flight.
             logger?.info("Cache miss: \(String(describing: key)).")
             let value = try await `default`()
-            storage.withLock { storage in
+            lock.withUnsafeLock {
                 storage[key] = value
             }
             return value
@@ -120,7 +121,7 @@ public extension Cache {
 
 public extension Cache where Key == String {
     func remove(matching pattern: Regex<String>) throws {
-        try storage.withLock { storage in
+        try lock.withUnsafeLock {
             for key in storage.keys {
                 if try pattern.wholeMatch(in: key) != nil {
                     storage[key] = nil
@@ -131,7 +132,17 @@ public extension Cache where Key == String {
 }
 
 public extension Cache where Value == Any {
-    func get<T>(key: Key, of: T.Type, default: @Sendable () throws -> T) rethrows -> T {
+    func get<T>(key: Key, of: T.Type, default: () throws -> T) rethrows -> T {
         try get(key: key, default: `default`) as! T
+    }
+}
+
+extension OSAllocatedUnfairLock where State == () {
+    func withUnsafeLock <R>(_ block: () throws -> R) rethrows -> R {
+        lock()
+        defer {
+            unlock()
+        }
+        return try block()
     }
 }

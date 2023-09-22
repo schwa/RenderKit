@@ -12,7 +12,7 @@ import AsyncAlgorithms
 // TODO: Break into smaller actors (one for kb/mouse/gcs)
 // TODO: That notification thing is f-ing hideous
 @Observable
-class MovementController {
+class MovementController: @unchecked Sendable {
     struct Event {
         enum Payload {
             case movement(SIMD3<Float>)

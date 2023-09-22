@@ -3,7 +3,7 @@ import SIMDSupport
 import GameController
 import simd
 
-public struct FirstPersonInteractiveViewModifier: ViewModifier {
+public struct FirstPersonInteractiveViewModifier: ViewModifier, @unchecked Sendable {
     @Environment(\.displayLink)
     var displayLink
 
@@ -55,7 +55,7 @@ public struct FirstPersonInteractiveViewModifier: ViewModifier {
                 .padding()
         }
         .task() {
-            movementConsumerTask = Task.detached {
+            movementConsumerTask = Task.detached { [movementController] in
                 guard let movementController else {
                     fatalError()
                 }

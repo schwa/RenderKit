@@ -138,50 +138,45 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
         guard let device = configuration.device else {
             fatalError("No metal device")
         }
-        do {
-            if renderPipelineState == nil {
-                let library = try! device.makeDebugLibrary(bundle: .shadersBundle)
-                let vertexFunction = library.makeFunction(name: "volumeVertexShader")!
-                let fragmentFunction = library.makeFunction(name: "volumeFragmentShader")
+        if renderPipelineState == nil {
+            let library = try! device.makeDebugLibrary(bundle: .shadersBundle)
+            let vertexFunction = library.makeFunction(name: "volumeVertexShader")!
+            let fragmentFunction = library.makeFunction(name: "volumeFragmentShader")
 
-                let renderPipelineDescriptor = MTLRenderPipelineDescriptor()
-                renderPipelineDescriptor.vertexFunction = vertexFunction
-                renderPipelineDescriptor.fragmentFunction = fragmentFunction
-                renderPipelineDescriptor.colorAttachments[0].pixelFormat = configuration.colorPixelFormat
+            let renderPipelineDescriptor = MTLRenderPipelineDescriptor()
+            renderPipelineDescriptor.vertexFunction = vertexFunction
+            renderPipelineDescriptor.fragmentFunction = fragmentFunction
+            renderPipelineDescriptor.colorAttachments[0].pixelFormat = configuration.colorPixelFormat
 
-                renderPipelineDescriptor.colorAttachments[0].isBlendingEnabled = true
-                renderPipelineDescriptor.colorAttachments[0].rgbBlendOperation = .add
-                renderPipelineDescriptor.colorAttachments[0].alphaBlendOperation = .add
-                renderPipelineDescriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
-                renderPipelineDescriptor.colorAttachments[0].sourceAlphaBlendFactor = .sourceAlpha
-                renderPipelineDescriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
-                renderPipelineDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
+            renderPipelineDescriptor.colorAttachments[0].isBlendingEnabled = true
+            renderPipelineDescriptor.colorAttachments[0].rgbBlendOperation = .add
+            renderPipelineDescriptor.colorAttachments[0].alphaBlendOperation = .add
+            renderPipelineDescriptor.colorAttachments[0].sourceRGBBlendFactor = .sourceAlpha
+            renderPipelineDescriptor.colorAttachments[0].sourceAlphaBlendFactor = .sourceAlpha
+            renderPipelineDescriptor.colorAttachments[0].destinationRGBBlendFactor = .oneMinusSourceAlpha
+            renderPipelineDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
 
-                renderPipelineDescriptor.depthAttachmentPixelFormat = configuration.depthStencilPixelFormat
-                renderPipelineDescriptor.vertexDescriptor = SimpleMesh.vertexDescriptor
-                renderPipelineState = try! device.makeRenderPipelineState(descriptor: renderPipelineDescriptor)
-            }
-
-            if depthStencilState == nil {
-                let depthStencilDescriptor = MTLDepthStencilDescriptor()
-                depthStencilDescriptor.depthCompareFunction = .lessEqual
-                depthStencilDescriptor.isDepthWriteEnabled = true
-                depthStencilState = device.makeDepthStencilState(descriptor: depthStencilDescriptor)
-            }
+            renderPipelineDescriptor.depthAttachmentPixelFormat = configuration.depthStencilPixelFormat
+            renderPipelineDescriptor.vertexDescriptor = SimpleMesh.vertexDescriptor
+            renderPipelineState = try! device.makeRenderPipelineState(descriptor: renderPipelineDescriptor)
         }
-        catch {
-            fatalError()
+
+        if depthStencilState == nil {
+            let depthStencilDescriptor = MTLDepthStencilDescriptor()
+            depthStencilDescriptor.depthCompareFunction = .lessEqual
+            depthStencilDescriptor.isDepthWriteEnabled = true
+            depthStencilState = device.makeDepthStencilState(descriptor: depthStencilDescriptor)
         }
     }
 
     mutating func resized(configuration: inout Configuration.Update, size: CGSize) {
         let id = id
         logger?.debug("\(id): \(#function)")
-        guard let renderPipelineState, let depthStencilState else {
-            let id = id
-            logger?.debug("\(id): \(#function): missing renderPipelineState or depthStencilState")
-            return
-        }
+//        guard let renderPipelineState, let depthStencilState else {
+//            let id = id
+//            logger?.debug("\(id): \(#function): missing renderPipelineState or depthStencilState")
+//            return
+//        }
     }
 
     func draw(configuration: Configuration.Draw, commandBuffer: MTLCommandBuffer) {
@@ -300,7 +295,7 @@ struct SimpleMesh {
     var indexType: MTLIndexType { .uint16 }
     var indexBufferOffset: Int { 0 }
     var vertexBufferOffset: Int { 0 }
-    static var vertexDescriptor: MTLVertexDescriptor = {
+    static let vertexDescriptor: MTLVertexDescriptor = {
         assert(MemoryLayout<Vertex>.size == 40)
 
         let vertexDescriptor = MTLVertexDescriptor()

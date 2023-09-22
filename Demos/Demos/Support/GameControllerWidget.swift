@@ -3,7 +3,7 @@ import GameController
 
 struct GameControllerWidget: View {
     @Observable
-    class GameControllerWidgetModel {
+    class GameControllerWidgetModel: @unchecked Sendable {
         var scanning = false
 
         struct DeviceBox: Hashable, Identifiable {
