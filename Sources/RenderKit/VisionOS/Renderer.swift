@@ -191,7 +191,6 @@ public class Renderer {
 }
 
 extension Renderer {
-
     class func buildMetalVertexDescriptor() -> MTLVertexDescriptor {
         let mtlVertexDescriptor = MTLVertexDescriptor()
 
@@ -241,7 +240,6 @@ extension Renderer {
         mdlMesh.vertexDescriptor = mdlVertexDescriptor
         return try MTKMesh(mesh: mdlMesh, device: device)
     }
-
 }
 
 extension LayerRenderer.Clock.Instant.Duration {

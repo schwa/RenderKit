@@ -18,8 +18,6 @@ import RenderKit
 </plist>
  */
 
-
-
 @main
 struct DemosApp: App {
     var body: some Scene {

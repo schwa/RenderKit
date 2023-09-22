@@ -103,7 +103,6 @@ struct RenderEnvironment {
     let materials = ""
 }
 
-
 struct BlinnPhong: RenderPipeline {
     let debug = false
 
@@ -123,7 +122,6 @@ struct BlinnPhong: RenderPipeline {
         FunctionConstant(index: CommonBindings.debug, value: debug)
     }
 }
-
 
 public struct Argument: Equatable, Sendable {
     let bytes: [UInt8]

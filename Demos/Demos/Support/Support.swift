@@ -12,7 +12,6 @@ extension CGVector {
     }
 }
 
-
 extension SIMD3 where Scalar == Float {
     var h: Float {
         get {

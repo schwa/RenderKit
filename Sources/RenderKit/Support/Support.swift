@@ -11,13 +11,10 @@ import MetalPerformanceShaders
 import SIMDSupport
 import CoreGraphicsSupport
 import SwiftFormats
-import Foundation
-import Metal
 
 public enum RenderKitError: Error {
     case generic(String)
 }
-
 
 extension CGSize {
     static func / (lhs: CGFloat, rhs: CGSize) -> CGSize {

@@ -51,7 +51,6 @@ public extension MTKView {
 }
 #endif
 
-
 public extension MTLTexture {
     func cgImage(colorSpace: CGColorSpace? = nil) async -> CGImage {
         if let pixelFormat = PixelFormat(mtlPixelFormat: pixelFormat) {
