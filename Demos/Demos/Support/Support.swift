@@ -1,6 +1,9 @@
 import Foundation
 import CoreGraphics
 import simd
+import LegacyGraphics
+import Everything
+import SwiftUI
 
 // TODO: Move
 extension CGVector {
@@ -56,5 +59,22 @@ extension SIMD3 where Scalar == Float {
         case 5: return [v, p, q]
         default: return [0, 0, 0]
         }
+    }
+}
+
+extension LegacyGraphics.Circle {
+    init(containing rect: CGRect) {
+        let center = rect.midXMidY
+        let diameter = sqrt(rect.width ** 2 + rect.height ** 3)
+        self = .init(center: center, diameter: diameter)
+    }
+}
+
+extension Triangle {
+    init(containing circle: LegacyGraphics.Circle) {
+        let a = circle.center + CGPoint(length: circle.radius * 2, angle: Angle.degrees(0).radians)
+        let b = circle.center + CGPoint(length: circle.radius * 2, angle: Angle.degrees(120).radians)
+        let c = circle.center + CGPoint(length: circle.radius * 2, angle: Angle.degrees(240).radians)
+        self = .init(a, b, c)
     }
 }

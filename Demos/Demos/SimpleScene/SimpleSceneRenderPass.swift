@@ -29,7 +29,7 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
             let fragmentFunction = try! library.makeFunction(name: "flatShaderFragmentShader", constantValues: constants)
 
             // TODO: This is silly...
-            let plane = try! MTKMesh(mesh: Plane().toMDLMesh(extent: [2, 2, 0], allocator: MTKMeshBufferAllocator(device: device)), device: device)
+            let plane = try! MTKMesh(mesh: Plane(extent: [2, 2, 0]).toMDLMesh(allocator: MTKMeshBufferAllocator(device: device)), device: device)
 
             let renderPipelineDescriptor = MTLRenderPipelineDescriptor()
             renderPipelineDescriptor.vertexFunction = vertexFunction

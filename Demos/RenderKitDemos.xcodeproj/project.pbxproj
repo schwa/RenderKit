@@ -35,7 +35,7 @@
 		4555A0662ABE2E7E0088CFFB /* Support.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4555A0652ABE2E7E0088CFFB /* Support.swift */; };
 		457D4F1F2ABD1634004CCD9D /* ContentView-VisionOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */; };
 		459EDA582A494C0700F9211C /* CLI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459EDA572A494C0700F9211C /* CLI.swift */; };
-		459F48672A5077A300623EEE /* RenderKit in Frameworks */ = {isa = PBXBuildFile; productRef = 459F48662A5077A300623EEE /* RenderKit */; };
+		459E755D2AC1EF6F004BC055 /* SimpleMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459E755C2AC1EF6F004BC055 /* SimpleMesh.swift */; };
 		45BEC1212ABE3480001730AB /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45BEC11F2ABE3480001730AB /* Cache.swift */; };
 		45BEC1222ABE3480001730AB /* LOLID2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45BEC1202ABE3480001730AB /* LOLID2.swift */; };
 		45CC35642AB8240F00C33779 /* StanfordVolumeData in Resources */ = {isa = PBXBuildFile; fileRef = 45CC35632AB8240F00C33779 /* StanfordVolumeData */; };
@@ -86,6 +86,7 @@
 		4555A0652ABE2E7E0088CFFB /* Support.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Support.swift; sourceTree = "<group>"; };
 		457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView-VisionOS.swift"; sourceTree = "<group>"; };
 		459EDA552A494C0600F9211C /* CLI */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CLI; sourceTree = BUILT_PRODUCTS_DIR; };
+		459E755C2AC1EF6F004BC055 /* SimpleMesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleMesh.swift; sourceTree = "<group>"; };
 		459EDA572A494C0700F9211C /* CLI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLI.swift; sourceTree = "<group>"; };
 		459F48632A50776C00623EEE /* RenderKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = RenderKit; path = ..; sourceTree = "<group>"; };
 		45A147BC2A4B1B7300C06FE1 /* CLI-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "CLI-Release.xcconfig"; sourceTree = "<group>"; };
@@ -178,6 +179,7 @@
 			children = (
 				4555A03D2ABE2BEC0088CFFB /* VolumeView.swift */,
 				4555A03E2ABE2BEC0088CFFB /* VolumeData.swift */,
+				459E755C2AC1EF6F004BC055 /* SimpleMesh.swift */,
 			);
 			path = Volume;
 			sourceTree = "<group>";
@@ -187,12 +189,8 @@
 			children = (
 				4555A0402ABE2BF00088CFFB /* SimpleSceneView.swift */,
 				4555A0412ABE2BF00088CFFB /* SimpleSceneMapView.swift */,
-				4555A0422ABE2BF00088CFFB /* RenderPass+SnapShot.swift */,
-				4555A0432ABE2BF00088CFFB /* FirstPersonInteractiveViewModifier.swift */,
 				4555A0442ABE2BF00088CFFB /* SimpleSceneRenderPass.swift */,
 				4555A0452ABE2BF00088CFFB /* SimpleSceneInspector.swift */,
-				4555A0462ABE2BF00088CFFB /* BallRotationModifier.swift */,
-				4555A0472ABE2BF00088CFFB /* Projections.swift */,
 				4555A0482ABE2BF00088CFFB /* SimpleScene.swift */,
 			);
 			path = SimpleScene;
@@ -210,12 +208,16 @@
 		4555A0672ABE2F740088CFFB /* Support */ = {
 			isa = PBXGroup;
 			children = (
+				4555A0462ABE2BF00088CFFB /* BallRotationModifier.swift */,
 				45BEC11F2ABE3480001730AB /* Cache.swift */,
 				45BEC1202ABE3480001730AB /* LOLID2.swift */,
+				4555A0472ABE2BF00088CFFB /* Projections.swift */,
 				4555A0652ABE2E7E0088CFFB /* Support.swift */,
 				4555A0632ABE2E2E0088CFFB /* SwiftUI+Support.swift */,
 				4555A0612ABE2D590088CFFB /* Logging.swift */,
+				4555A0432ABE2BF00088CFFB /* FirstPersonInteractiveViewModifier.swift */,
 				4555A05B2ABE2D030088CFFB /* DisplayLink.swift */,
+				4555A0422ABE2BF00088CFFB /* RenderPass+SnapShot.swift */,
 				4555A05D2ABE2D100088CFFB /* GameControllerWidget.swift */,
 				4555A0592ABE2CF50088CFFB /* MovementController.swift */,
 			);
@@ -365,6 +367,7 @@
 				4555A0642ABE2E2E0088CFFB /* SwiftUI+Support.swift in Sources */,
 				457D4F1F2ABD1634004CCD9D /* ContentView-VisionOS.swift in Sources */,
 				4555A0372ABE017A0088CFFB /* DemosApp-VisionOS.swift in Sources */,
+				459E755D2AC1EF6F004BC055 /* SimpleMesh.swift in Sources */,
 				4555A04D2ABE2CD80088CFFB /* SimpleSceneView.swift in Sources */,
 				4555A0582ABE2CE20088CFFB /* VolumeData.swift in Sources */,
 				4555A04C2ABE2CD80088CFFB /* RenderPass+SnapShot.swift in Sources */,

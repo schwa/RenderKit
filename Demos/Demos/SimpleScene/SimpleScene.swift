@@ -89,13 +89,24 @@ public struct Model: Identifiable {
     }
 }
 
+public struct Panorama: Identifiable {
+    public var id = LOLID2(prefix: "Model")
+    public var transform: Transform
+    public var mesh: (MTLDevice) throws -> MTKMesh
+
+    public init(transform: Transform, mesh: @escaping (MTLDevice) throws -> MTKMesh) {
+        self.transform = transform
+        self.mesh = mesh
+    }
+}
+
 // MARK: -
 
 public extension SimpleScene {
     static func demo() -> SimpleScene {
-        let cone = { device in try MTKMesh(mesh: MDLMesh(coneWithExtent: [0.5, 1, 0.5], segments: [20, 10], inwardNormals: false, cap: true, geometryType: .triangles, allocator: MTKMeshBufferAllocator(device: device)), device: device) }
-        let sphere = { device in try MTKMesh(mesh: MDLMesh(sphereWithExtent: [0.5, 0.5, 0.5], segments: [20, 10], inwardNormals: false, geometryType: .triangles, allocator: MTKMeshBufferAllocator(device: device)), device: device) }
-        let capsule = { device in try MTKMesh(mesh: MDLMesh(capsuleWithExtent: [0.25, 1, 0.25], cylinderSegments: [30, 10], hemisphereSegments: 5, inwardNormals: false, geometryType: .triangles, allocator: MTKMeshBufferAllocator(device: device)), device: device) }
+        let cone = { device in try Cone(extent: [0.5, 1, 0.5], segments: [20, 10]).toMTKMesh(allocator: MTKMeshBufferAllocator(device: device), device: device) }
+        let sphere = { device in try Sphere(extent: [0.5, 0.5, 0.5], segments: [20, 10]).toMTKMesh(allocator: MTKMeshBufferAllocator(device: device), device: device) }
+        let capsule = { device in try Capsule(extent: [0.25, 1, 0.25], cylinderSegments: [30, 10], hemisphereSegments: 5).toMTKMesh(allocator: MTKMeshBufferAllocator(device: device), device: device) }
 
         let meshes = [cone, sphere, capsule]
 
@@ -114,5 +125,52 @@ public extension SimpleScene {
                 }
         )
         return scene
+    }
+}
+
+enum BundleReference: Hashable, Sendable {
+    case main
+    case byURL(URL)
+    case byIdentifier(String)
+
+    func bundle() -> Bundle? {
+        switch self {
+        case .main:
+            return Bundle.main
+        case .byURL(let url):
+            return Bundle(url: url)
+        case .byIdentifier(let identifier):
+            return Bundle(identifier: identifier)
+        }
+    }
+}
+
+enum ResourceReference: Hashable, Sendable {
+    case direct(URL)
+    case bundle(BundleReference, String, String?)
+
+    func url() -> URL? {
+        switch self {
+        case .direct(let url):
+            url
+        case .bundle(let bundle, let name, let `extension`):
+            bundle.bundle().map { $0.url(forResource: name, withExtension: `extension`) }
+        }
+    }
+}
+
+extension MTKTextureLoader {
+    func newTexture(resource: ResourceReference, options: [Option: Any]? = nil) throws -> MTLTexture {
+        guard let url = resource.url() else {
+            fatalError()
+        }
+        return try newTexture(URL: url, options: options)
+    }
+
+    func newTexture(resource: ResourceReference, options: [Option: Any]? = nil) async throws -> MTLTexture {
+        guard let url = resource.url() else {
+            fatalError()
+        }
+        return try await newTexture(URL: url, options: options)
     }
 }

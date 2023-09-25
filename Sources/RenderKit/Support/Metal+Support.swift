@@ -477,32 +477,7 @@ public extension MTLTexture {
     }
 }
 
-public protocol Shape3D {
-    // TODO: this is mediocre.
-    func toMDLMesh(extent: SIMD3<Float>, allocator: MDLMeshBufferAllocator?) -> MDLMesh
-}
-
-public struct Cube: Shape3D {
-    public init() {
-    }
-
-    public func toMDLMesh(extent: SIMD3<Float>, allocator: MDLMeshBufferAllocator?) -> MDLMesh {
-        let mesh = MDLMesh(boxWithExtent: extent, segments: [1, 1, 1], inwardNormals: false, geometryType: .triangles, allocator: allocator)
-//        mesh.flipTextureCoordinates(inAttributeNamed: "textureCoordinate")
-        return mesh
-    }
-}
-
-public struct Plane: Shape3D {
-    public init() {
-    }
-
-    public func toMDLMesh(extent: SIMD3<Float>, allocator: MDLMeshBufferAllocator?) -> MDLMesh {
-        let mesh = MDLMesh(planeWithExtent: extent, segments: [1, 1], geometryType: .triangles, allocator: allocator)
-        mesh.flipTextureCoordinates(inAttributeNamed: "textureCoordinate")
-        return mesh
-    }
-}
+// MARK: -
 
 public extension MTLRenderCommandEncoder {
     func setVertexBuffer(_ mesh: MTKMesh, startingIndex: Int) {

@@ -101,7 +101,7 @@ public struct OffscreenDemoRenderPass <Configuration>: RenderPass where Configur
 
         let vertexFunction = try! library.makeFunction(name: "demoBlitVertexShader", constantValues: constants)
         let fragmentFunction = try! library.makeFunction(name: "demoBlitFragmentShader", constantValues: constants)
-        let plane = try! MTKMesh(mesh: Plane().toMDLMesh(extent: [2, 2, 0], allocator: MTKMeshBufferAllocator(device: device)), device: device)
+        let plane = try! MTKMesh(mesh: Plane(extent: [2, 2, 0]).toMDLMesh(allocator: MTKMeshBufferAllocator(device: device)), device: device)
         let renderPipelineDescriptor = MTLRenderPipelineDescriptor()
         renderPipelineDescriptor.vertexFunction = vertexFunction
         renderPipelineDescriptor.fragmentFunction = fragmentFunction
