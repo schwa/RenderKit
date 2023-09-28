@@ -13,7 +13,7 @@ struct ContentView: View {
     var scene = SimpleScene.demo()
 
     @State
-    var demo: Demo = .volumetric
+    var demo: Demo = .scene
 
     var body: some View {
         Group {
