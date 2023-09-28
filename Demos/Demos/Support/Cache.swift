@@ -137,12 +137,38 @@ public extension Cache where Value == Any {
     }
 }
 
-extension OSAllocatedUnfairLock where State == () {
+internal extension OSAllocatedUnfairLock where State == () {
     func withUnsafeLock <R>(_ block: () throws -> R) rethrows -> R {
         lock()
         defer {
             unlock()
         }
         return try block()
+    }
+}
+
+// MARK: -
+
+// TODO: not sure if this is a good idea but idea is for factory functions to return Cachable objects so that the key is separate from the value. Useful for returning objects with no key as part of the value (e.g. raw Data, Meshes etc).
+public struct Cachable <Key, Value> where Key: Hashable & Sendable {
+    public var key: Key
+    public var value: Value
+
+    public init(key: Key, value: Value) {
+        self.key = key
+        self.value = value
+    }
+}
+
+extension Cachable: Identifiable {
+    public var id: Key {
+        return key
+    }
+}
+
+public extension Cache {
+    @discardableResult
+    func insert(_ cachable: Cachable <Key, Value>) -> Value? {
+        return insert(key: cachable.key, value: cachable.value)
     }
 }
