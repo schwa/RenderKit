@@ -92,10 +92,15 @@ public struct Model: Identifiable {
 public struct Panorama: Identifiable {
     public var id = LOLID2(prefix: "Model")
     public var transform: Transform
+    public var tileTextures: [MTLTexture]
+    public var tilesSize: SIMD2<UInt16>
     public var mesh: (MTLDevice) throws -> MTKMesh
 
-    public init(transform: Transform, mesh: @escaping (MTLDevice) throws -> MTKMesh) {
+    init(transform: Transform, tileTextures: [MTLTexture], tilesSize: SIMD2<UInt16>, mesh: @escaping (MTLDevice) -> MTKMesh) {
+        assert(tileTextures.count == Int(tilesSize.x) * Int(tilesSize.y))
         self.transform = transform
+        self.tileTextures = tileTextures
+        self.tilesSize = tilesSize
         self.mesh = mesh
     }
 }
@@ -154,7 +159,8 @@ enum ResourceReference: Hashable, Sendable {
         case .direct(let url):
             url
         case .bundle(let bundle, let name, let `extension`):
-            bundle.bundle().map { $0.url(forResource: name, withExtension: `extension`) }
+            // swiftlint:disable:next redundant_nil_coalescing
+            bundle.bundle().map { $0.url(forResource: name, withExtension: `extension`) } ?? nil
         }
     }
 }
