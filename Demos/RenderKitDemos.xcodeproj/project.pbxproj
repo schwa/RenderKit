@@ -34,12 +34,27 @@
 		4555A0642ABE2E2E0088CFFB /* SwiftUI+Support.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4555A0632ABE2E2E0088CFFB /* SwiftUI+Support.swift */; };
 		4555A0662ABE2E7E0088CFFB /* Support.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4555A0652ABE2E7E0088CFFB /* Support.swift */; };
 		457D4F1F2ABD1634004CCD9D /* ContentView-VisionOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */; };
-		459EDA582A494C0700F9211C /* CLI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459EDA572A494C0700F9211C /* CLI.swift */; };
 		459E755D2AC1EF6F004BC055 /* SimpleMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459E755C2AC1EF6F004BC055 /* SimpleMesh.swift */; };
+		459EDA582A494C0700F9211C /* CLI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459EDA572A494C0700F9211C /* CLI.swift */; };
 		45BEC1212ABE3480001730AB /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45BEC11F2ABE3480001730AB /* Cache.swift */; };
 		45BEC1222ABE3480001730AB /* LOLID2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45BEC1202ABE3480001730AB /* LOLID2.swift */; };
 		45CC35642AB8240F00C33779 /* StanfordVolumeData in Resources */ = {isa = PBXBuildFile; fileRef = 45CC35632AB8240F00C33779 /* StanfordVolumeData */; };
 		45F588142ABD4BD700ADE82B /* RenderKit in Frameworks */ = {isa = PBXBuildFile; productRef = 45F588132ABD4BD700ADE82B /* RenderKit */; };
+		45F5E51C2AC5E7A2003FBEBD /* RenderKit in Frameworks */ = {isa = PBXBuildFile; productRef = 459F48662A5077A300623EEE /* RenderKit */; };
+		45F5E52E2AC5F433003FBEBD /* perseverance_08.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 45F5E5202AC5F433003FBEBD /* perseverance_08.ktx */; };
+		45F5E52F2AC5F433003FBEBD /* perseverance_09.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 45F5E5212AC5F433003FBEBD /* perseverance_09.ktx */; };
+		45F5E5302AC5F433003FBEBD /* perseverance_02.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 45F5E5222AC5F433003FBEBD /* perseverance_02.ktx */; };
+		45F5E5312AC5F433003FBEBD /* perseverance_03.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 45F5E5232AC5F433003FBEBD /* perseverance_03.ktx */; };
+		45F5E5322AC5F433003FBEBD /* perseverance_01.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 45F5E5242AC5F433003FBEBD /* perseverance_01.ktx */; };
+		45F5E5332AC5F433003FBEBD /* perseverance_14.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 45F5E5252AC5F433003FBEBD /* perseverance_14.ktx */; };
+		45F5E5342AC5F433003FBEBD /* perseverance_10.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 45F5E5262AC5F433003FBEBD /* perseverance_10.ktx */; };
+		45F5E5352AC5F433003FBEBD /* perseverance_04.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 45F5E5272AC5F433003FBEBD /* perseverance_04.ktx */; };
+		45F5E5362AC5F433003FBEBD /* perseverance_05.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 45F5E5282AC5F433003FBEBD /* perseverance_05.ktx */; };
+		45F5E5372AC5F433003FBEBD /* perseverance_11.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 45F5E5292AC5F433003FBEBD /* perseverance_11.ktx */; };
+		45F5E5382AC5F433003FBEBD /* perseverance_07.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 45F5E52A2AC5F433003FBEBD /* perseverance_07.ktx */; };
+		45F5E5392AC5F433003FBEBD /* perseverance_13.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 45F5E52B2AC5F433003FBEBD /* perseverance_13.ktx */; };
+		45F5E53A2AC5F433003FBEBD /* perseverance_12.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 45F5E52C2AC5F433003FBEBD /* perseverance_12.ktx */; };
+		45F5E53B2AC5F433003FBEBD /* perseverance_06.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 45F5E52D2AC5F433003FBEBD /* perseverance_06.ktx */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -85,8 +100,8 @@
 		4555A0632ABE2E2E0088CFFB /* SwiftUI+Support.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftUI+Support.swift"; sourceTree = "<group>"; };
 		4555A0652ABE2E7E0088CFFB /* Support.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Support.swift; sourceTree = "<group>"; };
 		457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView-VisionOS.swift"; sourceTree = "<group>"; };
-		459EDA552A494C0600F9211C /* CLI */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CLI; sourceTree = BUILT_PRODUCTS_DIR; };
 		459E755C2AC1EF6F004BC055 /* SimpleMesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleMesh.swift; sourceTree = "<group>"; };
+		459EDA552A494C0600F9211C /* CLI */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CLI; sourceTree = BUILT_PRODUCTS_DIR; };
 		459EDA572A494C0700F9211C /* CLI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLI.swift; sourceTree = "<group>"; };
 		459F48632A50776C00623EEE /* RenderKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = RenderKit; path = ..; sourceTree = "<group>"; };
 		45A147BC2A4B1B7300C06FE1 /* CLI-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "CLI-Release.xcconfig"; sourceTree = "<group>"; };
@@ -101,6 +116,20 @@
 		45BEC11F2ABE3480001730AB /* Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		45BEC1202ABE3480001730AB /* LOLID2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LOLID2.swift; sourceTree = "<group>"; };
 		45CC35632AB8240F00C33779 /* StanfordVolumeData */ = {isa = PBXFileReference; lastKnownFileType = folder; path = StanfordVolumeData; sourceTree = "<group>"; };
+		45F5E5202AC5F433003FBEBD /* perseverance_08.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = perseverance_08.ktx; sourceTree = "<group>"; };
+		45F5E5212AC5F433003FBEBD /* perseverance_09.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = perseverance_09.ktx; sourceTree = "<group>"; };
+		45F5E5222AC5F433003FBEBD /* perseverance_02.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = perseverance_02.ktx; sourceTree = "<group>"; };
+		45F5E5232AC5F433003FBEBD /* perseverance_03.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = perseverance_03.ktx; sourceTree = "<group>"; };
+		45F5E5242AC5F433003FBEBD /* perseverance_01.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = perseverance_01.ktx; sourceTree = "<group>"; };
+		45F5E5252AC5F433003FBEBD /* perseverance_14.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = perseverance_14.ktx; sourceTree = "<group>"; };
+		45F5E5262AC5F433003FBEBD /* perseverance_10.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = perseverance_10.ktx; sourceTree = "<group>"; };
+		45F5E5272AC5F433003FBEBD /* perseverance_04.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = perseverance_04.ktx; sourceTree = "<group>"; };
+		45F5E5282AC5F433003FBEBD /* perseverance_05.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = perseverance_05.ktx; sourceTree = "<group>"; };
+		45F5E5292AC5F433003FBEBD /* perseverance_11.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = perseverance_11.ktx; sourceTree = "<group>"; };
+		45F5E52A2AC5F433003FBEBD /* perseverance_07.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = perseverance_07.ktx; sourceTree = "<group>"; };
+		45F5E52B2AC5F433003FBEBD /* perseverance_13.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = perseverance_13.ktx; sourceTree = "<group>"; };
+		45F5E52C2AC5F433003FBEBD /* perseverance_12.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = perseverance_12.ktx; sourceTree = "<group>"; };
+		45F5E52D2AC5F433003FBEBD /* perseverance_06.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = perseverance_06.ktx; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -116,7 +145,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				459F48672A5077A300623EEE /* RenderKit in Frameworks */,
+				45F5E51C2AC5E7A2003FBEBD /* RenderKit in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -146,6 +175,7 @@
 		453D32B62A48D06500FCEE29 /* Demos */ = {
 			isa = PBXGroup;
 			children = (
+				45F5E51F2AC5F433003FBEBD /* PerseveranceTiles */,
 				45A147BB2A4B1B7300C06FE1 /* xcconfig */,
 				451196902A520D1F00F4F2DE /* Info.plist */,
 				4555A03A2ABE0B310088CFFB /* Info-visionOS.plist */,
@@ -255,6 +285,28 @@
 			path = xcconfig;
 			sourceTree = SOURCE_ROOT;
 		};
+		45F5E51F2AC5F433003FBEBD /* PerseveranceTiles */ = {
+			isa = PBXGroup;
+			children = (
+				45F5E5242AC5F433003FBEBD /* perseverance_01.ktx */,
+				45F5E5222AC5F433003FBEBD /* perseverance_02.ktx */,
+				45F5E5232AC5F433003FBEBD /* perseverance_03.ktx */,
+				45F5E5272AC5F433003FBEBD /* perseverance_04.ktx */,
+				45F5E5282AC5F433003FBEBD /* perseverance_05.ktx */,
+				45F5E52D2AC5F433003FBEBD /* perseverance_06.ktx */,
+				45F5E52A2AC5F433003FBEBD /* perseverance_07.ktx */,
+				45F5E5202AC5F433003FBEBD /* perseverance_08.ktx */,
+				45F5E5212AC5F433003FBEBD /* perseverance_09.ktx */,
+				45F5E5262AC5F433003FBEBD /* perseverance_10.ktx */,
+				45F5E5292AC5F433003FBEBD /* perseverance_11.ktx */,
+				45F5E52C2AC5F433003FBEBD /* perseverance_12.ktx */,
+				45F5E52B2AC5F433003FBEBD /* perseverance_13.ktx */,
+				45F5E5252AC5F433003FBEBD /* perseverance_14.ktx */,
+			);
+			name = PerseveranceTiles;
+			path = "../../../../Desktop Stuff/perseverance tiles/PerseveranceTiles";
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -342,9 +394,23 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				45F5E5322AC5F433003FBEBD /* perseverance_01.ktx in Resources */,
+				45F5E5302AC5F433003FBEBD /* perseverance_02.ktx in Resources */,
 				4555A03B2ABE0B310088CFFB /* Info-visionOS.plist in Resources */,
 				453D32C02A48D06600FCEE29 /* Preview Assets.xcassets in Resources */,
 				45CC35642AB8240F00C33779 /* StanfordVolumeData in Resources */,
+				45F5E5362AC5F433003FBEBD /* perseverance_05.ktx in Resources */,
+				45F5E53B2AC5F433003FBEBD /* perseverance_06.ktx in Resources */,
+				45F5E5332AC5F433003FBEBD /* perseverance_14.ktx in Resources */,
+				45F5E5352AC5F433003FBEBD /* perseverance_04.ktx in Resources */,
+				45F5E52F2AC5F433003FBEBD /* perseverance_09.ktx in Resources */,
+				45F5E5382AC5F433003FBEBD /* perseverance_07.ktx in Resources */,
+				45F5E5312AC5F433003FBEBD /* perseverance_03.ktx in Resources */,
+				45F5E5372AC5F433003FBEBD /* perseverance_11.ktx in Resources */,
+				45F5E5342AC5F433003FBEBD /* perseverance_10.ktx in Resources */,
+				45F5E52E2AC5F433003FBEBD /* perseverance_08.ktx in Resources */,
+				45F5E53A2AC5F433003FBEBD /* perseverance_12.ktx in Resources */,
+				45F5E5392AC5F433003FBEBD /* perseverance_13.ktx in Resources */,
 				453D32BC2A48D06600FCEE29 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
