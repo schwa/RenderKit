@@ -159,7 +159,7 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
             renderPipelineDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
 
             renderPipelineDescriptor.depthAttachmentPixelFormat = configuration.depthStencilPixelFormat
-            renderPipelineDescriptor.vertexDescriptor = SimpleMesh.vertexDescriptor
+            renderPipelineDescriptor.vertexDescriptor = SimpleVertex.vertexDescriptor
             renderPipelineState = try! device.makeRenderPipelineState(descriptor: renderPipelineDescriptor)
         }
 

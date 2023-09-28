@@ -7,6 +7,8 @@
 
 using namespace metal;
 
+typedef SimpleVertex Vertex;
+
 struct VertexOut {
     float4 position [[position]]; // in projection space
     float3 textureCoordinate;

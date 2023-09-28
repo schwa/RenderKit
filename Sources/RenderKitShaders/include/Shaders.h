@@ -19,19 +19,17 @@ typedef simd_float4 float4;
 #import "ImmsersiveShadersTypes.h"
 
 #ifdef __METAL_VERSION__
-struct Vertex {
+struct SimpleVertex {
     float3 position [[attribute(0)]];
     float3 normal [[attribute(1)]];
     float2 textureCoordinate [[attribute(2)]];
 };
 #else
-#pragma pack(push, 1)
-struct Vertex {
-    float3 position;
-    float3 normal;
+struct SimpleVertex {
+    PackedFloat3 position;
+    PackedFloat3 normal;
     float2 textureCoordinate;
 };
-#pragma pack(pop)
 #endif
 
 struct ModelUniforms { // Rename to ModelState?

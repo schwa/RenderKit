@@ -10,6 +10,39 @@ import os
 import RenderKit
 import LegacyGraphics
 
+public extension SimpleVertex {
+    static let vertexDescriptor: MTLVertexDescriptor = {
+        assert(MemoryLayout<SimpleVertex>.size == 32)
+
+        let vertexDescriptor = MTLVertexDescriptor()
+        vertexDescriptor.layouts[0].stepFunction = .perVertex
+        vertexDescriptor.layouts[0].stride = 32
+        vertexDescriptor.attributes[0].offset = 0
+        vertexDescriptor.attributes[0].format = .float3
+        vertexDescriptor.attributes[1].offset = 12
+        vertexDescriptor.attributes[1].format = .float3
+        vertexDescriptor.attributes[2].offset = 24
+        vertexDescriptor.attributes[2].format = .float2
+        return vertexDescriptor
+    }()
+
+    init(position: SIMD3<Float>, normal: SIMD3<Float>, textureCoordinate: SIMD2<Float>) {
+        self = .init(position: PackedFloat3(position), normal: PackedFloat3(normal), textureCoordinate: textureCoordinate)
+    }
+}
+
+public extension PackedFloat3 {
+    init(_ value: SIMD3<Float>) {
+        self = .init(x: value.x, y: value.y, z: value.z)
+    }
+}
+
+extension PackedFloat3: ExpressibleByArrayLiteral {
+    public init(arrayLiteral elements: Float...) {
+        self = .init(x: elements[0], y: elements[1], z: elements[2])
+    }
+}
+
 struct SimpleMesh {
     let label: String?
     var indexCount: Int
@@ -22,21 +55,6 @@ struct SimpleMesh {
     var indexType: MTLIndexType { .uint16 }
     var indexBufferOffset: Int { 0 }
     var vertexBufferOffset: Int { 0 }
-
-    static let vertexDescriptor: MTLVertexDescriptor = {
-        assert(MemoryLayout<Vertex>.size == 40)
-
-        let vertexDescriptor = MTLVertexDescriptor()
-        vertexDescriptor.layouts[0].stepFunction = .perVertex
-        vertexDescriptor.layouts[0].stride = 40
-        vertexDescriptor.attributes[0].offset = 0
-        vertexDescriptor.attributes[0].format = .float3
-        vertexDescriptor.attributes[1].offset = 16
-        vertexDescriptor.attributes[1].format = .float3
-        vertexDescriptor.attributes[2].offset = 32
-        vertexDescriptor.attributes[2].format = .float2
-        return vertexDescriptor
-    }()
 
     init(label: String? = nil, indexCount: Int, indexBuffer: MTLBuffer, vertexBuffer: MTLBuffer) {
         self.label = label
@@ -51,14 +69,14 @@ struct SimpleMesh {
 }
 
 extension SimpleMesh {
-    init(label: String? = nil, indices: [UInt16], vertices: [Vertex], device: MTLDevice) throws {
+    init(label: String? = nil, indices: [UInt16], vertices: [SimpleVertex], device: MTLDevice) throws {
         guard let indexBuffer = device.makeBuffer(bytesOf: indices, options: .storageModeShared) else {
             fatalError()
         }
         guard let vertexBuffer = device.makeBuffer(bytesOf: vertices, options: .storageModeShared) else {
             fatalError()
         }
-        assert(vertexBuffer.length == vertices.count * 40)
+        assert(vertexBuffer.length == vertices.count * 32)
         self = .init(label: label, indexCount: indices.count, indexBuffer: indexBuffer, vertexBuffer: vertexBuffer)
     }
 }
@@ -79,7 +97,7 @@ extension SimpleMesh {
         ]
         .map {
             // TODO; Normal not impacted by transform. It should be.
-            Vertex(position: SIMD2<Float>($0) * transform, normal: [0, 0, 1], textureCoordinate: textureCoordinate($0))
+            SimpleVertex(position: SIMD2<Float>($0) * transform, normal: [0, 0, 1], textureCoordinate: textureCoordinate($0))
         }
         self = try .init(label: label, indices: [0, 1, 2, 1, 3, 2], vertices: vertices, device: device)
     }
@@ -94,7 +112,7 @@ extension SimpleMesh {
         ]
         .map {
             // TODO; Normal not impacted by transform. It should be.
-            Vertex(position: SIMD2<Float>($0) * transform, normal: [0, 0, 1], textureCoordinate: textureCoordinate($0))
+            SimpleVertex(position: SIMD2<Float>($0) * transform, normal: [0, 0, 1], textureCoordinate: textureCoordinate($0))
         }
         self = try .init(label: label, indices: [0, 1, 2], vertices: vertices, device: device)
     }

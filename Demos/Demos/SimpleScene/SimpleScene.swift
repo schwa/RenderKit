@@ -13,12 +13,14 @@ public struct SimpleScene {
     public var light: Light
     public var ambientLightColor: SIMD3<Float>
     public var models: [Model]
+    public var panorama: Panorama?
 
-    public init(camera: Camera, light: Light, ambientLightColor: SIMD3<Float>, models: [Model]) {
+    public init(camera: Camera, light: Light, ambientLightColor: SIMD3<Float>, models: [Model], panorama: Panorama? = nil) {
         self.camera = camera
         self.light = light
         self.ambientLightColor = ambientLightColor
         self.models = models
+        self.panorama = panorama
     }
 }
 
@@ -81,6 +83,7 @@ public struct Model: Identifiable {
     public var transform: Transform
     public var color: SIMD4<Float>
     public var mesh: (MTLDevice) throws -> MTKMesh
+    //public var mesh1: (MTLDevice) throws -> Cachable<AnyHashable, MTKMesh>
 
     public init(transform: Transform, color: SIMD4<Float>, mesh: @escaping (MTLDevice) throws -> MTKMesh) {
         self.transform = transform
@@ -91,14 +94,12 @@ public struct Model: Identifiable {
 
 public struct Panorama: Identifiable {
     public var id = LOLID2(prefix: "Model")
-    public var transform: Transform
-    public var tileTextures: [MTLTexture]
     public var tilesSize: SIMD2<UInt16>
+    public var tileTextures: [(MTKTextureLoader) throws -> MTLTexture]
     public var mesh: (MTLDevice) throws -> MTKMesh
 
-    init(transform: Transform, tileTextures: [MTLTexture], tilesSize: SIMD2<UInt16>, mesh: @escaping (MTLDevice) -> MTKMesh) {
+    init(tilesSize: SIMD2<UInt16>, tileTextures: [(MTKTextureLoader) throws -> MTLTexture], mesh: @escaping (MTLDevice) throws -> MTKMesh) {
         assert(tileTextures.count == Int(tilesSize.x) * Int(tilesSize.y))
-        self.transform = transform
         self.tileTextures = tileTextures
         self.tilesSize = tilesSize
         self.mesh = mesh
@@ -118,6 +119,18 @@ public extension SimpleScene {
         let xRange = [Float](stride(from: -2, through: 2, by: 1))
         let zRange = [Float](stride(from: 0, through: -10, by: -1))
 
+        let tileTextures = (1 ... 12).map { index in
+            ResourceReference.bundle(.main, name: "perseverance_\(index.formatted(.number.precision(.integerLength(2))))", extension: "ktx")
+        }
+        .map { resource -> ((MTKTextureLoader) throws -> MTLTexture) in
+            return { loader in
+                try loader.newTexture(resource: resource)
+            }
+        }
+        let panorama = Panorama(tilesSize: [6, 2], tileTextures: tileTextures) { device in
+            try Sphere(extent: [100, 100, 100]).toMTKMesh(allocator: MTKMeshBufferAllocator(device: device), device: device)
+        }
+
         let scene = SimpleScene(
             camera: Camera(transform: .translation([0, 0, 2]), target: [0, 0, -1], projection: .perspective(.init(fovy: .degrees(90), zClip: 0.1 ... 100))),
             light: .init(position: .translation([-1, 2, 1]), color: [1, 1, 1], power: 1),
@@ -127,8 +140,10 @@ public extension SimpleScene {
                     let hsv: SIMD3<Float> = [Float.random(in: 0...1), 1, 1]
                     let rgba = SIMD4<Float>(hsv.hsv2rgb(), 1.0)
                     return Model(transform: .translation([x, 0, z]), color: rgba, mesh: meshes.randomElement()!)
-                }
+                },
+            panorama: panorama
         )
+
         return scene
     }
 }
@@ -152,7 +167,7 @@ enum BundleReference: Hashable, Sendable {
 
 enum ResourceReference: Hashable, Sendable {
     case direct(URL)
-    case bundle(BundleReference, String, String?)
+    case bundle(BundleReference, name: String, extension: String?)
 
     func url() -> URL? {
         switch self {

@@ -10,7 +10,7 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
     var scene: SimpleScene
     var renderPipelineState: MTLRenderPipelineState?
     var depthStencilState: MTLDepthStencilState?
-    var cache = Cache<String, MTKMesh>()
+    var cache = Cache<String, Any>()
 
     init(scene: SimpleScene) {
         self.scene = scene
@@ -28,15 +28,18 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
             let vertexFunction = library.makeFunction(name: "flatShaderVertexShader")!
             let fragmentFunction = try! library.makeFunction(name: "flatShaderFragmentShader", constantValues: constants)
 
-            // TODO: This is silly...
-            let plane = try! MTKMesh(mesh: Plane(extent: [2, 2, 0]).toMDLMesh(allocator: MTKMeshBufferAllocator(device: device)), device: device)
-
             let renderPipelineDescriptor = MTLRenderPipelineDescriptor()
             renderPipelineDescriptor.vertexFunction = vertexFunction
             renderPipelineDescriptor.fragmentFunction = fragmentFunction
             renderPipelineDescriptor.colorAttachments[0].pixelFormat = configuration.colorPixelFormat
             renderPipelineDescriptor.depthAttachmentPixelFormat = configuration.depthStencilPixelFormat
-            renderPipelineDescriptor.vertexDescriptor = MTLVertexDescriptor(plane.vertexDescriptor)
+
+//            renderPipelineDescriptor.vertexDescriptor = SimpleVertex.vertexDescriptor
+            let plane = try! MTKMesh(mesh: Plane(extent: [1, 1, 0]).toMDLMesh(allocator: MTKMeshBufferAllocator(device: device)), device: device)
+            print(MTLVertexDescriptor(plane.vertexDescriptor))
+            print(SimpleVertex.vertexDescriptor)
+//            renderPipelineDescriptor.vertexDescriptor = MTLVertexDescriptor(plane.vertexDescriptor)
+            renderPipelineDescriptor.vertexDescriptor = SimpleVertex.vertexDescriptor
             renderPipelineState = try! device.makeRenderPipelineState(descriptor: renderPipelineDescriptor)
         }
 
@@ -50,6 +53,10 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
         // Warm cache
         for model in scene.models {
             cache.insert(key: "model:\(model.id):mesh", value: try! model.mesh(device))
+        }
+
+        if let panorama = scene.panorama {
+            cache.insert(key: "panorama:mesh", value: try! panorama.mesh(device))
         }
     }
 
@@ -97,7 +104,7 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
 
             // TODO: Instancing
             for model in scene.models {
-                guard let mesh = cache.get(key: "model:\(model.id):mesh") else {
+                guard let mesh = cache.get(key: "model:\(model.id):mesh") as? MTKMesh else {
                     fatalError()
                 }
                 encoder.setVertexBuffer(mesh, startingIndex: 0)

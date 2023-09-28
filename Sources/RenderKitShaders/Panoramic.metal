@@ -6,6 +6,7 @@
 
 using namespace metal;
 
+typedef SimpleVertex Vertex;
 
 struct Fragment {
     float4 position [[position]]; // in projection space
