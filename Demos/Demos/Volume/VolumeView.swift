@@ -10,6 +10,7 @@ import MetalSupport
 import os
 import RenderKit
 import LegacyGraphics
+import LegacyGraphics
 
 // https://www.youtube.com/watch?v=y4KdxaMC69w&t=1761s
 
@@ -239,16 +240,6 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
                 }
                 encoder.setVertexBuffer(instances, offset: 0, index: 3)
 
-                let sampler = cache.get(key: "sampler", of: MTLSamplerState.self) {
-                    let samplerDescriptor = MTLSamplerDescriptor()
-                    samplerDescriptor.label = "Default sampler"
-                    samplerDescriptor.normalizedCoordinates = true
-                    samplerDescriptor.minFilter = .linear
-                    samplerDescriptor.magFilter = .linear
-                    samplerDescriptor.mipFilter = .linear
-                    return configuration.device!.makeSamplerState(descriptor: samplerDescriptor)!
-                }
-                encoder.setFragmentSamplerState(sampler, index: 0)
                 encoder.setFragmentTexture(texture, index: 0)
                 encoder.setFragmentTexture(transferFunctionTexture, index: 1)
 
