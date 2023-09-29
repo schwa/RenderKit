@@ -33,6 +33,18 @@
 		4555A0622ABE2D590088CFFB /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4555A0612ABE2D590088CFFB /* Logging.swift */; };
 		4555A0642ABE2E2E0088CFFB /* SwiftUI+Support.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4555A0632ABE2E2E0088CFFB /* SwiftUI+Support.swift */; };
 		4555A0662ABE2E7E0088CFFB /* Support.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4555A0652ABE2E7E0088CFFB /* Support.swift */; };
+		455741CC2AC658060050267D /* Testcard_01.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 455741C02AC658060050267D /* Testcard_01.ktx */; };
+		455741CD2AC658060050267D /* Testcard_03.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 455741C12AC658060050267D /* Testcard_03.ktx */; };
+		455741CE2AC658060050267D /* Testcard_02.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 455741C22AC658060050267D /* Testcard_02.ktx */; };
+		455741CF2AC658060050267D /* Testcard_06.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 455741C32AC658060050267D /* Testcard_06.ktx */; };
+		455741D02AC658060050267D /* Testcard_12.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 455741C42AC658060050267D /* Testcard_12.ktx */; };
+		455741D12AC658060050267D /* Testcard_07.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 455741C52AC658060050267D /* Testcard_07.ktx */; };
+		455741D22AC658060050267D /* Testcard_11.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 455741C62AC658060050267D /* Testcard_11.ktx */; };
+		455741D32AC658060050267D /* Testcard_05.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 455741C72AC658060050267D /* Testcard_05.ktx */; };
+		455741D42AC658060050267D /* Testcard_04.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 455741C82AC658060050267D /* Testcard_04.ktx */; };
+		455741D52AC658060050267D /* Testcard_10.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 455741C92AC658060050267D /* Testcard_10.ktx */; };
+		455741D62AC658060050267D /* Testcard_09.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 455741CA2AC658060050267D /* Testcard_09.ktx */; };
+		455741D72AC658060050267D /* Testcard_08.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 455741CB2AC658060050267D /* Testcard_08.ktx */; };
 		457D4F1F2ABD1634004CCD9D /* ContentView-VisionOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */; };
 		459E755D2AC1EF6F004BC055 /* SimpleMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459E755C2AC1EF6F004BC055 /* SimpleMesh.swift */; };
 		459EDA582A494C0700F9211C /* CLI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459EDA572A494C0700F9211C /* CLI.swift */; };
@@ -99,6 +111,18 @@
 		4555A0612ABE2D590088CFFB /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
 		4555A0632ABE2E2E0088CFFB /* SwiftUI+Support.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SwiftUI+Support.swift"; sourceTree = "<group>"; };
 		4555A0652ABE2E7E0088CFFB /* Support.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Support.swift; sourceTree = "<group>"; };
+		455741C02AC658060050267D /* Testcard_01.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = Testcard_01.ktx; sourceTree = "<group>"; };
+		455741C12AC658060050267D /* Testcard_03.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = Testcard_03.ktx; sourceTree = "<group>"; };
+		455741C22AC658060050267D /* Testcard_02.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = Testcard_02.ktx; sourceTree = "<group>"; };
+		455741C32AC658060050267D /* Testcard_06.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = Testcard_06.ktx; sourceTree = "<group>"; };
+		455741C42AC658060050267D /* Testcard_12.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = Testcard_12.ktx; sourceTree = "<group>"; };
+		455741C52AC658060050267D /* Testcard_07.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = Testcard_07.ktx; sourceTree = "<group>"; };
+		455741C62AC658060050267D /* Testcard_11.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = Testcard_11.ktx; sourceTree = "<group>"; };
+		455741C72AC658060050267D /* Testcard_05.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = Testcard_05.ktx; sourceTree = "<group>"; };
+		455741C82AC658060050267D /* Testcard_04.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = Testcard_04.ktx; sourceTree = "<group>"; };
+		455741C92AC658060050267D /* Testcard_10.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = Testcard_10.ktx; sourceTree = "<group>"; };
+		455741CA2AC658060050267D /* Testcard_09.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = Testcard_09.ktx; sourceTree = "<group>"; };
+		455741CB2AC658060050267D /* Testcard_08.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = Testcard_08.ktx; sourceTree = "<group>"; };
 		457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView-VisionOS.swift"; sourceTree = "<group>"; };
 		459E755C2AC1EF6F004BC055 /* SimpleMesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleMesh.swift; sourceTree = "<group>"; };
 		459EDA552A494C0600F9211C /* CLI */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CLI; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -175,6 +199,7 @@
 		453D32B62A48D06500FCEE29 /* Demos */ = {
 			isa = PBXGroup;
 			children = (
+				455741BF2AC658060050267D /* TestcardTiles */,
 				45F5E51F2AC5F433003FBEBD /* PerseveranceTiles */,
 				45A147BB2A4B1B7300C06FE1 /* xcconfig */,
 				451196902A520D1F00F4F2DE /* Info.plist */,
@@ -252,6 +277,25 @@
 				4555A0592ABE2CF50088CFFB /* MovementController.swift */,
 			);
 			path = Support;
+			sourceTree = "<group>";
+		};
+		455741BF2AC658060050267D /* TestcardTiles */ = {
+			isa = PBXGroup;
+			children = (
+				455741C02AC658060050267D /* Testcard_01.ktx */,
+				455741C12AC658060050267D /* Testcard_03.ktx */,
+				455741C22AC658060050267D /* Testcard_02.ktx */,
+				455741C32AC658060050267D /* Testcard_06.ktx */,
+				455741C42AC658060050267D /* Testcard_12.ktx */,
+				455741C52AC658060050267D /* Testcard_07.ktx */,
+				455741C62AC658060050267D /* Testcard_11.ktx */,
+				455741C72AC658060050267D /* Testcard_05.ktx */,
+				455741C82AC658060050267D /* Testcard_04.ktx */,
+				455741C92AC658060050267D /* Testcard_10.ktx */,
+				455741CA2AC658060050267D /* Testcard_09.ktx */,
+				455741CB2AC658060050267D /* Testcard_08.ktx */,
+			);
+			path = TestcardTiles;
 			sourceTree = "<group>";
 		};
 		459E2E272A48D64000E98F70 /* Frameworks */ = {
@@ -394,10 +438,18 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				455741CD2AC658060050267D /* Testcard_03.ktx in Resources */,
+				455741D02AC658060050267D /* Testcard_12.ktx in Resources */,
+				455741CF2AC658060050267D /* Testcard_06.ktx in Resources */,
 				45F5E5322AC5F433003FBEBD /* perseverance_01.ktx in Resources */,
+				455741D12AC658060050267D /* Testcard_07.ktx in Resources */,
+				455741D22AC658060050267D /* Testcard_11.ktx in Resources */,
+				455741D32AC658060050267D /* Testcard_05.ktx in Resources */,
 				45F5E5302AC5F433003FBEBD /* perseverance_02.ktx in Resources */,
 				4555A03B2ABE0B310088CFFB /* Info-visionOS.plist in Resources */,
 				453D32C02A48D06600FCEE29 /* Preview Assets.xcassets in Resources */,
+				455741CC2AC658060050267D /* Testcard_01.ktx in Resources */,
+				455741D62AC658060050267D /* Testcard_09.ktx in Resources */,
 				45CC35642AB8240F00C33779 /* StanfordVolumeData in Resources */,
 				45F5E5362AC5F433003FBEBD /* perseverance_05.ktx in Resources */,
 				45F5E53B2AC5F433003FBEBD /* perseverance_06.ktx in Resources */,
@@ -405,12 +457,16 @@
 				45F5E5352AC5F433003FBEBD /* perseverance_04.ktx in Resources */,
 				45F5E52F2AC5F433003FBEBD /* perseverance_09.ktx in Resources */,
 				45F5E5382AC5F433003FBEBD /* perseverance_07.ktx in Resources */,
+				455741D52AC658060050267D /* Testcard_10.ktx in Resources */,
+				455741CE2AC658060050267D /* Testcard_02.ktx in Resources */,
 				45F5E5312AC5F433003FBEBD /* perseverance_03.ktx in Resources */,
 				45F5E5372AC5F433003FBEBD /* perseverance_11.ktx in Resources */,
 				45F5E5342AC5F433003FBEBD /* perseverance_10.ktx in Resources */,
 				45F5E52E2AC5F433003FBEBD /* perseverance_08.ktx in Resources */,
+				455741D72AC658060050267D /* Testcard_08.ktx in Resources */,
 				45F5E53A2AC5F433003FBEBD /* perseverance_12.ktx in Resources */,
 				45F5E5392AC5F433003FBEBD /* perseverance_13.ktx in Resources */,
+				455741D42AC658060050267D /* Testcard_04.ktx in Resources */,
 				453D32BC2A48D06600FCEE29 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
