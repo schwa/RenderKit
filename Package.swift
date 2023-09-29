@@ -29,8 +29,7 @@ let package = Package(
         .package(url: "https://github.com/schwa/MetalCompilerPlugin", from: "0.0.2"),
     ],
     targets: [
-        .target(
-            name: "RenderKit",
+        .target(name: "RenderKit",
             dependencies: [
                 "Everything",
                 "RenderKitShaders",
@@ -56,6 +55,21 @@ let package = Package(
         .target(name: "RenderKitShaders",
             plugins: [
 //                .plugin(name: "MetalCompilerPlugin", package: "MetalCompilerPlugin")
+            ]
+        ),
+        .target(name: "RenderKitScratch",
+            dependencies: [
+                "Everything",
+                "RenderKitShaders",
+                .product(name: "CoreGraphicsSupport", package: "SwiftGraphics"),
+                .product(name: "MetalSupport", package: "SwiftGraphics"),
+                .product(name: "MetalSupportUnsafeConformances", package: "SwiftGraphics"),
+                .product(name: "SIMDSupport", package: "SwiftGraphics"),
+                .product(name: "LegacyGraphics", package: "SwiftGraphics"),
+                .product(name: "Algorithms", package: "swift-algorithms"),
+                .product(name: "SwiftFields", package: "swiftfields"),
+                .product(name: "SwiftFormats", package: "swiftformats"),
+                .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
             ]
         ),
         .testTarget(name: "RenderKitTests", dependencies: ["RenderKit"])
