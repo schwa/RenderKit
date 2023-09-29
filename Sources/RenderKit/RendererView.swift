@@ -19,15 +19,15 @@ public struct RendererView <T>: View where T: RenderPass, T.Configuration.Update
             configuration.depthStencilPixelFormat = .depth16Unorm
             configuration.depthStencilStorageMode = .memoryless
 
-            renderPass.setup(configuration: &configuration)
+            try! renderPass.setup(configuration: &configuration)
             commandQueue = configuration.device!.makeCommandQueue()
         }
         drawableSizeWillChange: { configuration, size in
-            renderPass.resized(configuration: &configuration, size: size)
+            try! renderPass.resized(configuration: &configuration, size: size)
         }
         draw: { configuration in
             commandQueue?.withCommandBuffer(drawable: configuration.currentDrawable, block: { commandBuffer in
-                renderPass.draw(configuration: configuration, commandBuffer: commandBuffer)
+                try! renderPass.draw(configuration: configuration, commandBuffer: commandBuffer)
             })
         }
     }

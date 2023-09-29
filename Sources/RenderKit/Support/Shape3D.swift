@@ -69,7 +69,7 @@ public struct Sphere: Shape3D {
     public var geometryType: MDLGeometryType
     public var flippedTextureCoordinates: Bool
 
-    public init(extent: SIMD3<Float> = [1, 1, 1], segments: SIMD2<UInt32> = [36, 36], inwardNormals: Bool = false, geometryType: MDLGeometryType = .triangles, flippedTextureCoordinates: Bool = true) {
+    public init(extent: SIMD3<Float> = [1, 1, 1], segments: SIMD2<UInt32> = [36, 36], inwardNormals: Bool = false, geometryType: MDLGeometryType = .triangles, flippedTextureCoordinates: Bool = false) {
         self.extent = extent
         self.segments = segments
         self.inwardNormals = inwardNormals

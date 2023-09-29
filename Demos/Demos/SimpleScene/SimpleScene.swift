@@ -121,6 +121,7 @@ public extension SimpleScene {
 
         let tileTextures = (1 ... 12).map { index in
             ResourceReference.bundle(.main, name: "perseverance_\(index.formatted(.number.precision(.integerLength(2))))", extension: "ktx")
+//            ResourceReference.bundle(.main, name: "Testcard_\(index.formatted(.number.precision(.integerLength(2))))", extension: "ktx")
         }
         .map { resource -> ((MTKTextureLoader) throws -> MTLTexture) in
             return { loader in
@@ -128,7 +129,7 @@ public extension SimpleScene {
             }
         }
         let panorama = Panorama(tilesSize: [6, 2], tileTextures: tileTextures) { device in
-            try Sphere(extent: [100, 100, 100]).toMTKMesh(allocator: MTKMeshBufferAllocator(device: device), device: device)
+            try Sphere(extent: [95, 95, 95], inwardNormals: true).toMTKMesh(allocator: MTKMeshBufferAllocator(device: device), device: device)
         }
 
         let scene = SimpleScene(
