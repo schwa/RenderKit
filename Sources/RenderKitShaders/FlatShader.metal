@@ -13,8 +13,14 @@ struct Fragment {
 // MARK: -
 
 [[vertex]]
-Fragment flatShaderVertexShader(Vertex in [[stage_in]], constant CameraUniforms &cameraUniforms [[buffer(1)]], constant ModelUniforms &modelUniforms [[buffer(2)]])
+Fragment flatShaderVertexShader(
+    Vertex in [[stage_in]],
+    ushort instance_id[[instance_id]],
+    constant CameraUniforms &cameraUniforms [[buffer(1)]],
+    constant ModelUniforms *instancedModelUniforms [[buffer(2)]]
+    )
 {
+    const ModelUniforms modelUniforms = instancedModelUniforms[instance_id];
     const float4 modelVertex = modelUniforms.modelViewMatrix * float4(in.position, 1.0);
     return {
         .position = cameraUniforms.projectionMatrix * modelVertex,
