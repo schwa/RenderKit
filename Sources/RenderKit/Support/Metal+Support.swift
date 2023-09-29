@@ -537,7 +537,7 @@ extension MTLRenderCommandEncoder {
         }
     }
 
-    func withDebugGroup<R>(_ string: String, block: () throws -> R) rethrows -> R {
+    public func withDebugGroup<R>(_ string: String, block: () throws -> R) rethrows -> R {
         pushDebugGroup(string)
         defer {
             popDebugGroup()

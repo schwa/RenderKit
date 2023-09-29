@@ -84,74 +84,78 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
 
         commandBuffer.withRenderCommandEncoder(descriptor: renderPassDescriptor) { encoder in
             // Render all models with flatShader
-            if !scene.models.isEmpty {
-                guard let flatShaderRenderPipelineState, let depthStencilState else {
-                    return
-                }
-                encoder.setDepthStencilState(depthStencilState)
-                encoder.setRenderPipelineState(flatShaderRenderPipelineState)
-                let modes: [(MTLTriangleFillMode, SIMD4<Float>?)] = [
-                    (.fill, nil),
-                    (.lines, [1, 1, 1, 1]),
-                ]
-                encoder.setVertexBytes(of: cameraUniforms, index: 1)
-                let lightUniforms = LightUniforms(lightPosition: scene.light.position.translation, lightColor: scene.light.color, lightPower: scene.light.power, ambientLightColor: scene.ambientLightColor)
-                encoder.setFragmentBytes(of: lightUniforms, index: 3)
-                // TODO: Instancing
-
-                let bucketedModels = scene.models.reduce(into: [:]) { partialResult, model in
-                    partialResult[model.mesh.0, default: []].append(model)
-                }
-
-                for (meshKey, models) in bucketedModels {
-                    encoder.pushDebugGroup("Instanced \(meshKey)")
-                    guard let mesh = cache.get(key: meshKey) as? MTKMesh else {
-                        fatalError()
+            encoder.withDebugGroup("Scene Models") {
+                if !scene.models.isEmpty {
+                    guard let flatShaderRenderPipelineState, let depthStencilState else {
+                        return
                     }
-                    encoder.setVertexBuffer(mesh, startingIndex: 0)
+                    encoder.setDepthStencilState(depthStencilState)
+                    encoder.setRenderPipelineState(flatShaderRenderPipelineState)
+                    encoder.setVertexBytes(of: cameraUniforms, index: 1)
+                    let lightUniforms = LightUniforms(lightPosition: scene.light.position.translation, lightColor: scene.light.color, lightPower: scene.light.power, ambientLightColor: scene.ambientLightColor)
+                    encoder.setFragmentBytes(of: lightUniforms, index: 3)
 
-                    for (fillMode, color) in modes {
-                        let modelUniforms = models.map { model in
-                            ModelUniforms(
-                                modelViewMatrix: inverseCameraMatrix * model.transform.matrix,
-                                modelNormalMatrix: simd_float3x3(truncating: model.transform.matrix.transpose.inverse),
-                                color: color ?? model.color
-                            )
+                    let bucketedModels = scene.models.reduce(into: [:]) { partialResult, model in
+                        partialResult[model.mesh.0, default: []].append(model)
+                    }
+
+                    for (meshKey, models) in bucketedModels {
+                        encoder.withDebugGroup("Instanced \(meshKey)") {
+                            guard let mesh = cache.get(key: meshKey) as? MTKMesh else {
+                                fatalError()
+                            }
+                            encoder.setVertexBuffer(mesh, startingIndex: 0)
+
+                            let modes: [(MTLTriangleFillMode, SIMD4<Float>?)] = [
+                                (.fill, nil),
+                                (.lines, [1, 1, 1, 1]),
+                            ]
+                            for (fillMode, color) in modes {
+                                encoder.withDebugGroup("FillMode: \(fillMode))") {
+                                    let modelUniforms = models.map { model in
+                                        ModelUniforms(
+                                            modelViewMatrix: inverseCameraMatrix * model.transform.matrix,
+                                            modelNormalMatrix: simd_float3x3(truncating: model.transform.matrix.transpose.inverse),
+                                            color: color ?? model.color
+                                        )
+                                    }
+                                    encoder.setVertexBytes(of: modelUniforms, index: 2)
+                                    encoder.setTriangleFillMode(fillMode)
+                                    encoder.draw(mesh, instanceCount: models.count)
+                                }
+                            }
                         }
-                        encoder.setTriangleFillMode(fillMode)
-                        encoder.setVertexBytes(of: modelUniforms, index: 2)
-                        encoder.draw(mesh, instanceCount: models.count)
                     }
-                    encoder.popDebugGroup()
                 }
             }
 
             if let panorama = scene.panorama {
-                encoder.pushDebugGroup("Panorama")
-                guard let panoramaShaderRenderPipelineState, let depthStencilState else {
-                    fatalError()
+                encoder.withDebugGroup("Panorama") {
+                    guard let panoramaShaderRenderPipelineState, let depthStencilState else {
+                        fatalError()
+                    }
+                    encoder.setRenderPipelineState(panoramaShaderRenderPipelineState)
+                    // TODO: if we render this first we can disable the depth test.
+                    encoder.setDepthStencilState(depthStencilState)
+
+                    guard let mesh = cache.get(key: "panorama:mesh") as? MTKMesh else {
+                        fatalError()
+                    }
+                    encoder.setVertexBuffer(mesh, startingIndex: 0)
+                    encoder.setVertexBytes(of: cameraUniforms, index: 1)
+                    let modelViewMatrix = inverseCameraMatrix * .identity
+                    encoder.setVertexBytes(of: modelViewMatrix, index: 2)
+
+                    encoder.setFragmentBytes(of: panorama.tilesSize, index: 0)
+
+                    let textures = (cache.get(key: "panorama:textures") as! [MTLTexture]).map {
+                        Optional($0)
+                    }
+                    encoder.setFragmentTextures(textures, range: 0..<textures.count)
+                    encoder.setTriangleFillMode(.fill)
+
+                    encoder.draw(mesh)
                 }
-                encoder.setRenderPipelineState(panoramaShaderRenderPipelineState)
-                encoder.setDepthStencilState(depthStencilState)
-
-                guard let mesh = cache.get(key: "panorama:mesh") as? MTKMesh else {
-                    fatalError()
-                }
-                encoder.setVertexBuffer(mesh, startingIndex: 0)
-                encoder.setVertexBytes(of: cameraUniforms, index: 1)
-                let modelViewMatrix = inverseCameraMatrix * .identity
-                encoder.setVertexBytes(of: modelViewMatrix, index: 2)
-
-                encoder.setFragmentBytes(of: panorama.tilesSize, index: 0)
-
-                let textures = (cache.get(key: "panorama:textures") as! [MTLTexture]).map {
-                    Optional($0)
-                }
-                encoder.setFragmentTextures(textures, range: 0..<textures.count)
-                encoder.setTriangleFillMode(.fill)
-
-                encoder.draw(mesh)
-                encoder.popDebugGroup()
             }
         }
     }
