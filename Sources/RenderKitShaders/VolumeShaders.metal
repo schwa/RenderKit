@@ -1,11 +1,5 @@
-#import <metal_stdlib>
-#import <simd/simd.h>
-#import <metal_geometric>
-
-#import "include/Shaders.h"
+#import "include/RenderKitShaders.h"
 #import "include/VolumeShaders.h"
-
-using namespace metal;
 
 typedef SimpleVertex Vertex;
 

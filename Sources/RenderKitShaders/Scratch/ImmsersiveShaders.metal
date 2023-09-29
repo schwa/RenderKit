@@ -1,13 +1,4 @@
-//
-//  Shaders.metal
-//
-
-// File for Metal kernel and shader functions
-
-#include <metal_stdlib>
-#include <simd/simd.h>
-
-// Including header shared between this Metal shader code and Swift/C code executing Metal API commands
+#import "include/RenderKitShaders.h"
 #import "include/ImmsersiveShadersTypes.h"
 
 using namespace metal;
