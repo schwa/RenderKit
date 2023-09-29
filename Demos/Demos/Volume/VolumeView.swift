@@ -16,7 +16,7 @@ import LegacyGraphics
 
 public struct VolumeView: View {
     @State
-    var renderPass = VolumeRenderPass<MetalViewConfiguration>()
+    var renderPass: VolumeRenderPass? = VolumeRenderPass()
 
     @State
     var rotation = Rotation.zero
@@ -46,7 +46,7 @@ public struct VolumeView: View {
                 updateTransferFunctionTexture()
             }
             .onChange(of: rotation) {
-                renderPass.rotation = rotation
+                renderPass?.rotation = rotation
             }
             .onChange(of: redTransferFunction) {
                 updateTransferFunctionTexture()
@@ -93,12 +93,12 @@ public struct VolumeView: View {
             let region = MTLRegion(origin: [0, 0, 0], size: [256, 1, 1]) // TODO: Hardcoded
             let bytesPerRow = 256 * MemoryLayout<SIMD4<UInt8>>.stride
 
-            renderPass.transferFunctionTexture.replace(region: region, mipmapLevel: 0, slice: 0, withBytes: buffer.baseAddress!, bytesPerRow: bytesPerRow, bytesPerImage: 0)
+            renderPass?.transferFunctionTexture.replace(region: region, mipmapLevel: 0, slice: 0, withBytes: buffer.baseAddress!, bytesPerRow: bytesPerRow, bytesPerImage: 0)
         }
     }
 }
 
-struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKitConfiguration {
+class VolumeRenderPass: RenderPass {
     let id = LOLID2(prefix: "VolumeRenderPass")
     var scene: SimpleScene?
     var renderPipelineState: MTLRenderPipelineState?
@@ -115,8 +115,6 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
 //        let volumeData = VolumeData(named: "MRBrain", size: [256, 256, 109])
         let load = try! volumeData.load()
         texture = try! load(device)
-        let id = id
-        logger?.debug("\(id): \(#function)")
 
         // TODO: Hardcoded
         let textureDescriptor = MTLTextureDescriptor()
@@ -134,12 +132,7 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
         transferFunctionTexture = texture
     }
 
-    mutating func setup(configuration: inout Configuration.Update) {
-        let id = id
-        logger?.debug("\(id): \(#function)")
-        guard let device = configuration.device else {
-            fatalError("No metal device")
-        }
+    func setup(device: MTLDevice, configuration: inout Configuration) throws {
         if renderPipelineState == nil {
             let library = try! device.makeDebugLibrary(bundle: .shadersBundle)
             let vertexFunction = library.makeFunction(name: "volumeVertexShader")!
@@ -171,26 +164,17 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
         }
     }
 
-    mutating func resized(configuration: inout Configuration.Update, size: CGSize) {
-        let id = id
-        logger?.debug("\(id): \(#function)")
+    func drawableSizeWillChange(device: MTLDevice, configuration: inout Configuration, size: CGSize) throws {
 //        guard let renderPipelineState, let depthStencilState else {
 //            let id = id
-//            logger?.debug("\(id): \(#function): missing renderPipelineState or depthStencilState")
 //            return
 //        }
     }
 
-    func draw(configuration: Configuration.Draw, commandBuffer: MTLCommandBuffer) {
-//        logger?.debug("\(#function)")
+    func draw(device: MTLDevice, configuration: Configuration, size: CGSize, renderPassDescriptor: MTLRenderPassDescriptor, commandBuffer: MTLCommandBuffer) throws {
         do {
             guard let renderPipelineState, let depthStencilState else {
-                let id = id
-                logger?.debug("\(id): \(#function): missing renderPipelineState or depthStencilState")
                 return
-            }
-            guard let renderPassDescriptor = configuration.currentRenderPassDescriptor, let size = configuration.size else {
-                fatalError("No current render pass descriptor.")
             }
             try commandBuffer.withRenderCommandEncoder(descriptor: renderPassDescriptor) { encoder in
                 encoder.setRenderPipelineState(renderPipelineState)
@@ -204,7 +188,7 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
                     let rect = CGRect(center: .zero, radius: 0.5)
                     let circle = LegacyGraphics.Circle(containing: rect)
                     let triangle = Triangle(containing: circle)
-                    return try SimpleMesh(label: "triangle", triangle: triangle, device: configuration.device!) {
+                    return try SimpleMesh(label: "triangle", triangle: triangle, device: device) {
                         SIMD2<Float>($0) + [0.5, 0.5]
                     }
 //                    return try SimpleMesh(label: "rectangle", rectangle: rect, device: configuration.device!) {
@@ -233,7 +217,7 @@ struct VolumeRenderPass<Configuration>: RenderPass where Configuration: RenderKi
                         let z = Float(slice) / Float(instanceCount - 1)
                         return VolumeInstance(offsetZ: z - 0.5, textureZ: 1 - z)
                     }
-                    let buffer = configuration.device!.makeBuffer(bytesOf: instances, options: .storageModeShared)!
+                    let buffer = device.makeBuffer(bytesOf: instances, options: .storageModeShared)!
                     buffer.label = "instances"
                     assert(buffer.length == 8 * instanceCount)
                     return buffer

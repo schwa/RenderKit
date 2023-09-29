@@ -4,6 +4,7 @@ import simd
 import LegacyGraphics
 import Everything
 import SwiftUI
+import MetalKit
 
 // TODO: Move
 extension CGVector {
@@ -76,5 +77,66 @@ extension Triangle {
         let b = circle.center + CGPoint(length: circle.radius * 2, angle: Angle.degrees(120).radians)
         let c = circle.center + CGPoint(length: circle.radius * 2, angle: Angle.degrees(240).radians)
         self = .init(a, b, c)
+    }
+}
+
+class Once {
+    // TODO: The thread safety, it's missing!!!!
+    var tokens: Set<AnyHashable> = []
+    static let shared = Once()
+}
+
+func once(_ token: AnyHashable, block: () throws -> Void) rethrows {
+    guard Once.shared.tokens.insert(token).inserted else {
+        return
+    }
+    try block()
+}
+
+enum BundleReference: Hashable, Sendable {
+    case main
+    case byURL(URL)
+    case byIdentifier(String)
+
+    func bundle() -> Bundle? {
+        switch self {
+        case .main:
+            return Bundle.main
+        case .byURL(let url):
+            return Bundle(url: url)
+        case .byIdentifier(let identifier):
+            return Bundle(identifier: identifier)
+        }
+    }
+}
+
+enum ResourceReference: Hashable, Sendable {
+    case direct(URL)
+    case bundle(BundleReference, name: String, extension: String?)
+
+    func url() -> URL? {
+        switch self {
+        case .direct(let url):
+            url
+        case .bundle(let bundle, let name, let `extension`):
+            // swiftlint:disable:next redundant_nil_coalescing
+            bundle.bundle().map { $0.url(forResource: name, withExtension: `extension`) } ?? nil
+        }
+    }
+}
+
+extension MTKTextureLoader {
+    func newTexture(resource: ResourceReference, options: [Option: Any]? = nil) throws -> MTLTexture {
+        guard let url = resource.url() else {
+            fatalError()
+        }
+        return try newTexture(URL: url, options: options)
+    }
+
+    func newTexture(resource: ResourceReference, options: [Option: Any]? = nil) async throws -> MTLTexture {
+        guard let url = resource.url() else {
+            fatalError()
+        }
+        return try await newTexture(URL: url, options: options)
     }
 }

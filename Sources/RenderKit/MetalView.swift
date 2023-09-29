@@ -1,146 +1,164 @@
-#if !os(visionOS)
 import SwiftUI
-import MetalKit
 import Everything
-import os
+import MetalKit
+import Observation
 
 public struct MetalView: View {
-    @Observable
-    class Model: NSObject, MTKViewDelegate {
-        @ObservationIgnored
-        var update: (inout ConcreteMetalViewConfiguration) -> Void = { _ in fatalError() }
-        @ObservationIgnored
-        var drawableSizeWillChange: (inout ConcreteMetalViewConfiguration, CGSize) -> Void = { _, _ in fatalError() }
-        @ObservationIgnored
-        var draw: (ConcreteMetalViewConfiguration) -> Void = { _ in fatalError() }
-        @ObservationIgnored
-        var lock = OSAllocatedUnfairLock()
+    public typealias Setup = (MTLDevice, inout Configuration) throws -> Void
+    public typealias DrawableSizeWillChange = (MTLDevice, inout Configuration, CGSize) throws -> Void
+    public typealias Draw = (MTLDevice, Configuration, CGSize, CAMetalDrawable, MTLRenderPassDescriptor) throws -> Void
 
-        @ObservationIgnored
-//        let queue: DispatchQueue? = DispatchQueue(label: "MetalView", qos: .userInteractive)
-        let queue: DispatchQueue? = nil
-
-        func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
-            drawableSizeWillChange(&view.concreteMetalViewConfiguration, size)
-        }
-
-        func draw(in view: MTKView) {
-            if let queue {
-                let configuration = view.concreteMetalViewConfiguration
-                queue.async { [weak self] in
-                    assert(!Thread.isMainThread)
-                    guard let strongSelf = self else {
-                        return
-                    }
-                    strongSelf.lock.withLockIfAvailable {
-                        strongSelf.draw(configuration)
-                    }
-                }
-            }
-            else {
-                draw(view.concreteMetalViewConfiguration)
-            }
-        }
-    }
-
-    @State
-    private var model = Model()
-
-    var update: (inout ConcreteMetalViewConfiguration) -> Void
-    var drawableSizeWillChange: (inout ConcreteMetalViewConfiguration, CGSize) -> Void
-    var draw: (ConcreteMetalViewConfiguration) -> Void
-
-    public init(update: @escaping (inout ConcreteMetalViewConfiguration) -> Void, drawableSizeWillChange: @escaping (inout ConcreteMetalViewConfiguration, CGSize) -> Void, draw: @escaping (ConcreteMetalViewConfiguration) -> Void) {
-        self.update = update
-        self.drawableSizeWillChange = drawableSizeWillChange
-        self.draw = draw
+    public struct Configuration {
+        // TODO: Fully expand this.
+        public var colorPixelFormat: MTLPixelFormat
+        public var depthStencilPixelFormat: MTLPixelFormat
+        public var depthStencilStorageMode: MTLStorageMode
+        public var clearDepth: Double
+        public var preferredFramesPerSecond: Int
     }
 
     @Environment(\.metalDevice)
     var device
 
+    @State
+    var model = MetalViewModel()
+
+    @State
+    var issetup = false
+
+    @State
+    var error: Error?
+
+    let setup: MetalView.Setup
+    let drawableSizeWillChange: MetalView.DrawableSizeWillChange
+    let draw: MetalView.Draw
+
+    init(setup: @escaping Setup, drawableSizeWillChange: @escaping DrawableSizeWillChange, draw: @escaping Draw) {
+        self.setup = setup
+        self.drawableSizeWillChange = drawableSizeWillChange
+        self.draw = draw
+    }
+
     public var body: some View {
-        ViewAdaptor<MTKView> {
-            model.update = update
-            model.drawableSizeWillChange = drawableSizeWillChange
-            model.draw = draw
-
-            //            logger.debug("\(String(describing: type(of: self)), privacy: .public).\(#function, privacy: .public), view adaptor setup")
-            let view = MTKView(frame: .zero, device: device)
-            view.delegate = model
-            Task {
-                var configuration = view.concreteMetalViewConfiguration
-                model.update(&configuration)
-                view.concreteMetalViewConfiguration = configuration
+        Group {
+            if let error {
+                ContentUnavailableView(String(describing: error), systemImage: "exclamationmark.triangle")
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
-            return view
-        } update: { _ in
-            //Self._printChanges()
-            // Perform updates in a Task to allow clients to update state and avoid "Modifying state during view update, this will cause undefined behavior."
+            else {
+                ViewAdaptor<MTKView> {
+                    guard let device else {
+                        fatalError()
+                    }
+                    let view = MTKView()
+                    model.view = view
+                    view.device = device
+                    view.delegate = model
+                    return view
+                } update: { _ in
+                }
+                .onAppear {
+                    model.setup = setup
+                    model.drawableSizeWillChange = drawableSizeWillChange
+                    model.draw = draw
+                    model.doSetup()  // TODO: Error handling
+                }
+            }
         }
-        .onAppear {
-            model.update = update
-            model.drawableSizeWillChange = drawableSizeWillChange
-            model.draw = draw
+        .onChange(of: model.error.0) {
+            self.error = model.error.1
         }
     }
 }
 
-extension MetalView {
-    public init(update: @escaping (inout ConcreteMetalViewConfiguration) -> Void, draw: @escaping (ConcreteMetalViewConfiguration) -> Void) {
-        self.init(update: update, drawableSizeWillChange: { _, _ in }, draw: draw)
+@Observable
+internal class MetalViewModel: NSObject, MTKViewDelegate {
+    var view: MTKView?
+    var setup: MetalView.Setup?
+    var drawableSizeWillChange: MetalView.DrawableSizeWillChange?
+    var draw: MetalView.Draw?
+    var error: (Int, Error?) = (0, nil)
+
+    override init() {
+//        print(#function)
+    }
+
+    func doSetup() {
+        guard let view, let device = view.device, let setup else {
+            fatalError()
+        }
+        do {
+            var configuration = view.configuration
+            try setup(device, &configuration)
+            view.configuration = configuration
+        }
+        catch {
+            set(error: error)
+        }
+    }
+
+    func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
+        guard let device = view.device, let drawableSizeWillChange else {
+            fatalError()
+        }
+        do {
+            var configuration = view.configuration
+            try drawableSizeWillChange(device, &configuration, size)
+            view.configuration = configuration
+        }
+        catch {
+            set(error: error)
+        }
+    }
+
+    func draw(in view: MTKView) {
+        guard let device = view.device, let currentDrawable = view.currentDrawable, let currentRenderPassDescriptor = view.currentRenderPassDescriptor, let draw else {
+            fatalError()
+        }
+        do {
+            try draw(device, view.configuration, view.drawableSize, currentDrawable, currentRenderPassDescriptor)
+        }
+        catch {
+            set(error: error)
+        }
+    }
+
+    func set(error: Error) {
+        self.error = (self.error.0 + 1, error)
     }
 }
 
-public protocol MetalViewUpdateConfiguration: RenderKitUpdateConfiguration {
-    var currentDrawable: CAMetalDrawable? { get }
-}
-
-public protocol MetalViewDrawConfiguration: RenderKitDrawConfiguration {
-    var currentDrawable: CAMetalDrawable? { get }
-}
-
-public struct MetalViewConfiguration: RenderKitConfiguration {
-    public typealias Update = ConcreteMetalViewConfiguration
-
-    public typealias Draw = ConcreteMetalViewConfiguration
-}
-
-extension MTKView {
-    var concreteMetalViewConfiguration: ConcreteMetalViewConfiguration {
+internal extension MTKView {
+    var configuration: MetalView.Configuration {
         get {
-            var configuration = ConcreteMetalViewConfiguration()
-            configuration.currentDrawable = currentDrawable
-            configuration.colorPixelFormat = colorPixelFormat
-            configuration.depthStencilPixelFormat = depthStencilPixelFormat
-            configuration.depthStencilStorageMode = depthStencilStorageMode
-            configuration.clearDepth = clearDepth
-            configuration.preferredFramesPerSecond = preferredFramesPerSecond
-            configuration.device = device
-            configuration.size = bounds.size
-            configuration.currentRenderPassDescriptor = currentRenderPassDescriptor
-            return configuration
+            return .init(
+                colorPixelFormat: colorPixelFormat,
+                depthStencilPixelFormat: depthStencilPixelFormat,
+                depthStencilStorageMode: depthStencilStorageMode,
+                clearDepth: clearDepth,
+                preferredFramesPerSecond: preferredFramesPerSecond
+            )
         }
         set {
-            colorPixelFormat = newValue.colorPixelFormat
-            depthStencilPixelFormat = newValue.depthStencilPixelFormat
-            depthStencilStorageMode = newValue.depthStencilStorageMode
-            clearDepth = newValue.clearDepth
-            preferredFramesPerSecond = newValue.preferredFramesPerSecond
-            device = newValue.device
+            if newValue.colorPixelFormat != colorPixelFormat {
+                colorPixelFormat = newValue.colorPixelFormat
+            }
+            if newValue.depthStencilPixelFormat != depthStencilPixelFormat {
+                depthStencilPixelFormat = newValue.depthStencilPixelFormat
+            }
+            if newValue.depthStencilStorageMode != depthStencilStorageMode {
+                depthStencilStorageMode = newValue.depthStencilStorageMode
+            }
+            if newValue.clearDepth != clearDepth {
+                clearDepth = newValue.clearDepth
+            }
+            if newValue.preferredFramesPerSecond != preferredFramesPerSecond {
+                preferredFramesPerSecond = newValue.preferredFramesPerSecond
+            }
         }
     }
 }
 
-public struct ConcreteMetalViewConfiguration: MetalViewUpdateConfiguration, MetalViewDrawConfiguration {
-    public var currentDrawable: CAMetalDrawable?
-    public var colorPixelFormat: MTLPixelFormat = .invalid
-    public var depthStencilPixelFormat: MTLPixelFormat = .invalid
-    public var depthStencilStorageMode: MTLStorageMode = .shared
-    public var clearDepth: Double = 1
-    public var preferredFramesPerSecond: Int = 120
-    public var device: MTLDevice?
-    public var size: CGSize?
-    public var currentRenderPassDescriptor: MTLRenderPassDescriptor?
+enum MyError: Error {
+    case oops
 }
-#endif

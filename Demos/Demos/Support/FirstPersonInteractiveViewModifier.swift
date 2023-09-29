@@ -23,7 +23,7 @@ public struct FirstPersonInteractiveViewModifier: ViewModifier, @unchecked Senda
         content
         .onAppear {
             guard let displayLink else {
-                fatalError()
+                return
             }
             movementController = MovementController(displayLink: displayLink)
         }
@@ -57,7 +57,7 @@ public struct FirstPersonInteractiveViewModifier: ViewModifier, @unchecked Senda
         .task() {
             movementConsumerTask = Task.detached { [movementController] in
                 guard let movementController else {
-                    fatalError()
+                    return
                 }
                 for await event in movementController.events() {
                     Counters.shared.increment(counter: "Consumption")

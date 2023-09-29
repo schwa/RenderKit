@@ -6,23 +6,32 @@ import SIMDSupport
 import RenderKitShaders
 import RenderKit
 
-struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: RenderKitConfiguration {
+extension SimpleSceneRenderPass: CustomStringConvertible {
+    var description: String {
+        return "SimpleSceneRenderPass(\(id), depthStencilState: \(depthStencilState != nil), nilDepthStencilState: \(nilDepthStencilState != nil), flatShaderRenderPipelineState: \(flatShaderRenderPipelineState != nil), panoramaShaderRenderPipelineState: \(panoramaShaderRenderPipelineState != nil))"
+    }
+}
+
+class SimpleSceneRenderPass: RenderPass {
+    var id = LOLID2(prefix: "SimpleSceneRenderPass")
     var scene: SimpleScene
     var depthStencilState: MTLDepthStencilState?
-    var nilDepthStencilState: MTLDepthStencilState?
+    var nilDepthStencilState: MTLDepthStencilState? {
+        didSet {
+            print(#function, nilDepthStencilState != nil)
+        }
+    }
     var flatShaderRenderPipelineState: MTLRenderPipelineState?
     var panoramaShaderRenderPipelineState: MTLRenderPipelineState?
     var cache = Cache<String, Any>()
 
     init(scene: SimpleScene) {
+        print("\(id): \(#function)")
         self.scene = scene
     }
 
-    mutating func setup(configuration: inout Configuration.Update) throws {
-        logger?.debug("\(#function)")
-        guard let device = configuration.device else {
-            fatalError("No metal device")
-        }
+    func setup(device: MTLDevice, configuration: inout MetalView.Configuration) throws {
+        print("\(id): \(#function)")
 
         if depthStencilState == nil {
             depthStencilState = device.makeDepthStencilState(descriptor: MTLDepthStencilDescriptor(depthCompareFunction: .lessEqual, isDepthWriteEnabled: true))
@@ -76,14 +85,14 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
         }
     }
 
-    mutating func resized(configuration: inout Configuration.Update, size: CGSize) throws {
+    func drawableSizeWillChange(device: MTLDevice, configuration: inout Configuration, size: CGSize) throws {
+        print("\(id): \(#function)")
     }
 
-    func draw(configuration: Configuration.Draw, commandBuffer: MTLCommandBuffer) throws {
-        guard let renderPassDescriptor = configuration.currentRenderPassDescriptor, let size = configuration.size else {
-            fatalError("No current render pass descriptor.")
+    func draw(device: MTLDevice, configuration: Configuration, size: CGSize, renderPassDescriptor: MTLRenderPassDescriptor, commandBuffer: MTLCommandBuffer) throws {
+        once(#function) {
+            print("\(id): \(#function)")
         }
-
         let cameraUniforms = CameraUniforms(projectionMatrix: scene.camera.projection.matrix(viewSize: SIMD2<Float>(size)))
         let inverseCameraMatrix = scene.camera.transform.matrix.inverse
 
@@ -91,7 +100,10 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
             if let panorama = scene.panorama {
                 encoder.withDebugGroup("Panorama") {
                     guard let panoramaShaderRenderPipelineState, let nilDepthStencilState else {
-                        fatalError()
+                        once("xyz") {
+                            print("No panoramaShaderRenderPipelineState/nilDepthStencilState")
+                        }
+                        return
                     }
                     encoder.setRenderPipelineState(panoramaShaderRenderPipelineState)
                     encoder.setDepthStencilState(nilDepthStencilState)
@@ -101,7 +113,7 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
                     }
                     encoder.setVertexBuffer(mesh, startingIndex: 0)
                     encoder.setVertexBytes(of: cameraUniforms, index: 1)
-                    let modelViewMatrix = inverseCameraMatrix * .identity
+                    let modelViewMatrix = inverseCameraMatrix * float4x4.translation(scene.camera.transform.translation)
                     encoder.setVertexBytes(of: modelViewMatrix, index: 2)
 
                     let uniforms = PanoramaFragmentUniforms(gridSize: panorama.tilesSize, colorFactor: [1, 1, 1, 1])
@@ -112,7 +124,7 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
                         Optional($0)
                     }
                     encoder.setFragmentTextures(textures, range: 0..<textures.count)
-                    encoder.setTriangleFillMode(.fill)
+                    //encoder.setTriangleFillMode(.fill)
 
                     encoder.draw(mesh)
                 }

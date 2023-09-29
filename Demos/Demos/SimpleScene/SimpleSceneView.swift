@@ -23,18 +23,15 @@ public struct SimpleSceneView: View {
     var scene: SimpleScene
 
     @State
-    var bareMetal = true
+    var renderPass: SimpleSceneRenderPass?
 
-    @State
-    var renderPass: SimpleSceneRenderPass<MetalViewConfiguration>
-
-    #if os(macOS)
+#if os(macOS)
     @State
     var isInspectorPresented = true
-    #else
+#else
     @State
     var isInspectorPresented = false
-    #endif
+#endif
 
     @State
     var exportImage: Image?
@@ -44,22 +41,11 @@ public struct SimpleSceneView: View {
 
     public init(scene: Binding<SimpleScene>) {
         self._scene = scene
-        self.renderPass = SimpleSceneRenderPass<MetalViewConfiguration>(scene: scene.wrappedValue)
     }
 
     public var body: some View {
-        if bareMetal {
-            RendererView(renderPass: $renderPass)
-            .onAppear {
-                renderPass.scene = scene
-            }
-            .onChange(of: scene.camera) {
-                renderPass.scene = scene
-            }
-        }
-        else {
-            ZStack {
-#if !os(visionOS)
+        ZStack {
+            if renderPass != nil {
                 RendererView(renderPass: $renderPass)
                     .overlay(alignment: .bottomTrailing) {
                         SimpleSceneMapView(scene: $scene)
@@ -68,47 +54,47 @@ public struct SimpleSceneView: View {
                             .padding()
                     }
                     .onAppear {
-                        renderPass.scene = scene
+                        self.renderPass?.scene = scene
                     }
                     .onChange(of: scene.camera) {
-                        renderPass.scene = scene
+                        self.renderPass?.scene = scene
                     }
-#endif
-            }
 #if os(macOS)
-            .showFrameEditor()
+                .showFrameEditor()
 #endif
-            .toolbar {
-                ToolbarItem(placement: .secondaryAction) {
-                    ValueView(value: false) { isPresentedBinding in
-                        Button(title: "Snapshot", systemImage: "camera") {
-                            Task {
-                                guard let device else {
-                                    fatalError()
+                .toolbar {
+                    ToolbarItem(placement: .secondaryAction) {
+                        ValueView(value: false) { isPresentedBinding in
+                            Button(title: "Snapshot", systemImage: "camera") {
+                                Task {
+                                    guard let device else {
+                                        fatalError()
+                                    }
+                                    exportImage = Image(cgImage: try await renderPass!.snapshot(device: device))
                                 }
-                                exportImage = Image(cgImage: try await renderPass.snapshot(device: device))
                             }
+                            .fileExporter(isPresented: isPresentedBinding, item: exportImage, contentTypes: [.png, .jpeg]) { _ in
+                                exportImage = nil
+                            }
+                            .fileExporterFilenameLabel("Snapshot")
                         }
-                        .fileExporter(isPresented: isPresentedBinding, item: exportImage, contentTypes: [.png, .jpeg]) { _ in
-                            exportImage = nil
-                        }
-                        .fileExporterFilenameLabel("Snapshot")
                     }
                 }
-            }
-#if !os(visionOS)
-            .inspector(isPresented: $isInspectorPresented) {
-                MyTabView(scene: $scene)
-                    .inspectorColumnWidth(ideal: 300)
-                    .toolbar {
-                        ToolbarItem(placement: .primaryAction) {
-                            Button(title: "Show/Hide Inspector", systemImage: "sidebar.trailing") {
-                                isInspectorPresented.toggle()
+                .inspector(isPresented: $isInspectorPresented) {
+                    MyTabView(scene: $scene)
+                        .inspectorColumnWidth(ideal: 300)
+                        .toolbar {
+                            ToolbarItem(placement: .primaryAction) {
+                                Button(title: "Show/Hide Inspector", systemImage: "sidebar.trailing") {
+                                    isInspectorPresented.toggle()
+                                }
                             }
                         }
-                    }
+                }
             }
-#endif
+        }
+        .onAppear {
+            renderPass = SimpleSceneRenderPass(scene: scene)
         }
     }
 }

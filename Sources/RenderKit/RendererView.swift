@@ -1,34 +1,39 @@
 #if !os(visionOS)
 import SwiftUI
+import MetalSupport
 
-public struct RendererView <T>: View where T: RenderPass, T.Configuration.Update == ConcreteMetalViewConfiguration, T.Configuration.Draw == ConcreteMetalViewConfiguration {
+public struct RendererView <T>: View where T: RenderPass {
     @Binding
-    var renderPass: T
+    var renderPass: T?
 
     @State
     var commandQueue: MTLCommandQueue?
 
-    public init(renderPass: Binding<T>) {
+    @Environment(\.metalDevice)
+    var device
+
+    public init(renderPass: Binding<T?>) {
         self._renderPass = renderPass
     }
 
     public var body: some View {
-        MetalView { configuration in
+        MetalView { device, configuration in
             configuration.preferredFramesPerSecond = 120
-            configuration.colorPixelFormat = .bgra8Unorm
+            configuration.colorPixelFormat = .bgra8Unorm_srgb
             configuration.depthStencilPixelFormat = .depth16Unorm
             configuration.depthStencilStorageMode = .memoryless
-
-            try! renderPass.setup(configuration: &configuration)
-            commandQueue = configuration.device!.makeCommandQueue()
-        }
-        drawableSizeWillChange: { configuration, size in
-            try! renderPass.resized(configuration: &configuration, size: size)
-        }
-        draw: { configuration in
-            commandQueue?.withCommandBuffer(drawable: configuration.currentDrawable, block: { commandBuffer in
-                try! renderPass.draw(configuration: configuration, commandBuffer: commandBuffer)
+            try renderPass!.setup(device: device, configuration: &configuration)
+        } drawableSizeWillChange: { device, configuration, size in
+            try renderPass!.drawableSizeWillChange(device: device, configuration: &configuration, size: size)
+        } draw: { device, configuration, size, currentDrawable, renderPassDescriptor in
+            try commandQueue!.withCommandBuffer(drawable: currentDrawable, block: { commandBuffer in
+                try renderPass!.draw(device: device, configuration: configuration, size: size, renderPassDescriptor: renderPassDescriptor, commandBuffer: commandBuffer)
             })
+        }
+        .onAppear {
+            if commandQueue == nil {
+                commandQueue = device!.makeCommandQueue()
+            }
         }
     }
 }

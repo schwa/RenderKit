@@ -121,11 +121,11 @@ public extension SimpleScene {
 
         let tilesSize: SIMD2<UInt16>
         let tileTextures: [(MTKTextureLoader) throws -> MTLTexture]
-        if false {
+        if true {
             tilesSize = [6, 2]
             tileTextures = (1 ... 12).map { index in
                 ResourceReference.bundle(.main, name: "perseverance_\(index.formatted(.number.precision(.integerLength(2))))", extension: "ktx")
-                //            ResourceReference.bundle(.main, name: "Testcard_\(index.formatted(.number.precision(.integerLength(2))))", extension: "ktx")
+                //ResourceReference.bundle(.main, name: "Testcard_\(index.formatted(.number.precision(.integerLength(2))))", extension: "ktx")
             }
             .map { resource -> ((MTKTextureLoader) throws -> MTLTexture) in
                 return { loader in
@@ -162,53 +162,5 @@ public extension SimpleScene {
         )
 
         return scene
-    }
-}
-
-enum BundleReference: Hashable, Sendable {
-    case main
-    case byURL(URL)
-    case byIdentifier(String)
-
-    func bundle() -> Bundle? {
-        switch self {
-        case .main:
-            return Bundle.main
-        case .byURL(let url):
-            return Bundle(url: url)
-        case .byIdentifier(let identifier):
-            return Bundle(identifier: identifier)
-        }
-    }
-}
-
-enum ResourceReference: Hashable, Sendable {
-    case direct(URL)
-    case bundle(BundleReference, name: String, extension: String?)
-
-    func url() -> URL? {
-        switch self {
-        case .direct(let url):
-            url
-        case .bundle(let bundle, let name, let `extension`):
-            // swiftlint:disable:next redundant_nil_coalescing
-            bundle.bundle().map { $0.url(forResource: name, withExtension: `extension`) } ?? nil
-        }
-    }
-}
-
-extension MTKTextureLoader {
-    func newTexture(resource: ResourceReference, options: [Option: Any]? = nil) throws -> MTLTexture {
-        guard let url = resource.url() else {
-            fatalError()
-        }
-        return try newTexture(URL: url, options: options)
-    }
-
-    func newTexture(resource: ResourceReference, options: [Option: Any]? = nil) async throws -> MTLTexture {
-        guard let url = resource.url() else {
-            fatalError()
-        }
-        return try await newTexture(URL: url, options: options)
     }
 }

@@ -25,8 +25,6 @@ Fragment panoramicVertexShader(
     };
 }
 
-//constant size_t texture_count [[function_constant(0)]];
-
 [[fragment]]
 vector_float4 panoramicFragmentShader(
     Fragment in [[stage_in]],
@@ -36,7 +34,7 @@ vector_float4 panoramicFragmentShader(
 {
     float4 color;
     // Special-case single texture panoramas.
-    if (tiles.size()) {
+    if (tiles.size() == 1) {
         const auto texture = tiles[0];
         color = texture.sample(RenderKitShaders::basicSampler, in.textureCoordinate);
     }
@@ -51,5 +49,6 @@ vector_float4 panoramicFragmentShader(
         //    }
         color = texture.sample(RenderKitShaders::basicSampler, textureCoordinate);
     }
-    return linear_to_srgb(color * uniforms.colorFactor);
+    color *= uniforms.colorFactor;
+    return color;
 }

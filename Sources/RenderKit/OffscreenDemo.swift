@@ -1,3 +1,4 @@
+/*
 import SwiftUI
 import MetalKit
 import ModelIO
@@ -188,3 +189,4 @@ public struct OffscreenDemo {
     }
 }
 #endif
+*/

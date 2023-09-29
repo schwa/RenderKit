@@ -3,7 +3,7 @@ import CoreGraphics
 import RenderKit
 
 extension RenderPass {
-    mutating func snapshot(device: MTLDevice) async throws -> CGImage {
+    func snapshot(device: MTLDevice) async throws -> CGImage {
         fatalError("Unimplemented")
         // TODO: RenderPasses are now bound to Render Configurations now. We can't just re-render. Need to recreate the render pass with new configuration?
 //        var configuration = OffscreenRenderPassConfiguration()
