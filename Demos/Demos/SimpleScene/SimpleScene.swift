@@ -119,16 +119,32 @@ public extension SimpleScene {
         let xRange = [Float](stride(from: -2, through: 2, by: 1))
         let zRange = [Float](stride(from: 0, through: -10, by: -1))
 
-        let tileTextures = (1 ... 12).map { index in
-            ResourceReference.bundle(.main, name: "perseverance_\(index.formatted(.number.precision(.integerLength(2))))", extension: "ktx")
-//            ResourceReference.bundle(.main, name: "Testcard_\(index.formatted(.number.precision(.integerLength(2))))", extension: "ktx")
-        }
-        .map { resource -> ((MTKTextureLoader) throws -> MTLTexture) in
-            return { loader in
-                try loader.newTexture(resource: resource, options: [.textureStorageMode: MTLStorageMode.private.rawValue])
+        let tilesSize: SIMD2<UInt16>
+        let tileTextures: [(MTKTextureLoader) throws -> MTLTexture]
+        if false {
+            tilesSize = [6, 2]
+            tileTextures = (1 ... 12).map { index in
+                ResourceReference.bundle(.main, name: "perseverance_\(index.formatted(.number.precision(.integerLength(2))))", extension: "ktx")
+                //            ResourceReference.bundle(.main, name: "Testcard_\(index.formatted(.number.precision(.integerLength(2))))", extension: "ktx")
+            }
+            .map { resource -> ((MTKTextureLoader) throws -> MTLTexture) in
+                return { loader in
+                    try loader.newTexture(resource: resource, options: [.textureStorageMode: MTLStorageMode.private.rawValue])
+                }
             }
         }
-        let panorama = Panorama(tilesSize: [6, 2], tileTextures: tileTextures) { device in
+        else {
+            tilesSize = [1, 1]
+            tileTextures = [ { loader in
+                    try loader.newTexture(name: "BlueSkySkybox", scaleFactor: 1, bundle: .main, options: [
+                        .textureStorageMode: MTLStorageMode.private.rawValue,
+                        .SRGB: true,
+                    ])
+                }
+            ]
+        }
+
+        let panorama = Panorama(tilesSize: tilesSize, tileTextures: tileTextures) { device in
             try Sphere(extent: [95, 95, 95], inwardNormals: true).toMTKMesh(allocator: MTKMeshBufferAllocator(device: device), device: device)
         }
 

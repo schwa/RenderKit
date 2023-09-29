@@ -9,6 +9,7 @@ import RenderKit
 struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: RenderKitConfiguration {
     var scene: SimpleScene
     var depthStencilState: MTLDepthStencilState?
+    var nilDepthStencilState: MTLDepthStencilState?
     var flatShaderRenderPipelineState: MTLRenderPipelineState?
     var panoramaShaderRenderPipelineState: MTLRenderPipelineState?
     var cache = Cache<String, Any>()
@@ -25,6 +26,10 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
 
         if depthStencilState == nil {
             depthStencilState = device.makeDepthStencilState(descriptor: MTLDepthStencilDescriptor(depthCompareFunction: .lessEqual, isDepthWriteEnabled: true))
+        }
+
+        if nilDepthStencilState == nil {
+            nilDepthStencilState = device.makeDepthStencilState(descriptor: MTLDepthStencilDescriptor())
         }
 
         if flatShaderRenderPipelineState == nil {
@@ -83,6 +88,36 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
         let inverseCameraMatrix = scene.camera.transform.matrix.inverse
 
         commandBuffer.withRenderCommandEncoder(descriptor: renderPassDescriptor) { encoder in
+            if let panorama = scene.panorama {
+                encoder.withDebugGroup("Panorama") {
+                    guard let panoramaShaderRenderPipelineState, let nilDepthStencilState else {
+                        fatalError()
+                    }
+                    encoder.setRenderPipelineState(panoramaShaderRenderPipelineState)
+                    encoder.setDepthStencilState(nilDepthStencilState)
+
+                    guard let mesh = cache.get(key: "panorama:mesh") as? MTKMesh else {
+                        fatalError()
+                    }
+                    encoder.setVertexBuffer(mesh, startingIndex: 0)
+                    encoder.setVertexBytes(of: cameraUniforms, index: 1)
+                    let modelViewMatrix = inverseCameraMatrix * .identity
+                    encoder.setVertexBytes(of: modelViewMatrix, index: 2)
+
+                    let uniforms = PanoramaFragmentUniforms(gridSize: panorama.tilesSize, colorFactor: [1, 1, 1, 1])
+
+                    encoder.setFragmentBytes(of: uniforms, index: 0)
+
+                    let textures = (cache.get(key: "panorama:textures") as! [MTLTexture]).map {
+                        Optional($0)
+                    }
+                    encoder.setFragmentTextures(textures, range: 0..<textures.count)
+                    encoder.setTriangleFillMode(.fill)
+
+                    encoder.draw(mesh)
+                }
+            }
+
             // Render all models with flatShader
             encoder.withDebugGroup("Scene Models") {
                 if !scene.models.isEmpty {
@@ -126,35 +161,6 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
                             }
                         }
                     }
-                }
-            }
-
-            if let panorama = scene.panorama {
-                encoder.withDebugGroup("Panorama") {
-                    guard let panoramaShaderRenderPipelineState, let depthStencilState else {
-                        fatalError()
-                    }
-                    encoder.setRenderPipelineState(panoramaShaderRenderPipelineState)
-                    // TODO: if we render this first we can disable the depth test.
-                    encoder.setDepthStencilState(depthStencilState)
-
-                    guard let mesh = cache.get(key: "panorama:mesh") as? MTKMesh else {
-                        fatalError()
-                    }
-                    encoder.setVertexBuffer(mesh, startingIndex: 0)
-                    encoder.setVertexBytes(of: cameraUniforms, index: 1)
-                    let modelViewMatrix = inverseCameraMatrix * .identity
-                    encoder.setVertexBytes(of: modelViewMatrix, index: 2)
-
-                    encoder.setFragmentBytes(of: panorama.tilesSize, index: 0)
-
-                    let textures = (cache.get(key: "panorama:textures") as! [MTLTexture]).map {
-                        Optional($0)
-                    }
-                    encoder.setFragmentTextures(textures, range: 0..<textures.count)
-                    encoder.setTriangleFillMode(.fill)
-
-                    encoder.draw(mesh)
                 }
             }
         }

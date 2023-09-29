@@ -1,4 +1,5 @@
 #import "include/RenderKitShaders.h"
+#import "include/PanoramicShaders.h"
 
 typedef SimpleVertex Vertex;
 
@@ -29,18 +30,26 @@ Fragment panoramicVertexShader(
 [[fragment]]
 vector_float4 panoramicFragmentShader(
     Fragment in [[stage_in]],
-    constant ushort2 &gridSize[[buffer(0)]],
+    constant PanoramaFragmentUniforms &uniforms[[buffer(0)]],
     array<texture2d<float, access::sample>, 12> tiles [[texture(0)]]
     )
 {
-    const float2 denormalizedTextureCoordinate = in.textureCoordinate * float2(gridSize);
-    const ushort textureIndex = clamp(ushort(denormalizedTextureCoordinate.y) * gridSize.x + ushort(denormalizedTextureCoordinate.x), 0, ushort(tiles.size()) - 1);
-    const float2 textureCoordinate = denormalizedTextureCoordinate - floor(denormalizedTextureCoordinate);
-    const auto texture = tiles[textureIndex];
-//    const float d = 1.0 / float(texture.get_width());
-//    if (textureCoordinate.x <= d || textureCoordinate.x >= 1 - d || textureCoordinate.y < d || textureCoordinate.y > 1 - d) {
-//        return float4(1, 0, 0, 1);
-//    }
-    const auto color = texture.sample(RenderKitShaders::basicSampler, textureCoordinate);
-    return color;
+    float4 color;
+    // Special-case single texture panoramas.
+    if (tiles.size()) {
+        const auto texture = tiles[0];
+        color = texture.sample(RenderKitShaders::basicSampler, in.textureCoordinate);
+    }
+    else {
+        const float2 denormalizedTextureCoordinate = in.textureCoordinate * float2(uniforms.gridSize);
+        const ushort textureIndex = clamp(ushort(denormalizedTextureCoordinate.y) * uniforms.gridSize.x + ushort(denormalizedTextureCoordinate.x), 0, ushort(tiles.size()) - 1);
+        const float2 textureCoordinate = denormalizedTextureCoordinate - floor(denormalizedTextureCoordinate);
+        const auto texture = tiles[textureIndex];
+        //    const float d = 1.0 / float(texture.get_width());
+        //    if (textureCoordinate.x <= d || textureCoordinate.x >= 1 - d || textureCoordinate.y < d || textureCoordinate.y > 1 - d) {
+        //        return float4(1, 0, 0, 1);
+        //    }
+        color = texture.sample(RenderKitShaders::basicSampler, textureCoordinate);
+    }
+    return linear_to_srgb(color * uniforms.colorFactor);
 }
