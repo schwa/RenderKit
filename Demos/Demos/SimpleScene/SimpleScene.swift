@@ -125,7 +125,7 @@ public extension SimpleScene {
         }
         .map { resource -> ((MTKTextureLoader) throws -> MTLTexture) in
             return { loader in
-                try loader.newTexture(resource: resource)
+                try loader.newTexture(resource: resource, options: [.textureStorageMode: MTLStorageMode.private.rawValue])
             }
         }
         let panorama = Panorama(tilesSize: [6, 2], tileTextures: tileTextures) { device in

@@ -104,26 +104,30 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
                 }
 
                 for (meshKey, models) in bucketedModels {
+                    encoder.pushDebugGroup("Instanced \(meshKey)")
                     guard let mesh = cache.get(key: meshKey) as? MTKMesh else {
                         fatalError()
                     }
                     encoder.setVertexBuffer(mesh, startingIndex: 0)
-                    for model in models {
-                        for (fillMode, color) in modes {
-                            let modelUniforms = ModelUniforms(
+
+                    for (fillMode, color) in modes {
+                        let modelUniforms = models.map { model in
+                            ModelUniforms(
                                 modelViewMatrix: inverseCameraMatrix * model.transform.matrix,
                                 modelNormalMatrix: simd_float3x3(truncating: model.transform.matrix.transpose.inverse),
                                 color: color ?? model.color
                             )
-                            encoder.setTriangleFillMode(fillMode)
-                            encoder.setVertexBytes(of: modelUniforms, index: 2)
-                            encoder.draw(mesh)
                         }
+                        encoder.setTriangleFillMode(fillMode)
+                        encoder.setVertexBytes(of: modelUniforms, index: 2)
+                        encoder.draw(mesh, instanceCount: models.count)
                     }
+                    encoder.popDebugGroup()
                 }
             }
 
             if let panorama = scene.panorama {
+                encoder.pushDebugGroup("Panorama")
                 guard let panoramaShaderRenderPipelineState, let depthStencilState else {
                     fatalError()
                 }
@@ -147,6 +151,7 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
                 encoder.setTriangleFillMode(.fill)
 
                 encoder.draw(mesh)
+                encoder.popDebugGroup()
             }
         }
     }
