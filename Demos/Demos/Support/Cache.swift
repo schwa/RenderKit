@@ -172,3 +172,10 @@ public extension Cache {
         return insert(key: cachable.key, value: cachable.value)
     }
 }
+
+public extension Cache where Value == Any {
+    @discardableResult
+    func insert <V>(_ cachable: Cachable <Key, V>) -> V? {
+        return insert(key: cachable.key, value: cachable.value) as? V
+    }
+}
