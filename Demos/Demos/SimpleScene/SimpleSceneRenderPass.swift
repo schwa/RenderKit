@@ -60,7 +60,7 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
 
         // Warm cache
         for model in scene.models {
-            cache.insert(key: "model:\(model.id):mesh", value: try! model.mesh(device))
+            cache.insert(key: model.mesh.0, value: try! model.mesh.1(device))
         }
 
         if let panorama = scene.panorama {
@@ -98,20 +98,27 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
                 let lightUniforms = LightUniforms(lightPosition: scene.light.position.translation, lightColor: scene.light.color, lightPower: scene.light.power, ambientLightColor: scene.ambientLightColor)
                 encoder.setFragmentBytes(of: lightUniforms, index: 3)
                 // TODO: Instancing
-                for model in scene.models {
-                    guard let mesh = cache.get(key: "model:\(model.id):mesh") as? MTKMesh else {
+
+                let bucketedModels = scene.models.reduce(into: [:]) { partialResult, model in
+                    partialResult[model.mesh.0, default: []].append(model)
+                }
+
+                for (meshKey, models) in bucketedModels {
+                    guard let mesh = cache.get(key: meshKey) as? MTKMesh else {
                         fatalError()
                     }
                     encoder.setVertexBuffer(mesh, startingIndex: 0)
-                    for (fillMode, color) in modes {
-                        let modelUniforms = ModelUniforms(
-                            modelViewMatrix: inverseCameraMatrix * model.transform.matrix,
-                            modelNormalMatrix: simd_float3x3(truncating: model.transform.matrix.transpose.inverse),
-                            color: color ?? model.color
-                        )
-                        encoder.setTriangleFillMode(fillMode)
-                        encoder.setVertexBytes(of: modelUniforms, index: 2)
-                        encoder.draw(mesh)
+                    for model in models {
+                        for (fillMode, color) in modes {
+                            let modelUniforms = ModelUniforms(
+                                modelViewMatrix: inverseCameraMatrix * model.transform.matrix,
+                                modelNormalMatrix: simd_float3x3(truncating: model.transform.matrix.transpose.inverse),
+                                color: color ?? model.color
+                            )
+                            encoder.setTriangleFillMode(fillMode)
+                            encoder.setVertexBytes(of: modelUniforms, index: 2)
+                            encoder.draw(mesh)
+                        }
                     }
                 }
             }

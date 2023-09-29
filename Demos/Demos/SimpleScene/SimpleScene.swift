@@ -82,10 +82,10 @@ public struct Model: Identifiable {
     public var id = LOLID2(prefix: "Model")
     public var transform: Transform
     public var color: SIMD4<Float>
-    public var mesh: (MTLDevice) throws -> MTKMesh
+    public var mesh: (String, (MTLDevice) throws -> MTKMesh)
     //public var mesh1: (MTLDevice) throws -> Cachable<AnyHashable, MTKMesh>
 
-    public init(transform: Transform, color: SIMD4<Float>, mesh: @escaping (MTLDevice) throws -> MTKMesh) {
+    public init(transform: Transform, color: SIMD4<Float>, mesh: (String, (MTLDevice) throws -> MTKMesh)) {
         self.transform = transform
         self.color = color
         self.mesh = mesh
@@ -110,9 +110,9 @@ public struct Panorama: Identifiable {
 
 public extension SimpleScene {
     static func demo() -> SimpleScene {
-        let cone = { device in try Cone(extent: [0.5, 1, 0.5], segments: [20, 10]).toMTKMesh(allocator: MTKMeshBufferAllocator(device: device), device: device) }
-        let sphere = { device in try Sphere(extent: [0.5, 0.5, 0.5], segments: [20, 10]).toMTKMesh(allocator: MTKMeshBufferAllocator(device: device), device: device) }
-        let capsule = { device in try Capsule(extent: [0.25, 1, 0.25], cylinderSegments: [30, 10], hemisphereSegments: 5).toMTKMesh(allocator: MTKMeshBufferAllocator(device: device), device: device) }
+        let cone = ("cone", { device in try Cone(extent: [0.5, 1, 0.5], segments: [20, 10]).toMTKMesh(allocator: MTKMeshBufferAllocator(device: device), device: device) })
+        let sphere = ("sphere", { device in try Sphere(extent: [0.5, 0.5, 0.5], segments: [20, 10]).toMTKMesh(allocator: MTKMeshBufferAllocator(device: device), device: device) })
+        let capsule = ("capsule", { device in try Capsule(extent: [0.25, 1, 0.25], cylinderSegments: [30, 10], hemisphereSegments: 5).toMTKMesh(allocator: MTKMeshBufferAllocator(device: device), device: device) })
 
         let meshes = [cone, sphere, capsule]
 
