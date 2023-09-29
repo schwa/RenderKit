@@ -59,10 +59,8 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
         }
 
         // Warm cache
-        if false {
-            for model in scene.models {
-                cache.insert(key: "model:\(model.id):mesh", value: try! model.mesh(device))
-            }
+        for model in scene.models {
+            cache.insert(key: "model:\(model.id):mesh", value: try! model.mesh(device))
         }
 
         if let panorama = scene.panorama {
@@ -86,7 +84,7 @@ struct SimpleSceneRenderPass<Configuration>: RenderPass where Configuration: Ren
 
         commandBuffer.withRenderCommandEncoder(descriptor: renderPassDescriptor) { encoder in
             // Render all models with flatShader
-            if !scene.models.isEmpty && false {
+            if !scene.models.isEmpty {
                 guard let flatShaderRenderPipelineState, let depthStencilState else {
                     return
                 }
