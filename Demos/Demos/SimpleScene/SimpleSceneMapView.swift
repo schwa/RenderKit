@@ -1,6 +1,7 @@
 import SwiftUI
 import simd
 import CoreGraphicsSupport
+import SIMDSupport
 
 struct SimpleSceneMapView: View {
     @Binding
@@ -29,6 +30,11 @@ struct SimpleSceneMapView: View {
             var cameraImage = context.resolve(Image(systemName: "camera.circle.fill"))
             cameraImage.shading = .color(.mint)
             context.draw(cameraImage, at: cameraPosition * scale, anchor: .center)
+
+            let lightPosition = CGPoint(scene.light.position.translation.xz)
+            var lightImage = context.resolve(Image(systemName: "lightbulb.fill"))
+            lightImage.shading = .color(.yellow)
+            context.draw(lightImage, at: lightPosition * scale, anchor: .center)
 
             let targetPosition = cameraPosition + CGPoint(scene.camera.target.xz)
             var targetImage = context.resolve(Image(systemName: "scope"))
