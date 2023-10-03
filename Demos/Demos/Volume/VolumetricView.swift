@@ -16,7 +16,7 @@ import LegacyGraphics
 
 public struct VolumetricView: View {
     @State
-    var renderPass: VolumetricRenderPass? = VolumetricRenderPass()
+    var renderPass = VolumetricRenderPass()
 
     @State
     var rotation = Rotation.zero
@@ -46,7 +46,7 @@ public struct VolumetricView: View {
                 updateTransferFunctionTexture()
             }
             .onChange(of: rotation) {
-                renderPass?.rotation = rotation
+                renderPass.rotation = rotation
             }
             .onChange(of: redTransferFunction) {
                 updateTransferFunctionTexture()
@@ -93,7 +93,7 @@ public struct VolumetricView: View {
             let region = MTLRegion(origin: [0, 0, 0], size: [256, 1, 1]) // TODO: Hardcoded
             let bytesPerRow = 256 * MemoryLayout<SIMD4<UInt8>>.stride
 
-            renderPass?.transferFunctionTexture.replace(region: region, mipmapLevel: 0, slice: 0, withBytes: buffer.baseAddress!, bytesPerRow: bytesPerRow, bytesPerImage: 0)
+            renderPass.transferFunctionTexture.replace(region: region, mipmapLevel: 0, slice: 0, withBytes: buffer.baseAddress!, bytesPerRow: bytesPerRow, bytesPerImage: 0)
         }
     }
 }

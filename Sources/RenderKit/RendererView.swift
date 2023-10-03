@@ -4,7 +4,7 @@ import MetalSupport
 
 public struct RendererView <T>: View where T: RenderPass {
     @Binding
-    var renderPass: T?
+    var renderPass: T
 
     @State
     var commandQueue: MTLCommandQueue?
@@ -12,7 +12,7 @@ public struct RendererView <T>: View where T: RenderPass {
     @Environment(\.metalDevice)
     var device
 
-    public init(renderPass: Binding<T?>) {
+    public init(renderPass: Binding<T>) {
         self._renderPass = renderPass
     }
 
@@ -22,17 +22,20 @@ public struct RendererView <T>: View where T: RenderPass {
             configuration.colorPixelFormat = .bgra8Unorm_srgb
             configuration.depthStencilPixelFormat = .depth16Unorm
             configuration.depthStencilStorageMode = .memoryless
-            try renderPass!.setup(device: device, configuration: &configuration)
+            try renderPass.setup(device: device, configuration: &configuration)
         } drawableSizeWillChange: { device, configuration, size in
-            try renderPass!.drawableSizeWillChange(device: device, configuration: &configuration, size: size)
+            try renderPass.drawableSizeWillChange(device: device, configuration: &configuration, size: size)
         } draw: { device, configuration, size, currentDrawable, renderPassDescriptor in
-            try commandQueue!.withCommandBuffer(drawable: currentDrawable, block: { commandBuffer in
-                try renderPass!.draw(device: device, configuration: configuration, size: size, renderPassDescriptor: renderPassDescriptor, commandBuffer: commandBuffer)
+            guard let commandQueue else {
+                fatalError("Draw called before command queue set up. This should be impossible.")
+            }
+            try commandQueue.withCommandBuffer(drawable: currentDrawable, block: { commandBuffer in
+                try renderPass.draw(device: device, configuration: configuration, size: size, renderPassDescriptor: renderPassDescriptor, commandBuffer: commandBuffer)
             })
         }
         .onAppear {
             if commandQueue == nil {
-                commandQueue = device!.makeCommandQueue()
+                commandQueue = device?.makeCommandQueue()
             }
         }
     }

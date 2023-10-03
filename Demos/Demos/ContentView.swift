@@ -6,11 +6,9 @@ import Everything
 struct ContentView: View {
     enum Demo: String, CaseIterable, Hashable {
         case simpleScene = "Simple Scene"
+        case simpleSceneExtended = "Simple Scene (Extended)"
         case volumetric = "Volumetric"
     }
-
-    @State
-    var scene = SimpleScene.demo()
 
     @State
     var demo: Demo = .simpleScene
@@ -35,7 +33,10 @@ struct ContentView: View {
             .navigationDestination(for: Demo.self) { demo in
                 switch demo {
                 case .simpleScene:
-                    SimpleSceneView(scene: $scene)
+                    CoreSimpleSceneView()
+                        .navigationTitle(demo.rawValue)
+                case .simpleSceneExtended:
+                    SimpleSceneView()
                         .navigationTitle(demo.rawValue)
                 case .volumetric:
                     VolumetricView()

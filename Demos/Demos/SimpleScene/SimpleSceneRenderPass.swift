@@ -7,33 +7,19 @@ import RenderKitShaders
 import RenderKit
 import Observation
 
-extension SimpleSceneRenderPass: CustomStringConvertible {
-    var description: String {
-        return "SimpleSceneRenderPass(\(id), depthStencilState: \(depthStencilState != nil), nilDepthStencilState: \(nilDepthStencilState != nil), flatShaderRenderPipelineState: \(flatShaderRenderPipelineState != nil), panoramaShaderRenderPipelineState: \(panoramaShaderRenderPipelineState != nil))"
-    }
-}
-
 class SimpleSceneRenderPass: RenderPass {
-    var id = LOLID2(prefix: "SimpleSceneRenderPass")
     var scene: SimpleScene
     var depthStencilState: MTLDepthStencilState?
-    var nilDepthStencilState: MTLDepthStencilState? {
-        didSet {
-            print(#function, nilDepthStencilState != nil)
-        }
-    }
+    var nilDepthStencilState: MTLDepthStencilState?
     var flatShaderRenderPipelineState: MTLRenderPipelineState?
     var panoramaShaderRenderPipelineState: MTLRenderPipelineState?
     var cache = Cache<String, Any>()
 
     init(scene: SimpleScene) {
-        print("\(id): \(#function)")
         self.scene = scene
     }
 
     func setup(device: MTLDevice, configuration: inout MetalConfiguration) throws {
-        print("\(id): \(#function)")
-
         if depthStencilState == nil {
             depthStencilState = device.makeDepthStencilState(descriptor: MTLDepthStencilDescriptor(depthCompareFunction: .lessEqual, isDepthWriteEnabled: true))
         }
@@ -87,13 +73,9 @@ class SimpleSceneRenderPass: RenderPass {
     }
 
     func drawableSizeWillChange(device: MTLDevice, configuration: inout Configuration, size: CGSize) throws {
-        print("\(id): \(#function)")
     }
 
     func draw(device: MTLDevice, configuration: Configuration, size: CGSize, renderPassDescriptor: MTLRenderPassDescriptor, commandBuffer: MTLCommandBuffer) throws {
-        once(#function) {
-            print("\(id): \(#function)")
-        }
         let cameraUniforms = CameraUniforms(projectionMatrix: scene.camera.projection.matrix(viewSize: SIMD2<Float>(size)))
         let inverseCameraMatrix = scene.camera.transform.matrix.inverse
 
@@ -101,9 +83,6 @@ class SimpleSceneRenderPass: RenderPass {
             if let panorama = scene.panorama {
                 encoder.withDebugGroup("Panorama") {
                     guard let panoramaShaderRenderPipelineState, let nilDepthStencilState else {
-                        once("xyz") {
-                            print("No panoramaShaderRenderPipelineState/nilDepthStencilState")
-                        }
                         return
                     }
                     encoder.setRenderPipelineState(panoramaShaderRenderPipelineState)

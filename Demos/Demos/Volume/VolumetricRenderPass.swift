@@ -54,7 +54,6 @@ class VolumetricRenderPass: RenderPass {
             renderPipelineDescriptor.vertexFunction = vertexFunction
             renderPipelineDescriptor.fragmentFunction = fragmentFunction
             renderPipelineDescriptor.colorAttachments[0].pixelFormat = configuration.colorPixelFormat
-
             renderPipelineDescriptor.colorAttachments[0].isBlendingEnabled = true
             renderPipelineDescriptor.colorAttachments[0].rgbBlendOperation = .add
             renderPipelineDescriptor.colorAttachments[0].alphaBlendOperation = .add

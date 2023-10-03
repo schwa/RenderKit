@@ -15,7 +15,7 @@ import CoreImage
 import CoreGraphicsSupport
 import AsyncAlgorithms
 
-public struct SimpleSceneView: View {
+struct CoreSimpleSceneView: View {
     @Environment(\.metalDevice)
     var device
 
@@ -23,7 +23,32 @@ public struct SimpleSceneView: View {
     var scene: SimpleScene
 
     @State
-    var renderPass: SimpleSceneRenderPass?
+    var renderPass: SimpleSceneRenderPass
+
+    init(scene: Binding<SimpleScene> = .constant(.demo())) {
+        self._scene = scene
+        self.renderPass = SimpleSceneRenderPass(scene: scene.wrappedValue)
+    }
+
+    var body: some View {
+        RendererView(renderPass: $renderPass)
+            .onChange(of: scene.camera) {
+                renderPass.scene = scene
+            }
+            .onChange(of: scene.light) {
+                renderPass.scene = scene
+            }
+    }
+}
+
+// MARK: -
+
+public struct SimpleSceneView: View {
+    @Environment(\.metalDevice)
+    var device
+
+    @State
+    var scene = SimpleScene.demo()
 
 #if os(macOS)
     @State
@@ -33,69 +58,38 @@ public struct SimpleSceneView: View {
     var isInspectorPresented = false
 #endif
 
-    @State
-    var exportImage: Image?
-
-    @State
-    var label: String?
-
-    public init(scene: Binding<SimpleScene>) {
-        self._scene = scene
-    }
+//    @State
+//    var exportImage: Image?
+//
+//    @State
+//    var label: String?
 
     public var body: some View {
-        ZStack {
-            if renderPass != nil {
-                RendererView(renderPass: $renderPass)
-                    .overlay(alignment: .bottomTrailing) {
-                        SimpleSceneMapView(scene: $scene)
-                            .border(Color.red)
-                            .frame(width: 200, height: 200)
-                            .padding()
-                    }
-                    .onAppear {
-                        self.renderPass?.scene = scene
-                    }
-                    .onChange(of: scene.camera) {
-                        self.renderPass?.scene = scene
-                    }
+        CoreSimpleSceneView(scene: $scene)
 #if os(macOS)
-                .showFrameEditor()
+        .showFrameEditor()
 #endif
-                .toolbar {
-                    ToolbarItem(placement: .secondaryAction) {
-                        ValueView(value: false) { isPresentedBinding in
-                            Button(title: "Snapshot", systemImage: "camera") {
-                                Task {
-                                    guard let device else {
-                                        fatalError()
-                                    }
-                                    exportImage = Image(cgImage: try await renderPass!.snapshot(device: device))
-                                }
-                            }
-                            .fileExporter(isPresented: isPresentedBinding, item: exportImage, contentTypes: [.png, .jpeg]) { _ in
-                                exportImage = nil
-                            }
-                            .fileExporterFilenameLabel("Snapshot")
-                        }
+        .overlay(alignment: .bottomTrailing, content: mapView)
+        .inspector(isPresented: $isInspectorPresented, content: inspector)
+    }
+
+    func mapView() -> some View {
+        SimpleSceneMapView(scene: $scene)
+            .border(Color.red)
+            .frame(width: 200, height: 200)
+            .padding()
+    }
+
+    func inspector() -> some View {
+        MyTabView(scene: $scene)
+            .inspectorColumnWidth(ideal: 300)
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button(title: "Show/Hide Inspector", systemImage: "sidebar.trailing") {
+                        isInspectorPresented.toggle()
                     }
-                }
-                .inspector(isPresented: $isInspectorPresented) {
-                    MyTabView(scene: $scene)
-                        .inspectorColumnWidth(ideal: 300)
-                        .toolbar {
-                            ToolbarItem(placement: .primaryAction) {
-                                Button(title: "Show/Hide Inspector", systemImage: "sidebar.trailing") {
-                                    isInspectorPresented.toggle()
-                                }
-                            }
-                        }
                 }
             }
-        }
-        .onAppear {
-            renderPass = SimpleSceneRenderPass(scene: scene)
-        }
     }
 }
 
@@ -136,3 +130,24 @@ struct MyTabView: View {
     }
 }
 #endif
+
+/*
+ .toolbar {
+ ToolbarItem(placement: .secondaryAction) {
+ ValueView(value: false) { isPresentedBinding in
+ Button(title: "Snapshot", systemImage: "camera") {
+ Task {
+ guard let device else {
+ fatalError()
+ }
+ exportImage = Image(cgImage: try await renderPass!.snapshot(device: device))
+ }
+ }
+ .fileExporter(isPresented: isPresentedBinding, item: exportImage, contentTypes: [.png, .jpeg]) { _ in
+ exportImage = nil
+ }
+ .fileExporterFilenameLabel("Snapshot")
+ }
+ }
+ }
+ */
