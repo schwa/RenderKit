@@ -140,3 +140,9 @@ extension MTKTextureLoader {
         return try await newTexture(URL: url, options: options)
     }
 }
+
+extension MTLOrigin: ExpressibleByArrayLiteral {
+    public init(arrayLiteral elements: Int...) {
+        self = .init(x: elements[0], y: elements[1], z: elements[2])
+    }
+}

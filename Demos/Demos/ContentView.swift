@@ -16,26 +16,34 @@ struct ContentView: View {
     var demo: Demo = .simpleScene
 
     var body: some View {
-        Group {
-            switch demo {
-            case .simpleScene:
-                SimpleSceneView(scene: $scene)
-                .firstPersonInteractive(scene: $scene)
-                .displayLink(DisplayLink2())
-            case .volumetric:
-                VolumeView()
-            }
-        }
-        .metalDevice(MTLCreateSystemDefaultDevice()!)
-        .toolbar {
-            ToolbarItem(placement: .navigation) {
-                Picker(selection: $demo, label: Text("Demo")) {
+        NavigationStack {
+            Group {
+                List {
                     ForEach(Demo.allCases, id: \.self) { demo in
-                        Text("\(demo.rawValue)").tag(demo)
+                        NavigationLink(value: demo) {
+                            Text(verbatim: demo.rawValue)
+                        }
                     }
+                }
+                #if os(macOS)
+                .frame(maxWidth: 320)
+                .padding()
+                .frame(maxWidth: .infinity)
+                #endif
+            }
+            .navigationTitle("RenderKit")
+            .navigationDestination(for: Demo.self) { demo in
+                switch demo {
+                case .simpleScene:
+                    SimpleSceneView(scene: $scene)
+                        .navigationTitle(demo.rawValue)
+                case .volumetric:
+                    VolumetricView()
+                        .navigationTitle(demo.rawValue)
                 }
             }
         }
+        .metalDevice(MTLCreateSystemDefaultDevice()!)
     }
 }
 
