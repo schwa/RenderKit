@@ -107,7 +107,7 @@ struct TransferFunctionEditor: View {
     let color: Color
 
     @State
-    var lastLocation: CGFloat?
+    var lastLocation: CGPoint?
 
     let coordinateSpace = NamedCoordinateSpace.named(ObjectIdentifier(Self.self))
 
@@ -128,11 +128,7 @@ struct TransferFunctionEditor: View {
                 context.fill(path, with: .color(color))
             }
             .coordinateSpace(coordinateSpace)
-            .gesture(DragGesture(coordinateSpace: coordinateSpace ).onChanged({ value in
-                let column = clamp(Int(value.location.x * Double(values.count - 1) / proxy.size.width), in: 0...(values.count - 1))
-                let value = clamp(1 - Float(value.location.y / proxy.size.height), in: 0...1)
-                values[column] = value
-            }))
+            .gesture(gesture(proxy.size))
         }
         .contextMenu {
             Button("Clear") {
@@ -147,6 +143,22 @@ struct TransferFunctionEditor: View {
             Button("Ramp Down") {
                 values = (0..<values.count).map { 1 - Float($0) / Float(values.count) }
             }
+        }
+    }
+
+    func gesture(_ size: CGSize) -> some Gesture {
+        DragGesture(coordinateSpace: coordinateSpace)
+        .onChanged { value in
+            let startColumn = clamp(Int((lastLocation ?? value.location).x * Double(values.count - 1) / size.width), in: 0...(values.count - 1))
+            let endColumn = clamp(Int(value.location.x * Double(values.count - 1) / size.width), in: 0...(values.count - 1))
+            let v = clamp(1 - Float(value.location.y / size.height), in: 0...1)
+            for column in stride(from: startColumn, through: endColumn, by: endColumn >= startColumn ? 1 : -1) {
+                values[column] = v
+            }
+            lastLocation = value.location
+        }
+        .onEnded { _ in
+            lastLocation = nil
         }
     }
 }
