@@ -5,18 +5,9 @@ import MetalKit
 import Observation
 
 public struct MetalView: View {
-    public typealias Setup = (MTLDevice, inout Configuration) throws -> Void
-    public typealias DrawableSizeWillChange = (MTLDevice, inout Configuration, CGSize) throws -> Void
-    public typealias Draw = (MTLDevice, Configuration, CGSize, CAMetalDrawable, MTLRenderPassDescriptor) throws -> Void
-
-    public struct Configuration {
-        // TODO: Fully expand this.
-        public var colorPixelFormat: MTLPixelFormat
-        public var depthStencilPixelFormat: MTLPixelFormat
-        public var depthStencilStorageMode: MTLStorageMode
-        public var clearDepth: Double
-        public var preferredFramesPerSecond: Int
-    }
+    public typealias Setup = (MTLDevice, inout MetalConfiguration) throws -> Void
+    public typealias DrawableSizeWillChange = (MTLDevice, inout MetalConfiguration, CGSize) throws -> Void
+    public typealias Draw = (MTLDevice, MetalConfiguration, CGSize, CAMetalDrawable, MTLRenderPassDescriptor) throws -> Void
 
     @Environment(\.metalDevice)
     var device
@@ -130,7 +121,7 @@ internal class MetalViewModel: NSObject, MTKViewDelegate {
 }
 
 internal extension MTKView {
-    var configuration: MetalView.Configuration {
+    var configuration: MetalConfiguration {
         get {
             return .init(
                 colorPixelFormat: colorPixelFormat,

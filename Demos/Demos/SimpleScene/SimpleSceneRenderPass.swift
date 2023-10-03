@@ -1,4 +1,3 @@
-#if !os(visionOS)
 import SwiftUI
 import ModelIO
 import Metal
@@ -6,6 +5,7 @@ import MetalKit
 import SIMDSupport
 import RenderKitShaders
 import RenderKit
+import Observation
 
 extension SimpleSceneRenderPass: CustomStringConvertible {
     var description: String {
@@ -31,7 +31,7 @@ class SimpleSceneRenderPass: RenderPass {
         self.scene = scene
     }
 
-    func setup(device: MTLDevice, configuration: inout MetalView.Configuration) throws {
+    func setup(device: MTLDevice, configuration: inout MetalConfiguration) throws {
         print("\(id): \(#function)")
 
         if depthStencilState == nil {
@@ -179,4 +179,6 @@ class SimpleSceneRenderPass: RenderPass {
         }
     }
 }
-#endif // !os(visionOS)
+
+extension SimpleSceneRenderPass: Observable {
+}

@@ -1,4 +1,3 @@
-#if !os(visionOS)
 import SwiftUI
 import ModelIO
 import Metal
@@ -152,4 +151,6 @@ class VolumetricRenderPass: RenderPass {
         }
     }
 }
-#endif // !os(visionOS)
+
+extension VolumetricRenderPass: Observable {
+}
