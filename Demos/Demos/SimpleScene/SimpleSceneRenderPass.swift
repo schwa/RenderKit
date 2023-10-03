@@ -1,3 +1,4 @@
+#if !os(visionOS)
 import SwiftUI
 import ModelIO
 import Metal
@@ -178,3 +179,4 @@ class SimpleSceneRenderPass: RenderPass {
         }
     }
 }
+#endif // !os(visionOS)

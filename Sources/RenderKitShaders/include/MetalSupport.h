@@ -1,3 +1,15 @@
+#ifndef __METAL_VERSION__
+
+#import <Foundation/Foundation.h>
+#import <simd/simd.h>
+
+typedef simd_float2 float2;
+typedef simd_float3 float3;
+typedef simd_float4 float4;
+typedef simd_float3x3 float3x3;
+typedef simd_float4x4 float4x4;
+
+#else
 
 #import <simd/simd.h>
 #import <metal_stdlib>
@@ -47,3 +59,4 @@ inline float3 linear_to_srgb(float3 c) {
 inline float4 linear_to_srgb(float4 c) {
     return float4(linear_to_srgb(c.xyz), c.a);
 }
+#endif

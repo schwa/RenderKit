@@ -1,4 +1,5 @@
 #import "RenderKitShaders.h"
+#import "MetalSupport.h"
 
 #ifdef __METAL_VERSION__
 struct SimpleVertex {

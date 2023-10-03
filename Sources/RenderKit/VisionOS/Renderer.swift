@@ -7,6 +7,7 @@ import Spatial
 import RenderKitShaders
 import SwiftUI
 import SIMDSupport
+import MetalSupport
 
 public struct ContentStageConfiguration: CompositorLayerConfiguration {
     public init() {

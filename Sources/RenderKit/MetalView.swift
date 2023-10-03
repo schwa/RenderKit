@@ -1,3 +1,4 @@
+#if !os(visionOS)
 import SwiftUI
 import Everything
 import MetalKit
@@ -158,7 +159,4 @@ internal extension MTKView {
         }
     }
 }
-
-enum MyError: Error {
-    case oops
-}
+#endif

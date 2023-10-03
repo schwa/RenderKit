@@ -1,3 +1,4 @@
+#if !os(visionOS)
 import Metal
 import CoreGraphics
 import RenderKit
@@ -22,3 +23,4 @@ extension RenderPass {
 //        return cgImage
     }
 }
+#endif // !os(visionOS)
