@@ -23,7 +23,7 @@ struct CoreSimpleSceneView: View {
     var scene: SimpleScene
 
     @State
-    var renderPass: SimpleSceneRenderPass
+    var renderPass: SimpleSceneRenderPass<MetalViewConfiguration>
 
     init(scene: Binding<SimpleScene> = .constant(.demo())) {
         self._scene = scene

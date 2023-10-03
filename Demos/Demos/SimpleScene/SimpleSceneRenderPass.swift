@@ -7,7 +7,7 @@ import RenderKitShaders
 import RenderKit
 import Observation
 
-class SimpleSceneRenderPass: RenderPass {
+class SimpleSceneRenderPass <Configuration>: RenderPass where Configuration: MetalConfiguration {
     var scene: SimpleScene
     var depthStencilState: MTLDepthStencilState?
     var nilDepthStencilState: MTLDepthStencilState?
@@ -19,7 +19,7 @@ class SimpleSceneRenderPass: RenderPass {
         self.scene = scene
     }
 
-    func setup(device: MTLDevice, configuration: inout MetalConfiguration) throws {
+    func setup(device: MTLDevice, configuration: inout Configuration) throws {
         if depthStencilState == nil {
             depthStencilState = device.makeDepthStencilState(descriptor: MTLDepthStencilDescriptor(depthCompareFunction: .lessEqual, isDepthWriteEnabled: true))
         }

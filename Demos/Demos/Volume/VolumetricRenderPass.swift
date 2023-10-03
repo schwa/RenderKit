@@ -10,7 +10,7 @@ import os
 import RenderKit
 import LegacyGraphics
 
-class VolumetricRenderPass: RenderPass {
+class VolumetricRenderPass <Configuration>: RenderPass where Configuration: MetalConfiguration {
     let id = LOLID2(prefix: "VolumeRenderPass")
     var scene: SimpleScene?
     var renderPipelineState: MTLRenderPipelineState?

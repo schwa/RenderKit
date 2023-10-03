@@ -1,4 +1,3 @@
-/*
 import SwiftUI
 import MetalKit
 import ModelIO
@@ -7,11 +6,7 @@ import Everything
 import MetalSupport
 import SIMDSupport
 
-// TODO: Struct?
-public struct OffscreenRenderPassConfiguration: RenderKitConfiguration, RenderKitUpdateConfiguration, RenderKitDrawConfiguration {
-    public typealias Update = Self
-    public typealias Draw = Self
-
+public struct OffscreenRenderPassConfiguration: MetalConfiguration {
     public var currentDrawable: CAMetalDrawable?
 
     public var preferredFramesPerSecond: Int = 120 // TODO: What?
@@ -73,7 +68,7 @@ public struct OffscreenRenderPassConfiguration: RenderKitConfiguration, RenderKi
 
 // MARK: -
 
-public struct OffscreenDemoRenderPass <Configuration>: RenderPass where Configuration: RenderKitConfiguration {
+public class OffscreenDemoRenderPass <Configuration>: RenderPass where Configuration: MetalConfiguration {
     public var shaderToyRenderPipelineState: MTLRenderPipelineState?
     public var plane: MTKMesh?
     public var pixelate = false
@@ -87,10 +82,7 @@ public struct OffscreenDemoRenderPass <Configuration>: RenderPass where Configur
     public init() {
     }
 
-    public mutating func setup(configuration: inout Configuration.Update) {
-        guard let device = configuration.device else {
-            fatalError("No metal device")
-        }
+    public func setup(device: MTLDevice, configuration: inout Configuration) throws {
         let library = try! device.makeDefaultLibrary(bundle: .shadersBundle)
         let constants = MTLFunctionConstantValues()
 
@@ -114,15 +106,14 @@ public struct OffscreenDemoRenderPass <Configuration>: RenderPass where Configur
         self.shaderToyRenderPipelineState = shaderToyRenderPipelineState
     }
 
-    public mutating func resized(configuration: inout Configuration.Update, size: CGSize) {
+    public func drawableSizeWillChange(device: MTLDevice, configuration: inout Configuration, size: CGSize) throws {
     }
 
-    public func draw(configuration: Configuration.Draw, commandBuffer: MTLCommandBuffer) {
-        guard let device = configuration.device, let plane, let shaderToyRenderPipelineState, let size = configuration.size else {
+    public func draw(device: MTLDevice, configuration: Configuration, size: CGSize, renderPassDescriptor: MTLRenderPassDescriptor, commandBuffer: MTLCommandBuffer) throws {
+        guard let plane, let shaderToyRenderPipelineState else {
             logger?.warning("Not ready to draw.")
             return
         }
-
         var captureScope: MTLCaptureScope?
         if capture {
             let captureManager = MTLCaptureManager.shared()
@@ -131,11 +122,6 @@ public struct OffscreenDemoRenderPass <Configuration>: RenderPass where Configur
             captureDescriptor.captureObject = captureScope
             try! captureManager.startCapture(with: captureDescriptor)
             captureScope?.begin()
-        }
-
-        guard let renderPassDescriptor = configuration.currentRenderPassDescriptor else {
-            logger?.warning("No current render pass descriptor.")
-            return
         }
         commandBuffer.withRenderCommandEncoder(descriptor: renderPassDescriptor) { encoder in
             encoder.setViewport(MTLViewport(originX: 0, originY: 0, width: Double(size.width), height: Double(size.height), znear: 0, zfar: 1))
@@ -165,14 +151,13 @@ public struct OffscreenDemo {
         configuration.device = device
         configuration.update()
         var offscreen = OffscreenDemoRenderPass<OffscreenRenderPassConfiguration>()
-        offscreen.setup(configuration: &configuration)
+        try offscreen.setup(device: device, configuration: &configuration)
 
         guard let commandQueue = device.makeCommandQueue() else {
             fatalError()
         }
-
-        commandQueue.withCommandBuffer(waitAfterCommit: true) { commandBuffer in
-            offscreen.draw(configuration: configuration, commandBuffer: commandBuffer)
+        try commandQueue.withCommandBuffer(waitAfterCommit: true) { commandBuffer in
+            try offscreen.draw(device: device, configuration: configuration, size: configuration.size!, renderPassDescriptor: configuration.currentRenderPassDescriptor!, commandBuffer: commandBuffer)
         }
 
         let histogram = configuration.targetTexture!.histogram()
@@ -189,4 +174,3 @@ public struct OffscreenDemo {
     }
 }
 #endif
-*/

@@ -16,7 +16,7 @@ import LegacyGraphics
 
 public struct VolumetricView: View {
     @State
-    var renderPass = VolumetricRenderPass()
+    var renderPass = VolumetricRenderPass<MetalViewConfiguration>()
 
     @State
     var rotation = Rotation.zero

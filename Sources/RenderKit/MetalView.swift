@@ -5,9 +5,9 @@ import MetalKit
 import Observation
 
 public struct MetalView: View {
-    public typealias Setup = (MTLDevice, inout MetalConfiguration) throws -> Void
-    public typealias DrawableSizeWillChange = (MTLDevice, inout MetalConfiguration, CGSize) throws -> Void
-    public typealias Draw = (MTLDevice, MetalConfiguration, CGSize, CAMetalDrawable, MTLRenderPassDescriptor) throws -> Void
+    public typealias Setup = (MTLDevice, inout MetalViewConfiguration) throws -> Void
+    public typealias DrawableSizeWillChange = (MTLDevice, inout MetalViewConfiguration, CGSize) throws -> Void
+    public typealias Draw = (MTLDevice, MetalViewConfiguration, CGSize, CAMetalDrawable, MTLRenderPassDescriptor) throws -> Void
 
     @Environment(\.metalDevice)
     var device
@@ -121,7 +121,7 @@ internal class MetalViewModel: NSObject, MTKViewDelegate {
 }
 
 internal extension MTKView {
-    var configuration: MetalConfiguration {
+    var configuration: MetalViewConfiguration {
         get {
             return .init(
                 colorPixelFormat: colorPixelFormat,
