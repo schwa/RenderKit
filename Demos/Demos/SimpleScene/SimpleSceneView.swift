@@ -38,6 +38,9 @@ struct CoreSimpleSceneView: View {
             .onChange(of: scene.light) {
                 renderPass.scene = scene
             }
+            .onChange(of: scene.ambientLightColor) {
+                renderPass.scene = scene
+            }
     }
 }
 
