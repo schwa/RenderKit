@@ -100,6 +100,15 @@
       }
     },
     {
+      "identity" : "swiftgltf",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/schwa/SwiftGLTF",
+      "state" : {
+        "branch" : "jwight/develop",
+        "revision" : "f67722dc599ccc8d64b3509e548b3558a3484a62"
+      }
+    },
+    {
       "identity" : "swiftgraphics",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/schwa/SwiftGraphics",

@@ -43,6 +43,10 @@ extension PackedFloat3: ExpressibleByArrayLiteral {
     }
 }
 
+protocol MTLBufferProviding {
+    var buffer: MTLBuffer { get }
+}
+
 struct SimpleMesh {
     let label: String?
     var indexCount: Int

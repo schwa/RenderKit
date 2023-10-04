@@ -88,7 +88,7 @@ class SimpleSceneRenderPass <Configuration>: RenderPass where Configuration: Met
                     encoder.setRenderPipelineState(panoramaShaderRenderPipelineState)
                     encoder.setDepthStencilState(nilDepthStencilState)
 
-                    guard let mesh = cache.get(key: "panorama:mesh") as? MTKMesh else {
+                    guard let mesh = cache.get(key: "panorama:mesh") as? YAMesh else {
                         fatalError()
                     }
                     encoder.setVertexBuffer(mesh, startingIndex: 0)
@@ -128,11 +128,10 @@ class SimpleSceneRenderPass <Configuration>: RenderPass where Configuration: Met
 
                     for (meshKey, models) in bucketedModels {
                         encoder.withDebugGroup("Instanced \(meshKey)") {
-                            guard let mesh = cache.get(key: meshKey) as? MTKMesh else {
+                            guard let mesh = cache.get(key: meshKey) as? YAMesh else {
                                 fatalError()
                             }
                             encoder.setVertexBuffer(mesh, startingIndex: 0)
-
                             let modes: [(MTLTriangleFillMode, SIMD4<Float>?)] = [
                                 (.fill, nil),
                                 (.lines, [1, 1, 1, 1]),

@@ -8,6 +8,7 @@ struct ContentView: View {
         case simpleScene = "Simple Scene"
         case simpleSceneExtended = "Simple Scene (Extended)"
         case volumetric = "Volumetric"
+        case gltf = "GLTF"
     }
 
     @State
@@ -40,6 +41,9 @@ struct ContentView: View {
                         .navigationTitle(demo.rawValue)
                 case .volumetric:
                     VolumetricView()
+                        .navigationTitle(demo.rawValue)
+                case .gltf:
+                    GLTFView()
                         .navigationTitle(demo.rawValue)
                 }
             }

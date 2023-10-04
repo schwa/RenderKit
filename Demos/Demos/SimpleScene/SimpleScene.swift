@@ -88,23 +88,58 @@ public struct Model: Identifiable {
     public var id = LOLID2(prefix: "Model")
     public var transform: Transform
     public var color: SIMD4<Float>
-    public var mesh: (String, (MTLDevice) throws -> MTKMesh)
-    //public var mesh1: (MTLDevice) throws -> Cachable<AnyHashable, MTKMesh>
+    public var mesh: (String, (MTLDevice) throws -> YAMesh)
 
-    public init(transform: Transform, color: SIMD4<Float>, mesh: (String, (MTLDevice) throws -> MTKMesh)) {
+    public init(transform: Transform, color: SIMD4<Float>, mesh: (String, (MTLDevice) throws -> YAMesh)) {
         self.transform = transform
         self.color = color
         self.mesh = mesh
     }
 }
 
+struct Geometry: Labeled {
+    var label: String?
+    var mesh: Mesh
+    var material: (any Material)?
+}
+
+struct Mesh: Labeled {
+    var label: String?
+    var resource: any ResourceProtocol
+}
+
+protocol Material: Labeled {
+}
+
+struct UnlitMaterial: Material {
+    var label: String?
+    var baseColorFactor: SIMD4<Float> = .one
+    var baseColorTexture: Texture?
+}
+
+struct PBRMaterial: Material {
+    var label: String?
+    var baseColorFactor: SIMD4<Float> = .one
+    var baseColorTexture: Texture?
+    var metallicFactor: Float = 1.0
+    var roughnessFactor: Float = 1.0
+    var metallicRoughnessTexture: Texture?
+    var normalTexture: Texture?
+    var occlusionTexture: Texture?
+}
+
+struct Texture: Labeled {
+    var label: String?
+    var resource: any ResourceProtocol
+}
+
 public struct Panorama: Identifiable {
     public var id = LOLID2(prefix: "Model")
     public var tilesSize: SIMD2<UInt16>
     public var tileTextures: [(MTKTextureLoader) throws -> MTLTexture]
-    public var mesh: (MTLDevice) throws -> MTKMesh
+    public var mesh: (MTLDevice) throws -> YAMesh
 
-    init(tilesSize: SIMD2<UInt16>, tileTextures: [(MTKTextureLoader) throws -> MTLTexture], mesh: @escaping (MTLDevice) throws -> MTKMesh) {
+    init(tilesSize: SIMD2<UInt16>, tileTextures: [(MTKTextureLoader) throws -> MTLTexture], mesh: @escaping (MTLDevice) throws -> YAMesh) {
         assert(tileTextures.count == Int(tilesSize.x) * Int(tilesSize.y))
         self.tileTextures = tileTextures
         self.tilesSize = tilesSize
@@ -116,9 +151,9 @@ public struct Panorama: Identifiable {
 
 public extension SimpleScene {
     static func demo() -> SimpleScene {
-        let cone = ("cone", { device in try Cone(extent: [0.5, 1, 0.5], segments: [20, 10]).toMTKMesh(allocator: MTKMeshBufferAllocator(device: device), device: device) })
-        let sphere = ("sphere", { device in try Sphere(extent: [0.5, 0.5, 0.5], segments: [20, 10]).toMTKMesh(allocator: MTKMeshBufferAllocator(device: device), device: device) })
-        let capsule = ("capsule", { device in try Capsule(extent: [0.25, 1, 0.25], cylinderSegments: [30, 10], hemisphereSegments: 5).toMTKMesh(allocator: MTKMeshBufferAllocator(device: device), device: device) })
+        let cone = ("cone", { device in try Cone(extent: [0.5, 1, 0.5], segments: [20, 10]).toYAMesh(allocator: MTKMeshBufferAllocator(device: device), device: device) })
+        let sphere = ("sphere", { device in try Sphere(extent: [0.5, 0.5, 0.5], segments: [20, 10]).toYAMesh(allocator: MTKMeshBufferAllocator(device: device), device: device) })
+        let capsule = ("capsule", { device in try Capsule(extent: [0.25, 1, 0.25], cylinderSegments: [30, 10], hemisphereSegments: 5).toYAMesh(allocator: MTKMeshBufferAllocator(device: device), device: device) })
 
         let meshes = [cone, sphere, capsule]
 
@@ -130,7 +165,7 @@ public extension SimpleScene {
         if true {
             tilesSize = [6, 2]
             tileTextures = (1 ... 12).map { index in
-                ResourceReference.bundle(.main, name: "perseverance_\(index.formatted(.number.precision(.integerLength(2))))", extension: "ktx")
+                BundleResourceReference(bundle: .main, name: "perseverance_\(index.formatted(.number.precision(.integerLength(2))))", extension: "ktx")
                 //ResourceReference.bundle(.main, name: "Testcard_\(index.formatted(.number.precision(.integerLength(2))))", extension: "ktx")
             }
             .map { resource -> ((MTKTextureLoader) throws -> MTLTexture) in
@@ -151,7 +186,7 @@ public extension SimpleScene {
         }
 
         let panorama = Panorama(tilesSize: tilesSize, tileTextures: tileTextures) { device in
-            try Sphere(extent: [95, 95, 95], inwardNormals: true).toMTKMesh(allocator: MTKMeshBufferAllocator(device: device), device: device)
+            try Sphere(extent: [95, 95, 95], inwardNormals: true).toYAMesh(allocator: MTKMeshBufferAllocator(device: device), device: device)
         }
 
         let scene = SimpleScene(

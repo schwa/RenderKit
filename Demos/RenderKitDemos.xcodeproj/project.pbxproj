@@ -13,6 +13,7 @@
 		453D32C02A48D06600FCEE29 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 453D32BF2A48D06600FCEE29 /* Preview Assets.xcassets */; };
 		453F7D3D2ACC7A2C0051D331 /* VolumetricView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453F7D3C2ACC7A2C0051D331 /* VolumetricView.swift */; };
 		453F7D3F2ACC7A590051D331 /* VolumetricRenderPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453F7D3E2ACC7A590051D331 /* VolumetricRenderPass.swift */; };
+		454386A12ACF35BA00928B52 /* BitSetN.swift in Sources */ = {isa = PBXBuildFile; fileRef = 454386A02ACF35BA00928B52 /* BitSetN.swift */; };
 		4555A0372ABE017A0088CFFB /* DemosApp-VisionOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4555A0362ABE017A0088CFFB /* DemosApp-VisionOS.swift */; };
 		4555A03B2ABE0B310088CFFB /* Info-visionOS.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4555A03A2ABE0B310088CFFB /* Info-visionOS.plist */; };
 		4555A04D2ABE2CD80088CFFB /* SimpleSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4555A0402ABE2BF00088CFFB /* SimpleSceneView.swift */; };
@@ -46,6 +47,9 @@
 		455741D62AC658060050267D /* Testcard_09.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 455741CA2AC658060050267D /* Testcard_09.ktx */; };
 		455741D72AC658060050267D /* Testcard_08.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 455741CB2AC658060050267D /* Testcard_08.ktx */; };
 		45650DE22ACCE5CE009F2AF2 /* OffscreenDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45650DE12ACCE5CE009F2AF2 /* OffscreenDemo.swift */; };
+		45650DE62ACCEA09009F2AF2 /* SwiftGLTF in Frameworks */ = {isa = PBXBuildFile; productRef = 45650DE52ACCEA09009F2AF2 /* SwiftGLTF */; };
+		45650DE82ACCEA45009F2AF2 /* BarramundiFish.glb in Resources */ = {isa = PBXBuildFile; fileRef = 45650DE72ACCEA45009F2AF2 /* BarramundiFish.glb */; };
+		45650DEC2ACCEAEA009F2AF2 /* GLTFView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45650DEB2ACCEAEA009F2AF2 /* GLTFView.swift */; };
 		4570E2C72AC711A200B3B64D /* perseverance_08.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 4570E2B92AC711A200B3B64D /* perseverance_08.ktx */; };
 		4570E2C82AC711A200B3B64D /* perseverance_09.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 4570E2BA2AC711A200B3B64D /* perseverance_09.ktx */; };
 		4570E2C92AC711A200B3B64D /* perseverance_02.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 4570E2BB2AC711A200B3B64D /* perseverance_02.ktx */; };
@@ -63,11 +67,13 @@
 		457D4F1F2ABD1634004CCD9D /* ContentView-VisionOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */; };
 		459E755D2AC1EF6F004BC055 /* SimpleMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459E755C2AC1EF6F004BC055 /* SimpleMesh.swift */; };
 		459EDA582A494C0700F9211C /* CLI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459EDA572A494C0700F9211C /* CLI.swift */; };
+		459FAE552ACDFCAD000018E2 /* YAMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459FAE542ACDFCAD000018E2 /* YAMesh.swift */; };
 		45BEC1212ABE3480001730AB /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45BEC11F2ABE3480001730AB /* Cache.swift */; };
 		45BEC1222ABE3480001730AB /* LOLID2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45BEC1202ABE3480001730AB /* LOLID2.swift */; };
 		45CC35642AB8240F00C33779 /* StanfordVolumeData in Resources */ = {isa = PBXBuildFile; fileRef = 45CC35632AB8240F00C33779 /* StanfordVolumeData */; };
 		45F588142ABD4BD700ADE82B /* RenderKit in Frameworks */ = {isa = PBXBuildFile; productRef = 45F588132ABD4BD700ADE82B /* RenderKit */; };
 		45F5E51C2AC5E7A2003FBEBD /* RenderKit in Frameworks */ = {isa = PBXBuildFile; productRef = 459F48662A5077A300623EEE /* RenderKit */; };
+		45FAACBC2ACCF54C006C31BD /* Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45FAACBB2ACCF54C006C31BD /* Resources.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -92,6 +98,7 @@
 		453D32BF2A48D06600FCEE29 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		453F7D3C2ACC7A2C0051D331 /* VolumetricView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VolumetricView.swift; sourceTree = "<group>"; };
 		453F7D3E2ACC7A590051D331 /* VolumetricRenderPass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumetricRenderPass.swift; sourceTree = "<group>"; };
+		454386A02ACF35BA00928B52 /* BitSetN.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitSetN.swift; sourceTree = "<group>"; };
 		4555A0362ABE017A0088CFFB /* DemosApp-VisionOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemosApp-VisionOS.swift"; sourceTree = "<group>"; };
 		4555A03A2ABE0B310088CFFB /* Info-visionOS.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-visionOS.plist"; sourceTree = "<group>"; };
 		4555A03E2ABE2BEC0088CFFB /* VolumeData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeData.swift; sourceTree = "<group>"; };
@@ -126,6 +133,8 @@
 		455741CB2AC658060050267D /* Testcard_08.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = Testcard_08.ktx; sourceTree = "<group>"; };
 		45650DE12ACCE5CE009F2AF2 /* OffscreenDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OffscreenDemo.swift; sourceTree = "<group>"; };
 		45650DE32ACCE5FA009F2AF2 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
+		45650DE72ACCEA45009F2AF2 /* BarramundiFish.glb */ = {isa = PBXFileReference; lastKnownFileType = file; path = BarramundiFish.glb; sourceTree = "<group>"; };
+		45650DEB2ACCEAEA009F2AF2 /* GLTFView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GLTFView.swift; sourceTree = "<group>"; };
 		4570E2B92AC711A200B3B64D /* perseverance_08.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = perseverance_08.ktx; sourceTree = "<group>"; };
 		4570E2BA2AC711A200B3B64D /* perseverance_09.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = perseverance_09.ktx; sourceTree = "<group>"; };
 		4570E2BB2AC711A200B3B64D /* perseverance_02.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = perseverance_02.ktx; sourceTree = "<group>"; };
@@ -145,6 +154,7 @@
 		459EDA552A494C0600F9211C /* CLI */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CLI; sourceTree = BUILT_PRODUCTS_DIR; };
 		459EDA572A494C0700F9211C /* CLI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLI.swift; sourceTree = "<group>"; };
 		459F48632A50776C00623EEE /* RenderKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = RenderKit; path = ..; sourceTree = "<group>"; };
+		459FAE542ACDFCAD000018E2 /* YAMesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YAMesh.swift; sourceTree = "<group>"; };
 		45A147BC2A4B1B7300C06FE1 /* CLI-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "CLI-Release.xcconfig"; sourceTree = "<group>"; };
 		45A147BD2A4B1B7300C06FE1 /* Project-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Project-Release.xcconfig"; sourceTree = "<group>"; };
 		45A147BE2A4B1B7300C06FE1 /* CLI-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "CLI-Debug.xcconfig"; sourceTree = "<group>"; };
@@ -157,6 +167,7 @@
 		45BEC11F2ABE3480001730AB /* Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		45BEC1202ABE3480001730AB /* LOLID2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LOLID2.swift; sourceTree = "<group>"; };
 		45CC35632AB8240F00C33779 /* StanfordVolumeData */ = {isa = PBXFileReference; lastKnownFileType = folder; path = StanfordVolumeData; sourceTree = "<group>"; };
+		45FAACBB2ACCF54C006C31BD /* Resources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resources.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -165,6 +176,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				45F588142ABD4BD700ADE82B /* RenderKit in Frameworks */,
+				45650DE62ACCEA09009F2AF2 /* SwiftGLTF in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -211,6 +223,7 @@
 				4555A0362ABE017A0088CFFB /* DemosApp-VisionOS.swift */,
 				453D32B92A48D06500FCEE29 /* ContentView.swift */,
 				457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */,
+				45650DE72ACCEA45009F2AF2 /* BarramundiFish.glb */,
 				4555A0672ABE2F740088CFFB /* Support */,
 				4555A0492ABE2BF50088CFFB /* ShaderToy */,
 				4555A03F2ABE2BF00088CFFB /* SimpleScene */,
@@ -250,6 +263,8 @@
 				4555A0452ABE2BF00088CFFB /* SimpleSceneInspector.swift */,
 				459E755C2AC1EF6F004BC055 /* SimpleMesh.swift */,
 				4555A0482ABE2BF00088CFFB /* SimpleScene.swift */,
+				45650DEB2ACCEAEA009F2AF2 /* GLTFView.swift */,
+				459FAE542ACDFCAD000018E2 /* YAMesh.swift */,
 			);
 			path = SimpleScene;
 			sourceTree = "<group>";
@@ -272,12 +287,14 @@
 				45BEC1202ABE3480001730AB /* LOLID2.swift */,
 				4555A0472ABE2BF00088CFFB /* Projections.swift */,
 				4555A0652ABE2E7E0088CFFB /* Support.swift */,
+				45FAACBB2ACCF54C006C31BD /* Resources.swift */,
 				4555A0632ABE2E2E0088CFFB /* SwiftUI+Support.swift */,
 				4555A0612ABE2D590088CFFB /* Logging.swift */,
 				4555A0432ABE2BF00088CFFB /* FirstPersonInteractiveViewModifier.swift */,
 				4555A05B2ABE2D030088CFFB /* DisplayLink.swift */,
 				4555A05D2ABE2D100088CFFB /* GameControllerWidget.swift */,
 				4555A0592ABE2CF50088CFFB /* MovementController.swift */,
+				454386A02ACF35BA00928B52 /* BitSetN.swift */,
 			);
 			path = Support;
 			sourceTree = "<group>";
@@ -373,6 +390,7 @@
 			name = Demos;
 			packageProductDependencies = (
 				45F588132ABD4BD700ADE82B /* RenderKit */,
+				45650DE52ACCEA09009F2AF2 /* SwiftGLTF */,
 			);
 			productName = Demos;
 			productReference = 453D32B42A48D06500FCEE29 /* Demos.app */;
@@ -426,6 +444,7 @@
 			);
 			mainGroup = 453D32AB2A48D06500FCEE29;
 			packageReferences = (
+				45650DE42ACCEA09009F2AF2 /* XCRemoteSwiftPackageReference "SwiftGLTF" */,
 			);
 			productRefGroup = 453D32B52A48D06500FCEE29 /* Products */;
 			projectDirPath = "";
@@ -460,6 +479,7 @@
 				455741CC2AC658060050267D /* Testcard_01.ktx in Resources */,
 				455741D62AC658060050267D /* Testcard_09.ktx in Resources */,
 				45CC35642AB8240F00C33779 /* StanfordVolumeData in Resources */,
+				45650DE82ACCEA45009F2AF2 /* BarramundiFish.glb in Resources */,
 				455741D52AC658060050267D /* Testcard_10.ktx in Resources */,
 				4570E2CA2AC711A200B3B64D /* perseverance_03.ktx in Resources */,
 				4570E2D12AC711A200B3B64D /* perseverance_07.ktx in Resources */,
@@ -483,11 +503,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				4555A0532ABE2CD80088CFFB /* SimpleSceneMapView.swift in Sources */,
+				45650DEC2ACCEAEA009F2AF2 /* GLTFView.swift in Sources */,
 				4555A0562ABE2CDD0088CFFB /* ShaderToy.metal in Sources */,
 				453D32BA2A48D06500FCEE29 /* ContentView.swift in Sources */,
 				45BEC1222ABE3480001730AB /* LOLID2.swift in Sources */,
 				4555A0622ABE2D590088CFFB /* Logging.swift in Sources */,
 				4555A0522ABE2CD80088CFFB /* FirstPersonInteractiveViewModifier.swift in Sources */,
+				454386A12ACF35BA00928B52 /* BitSetN.swift in Sources */,
 				453F7D3F2ACC7A590051D331 /* VolumetricRenderPass.swift in Sources */,
 				4555A0662ABE2E7E0088CFFB /* Support.swift in Sources */,
 				4555A05A2ABE2CF50088CFFB /* MovementController.swift in Sources */,
@@ -501,11 +523,13 @@
 				4555A04F2ABE2CD80088CFFB /* SimpleSceneRenderPass.swift in Sources */,
 				4555A05C2ABE2D030088CFFB /* DisplayLink.swift in Sources */,
 				4555A0512ABE2CD80088CFFB /* SimpleScene.swift in Sources */,
+				459FAE552ACDFCAD000018E2 /* YAMesh.swift in Sources */,
 				4555A0542ABE2CD80088CFFB /* BallRotationModifier.swift in Sources */,
 				4555A0552ABE2CDD0088CFFB /* ShaderToyView.swift in Sources */,
 				4555A05E2ABE2D100088CFFB /* GameControllerWidget.swift in Sources */,
 				453D32B82A48D06500FCEE29 /* DemosApp.swift in Sources */,
 				45BEC1212ABE3480001730AB /* Cache.swift in Sources */,
+				45FAACBC2ACCF54C006C31BD /* Resources.swift in Sources */,
 				453F7D3D2ACC7A2C0051D331 /* VolumetricView.swift in Sources */,
 				4555A0502ABE2CD80088CFFB /* Projections.swift in Sources */,
 				4555A04E2ABE2CD80088CFFB /* SimpleSceneInspector.swift in Sources */,
@@ -604,7 +628,23 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		45650DE42ACCEA09009F2AF2 /* XCRemoteSwiftPackageReference "SwiftGLTF" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/schwa/SwiftGLTF";
+			requirement = {
+				branch = jwight/develop;
+				kind = branch;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
+		45650DE52ACCEA09009F2AF2 /* SwiftGLTF */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 45650DE42ACCEA09009F2AF2 /* XCRemoteSwiftPackageReference "SwiftGLTF" */;
+			productName = SwiftGLTF;
+		};
 		459F48662A5077A300623EEE /* RenderKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = RenderKit;

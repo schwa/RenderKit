@@ -109,7 +109,7 @@ public struct SimpleSceneView: View {
                 let scene = scene
                 Task {
                     let renderPass = SimpleSceneRenderPass<OffscreenRenderPassConfiguration>(scene: scene)
-                    self.exportImage = Image(cgImage: try await renderPass.snapshot(device: device))
+                    self.exportImage = Image(cgImage: try await renderPass.snapshot(device: device, size: [1024, 768]))
                 }
             }
             .fileExporter(isPresented: isPresentedBinding, item: exportImage, contentTypes: [.png, .jpeg]) { _ in

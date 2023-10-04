@@ -62,7 +62,7 @@ public struct OffscreenRenderPassConfiguration: MetalConfiguration {
     }
 }
 
-extension RenderPass where Configuration == OffscreenRenderPassConfiguration {
+public extension RenderPass where Configuration == OffscreenRenderPassConfiguration {
     func snapshot(device: MTLDevice, size: CGSize) async throws -> CGImage {
         var configuration = OffscreenRenderPassConfiguration(device: device, size: size)
         configuration.colorPixelFormat = .bgra8Unorm_srgb
