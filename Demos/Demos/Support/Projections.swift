@@ -1,7 +1,7 @@
 import simd
 import SIMDSupport
 
-public protocol ProjectionProtocol: Equatable {
+public protocol ProjectionProtocol: Equatable, Sendable {
     func matrix(viewSize: SIMD2<Float>) -> simd_float4x4
 }
 
@@ -69,4 +69,7 @@ public enum Projection: ProjectionProtocol {
             return .orthographic
         }
     }
+}
+
+extension Projection: Sendable {
 }
