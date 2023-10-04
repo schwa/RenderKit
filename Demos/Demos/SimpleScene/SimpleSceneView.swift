@@ -61,19 +61,24 @@ public struct SimpleSceneView: View {
     var isInspectorPresented = false
 #endif
 
-//    @State
-//    var exportImage: Image?
-//
-//    @State
-//    var label: String?
+    @State
+    var exportImage: Image?
+
+    //    @State
+    //    var label: String?
 
     public var body: some View {
         CoreSimpleSceneView(scene: $scene)
 #if os(macOS)
-        .showFrameEditor()
+            .showFrameEditor()
 #endif
-        .overlay(alignment: .bottomTrailing, content: mapView)
-        .inspector(isPresented: $isInspectorPresented, content: inspector)
+            .overlay(alignment: .bottomTrailing, content: mapView)
+            .inspector(isPresented: $isInspectorPresented, content: inspector)
+            .toolbar {
+                ToolbarItem(placement: .secondaryAction) {
+                    snapshot()
+                }
+            }
     }
 
     func mapView() -> some View {
@@ -93,6 +98,25 @@ public struct SimpleSceneView: View {
                     }
                 }
             }
+    }
+
+    func snapshot() -> some View {
+        ValueView(value: false) { isPresentedBinding in
+            Button(title: "Snapshot", systemImage: "camera") {
+                guard let device else {
+                    fatalError()
+                }
+                let scene = scene
+                Task {
+                    let renderPass = SimpleSceneRenderPass<OffscreenRenderPassConfiguration>(scene: scene)
+                    self.exportImage = Image(cgImage: try await renderPass.snapshot(device: device))
+                }
+            }
+            .fileExporter(isPresented: isPresentedBinding, item: exportImage, contentTypes: [.png, .jpeg]) { _ in
+                exportImage = nil
+            }
+            .fileExporterFilenameLabel("Snapshot")
+        }
     }
 }
 
@@ -133,24 +157,3 @@ struct MyTabView: View {
     }
 }
 #endif
-
-/*
- .toolbar {
- ToolbarItem(placement: .secondaryAction) {
- ValueView(value: false) { isPresentedBinding in
- Button(title: "Snapshot", systemImage: "camera") {
- Task {
- guard let device else {
- fatalError()
- }
- exportImage = Image(cgImage: try await renderPass!.snapshot(device: device))
- }
- }
- .fileExporter(isPresented: isPresentedBinding, item: exportImage, contentTypes: [.png, .jpeg]) { _ in
- exportImage = nil
- }
- .fileExporterFilenameLabel("Snapshot")
- }
- }
- }
- */

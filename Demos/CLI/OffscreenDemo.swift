@@ -5,70 +5,10 @@ import simd
 import Everything
 import MetalSupport
 import SIMDSupport
+import RenderKit
 
-public struct OffscreenRenderPassConfiguration: MetalConfiguration {
-    public var currentDrawable: CAMetalDrawable?
-
-    public var preferredFramesPerSecond: Int = 120 // TODO: What?
-
-    // TODO: INVENTED VALUES
-    public var depthStencilAttachmentTextureUsage: MTLTextureUsage = .renderTarget
-    public var depthStencilStorageMode: MTLStorageMode = .shared
-    // TODO: DONE
-
-    public var size: CGSize? = CGSize(width: 1920, height: 1080)
-
-    public var device: MTLDevice?
-    public var colorPixelFormat: MTLPixelFormat = .bgra8Unorm
-    public var depthStencilPixelFormat: MTLPixelFormat = .invalid
-    public var depthStencilTexture: MTLTexture?
-    public var currentRenderPassDescriptor: MTLRenderPassDescriptor?
-    public var targetTexture: MTLTexture?
-    public var clearColor: MTLClearColor = .init(red: 0, green: 0, blue: 0, alpha: 1.0)
-    public var clearDepth: Double = 1.0
-
-    public init() {
-    }
-
-    public mutating func update() {
-        currentRenderPassDescriptor = nil
-        targetTexture = nil
-
-        guard let device, let size else {
-            return
-        }
-
-        let currentRenderPassDescriptor = MTLRenderPassDescriptor()
-
-        let targetTextureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: colorPixelFormat, width: Int(size.width), height: Int(size.height), mipmapped: false)
-        targetTextureDescriptor.storageMode = .shared
-        targetTextureDescriptor.usage = [.renderTarget, .shaderRead, .shaderWrite]
-        let targetTexture = device.makeTexture(descriptor: targetTextureDescriptor)!
-        targetTexture.label = "Target Texture"
-        currentRenderPassDescriptor.colorAttachments[0].texture = targetTexture
-        currentRenderPassDescriptor.colorAttachments[0].loadAction = .clear
-        currentRenderPassDescriptor.colorAttachments[0].storeAction = .store
-        self.targetTexture = targetTexture
-
-        if depthStencilPixelFormat != .invalid {
-            let depthTextureDescriptor = MTLTextureDescriptor.texture2DDescriptor(pixelFormat: depthStencilPixelFormat, width: Int(size.width), height: Int(size.height), mipmapped: false)
-            depthTextureDescriptor.storageMode = .private
-            depthTextureDescriptor.usage = [.renderTarget, .shaderRead, .shaderWrite]
-            let depthStencilTexture = device.makeTexture(descriptor: depthTextureDescriptor)!
-            depthStencilTexture.label = "Depth Texture"
-            currentRenderPassDescriptor.depthAttachment.texture = depthStencilTexture
-            currentRenderPassDescriptor.depthAttachment.loadAction = .clear
-            currentRenderPassDescriptor.depthAttachment.storeAction = .store
-            self.depthStencilTexture = depthStencilTexture
-        }
-
-        self.currentRenderPassDescriptor = currentRenderPassDescriptor
-    }
-}
-
-// MARK: -
-
-public class OffscreenDemoRenderPass <Configuration>: RenderPass where Configuration: MetalConfiguration {
+public class OffscreenDemoRenderPass: RenderPass {
+    public typealias Configuration = OffscreenRenderPassConfiguration
     public var shaderToyRenderPipelineState: MTLRenderPipelineState?
     public var plane: MTKMesh?
     public var pixelate = false
@@ -87,7 +27,7 @@ public class OffscreenDemoRenderPass <Configuration>: RenderPass where Configura
         let constants = MTLFunctionConstantValues()
 
         let textureLoader = MTKTextureLoader(device: device)
-        texture = try! textureLoader.newTexture(name: "HD-Testcard-original", scaleFactor: 1.0, bundle: .module)
+        texture = try! textureLoader.newTexture(name: "HD-Testcard-original", scaleFactor: 1.0, bundle: .main)
 
         let samplerDescriptor = MTLSamplerDescriptor()
         sampler = device.makeSamplerState(descriptor: samplerDescriptor)
@@ -111,7 +51,6 @@ public class OffscreenDemoRenderPass <Configuration>: RenderPass where Configura
 
     public func draw(device: MTLDevice, configuration: Configuration, size: CGSize, renderPassDescriptor: MTLRenderPassDescriptor, commandBuffer: MTLCommandBuffer) throws {
         guard let plane, let shaderToyRenderPipelineState else {
-            logger?.warning("Not ready to draw.")
             return
         }
         var captureScope: MTLCaptureScope?
@@ -135,7 +74,7 @@ public class OffscreenDemoRenderPass <Configuration>: RenderPass where Configura
             encoder.setFragmentSamplerState(sampler, index: 0)
 
             //
-            encoder.draw(plane)
+//            encoder.draw(plane)
         }
 
         captureScope?.end()
@@ -146,18 +85,17 @@ public class OffscreenDemoRenderPass <Configuration>: RenderPass where Configura
 public struct OffscreenDemo {
     public static func main() async throws {
         let device = MTLCreateSystemDefaultDevice()!
-        var configuration = OffscreenRenderPassConfiguration()
+        var configuration = OffscreenRenderPassConfiguration(device: device, size: [1024, 769])
         configuration.colorPixelFormat = .bgra10_xr_srgb
-        configuration.device = device
         configuration.update()
-        var offscreen = OffscreenDemoRenderPass<OffscreenRenderPassConfiguration>()
+        let offscreen = OffscreenDemoRenderPass()
         try offscreen.setup(device: device, configuration: &configuration)
 
         guard let commandQueue = device.makeCommandQueue() else {
             fatalError()
         }
         try commandQueue.withCommandBuffer(waitAfterCommit: true) { commandBuffer in
-            try offscreen.draw(device: device, configuration: configuration, size: configuration.size!, renderPassDescriptor: configuration.currentRenderPassDescriptor!, commandBuffer: commandBuffer)
+            try offscreen.draw(device: device, configuration: configuration, size: configuration.size, renderPassDescriptor: configuration.currentRenderPassDescriptor!, commandBuffer: commandBuffer)
         }
 
         let histogram = configuration.targetTexture!.histogram()

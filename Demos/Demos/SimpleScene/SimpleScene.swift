@@ -46,6 +46,9 @@ public struct Camera {
 extension Camera: Equatable {
 }
 
+extension Camera: Sendable {
+}
+
 public extension Camera {
     var heading: SIMDSupport.Angle<Float> {
         get {
@@ -74,6 +77,9 @@ public struct Light {
 }
 
 extension Light: Equatable {
+}
+
+extension Light: Sendable {
 }
 
 // MARK: -

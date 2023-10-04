@@ -44,7 +44,7 @@ let package = Package(
                 .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
             ],
             resources: [
-                .process("Media.xcassets"),
+//                .process("Media.xcassets"),
                 .process("VisionOS/Assets.xcassets"),
             ],
             swiftSettings: [
