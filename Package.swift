@@ -18,10 +18,6 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/schwa/Everything", branch: "jwight/downsizing"),
         .package(url: "https://github.com/schwa/SwiftGraphics", branch: "jwight/develop"),
-//        .package(path: "/Users/schwa/Projects/Everything"),
-//        .package(url: "https://github.com/schwa/MetalSupport", from: "0.2.0"),
-//        .package(url: "https://github.com/schwa/SIMD-Support", from: "0.1.1"),
-//        .package(url: "https://github.com/schwa/CoreGraphicsGeometrySupport", from: "0.1.0"),
         .package(url: "https://github.com/apple/swift-algorithms", from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-async-algorithms", from: "0.1.0"),
         .package(url: "https://github.com/schwa/swiftformats", from: "0.3.3"),
@@ -54,7 +50,7 @@ let package = Package(
         ),
         .target(name: "RenderKitShaders",
             plugins: [
-//                .plugin(name: "MetalCompilerPlugin", package: "MetalCompilerPlugin")
+                .plugin(name: "MetalCompilerPlugin", package: "MetalCompilerPlugin")
             ]
         ),
         .target(name: "RenderKitScratch",

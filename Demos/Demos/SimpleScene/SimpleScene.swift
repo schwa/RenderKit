@@ -185,6 +185,19 @@ public extension SimpleScene {
             ]
         }
 
+        var models: [Model] = []
+//        models += product(xRange, zRange).map { x, z in
+//            let hsv: SIMD3<Float> = [Float.random(in: 0...1), 1, 1]
+//            let rgba = SIMD4<Float>(hsv.hsv2rgb(), 1.0)
+//            return Model(transform: .translation([x, 0, z]), color: rgba, mesh: meshes.randomElement()!)
+//        }
+
+        let fishModel = Model(transform: .translation([0, 0, 0]).rotated(angle: .degrees(90), axis: [0, 1, 0]), color: [1, 0, 1, 1], mesh: ("glb-test", { device in
+            try YAMesh(gltf: "BarramundiFish", device: device)
+        }))
+
+        models.append(fishModel)
+
         let panorama = Panorama(tilesSize: tilesSize, tileTextures: tileTextures) { device in
             try Sphere(extent: [95, 95, 95], inwardNormals: true).toYAMesh(allocator: MTKMeshBufferAllocator(device: device), device: device)
         }
@@ -192,13 +205,8 @@ public extension SimpleScene {
         let scene = SimpleScene(
             camera: Camera(transform: .translation([0, 0, 2]), target: [0, 0, -1], projection: .perspective(.init(fovy: .degrees(90), zClip: 0.1 ... 100))),
             light: .init(position: .translation([-2, 2, -1]), color: [1, 1, 1], power: 1),
-            ambientLightColor: [0, 0, 0],
-            models:
-                product(xRange, zRange).map { x, z in
-                    let hsv: SIMD3<Float> = [Float.random(in: 0...1), 1, 1]
-                    let rgba = SIMD4<Float>(hsv.hsv2rgb(), 1.0)
-                    return Model(transform: .translation([x, 0, z]), color: rgba, mesh: meshes.randomElement()!)
-                },
+            ambientLightColor: [1, 1, 0],
+            models: models,
             panorama: panorama
         )
 

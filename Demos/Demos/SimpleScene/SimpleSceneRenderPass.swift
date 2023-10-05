@@ -39,6 +39,21 @@ class SimpleSceneRenderPass <Configuration>: RenderPass where Configuration: Met
             renderPipelineDescriptor.colorAttachments[0].pixelFormat = configuration.colorPixelFormat
             renderPipelineDescriptor.depthAttachmentPixelFormat = configuration.depthStencilPixelFormat
             renderPipelineDescriptor.vertexDescriptor = SimpleVertex.vertexDescriptor
+
+            let descriptor = VertexDescriptor(
+                attributes: [
+                    .init(semantic: .position, format: .float3, offset: 0, bufferIndex: 10),
+                    .init(semantic: .normal, format: .float3, offset: 0, bufferIndex: 11),
+                    .init(semantic: .textureCoordinate, format: .float2, offset: 0, bufferIndex: 12)
+                ],
+                layouts: [
+                    10: .init(stepFunction: .perVertex, stepRate: 1, stride: 12),
+                    11: .init(stepFunction: .perVertex, stepRate: 1, stride: 12),
+                    12: .init(stepFunction: .perVertex, stepRate: 1, stride: 8)
+                ]
+            )
+            renderPipelineDescriptor.vertexDescriptor = MTLVertexDescriptor(descriptor)
+
             flatShaderRenderPipelineState = try device.makeRenderPipelineState(descriptor: renderPipelineDescriptor)
         }
 

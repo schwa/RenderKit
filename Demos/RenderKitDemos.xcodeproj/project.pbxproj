@@ -68,12 +68,15 @@
 		459E755D2AC1EF6F004BC055 /* SimpleMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459E755C2AC1EF6F004BC055 /* SimpleMesh.swift */; };
 		459EDA582A494C0700F9211C /* CLI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459EDA572A494C0700F9211C /* CLI.swift */; };
 		459FAE552ACDFCAD000018E2 /* YAMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459FAE542ACDFCAD000018E2 /* YAMesh.swift */; };
+		45B1D71E2ACFB25600960D02 /* YAMesh+Conversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B1D71D2ACFB25600960D02 /* YAMesh+Conversion.swift */; };
+		45B1D7222ACFB5E500960D02 /* VertexDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B1D7212ACFB5E500960D02 /* VertexDescriptor.swift */; };
 		45BEC1212ABE3480001730AB /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45BEC11F2ABE3480001730AB /* Cache.swift */; };
 		45BEC1222ABE3480001730AB /* LOLID2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45BEC1202ABE3480001730AB /* LOLID2.swift */; };
 		45CC35642AB8240F00C33779 /* StanfordVolumeData in Resources */ = {isa = PBXBuildFile; fileRef = 45CC35632AB8240F00C33779 /* StanfordVolumeData */; };
 		45F588142ABD4BD700ADE82B /* RenderKit in Frameworks */ = {isa = PBXBuildFile; productRef = 45F588132ABD4BD700ADE82B /* RenderKit */; };
 		45F5E51C2AC5E7A2003FBEBD /* RenderKit in Frameworks */ = {isa = PBXBuildFile; productRef = 459F48662A5077A300623EEE /* RenderKit */; };
 		45FAACBC2ACCF54C006C31BD /* Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45FAACBB2ACCF54C006C31BD /* Resources.swift */; };
+		45FB79602ACF6E10001CD1B5 /* Cube.glb in Resources */ = {isa = PBXBuildFile; fileRef = 45FB795F2ACF6E10001CD1B5 /* Cube.glb */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -164,10 +167,13 @@
 		45A147C22A4B1B7300C06FE1 /* Demos-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Demos-Release.xcconfig"; sourceTree = "<group>"; };
 		45A147C32A4B1B7300C06FE1 /* Project-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Project-Debug.xcconfig"; sourceTree = "<group>"; };
 		45A147C42A4B1B7300C06FE1 /* CLI-Shared.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "CLI-Shared.xcconfig"; sourceTree = "<group>"; };
+		45B1D71D2ACFB25600960D02 /* YAMesh+Conversion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "YAMesh+Conversion.swift"; sourceTree = "<group>"; };
+		45B1D7212ACFB5E500960D02 /* VertexDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VertexDescriptor.swift; sourceTree = "<group>"; };
 		45BEC11F2ABE3480001730AB /* Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		45BEC1202ABE3480001730AB /* LOLID2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LOLID2.swift; sourceTree = "<group>"; };
 		45CC35632AB8240F00C33779 /* StanfordVolumeData */ = {isa = PBXFileReference; lastKnownFileType = folder; path = StanfordVolumeData; sourceTree = "<group>"; };
 		45FAACBB2ACCF54C006C31BD /* Resources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resources.swift; sourceTree = "<group>"; };
+		45FB795F2ACF6E10001CD1B5 /* Cube.glb */ = {isa = PBXFileReference; lastKnownFileType = file; path = Cube.glb; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -223,6 +229,7 @@
 				4555A0362ABE017A0088CFFB /* DemosApp-VisionOS.swift */,
 				453D32B92A48D06500FCEE29 /* ContentView.swift */,
 				457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */,
+				45FB795F2ACF6E10001CD1B5 /* Cube.glb */,
 				45650DE72ACCEA45009F2AF2 /* BarramundiFish.glb */,
 				4555A0672ABE2F740088CFFB /* Support */,
 				4555A0492ABE2BF50088CFFB /* ShaderToy */,
@@ -260,11 +267,13 @@
 				4555A0402ABE2BF00088CFFB /* SimpleSceneView.swift */,
 				4555A0412ABE2BF00088CFFB /* SimpleSceneMapView.swift */,
 				4555A0442ABE2BF00088CFFB /* SimpleSceneRenderPass.swift */,
+				45B1D7212ACFB5E500960D02 /* VertexDescriptor.swift */,
 				4555A0452ABE2BF00088CFFB /* SimpleSceneInspector.swift */,
 				459E755C2AC1EF6F004BC055 /* SimpleMesh.swift */,
 				4555A0482ABE2BF00088CFFB /* SimpleScene.swift */,
 				45650DEB2ACCEAEA009F2AF2 /* GLTFView.swift */,
 				459FAE542ACDFCAD000018E2 /* YAMesh.swift */,
+				45B1D71D2ACFB25600960D02 /* YAMesh+Conversion.swift */,
 			);
 			path = SimpleScene;
 			sourceTree = "<group>";
@@ -471,6 +480,7 @@
 				455741CF2AC658060050267D /* Testcard_06.ktx in Resources */,
 				455741D12AC658060050267D /* Testcard_07.ktx in Resources */,
 				455741D22AC658060050267D /* Testcard_11.ktx in Resources */,
+				45FB79602ACF6E10001CD1B5 /* Cube.glb in Resources */,
 				4570E2CE2AC711A200B3B64D /* perseverance_04.ktx in Resources */,
 				4570E2CD2AC711A200B3B64D /* perseverance_10.ktx in Resources */,
 				455741D32AC658060050267D /* Testcard_05.ktx in Resources */,
@@ -512,6 +522,7 @@
 				454386A12ACF35BA00928B52 /* BitSetN.swift in Sources */,
 				453F7D3F2ACC7A590051D331 /* VolumetricRenderPass.swift in Sources */,
 				4555A0662ABE2E7E0088CFFB /* Support.swift in Sources */,
+				45B1D71E2ACFB25600960D02 /* YAMesh+Conversion.swift in Sources */,
 				4555A05A2ABE2CF50088CFFB /* MovementController.swift in Sources */,
 				4555A0642ABE2E2E0088CFFB /* SwiftUI+Support.swift in Sources */,
 				457D4F1F2ABD1634004CCD9D /* ContentView-VisionOS.swift in Sources */,
@@ -525,6 +536,7 @@
 				4555A0512ABE2CD80088CFFB /* SimpleScene.swift in Sources */,
 				459FAE552ACDFCAD000018E2 /* YAMesh.swift in Sources */,
 				4555A0542ABE2CD80088CFFB /* BallRotationModifier.swift in Sources */,
+				45B1D7222ACFB5E500960D02 /* VertexDescriptor.swift in Sources */,
 				4555A0552ABE2CDD0088CFFB /* ShaderToyView.swift in Sources */,
 				4555A05E2ABE2D100088CFFB /* GameControllerWidget.swift in Sources */,
 				453D32B82A48D06500FCEE29 /* DemosApp.swift in Sources */,

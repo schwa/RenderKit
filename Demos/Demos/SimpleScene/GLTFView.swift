@@ -3,6 +3,7 @@ import MetalKit
 import Foundation
 import SwiftGLTF
 import RenderKit
+import SwiftFormats
 
 struct GLTFView: View {
     init() {
@@ -16,69 +17,10 @@ struct GLTFView: View {
 
 func gltfTest() throws {
     let device = MTLCreateSystemDefaultDevice()!
-    let url = Bundle.main.url(forResource: "BarramundiFish", withExtension: "glb")!
-    let container = try Container(url: url)
-    let document = container.document
-    let node = try document.scenes[0].nodes[0].resolve(in: document)
-    let mesh = try node.mesh!.resolve(in: document)
-    print(mesh)
-//    let material = try mesh.primitives[0].material!.resolve(in: document)
-//    let baseTexture = try material.pbrMetallicRoughness!.baseColorTexture!.index.resolve(in: document)
+    let fish = try YAMesh(gltf: "Cube", device: device)
 
-    assert(mesh.primitives.count == 1)
-    let primitive = mesh.primitives.first!
-
-    //    var buffers: [MTLBuffer] = try document.buffers.map { buffer in
-    //        let data = try container.data(for: buffer)
-    //        return device.makeBuffer(data: data, options: [])!
-    //    }
-
-    var mtlBuffers: [Index<Buffer>: MTLBuffer] = [:]
-    var descriptor = VertexDescriptor()
-
-    func makeBuffer(for buffer: Index<Buffer>) -> MTLBuffer {
-        let data = try! container.data(for: buffer)
-        return device.makeBuffer(data: data, options: [])!
-    }
-
-    var buffersViews: [Semantic: BufferView] = [:]
-
-    let semantics: [(SwiftGLTF.Mesh.Primitive.Semantic, Semantic, Int)] = [
-        (.POSITION, .position, 0),
-        (.NORMAL, .normal, 1),
-        (.TEXCOORD_0, .textureCoordinate, 2),
-    ]
-    for (gltfSemantic, semantic, index) in semantics {
-        guard let accessor = try primitive.attributes[gltfSemantic]?.resolve(in: document) else {
-            continue
-        }
-        assert(accessor.byteOffset == 0)
-        let bufferView = try accessor.bufferView!.resolve(in: document)
-        assert(bufferView.byteStride == nil)
-        var mtlBuffer: MTLBuffer! = mtlBuffers[bufferView.buffer]
-        if mtlBuffer == nil {
-            mtlBuffer = makeBuffer(for: bufferView.buffer)
-            mtlBuffers[bufferView.buffer] = mtlBuffer
-        }
-        buffersViews[semantic] = .init(buffer: mtlBuffer, offset: bufferView.byteOffset)
-
-        descriptor.attributes.append(.init(semantic: semantic, format: accessor.vertexFormat!, offset: 0, bufferIndex: index))
-    }
-
-    let accessor = try primitive.indices!.resolve(in: document)
-    let bufferView = try accessor.bufferView!.resolve(in: document)
-    assert(bufferView.byteStride == nil)
-    var mtlBuffer: MTLBuffer! = mtlBuffers[bufferView.buffer]
-    if mtlBuffer == nil {
-        mtlBuffer = makeBuffer(for: bufferView.buffer)
-        mtlBuffers[bufferView.buffer] = mtlBuffer
-    }
-    let indexBufferView = BufferView(buffer: mtlBuffer, offset: bufferView.byteOffset)
-    let yaMesh = YAMesh(indexType: .uint16, indexBufferView: indexBufferView, indexCount: 0, vertexDescriptor: descriptor, vertexBufferViews: buffersViews, primitiveType: .triangle)
-    //print(yaMesh)
-
-    let cube = try Cube().toYAMesh(allocator: MTKMeshBufferAllocator(device: device), device: device)
-    print(cube)
+    print(fish.vertexDescriptor.toSwift())
+//    dump(fish)
 }
 
 extension SwiftGLTF.Accessor {
@@ -96,28 +38,116 @@ extension SwiftGLTF.Accessor {
             fatalError() // MORE TO DO
         }
     }
-}
 
-//struct GLTFResourceSpecifier: Equatable, Sendable {
-//    enum Part: Hashable, Sendable {
-//        case buffer(Buffer)
-//        case bufferView(BufferView)
-//    }
-//
-//    var document: SwiftGLTF.Document
-//    var part: Part
-//}
-//
-//extension GLTFResourceSpecifier: SynchronousLoadable {
-//    func load(_ parameter: ()) throws -> Data {
-//        fatalError()
-//    }
-//}
+    var indexType: MTLIndexType {
+        switch (componentType, type) {
+        case (.UNSIGNED_SHORT, .SCALAR), (.SHORT, .SCALAR):
+            return .uint16
+        case (.UNSIGNED_INT, .SCALAR):
+            return .uint32
+        default:
+            fatalError()
+        }
+    }
+}
 
 extension MTLDevice {
     func makeBuffer(data: Data, options: MTLResourceOptions) -> MTLBuffer? {
         return data.withUnsafeBytes { buffer in
             return makeBuffer(bytes: buffer.baseAddress!, length: buffer.count, options: options)
+        }
+    }
+}
+
+extension YAMesh {
+    init(gltf name: String, device: MTLDevice) throws {
+        let url = Bundle.main.url(forResource: name, withExtension: "glb")!
+        let container = try Container(url: url)
+//        dump(container)
+        let node = try container.document.scenes[0].nodes[0].resolve(in: container.document)
+        let mesh = try node.mesh!.resolve(in: container.document)
+        assert(mesh.primitives.count == 1)
+        let primitive = mesh.primitives.first!
+        try self.init(container: container, primitive: primitive, device: device)
+    }
+
+    init(container: SwiftGLTF.Container, primitive: SwiftGLTF.Mesh.Primitive, device: MTLDevice) throws {
+        func makeBuffer(for bufferView: SwiftGLTF.BufferView, label: String) -> MTLBuffer {
+            let data = try! container.data(for: bufferView)
+            let buffer = device.makeBuffer(data: data, options: [])!
+            buffer.label = label
+            return buffer
+        }
+
+        var buffersViews: [Semantic: BufferView] = [:]
+
+        let semantics: [(SwiftGLTF.Mesh.Primitive.Semantic, Semantic, Int)] = [
+            (.POSITION, .position, 10),
+            (.NORMAL, .normal, 11),
+            (.TEXCOORD_0, .textureCoordinate, 12),
+        ]
+
+        var descriptor = VertexDescriptor(attributes: [], layouts: [:])
+        for (gltfSemantic, semantic, index) in semantics {
+            guard let accessor = try primitive.attributes[gltfSemantic]?.resolve(in: container.document) else {
+                continue
+            }
+            assert(accessor.byteOffset == 0)
+            let bufferView = try accessor.bufferView!.resolve(in: container.document)
+            assert(bufferView.byteStride == nil)
+            let mtlBuffer = makeBuffer(for: bufferView, label: "\(container.url.lastPathComponent):\(semantic):\(index)")
+            buffersViews[semantic] = .init(buffer: mtlBuffer, offset: 0)
+            descriptor.attributes.append(.init(semantic: semantic, format: accessor.vertexFormat!, offset: 0, bufferIndex: index))
+        }
+
+        descriptor.layouts[10] = .init(stepFunction: .perVertex, stepRate: 0, stride: 12)
+        descriptor.layouts[11] = .init(stepFunction: .perVertex, stepRate: 0, stride: 12)
+        descriptor.layouts[12] = .init(stepFunction: .perVertex, stepRate: 0, stride: 8)
+
+        let accessor = try primitive.indices!.resolve(in: container.document)
+        let bufferView = try accessor.bufferView!.resolve(in: container.document)
+        assert(bufferView.byteStride == nil)
+        let mtlBuffer: MTLBuffer! = makeBuffer(for: bufferView, label: "\(container.url.lastPathComponent):indices")
+        let indexBufferView = BufferView(label: "Indices", buffer: mtlBuffer, offset: 0)
+        let indexType: MTLIndexType = accessor.indexType
+        let indexCount = accessor.count
+        guard let primitiveType = MTLPrimitiveType(primitive.mode) else {
+            fatalError()
+        }
+        self = YAMesh(label: container.url.lastPathComponent, indexType: indexType, indexBufferView: indexBufferView, indexCount: indexCount, vertexDescriptor: descriptor, vertexBufferViews: buffersViews, primitiveType: primitiveType)
+    }
+}
+
+extension MTLPrimitiveType {
+    init?(_ mode: SwiftGLTF.Mesh.Primitive.Mode) {
+        switch mode {
+        case .POINTS:
+            self = .point
+        case .LINES:
+            self = .line
+        case .LINE_LOOP:
+            return nil
+        case .LINE_STRIP:
+            self = .lineStrip
+        case .TRIANGLES:
+            self = .triangle
+        case .TRIANGLE_STRIP:
+            self = .triangleStrip
+        case .TRIANGLE_FAN:
+            return nil
+        }
+    }
+}
+
+extension MTLStepFunction: CustomStringConvertible {
+    public var description: String {
+        switch self {
+        case .perVertex:
+            "perVertex"
+        case .perInstance:
+            "perInstance"
+        default:
+            fatalError()
         }
     }
 }
