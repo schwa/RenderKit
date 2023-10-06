@@ -66,7 +66,7 @@ public extension VertexDescriptor {
     }
 
     mutating func setPackedOffsets() {
-        let bufferIndices = Set(attributes.map(\.bufferIndex))
+        let bufferIndices = attributes.map(\.bufferIndex)
         for bufferIndex in bufferIndices {
             var currentOffset = 0
             for (index, attribute) in attributes.enumerated() where attribute.bufferIndex == bufferIndex {
@@ -77,6 +77,14 @@ public extension VertexDescriptor {
     }
 
     mutating func setPackedStrides() {
+        let bufferIndices = attributes.map(\.bufferIndex)
+        for bufferIndex in bufferIndices {
+            let last = attributes.filter({ $0.bufferIndex == bufferIndex }).sorted(by: { lhs, rhs in
+                lhs.offset < rhs.offset
+            }).last!
+            let stride = last.offset + last.format.size
+            layouts[bufferIndex] = .init(stepFunction: .perVertex, stepRate: 1, stride: stride)
+        }
     }
 }
 
