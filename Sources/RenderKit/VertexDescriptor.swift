@@ -16,6 +16,14 @@ public struct VertexDescriptor: Labeled, Hashable, Sendable {
         public var format: MTLVertexFormat
         public var offset: Int
         public var bufferIndex: Int
+
+        public init(label: String? = nil, semantic: Semantic, format: MTLVertexFormat, offset: Int, bufferIndex: Int) {
+            self.label = label
+            self.semantic = semantic
+            self.format = format
+            self.offset = offset
+            self.bufferIndex = bufferIndex
+        }
     }
 
     public struct Layout: Hashable, Sendable {
@@ -23,6 +31,13 @@ public struct VertexDescriptor: Labeled, Hashable, Sendable {
         public var stepFunction: MTLVertexStepFunction
         public var stepRate: Int
         public var stride: Int
+
+        public init(label: String? = nil, stepFunction: MTLVertexStepFunction, stepRate: Int, stride: Int) {
+            self.label = label
+            self.stepFunction = stepFunction
+            self.stepRate = stepRate
+            self.stride = stride
+        }
     }
 
     public var label: String?
@@ -73,7 +88,7 @@ public extension VertexDescriptor {
     }
 }
 
-extension MTLVertexDescriptor {
+public extension MTLVertexDescriptor {
     convenience init(_ descriptor: VertexDescriptor) {
         self.init()
 
@@ -143,7 +158,7 @@ public extension VertexDescriptor {
     }
 }
 
-extension VertexDescriptor {
+public extension VertexDescriptor {
     func toSwift() -> String {
         let attributes = attributes.map { attribute in
             ".init(semantic: .\(attribute.semantic), format: .\(attribute.format), offset: \(attribute.offset), bufferIndex: \(attribute.bufferIndex))"

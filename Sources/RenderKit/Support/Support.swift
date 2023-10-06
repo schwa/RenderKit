@@ -21,3 +21,7 @@ extension CGSize {
         return CGSize(width: lhs / rhs.width, height: lhs / rhs.height)
     }
 }
+
+public protocol Labeled {
+    var label: String? { get }
+}

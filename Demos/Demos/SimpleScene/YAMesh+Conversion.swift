@@ -1,11 +1,4 @@
-//
-//  YAMesh+Conversion.swift
-//  Demos
-//
-//  Created by Jonathan Wight on 10/5/23.
-//
-
-import Foundation
+import RenderKit
 
 extension YAMesh {
     func convert(to: VertexDescriptor) throws -> YAMesh {
