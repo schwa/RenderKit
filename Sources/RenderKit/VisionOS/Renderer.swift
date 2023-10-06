@@ -47,7 +47,6 @@ public class Renderer {
         self.layerRenderer = layerRenderer
         device = layerRenderer.device
         commandQueue = device.makeCommandQueue()!
-        print(MemoryLayout<UniformsArray>.size)
         inFlightSemaphore = DispatchSemaphore(value: maxBuffersInFlight)
         let uniformBufferSize = alignedUniformsSize * maxBuffersInFlight
         dynamicUniformBuffer = device.makeBuffer(length: uniformBufferSize, options: [MTLResourceOptions.storageModeShared])!

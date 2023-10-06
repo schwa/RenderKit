@@ -4,11 +4,12 @@ import XCTest
 final class VertexDescriptorTests: XCTestCase {
     func testVertexDescriptor() throws {
         let d = VertexDescriptor.packed(semantics: [.position, .normal, .textureCoordinate])
-        XCTAssertEqual(d.bufferCount, 1)
-        XCTAssertEqual(d.attributes[0], .init(semantic: .position, format: .float3, offset: 0, bufferIndex: 0))
-        XCTAssertEqual(d.attributes[1], .init(semantic: .normal, format: .float3, offset: 12, bufferIndex: 0))
-        XCTAssertEqual(d.attributes[2], .init(semantic: .textureCoordinate, format: .float2, offset: 24, bufferIndex: 0))
-        XCTAssertEqual(d.layouts[0], .init(stepFunction: .perVertex, stepRate: 1, stride: 32))
+        XCTAssertEqual(d.layouts[0].attributes[0], .init(semantic: .position, format: .float3, offset: 0))
+        XCTAssertEqual(d.layouts[0].attributes[1], .init(semantic: .normal, format: .float3, offset: 12))
+        XCTAssertEqual(d.layouts[0].attributes[2], .init(semantic: .textureCoordinate, format: .float2, offset: 24))
+        XCTAssertEqual(d.layouts[0].stepFunction, .perVertex)
+        XCTAssertEqual(d.layouts[0].stepRate, 1)
+        XCTAssertEqual(d.layouts[0].stride, 32)
 
         let mtl = MTLVertexDescriptor(d)
         XCTAssertEqual(mtl.attributes[0].format, .float3)
@@ -23,6 +24,15 @@ final class VertexDescriptorTests: XCTestCase {
         XCTAssertEqual(mtl.layouts[0].stepFunction, .perVertex)
         XCTAssertEqual(mtl.layouts[0].stepRate, 1)
         XCTAssertEqual(mtl.layouts[0].stride, 32)
+
+        var d2 = try VertexDescriptor(mtl)
+        XCTAssertEqual(d2.layouts[0].attributes[0].semantic, .undefined)
+        XCTAssertEqual(d2.layouts[0].attributes[1].semantic, .undefined)
+        XCTAssertEqual(d2.layouts[0].attributes[2].semantic, .undefined)
+        d2.layouts[0].attributes[0].semantic = .position
+        d2.layouts[0].attributes[1].semantic = .normal
+        d2.layouts[0].attributes[2].semantic = .textureCoordinate
+        XCTAssertEqual(d, d2)
 
 /*
  <MTLVertexDescriptorInternal: 0x6000037d9140>
@@ -39,52 +49,5 @@ final class VertexDescriptorTests: XCTestCase {
              offset = 24
              format = MTLAttributeFormatFloat2
 */
-    }
-}
-
-public struct VertexDescriptor2: Labeled, Hashable, Sendable {
-    public struct Layout: Labeled, Hashable, Sendable {
-        public var label: String?
-        public var bufferIndex: Int
-        public var stride: Int
-        public var stepFunction: MTLVertexStepFunction
-        public var stepRate: Int
-        public var attributes: [Attribute]
-
-        public init(label: String? = nil, bufferIndex: Int, stride: Int, stepFunction: MTLVertexStepFunction, stepRate: Int, attributes: [Attribute]) {
-            assert(bufferIndex >= 0)
-            assert(bufferIndex >= 0)
-            assert(stride >= 0)
-            self.label = label
-            self.bufferIndex = bufferIndex
-            self.stride = stride
-            self.stepFunction = stepFunction
-            self.stepRate = stepRate
-            self.attributes = attributes
-        }
-    }
-
-    public struct Attribute: Labeled, Hashable, Sendable {
-        public var label: String?
-        public var semantic: Semantic
-        public var format: MTLVertexFormat
-        public var offset: Int
-
-        public init(label: String? = nil, semantic: Semantic, format: MTLVertexFormat, offset: Int) {
-            assert(offset >= 0)
-            self.label = label
-            self.semantic = semantic
-            self.format = format
-            self.offset = offset
-        }
-    }
-
-    public var label: String?
-    public var layouts: [Layout]
-
-    public init(label: String? = nil, layouts: [Layout]) {
-        assert(Set(layouts.map(\.bufferIndex)).count == layouts.count)
-        self.label = label
-        self.layouts = layouts
     }
 }

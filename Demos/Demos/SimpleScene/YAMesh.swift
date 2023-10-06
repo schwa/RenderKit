@@ -48,9 +48,9 @@ public struct YAMesh: Labeled {
     public var label: String?
     public var submeshes: [Submesh]
     public var vertexDescriptor: VertexDescriptor
-    public var vertexBufferViews: [Semantic: BufferView]
+    public var vertexBufferViews: [BufferView]
 
-    public init(label: String? = nil, submeshes: [Submesh], vertexDescriptor: VertexDescriptor, vertexBufferViews: [Semantic: BufferView]) {
+    public init(label: String? = nil, submeshes: [Submesh], vertexDescriptor: VertexDescriptor, vertexBufferViews: [BufferView]) {
         self.label = label
         self.submeshes = submeshes
         self.vertexDescriptor = vertexDescriptor
@@ -77,30 +77,21 @@ public struct YAMesh: Labeled {
 // MARK: -
 
 public extension YAMesh {
-    init(label: String? = nil, indexType: MTLIndexType, indexBufferView: BufferView, indexCount: Int, vertexDescriptor: VertexDescriptor, vertexBufferViews: [Semantic: BufferView], primitiveType: MTLPrimitiveType) {
+    init(label: String? = nil, indexType: MTLIndexType, indexBufferView: BufferView, indexCount: Int, vertexDescriptor: VertexDescriptor, vertexBufferViews: [BufferView], primitiveType: MTLPrimitiveType) {
         let submesh = Submesh(indexType: indexType, indexBufferView: indexBufferView, indexCount: indexCount, primitiveType: primitiveType)
         self = .init(label: label, submeshes: [submesh], vertexDescriptor: vertexDescriptor, vertexBufferViews: vertexBufferViews)
     }
 
     init(label: String? = nil, indexType: MTLIndexType, indexBufferView: BufferView, indexCount: Int, vertexDescriptor: VertexDescriptor, vertexBuffer: MTLBuffer, vertexBufferOffset: Int, primitiveType: MTLPrimitiveType) {
-        assert(vertexDescriptor.bufferCount == 1)
-        let vertexBufferViewss = Dictionary(uniqueKeysWithValues: vertexDescriptor.attributes.map({ ($0.semantic, BufferView(buffer: vertexBuffer, offset: vertexBufferOffset)) }))
-        self = .init(label: label, indexType: indexType, indexBufferView: indexBufferView, indexCount: indexCount, vertexDescriptor: vertexDescriptor, vertexBufferViews: vertexBufferViewss, primitiveType: primitiveType)
+        assert(vertexDescriptor.layouts.count == 1)
+        self = .init(label: label, indexType: indexType, indexBufferView: indexBufferView, indexCount: indexCount, vertexDescriptor: vertexDescriptor, vertexBufferViews: [BufferView(buffer: vertexBuffer, offset: vertexBufferOffset)], primitiveType: primitiveType)
     }
 }
 
 public extension MTLRenderCommandEncoder {
-    func setVertexBuffer(_ mesh: YAMesh, startingIndex: Int) {
-        // TODO: this involves too many allocs.
-        let bufferViews: [Int: BufferView] = mesh.vertexDescriptor.attributes.reduce(into: [:]) { partialResult, attribute in
-            let vertexBufferView = mesh.vertexBufferViews[attribute.semantic]!
-            assert(partialResult[attribute.bufferIndex] == nil || partialResult[attribute.bufferIndex]?.buffer === vertexBufferView.buffer)
-            assert(partialResult[attribute.bufferIndex] == nil || partialResult[attribute.bufferIndex]?.offset == vertexBufferView.offset)
-            partialResult[attribute.bufferIndex] = vertexBufferView
-        }
-        for (index, bufferView) in bufferViews {
-            //print("setVertexBuffer(\(bufferView.buffer.label), offset: \(bufferView.offset), index: \(index)")
-            setVertexBuffer(bufferView.buffer, offset: bufferView.offset, index: index)
+    func setVertexBuffers(_ mesh: YAMesh) {
+        for (layout, bufferView) in zip(mesh.vertexDescriptor.layouts, mesh.vertexBufferViews) {
+            setVertexBuffer(bufferView.buffer, offset: bufferView.offset, index: layout.bufferIndex)
         }
     }
 
@@ -144,12 +135,7 @@ public extension YAMesh {
             return Submesh(label: mtkSubmesh.name, indexType: mtkSubmesh.indexType, indexBufferView: indexBufferView, indexCount: mtkSubmesh.indexCount, primitiveType: mtkSubmesh.primitiveType)
         }
         let vertexDescriptor = try VertexDescriptor(mdlMesh.vertexDescriptor)
-
-        var vertexBufferViews: [Semantic: BufferView] = [:]
-        for attribute in vertexDescriptor.attributes {
-            let mtkBuffer = mtkMesh.vertexBuffers[attribute.bufferIndex]
-            vertexBufferViews[attribute.semantic] = .init(buffer: mtkBuffer.buffer, offset: mtkBuffer.offset)
-        }
+        let vertexBufferViews = mtkMesh.vertexBuffers.map { BufferView(buffer: $0.buffer, offset: $0.offset) }
         self = .init(label: label, submeshes: submeshes, vertexDescriptor: vertexDescriptor, vertexBufferViews: vertexBufferViews)
     }
 }

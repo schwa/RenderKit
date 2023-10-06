@@ -17,9 +17,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "RenderKitTests"
-               BuildableName = "RenderKitTests"
-               BlueprintName = "RenderKitTests"
+               BlueprintIdentifier = "StreamBuilderTests"
+               BuildableName = "StreamBuilderTests"
+               BlueprintName = "StreamBuilderTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>

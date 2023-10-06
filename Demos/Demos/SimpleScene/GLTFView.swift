@@ -19,7 +19,6 @@ func gltfTest() throws {
     let device = MTLCreateSystemDefaultDevice()!
     let fish = try YAMesh(gltf: "Cube", device: device)
 
-    print(fish.vertexDescriptor.toSwift())
 //    dump(fish)
 }
 
@@ -79,7 +78,7 @@ extension YAMesh {
             return buffer
         }
 
-        var buffersViews: [Semantic: BufferView] = [:]
+        var bufferViews: [BufferView] = []
 
         let semantics: [(SwiftGLTF.Mesh.Primitive.Semantic, Semantic, Int)] = [
             (.POSITION, .position, 10),
@@ -87,7 +86,7 @@ extension YAMesh {
             (.TEXCOORD_0, .textureCoordinate, 12),
         ]
 
-        var descriptor = VertexDescriptor(attributes: [], layouts: [:])
+        var descriptor = VertexDescriptor()
         for (gltfSemantic, semantic, index) in semantics {
             guard let accessor = try primitive.attributes[gltfSemantic]?.resolve(in: container.document) else {
                 continue
@@ -96,13 +95,15 @@ extension YAMesh {
             let bufferView = try accessor.bufferView!.resolve(in: container.document)
             assert(bufferView.byteStride == nil)
             let mtlBuffer = makeBuffer(for: bufferView, label: "\(container.url.lastPathComponent):\(semantic):\(index)")
-            buffersViews[semantic] = .init(buffer: mtlBuffer, offset: 0)
-            descriptor.attributes.append(.init(semantic: semantic, format: accessor.vertexFormat!, offset: 0, bufferIndex: index))
-        }
 
-        descriptor.layouts[10] = .init(stepFunction: .perVertex, stepRate: 0, stride: 12)
-        descriptor.layouts[11] = .init(stepFunction: .perVertex, stepRate: 0, stride: 12)
-        descriptor.layouts[12] = .init(stepFunction: .perVertex, stepRate: 0, stride: 8)
+            bufferViews.append(BufferView(buffer: mtlBuffer, offset: 0))
+
+            descriptor.layouts.append(.init(label: nil, bufferIndex: index, stride: 0, stepFunction: .perVertex, stepRate: 1, attributes: [
+                .init(semantic: semantic, format: accessor.vertexFormat!, offset: 0)
+            ]))
+        }
+        descriptor.setPackedOffsets()
+        descriptor.setPackedStrides()
 
         let accessor = try primitive.indices!.resolve(in: container.document)
         let bufferView = try accessor.bufferView!.resolve(in: container.document)
@@ -114,7 +115,7 @@ extension YAMesh {
         guard let primitiveType = MTLPrimitiveType(primitive.mode) else {
             fatalError()
         }
-        self = YAMesh(label: container.url.lastPathComponent, indexType: indexType, indexBufferView: indexBufferView, indexCount: indexCount, vertexDescriptor: descriptor, vertexBufferViews: buffersViews, primitiveType: primitiveType)
+        self = YAMesh(label: container.url.lastPathComponent, indexType: indexType, indexBufferView: indexBufferView, indexCount: indexCount, vertexDescriptor: descriptor, vertexBufferViews: bufferViews, primitiveType: primitiveType)
     }
 }
 

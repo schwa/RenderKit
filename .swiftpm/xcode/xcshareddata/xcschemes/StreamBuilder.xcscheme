@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1500"
+   LastUpgradeVersion = "1510"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,10 +14,10 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "453D32B32A48D06500FCEE29"
-               BuildableName = "Demos.app"
-               BlueprintName = "Demos"
-               ReferencedContainer = "container:RenderKitDemos.xcodeproj">
+               BlueprintIdentifier = "StreamBuilder"
+               BuildableName = "StreamBuilder"
+               BlueprintName = "StreamBuilder"
+               ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -38,18 +38,7 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
-      showGraphicsOverview = "Yes"
       allowLocationSimulation = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "453D32B32A48D06500FCEE29"
-            BuildableName = "Demos.app"
-            BlueprintName = "Demos"
-            ReferencedContainer = "container:RenderKitDemos.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
    </LaunchAction>
    <ProfileAction
       buildConfiguration = "Release"
@@ -57,16 +46,15 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
+      <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "453D32B32A48D06500FCEE29"
-            BuildableName = "Demos.app"
-            BlueprintName = "Demos"
-            ReferencedContainer = "container:RenderKitDemos.xcodeproj">
+            BlueprintIdentifier = "StreamBuilder"
+            BuildableName = "StreamBuilder"
+            BlueprintName = "StreamBuilder"
+            ReferencedContainer = "container:">
          </BuildableReference>
-      </BuildableProductRunnable>
+      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

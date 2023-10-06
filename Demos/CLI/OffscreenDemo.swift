@@ -98,11 +98,9 @@ public struct OffscreenDemo {
             try offscreen.draw(device: device, configuration: configuration, size: configuration.size, renderPassDescriptor: configuration.currentRenderPassDescriptor!, commandBuffer: commandBuffer)
         }
 
-        let histogram = configuration.targetTexture!.histogram()
-
-        histogram.withEx(type: UInt32.self, count: 4 * 256) { pointer in
-            print(Array(pointer))
-        }
+//        let histogram = configuration.targetTexture!.histogram()
+//        histogram.withEx(type: UInt32.self, count: 4 * 256) { pointer in
+//        }
         let image = await configuration.targetTexture!.cgImage(colorSpace: CGColorSpace(name: CGColorSpace.displayP3))
         let url = URL(filePath: "/tmp/test.jpg")
         try image.write(to: URL(filePath: "/tmp/test.jpg"))

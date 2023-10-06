@@ -23,6 +23,7 @@ let package = Package(
         .package(url: "https://github.com/schwa/swiftformats", from: "0.3.3"),
         .package(url: "https://github.com/schwa/swiftfields", from: "0.1.3"),
         .package(url: "https://github.com/schwa/MetalCompilerPlugin", from: "0.0.2"),
+        //.package(url: "https://github.com/schwa/StreamBuilder", branch: "main"),
     ],
     targets: [
         .target(name: "RenderKit",
@@ -38,6 +39,7 @@ let package = Package(
                 .product(name: "SwiftFields", package: "swiftfields"),
                 .product(name: "SwiftFormats", package: "swiftformats"),
                 .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
+//                .product(name: "StreamBuilder", package: "StreamBuilder"),
             ],
             resources: [
 //                .process("Media.xcassets"),
@@ -50,7 +52,7 @@ let package = Package(
         ),
         .target(name: "RenderKitShaders",
             plugins: [
-                .plugin(name: "MetalCompilerPlugin", package: "MetalCompilerPlugin")
+//                .plugin(name: "MetalCompilerPlugin", package: "MetalCompilerPlugin")
             ]
         ),
         .target(name: "RenderKitScratch",

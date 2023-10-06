@@ -40,20 +40,8 @@ class SimpleSceneRenderPass <Configuration>: RenderPass where Configuration: Met
             renderPipelineDescriptor.depthAttachmentPixelFormat = configuration.depthStencilPixelFormat
             renderPipelineDescriptor.vertexDescriptor = SimpleVertex.vertexDescriptor
 
-            let descriptor = VertexDescriptor(
-                attributes: [
-                    .init(semantic: .position, format: .float3, offset: 0, bufferIndex: 10),
-                    .init(semantic: .normal, format: .float3, offset: 0, bufferIndex: 11),
-                    .init(semantic: .textureCoordinate, format: .float2, offset: 0, bufferIndex: 12)
-                ],
-                layouts: [
-                    10: .init(stepFunction: .perVertex, stepRate: 1, stride: 12),
-                    11: .init(stepFunction: .perVertex, stepRate: 1, stride: 12),
-                    12: .init(stepFunction: .perVertex, stepRate: 1, stride: 8)
-                ]
-            )
+            let descriptor = VertexDescriptor.packed(semantics: [.position, .normal, .textureCoordinate])
             renderPipelineDescriptor.vertexDescriptor = MTLVertexDescriptor(descriptor)
-
             flatShaderRenderPipelineState = try device.makeRenderPipelineState(descriptor: renderPipelineDescriptor)
         }
 
@@ -106,7 +94,7 @@ class SimpleSceneRenderPass <Configuration>: RenderPass where Configuration: Met
                     guard let mesh = cache.get(key: "panorama:mesh") as? YAMesh else {
                         fatalError()
                     }
-                    encoder.setVertexBuffer(mesh, startingIndex: 0)
+                    encoder.setVertexBuffers(mesh)
                     encoder.setVertexBytes(of: cameraUniforms, index: 1)
                     let modelViewMatrix = inverseCameraMatrix * float4x4.translation(scene.camera.transform.translation)
                     encoder.setVertexBytes(of: modelViewMatrix, index: 2)
@@ -146,12 +134,13 @@ class SimpleSceneRenderPass <Configuration>: RenderPass where Configuration: Met
                             guard let mesh = cache.get(key: meshKey) as? YAMesh else {
                                 fatalError()
                             }
-                            encoder.setVertexBuffer(mesh, startingIndex: 0)
+                            encoder.setVertexBuffers(mesh)
                             let modes: [(MTLTriangleFillMode, SIMD4<Float>?)] = [
                                 (.fill, nil),
                                 (.lines, [1, 1, 1, 1]),
                             ]
                             for (fillMode, color) in modes {
+                                //print(meshKey, models)
                                 encoder.withDebugGroup("FillMode: \(fillMode))") {
                                     let modelUniforms = models.map { model in
                                         ModelUniforms(
