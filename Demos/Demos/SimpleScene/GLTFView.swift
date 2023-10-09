@@ -18,6 +18,8 @@ struct GLTFView: View {
 func gltfTest() throws {
     let device = MTLCreateSystemDefaultDevice()!
     let fish = try YAMesh(gltf: "Cube", device: device)
+    let converted = try fish.convert(to: VertexDescriptor.packed(semantics: [.position, .position, .textureCoordinate]))
+    print(converted)
 
 //    dump(fish)
 }

@@ -4,7 +4,6 @@ import ModelIO
 import Everything
 
 public enum Semantic: Hashable, Sendable {
-    case undefined // TODO: Remove
     case position
     case normal
     case textureCoordinate
@@ -34,11 +33,11 @@ public struct VertexDescriptor: Labeled, Hashable, Sendable {
 
     public struct Attribute: Labeled, Hashable, Sendable {
         public var label: String?
-        public var semantic: Semantic
+        public var semantic: Semantic?
         public var format: MTLVertexFormat
         public var offset: Int
 
-        public init(label: String? = nil, semantic: Semantic, format: MTLVertexFormat, offset: Int) {
+        public init(label: String? = nil, semantic: Semantic?, format: MTLVertexFormat, offset: Int) {
             assert(offset >= 0)
             self.label = label
             self.semantic = semantic
@@ -144,7 +143,7 @@ public extension VertexDescriptor {
                 guard mtlAttribute.bufferIndex == bufferIndex else {
                     return nil
                 }
-                return Attribute(semantic: .undefined, format: mtlAttribute.format, offset: mtlAttribute.offset)
+                return Attribute(semantic: nil, format: mtlAttribute.format, offset: mtlAttribute.offset)
             }
             let layout = Layout(bufferIndex: bufferIndex, stride: mtlLayout.stride, stepFunction: mtlLayout.stepFunction, stepRate: mtlLayout.stepRate, attributes: attributes)
             return layout
@@ -187,7 +186,7 @@ public extension VertexDescriptor {
                     return nil
                 }
                 let format = MTLVertexFormat(mdlAttribute.format)
-                return Attribute(semantic: .undefined, format: format, offset: mdlAttribute.offset)
+                return Attribute(semantic: nil, format: format, offset: mdlAttribute.offset)
             }
             return .init(label: nil, bufferIndex: bufferIndex, stride: mdlLayout.stride, stepFunction: .perVertex, stepRate: 1, attributes: attributes)
         }
@@ -205,8 +204,6 @@ public extension VertexDescriptor {
                 format = .float3
             case .textureCoordinate:
                 format = .float2
-            default:
-                fatalError()
             }
             return .init(semantic: semantic, format: format, offset: 0)
         }
