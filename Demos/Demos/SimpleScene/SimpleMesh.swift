@@ -32,29 +32,6 @@ protocol MTLBufferProviding {
     var buffer: MTLBuffer { get }
 }
 
-//@available(*, deprecated, message: "Use YAMesh")
-//extension SimpleMesh {
-//    init(label: String? = nil, rectangle: CGRect, transform: simd_float3x2 = simd_float3x2([1, 0], [0, 1], [0, 0]), device: MTLDevice, textureCoordinate: (CGPoint) -> SIMD2<Float>) throws {
-//        // 1---3
-//        // |\  |
-//        // | \ |
-//        // |  \|
-//        // 0---2
-//
-//        let vertices = [
-//            rectangle.minXMinY,
-//            rectangle.minXMaxY,
-//            rectangle.maxXMinY,
-//            rectangle.maxXMaxY,
-//        ]
-//        .map {
-//            // TODO; Normal not impacted by transform. It should be.
-//            SimpleVertex(position: SIMD2<Float>($0) * transform, normal: [0, 0, 1], textureCoordinate: textureCoordinate($0))
-//        }
-//        self = try .init(label: label, indices: [0, 1, 2, 1, 3, 2], vertices: vertices, device: device)
-//    }
-//}
-
 extension YAMesh {
     static func simpleMesh(label: String? = nil, indices: [UInt16], vertices: [SimpleVertex], device: MTLDevice) throws -> YAMesh {
         guard let indexBuffer = device.makeBuffer(bytesOf: indices, options: .storageModeShared) else {
@@ -81,5 +58,24 @@ extension YAMesh {
             SimpleVertex(position: SIMD2<Float>($0) * transform, normal: [0, 0, 1], textureCoordinate: textureCoordinate($0))
         }
         return try YAMesh.simpleMesh(label: label, indices: [0, 1, 2], vertices: vertices, device: device)
+    }
+
+    static func plane(label: String? = nil, rectangle: CGRect, transform: simd_float3x2 = simd_float3x2([1, 0], [0, 1], [0, 0]), device: MTLDevice, textureCoordinate: (CGPoint) -> SIMD2<Float>) throws -> YAMesh {
+        // 1---3
+        // |\  |
+        // | \ |
+        // |  \|
+        // 0---2
+        let vertices = [
+            rectangle.minXMinY,
+            rectangle.minXMaxY,
+            rectangle.maxXMinY,
+            rectangle.maxXMaxY,
+        ]
+        .map {
+            // TODO; Normal not impacted by transform. It should be.
+            SimpleVertex(position: SIMD2<Float>($0) * transform, normal: [0, 0, 1], textureCoordinate: textureCoordinate($0))
+        }
+        return try simpleMesh(label: label, indices: [0, 1, 2, 1, 3, 2], vertices: vertices, device: device)
     }
 }
