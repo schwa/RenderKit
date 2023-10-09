@@ -63,7 +63,9 @@ class VolumetricRenderPass <Configuration>: RenderPass where Configuration: Meta
             renderPipelineDescriptor.colorAttachments[0].destinationAlphaBlendFactor = .oneMinusSourceAlpha
 
             renderPipelineDescriptor.depthAttachmentPixelFormat = configuration.depthStencilPixelFormat
-            renderPipelineDescriptor.vertexDescriptor = SimpleVertex.vertexDescriptor
+            let descriptor = VertexDescriptor.packed(semantics: [.position, .normal, .textureCoordinate])
+            renderPipelineDescriptor.vertexDescriptor = MTLVertexDescriptor(descriptor)
+
             renderPipelineState = try! device.makeRenderPipelineState(descriptor: renderPipelineDescriptor)
         }
 
@@ -95,18 +97,18 @@ class VolumetricRenderPass <Configuration>: RenderPass where Configuration: Meta
 
                 let modelTransform = Transform(scale: [2, 2, 2], rotation: rotation.quaternion)
 
-                let mesh2 = try cache.get(key: "mesh2", of: SimpleMesh.self) {
+                let mesh2 = try cache.get(key: "mesh2", of: YAMesh.self) {
                     let rect = CGRect(center: .zero, radius: 0.5)
                     let circle = LegacyGraphics.Circle(containing: rect)
                     let triangle = Triangle(containing: circle)
-                    return try SimpleMesh(label: "triangle", triangle: triangle, device: device) {
+                    return try YAMesh.triangle(label: "triangle", triangle: triangle, device: device) {
                         SIMD2<Float>($0) + [0.5, 0.5]
                     }
 //                    return try SimpleMesh(label: "rectangle", rectangle: rect, device: configuration.device!) {
 //                        SIMD2<Float>($0) + [0.5, 0.5]
 //                    }
                 }
-                encoder.setVertexBuffer(mesh2, index: 0)
+                encoder.setVertexBuffers(mesh2)
 
                 // Vertex Buffer Index 1
                 let cameraUniforms = CameraUniforms(projectionMatrix: camera.projection.matrix(viewSize: SIMD2<Float>(size)))

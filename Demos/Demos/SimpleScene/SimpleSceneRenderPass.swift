@@ -38,7 +38,6 @@ class SimpleSceneRenderPass <Configuration>: RenderPass where Configuration: Met
             renderPipelineDescriptor.fragmentFunction = fragmentFunction
             renderPipelineDescriptor.colorAttachments[0].pixelFormat = configuration.colorPixelFormat
             renderPipelineDescriptor.depthAttachmentPixelFormat = configuration.depthStencilPixelFormat
-            renderPipelineDescriptor.vertexDescriptor = SimpleVertex.vertexDescriptor
 
             let descriptor = VertexDescriptor.packed(semantics: [.position, .normal, .textureCoordinate])
             renderPipelineDescriptor.vertexDescriptor = MTLVertexDescriptor(descriptor)
@@ -58,7 +57,8 @@ class SimpleSceneRenderPass <Configuration>: RenderPass where Configuration: Met
             renderPipelineDescriptor.fragmentFunction = fragmentFunction
             renderPipelineDescriptor.colorAttachments[0].pixelFormat = configuration.colorPixelFormat
             renderPipelineDescriptor.depthAttachmentPixelFormat = configuration.depthStencilPixelFormat
-            renderPipelineDescriptor.vertexDescriptor = SimpleVertex.vertexDescriptor
+            let descriptor = VertexDescriptor.packed(semantics: [.position, .normal, .textureCoordinate])
+            renderPipelineDescriptor.vertexDescriptor = MTLVertexDescriptor(descriptor)
             panoramaShaderRenderPipelineState = try device.makeRenderPipelineState(descriptor: renderPipelineDescriptor)
         }
 

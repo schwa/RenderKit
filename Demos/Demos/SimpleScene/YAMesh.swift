@@ -108,25 +108,6 @@ public extension MTLRenderCommandEncoder {
     }
 }
 
-extension YAMesh {
-    init(label: String?, _ mesh: SimpleMesh) {
-        fatalError()
-//        self = .init(
-//            label: mesh.label,
-//            indexType: mesh.indexType,
-//            indexBufferView: .init(
-//                buffer: mesh.indexBuffer,
-//                offset: mesh.indexBufferOffset
-//            ),
-//            indexCount: mesh.indexCount,
-//            vertexDescriptor: descriptor,
-//            vertexBuffer: mesh.vertexBuffer,
-//            vertexBufferOffset: mesh.vertexBufferOffset,
-//            primitiveType: mesh.primitiveType
-//        )
-    }
-}
-
 public extension YAMesh {
     init(label: String? = nil, mdlMesh: MDLMesh, device: MTLDevice) throws {
         let mtkMesh = try MTKMesh(mesh: mdlMesh, device: device)
