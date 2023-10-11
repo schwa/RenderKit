@@ -5,7 +5,6 @@ import Metal
 import MetalKit
 import SIMDSupport
 import RenderKitShaders
-import Everything
 import MetalSupport
 import os
 import RenderKit
@@ -149,7 +148,8 @@ struct TransferFunctionEditor: View {
     func gesture(_ size: CGSize) -> some Gesture {
         DragGesture(coordinateSpace: coordinateSpace)
         .onChanged { value in
-            let startColumn = clamp(Int((lastLocation ?? value.location).x * Double(values.count - 1) / size.width), in: 0...(values.count - 1))
+            let count = values.count
+            let startColumn = clamp(Int((lastLocation ?? value.location).x * Double(count - 1) / size.width), in: 0...(count - 1))
             let endColumn = clamp(Int(value.location.x * Double(values.count - 1) / size.width), in: 0...(values.count - 1))
             let v = clamp(1 - Float(value.location.y / size.height), in: 0...1)
             for column in stride(from: startColumn, through: endColumn, by: endColumn >= startColumn ? 1 : -1) {

@@ -37,10 +37,12 @@ extension YAMesh {
         guard let indexBuffer = device.makeBuffer(bytesOf: indices, options: .storageModeShared) else {
             fatalError()
         }
+        indexBuffer.label = "\(label ?? "unlabeled YAMesh"):indices"
         let indexBufferView = BufferView(buffer: indexBuffer, offset: 0)
         guard let vertexBuffer = device.makeBuffer(bytesOf: vertices, options: .storageModeShared) else {
             fatalError()
         }
+        vertexBuffer.label = "\(label ?? "unlabeled YAMesh"):vertices"
         assert(vertexBuffer.length == vertices.count * 32)
         let vertexBufferView = BufferView(buffer: vertexBuffer, offset: 0)
         let vertexDescriptor = VertexDescriptor.packed(semantics: [.position, .normal, .textureCoordinate])
@@ -61,6 +63,11 @@ extension YAMesh {
     }
 
     static func plane(label: String? = nil, rectangle: CGRect, transform: simd_float3x2 = simd_float3x2([1, 0], [0, 1], [0, 0]), device: MTLDevice, textureCoordinate: (CGPoint) -> SIMD2<Float>) throws -> YAMesh {
+        // Transforms:
+        // [1, 0], [0, 1], [0, 0]: XY aligned plane
+        // [1, 0], [0, 0], [0, 1]: XZ aligned plane
+        // ...
+
         // 1---3
         // |\  |
         // | \ |

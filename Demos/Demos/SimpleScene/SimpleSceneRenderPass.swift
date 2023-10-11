@@ -6,154 +6,163 @@ import SIMDSupport
 import RenderKitShaders
 import RenderKit
 import Observation
+import Everything
 
 class SimpleSceneRenderPass <Configuration>: RenderPass where Configuration: MetalConfiguration {
     var scene: SimpleScene
+    var jobs: [AnyRenderJob<Configuration>] = []
+
+    init(scene: SimpleScene) {
+        self.scene = scene
+
+        jobs = [
+            AnyRenderJob(PanoramaRenderJob<Configuration>(scene: scene)),
+            AnyRenderJob(SceneModelsRenderJob<Configuration>(scene: scene)),
+            AnyRenderJob(ParticlesRenderJob()),
+        ]
+    }
+
+    func setup(device: MTLDevice, configuration: inout Configuration) throws {
+        try jobs.forEach { job in
+            try job.prepare(device: device, configuration: &configuration)
+        }
+    }
+
+    func drawableSizeWillChange(device: MTLDevice, configuration: inout Configuration, size: CGSize) throws {
+        try jobs.forEach { job in
+            try job.drawableSizeWillChange(device: device, configuration: &configuration, size: size)
+        }
+    }
+
+    func draw(device: MTLDevice, configuration: Configuration, size: CGSize, renderPassDescriptor: MTLRenderPassDescriptor, commandBuffer: MTLCommandBuffer) throws {
+        try commandBuffer.withRenderCommandEncoder(descriptor: renderPassDescriptor) { encoder in
+            try jobs.forEach { job in
+                try job.encode(on: encoder, size: size)
+            }
+        }
+    }
+}
+
+extension SimpleSceneRenderPass: Observable {
+}
+
+protocol SimpleRenderJob: AnyObject {
+    associatedtype Configuration: MetalConfiguration
+    func prepare(device: MTLDevice, configuration: inout Configuration) throws
+    func drawableSizeWillChange(device: MTLDevice, configuration: inout Configuration, size: CGSize) throws
+    func encode(on encoder: MTLRenderCommandEncoder, size: CGSize) throws
+}
+
+extension SimpleRenderJob {
+    func drawableSizeWillChange(device: MTLDevice, configuration: inout Configuration, size: CGSize) throws {
+    }
+}
+
+class AnyRenderJob <Configuration>: SimpleRenderJob where Configuration: MetalConfiguration {
+    var base: Any
+    var _prepare: (MTLDevice, inout Configuration) throws -> Void
+    var _drawableSizeWillChange: (MTLDevice, inout Configuration, CGSize) throws -> Void
+    var _encode: (MTLRenderCommandEncoder, CGSize) throws -> Void
+
+    init<Base>(_ base: Base) where Base: SimpleRenderJob, Base.Configuration == Configuration {
+        self.base = base
+        _prepare = base.prepare(device:configuration:)
+        _drawableSizeWillChange = base.drawableSizeWillChange(device:configuration:size:)
+        _encode = base.encode(on:size:)
+    }
+
+    func drawableSizeWillChange(device: MTLDevice, configuration: inout Configuration, size: CGSize) throws {
+        try _drawableSizeWillChange(device, &configuration, size)
+    }
+
+    func prepare(device: MTLDevice, configuration: inout Configuration) throws {
+        try _prepare(device, &configuration)
+    }
+
+    func encode(on encoder: MTLRenderCommandEncoder, size: CGSize) throws {
+        try _encode(encoder, size)
+    }
+}
+
+class SceneModelsRenderJob <Configuration>: SimpleRenderJob where Configuration: MetalConfiguration {
+    var renderPipelineState: MTLRenderPipelineState?
     var depthStencilState: MTLDepthStencilState?
-    var nilDepthStencilState: MTLDepthStencilState?
-    var flatShaderRenderPipelineState: MTLRenderPipelineState?
-    var panoramaShaderRenderPipelineState: MTLRenderPipelineState?
+
+    typealias Parameter = (SimpleScene)
+
+    var scene: SimpleScene
     var cache = Cache<String, Any>()
 
     init(scene: SimpleScene) {
         self.scene = scene
     }
 
-    func setup(device: MTLDevice, configuration: inout Configuration) throws {
-        if depthStencilState == nil {
-            depthStencilState = device.makeDepthStencilState(descriptor: MTLDepthStencilDescriptor(depthCompareFunction: .lessEqual, isDepthWriteEnabled: true))
-        }
+    func prepare(device: MTLDevice, configuration: inout Configuration) throws {
+        let library = try! device.makeDefaultLibrary(bundle: .shadersBundle)
+        let vertexFunction = library.makeFunction(name: "flatShaderVertexShader")!
+        let fragmentFunction = library.makeFunction(name: "flatShaderFragmentShader")
 
-        if nilDepthStencilState == nil {
-            nilDepthStencilState = device.makeDepthStencilState(descriptor: MTLDepthStencilDescriptor())
-        }
+        depthStencilState = device.makeDepthStencilState(descriptor: MTLDepthStencilDescriptor(depthCompareFunction: .lessEqual, isDepthWriteEnabled: true))
 
-        if flatShaderRenderPipelineState == nil {
-            let library = try! device.makeDefaultLibrary(bundle: .shadersBundle)
-            let vertexFunction = library.makeFunction(name: "flatShaderVertexShader")!
-            let fragmentFunction = library.makeFunction(name: "flatShaderFragmentShader")
+        let renderPipelineDescriptor = MTLRenderPipelineDescriptor()
+        renderPipelineDescriptor.vertexFunction = vertexFunction
+        renderPipelineDescriptor.fragmentFunction = fragmentFunction
+        renderPipelineDescriptor.colorAttachments[0].pixelFormat = configuration.colorPixelFormat
+        renderPipelineDescriptor.depthAttachmentPixelFormat = configuration.depthStencilPixelFormat
 
-            let renderPipelineDescriptor = MTLRenderPipelineDescriptor()
-            renderPipelineDescriptor.vertexFunction = vertexFunction
-            renderPipelineDescriptor.fragmentFunction = fragmentFunction
-            renderPipelineDescriptor.colorAttachments[0].pixelFormat = configuration.colorPixelFormat
-            renderPipelineDescriptor.depthAttachmentPixelFormat = configuration.depthStencilPixelFormat
-
-            let descriptor = VertexDescriptor.packed(semantics: [.position, .normal, .textureCoordinate])
-            renderPipelineDescriptor.vertexDescriptor = MTLVertexDescriptor(descriptor)
-            flatShaderRenderPipelineState = try device.makeRenderPipelineState(descriptor: renderPipelineDescriptor)
-        }
-
-        if panoramaShaderRenderPipelineState == nil {
-            let library = try! device.makeDefaultLibrary(bundle: .shadersBundle)
-            let vertexFunction = library.makeFunction(name: "panoramicVertexShader")!
-            let constantValues = MTLFunctionConstantValues()
-            //constantValues.setConstantValue(<#T##value: UnsafeRawPointer##UnsafeRawPointer#>, type: .ushort, withName: <#T##String#>)
-
-            let fragmentFunction = try library.makeFunction(name: "panoramicFragmentShader", constantValues: constantValues)
-
-            let renderPipelineDescriptor = MTLRenderPipelineDescriptor()
-            renderPipelineDescriptor.vertexFunction = vertexFunction
-            renderPipelineDescriptor.fragmentFunction = fragmentFunction
-            renderPipelineDescriptor.colorAttachments[0].pixelFormat = configuration.colorPixelFormat
-            renderPipelineDescriptor.depthAttachmentPixelFormat = configuration.depthStencilPixelFormat
-            let descriptor = VertexDescriptor.packed(semantics: [.position, .normal, .textureCoordinate])
-            renderPipelineDescriptor.vertexDescriptor = MTLVertexDescriptor(descriptor)
-            panoramaShaderRenderPipelineState = try device.makeRenderPipelineState(descriptor: renderPipelineDescriptor)
-        }
+        let descriptor = VertexDescriptor.packed(semantics: [.position, .normal, .textureCoordinate])
+        renderPipelineDescriptor.vertexDescriptor = MTLVertexDescriptor(descriptor)
+        renderPipelineState = try device.makeRenderPipelineState(descriptor: renderPipelineDescriptor)
 
         // Warm cache
         for model in scene.models {
             cache.insert(key: model.mesh.0, value: try! model.mesh.1(device))
         }
+    }
 
-        if let panorama = scene.panorama {
-            cache.insert(key: "panorama:mesh", value: try! panorama.mesh(device))
-            let loader = MTKTextureLoader(device: device)
-            let textures = try panorama.tileTextures.map { try $0(loader) }
-            cache.insert(key: "panorama:textures", value: textures)
+    func encode(on encoder: MTLRenderCommandEncoder, size: CGSize) throws {
+        guard !scene.models.isEmpty else {
+            return
         }
-    }
+        guard let renderPipelineState, let depthStencilState else {
+            return
+        }
+        encoder.withDebugGroup("Instanced Models") {
+            encoder.setRenderPipelineState(renderPipelineState)
+            encoder.setDepthStencilState(depthStencilState)
+            let cameraUniforms = CameraUniforms(projectionMatrix: scene.camera.projection.matrix(viewSize: SIMD2<Float>(size)))
+            let inverseCameraMatrix = scene.camera.transform.matrix.inverse
+            encoder.setVertexBytes(of: cameraUniforms, index: 1)
+            let lightUniforms = LightUniforms(lightPosition: scene.light.position.translation, lightColor: scene.light.color, lightPower: scene.light.power, ambientLightColor: scene.ambientLightColor)
+            encoder.setFragmentBytes(of: lightUniforms, index: 3)
 
-    func drawableSizeWillChange(device: MTLDevice, configuration: inout Configuration, size: CGSize) throws {
-    }
+            let bucketedModels = scene.models.reduce(into: [:]) { partialResult, model in
+                partialResult[model.mesh.0, default: []].append(model)
+            }
 
-    func draw(device: MTLDevice, configuration: Configuration, size: CGSize, renderPassDescriptor: MTLRenderPassDescriptor, commandBuffer: MTLCommandBuffer) throws {
-        let cameraUniforms = CameraUniforms(projectionMatrix: scene.camera.projection.matrix(viewSize: SIMD2<Float>(size)))
-        let inverseCameraMatrix = scene.camera.transform.matrix.inverse
-
-        commandBuffer.withRenderCommandEncoder(descriptor: renderPassDescriptor) { encoder in
-            if let panorama = scene.panorama {
-                encoder.withDebugGroup("Panorama") {
-                    guard let panoramaShaderRenderPipelineState, let nilDepthStencilState else {
-                        return
-                    }
-                    encoder.setRenderPipelineState(panoramaShaderRenderPipelineState)
-                    encoder.setDepthStencilState(nilDepthStencilState)
-
-                    guard let mesh = cache.get(key: "panorama:mesh") as? YAMesh else {
+            for (meshKey, models) in bucketedModels {
+                encoder.withDebugGroup("Instanced \(meshKey)") {
+                    guard let mesh = cache.get(key: meshKey) as? YAMesh else {
                         fatalError()
                     }
                     encoder.setVertexBuffers(mesh)
-                    encoder.setVertexBytes(of: cameraUniforms, index: 1)
-                    let modelViewMatrix = inverseCameraMatrix * float4x4.translation(scene.camera.transform.translation)
-                    encoder.setVertexBytes(of: modelViewMatrix, index: 2)
-
-                    let uniforms = PanoramaFragmentUniforms(gridSize: panorama.tilesSize, colorFactor: [1, 1, 1, 1])
-
-                    encoder.setFragmentBytes(of: uniforms, index: 0)
-
-                    let textures = (cache.get(key: "panorama:textures") as! [MTLTexture]).map {
-                        Optional($0)
-                    }
-                    encoder.setFragmentTextures(textures, range: 0..<textures.count)
-                    //encoder.setTriangleFillMode(.fill)
-
-                    encoder.draw(mesh)
-                }
-            }
-
-            // Render all models with flatShader
-            encoder.withDebugGroup("Scene Models") {
-                if !scene.models.isEmpty {
-                    guard let flatShaderRenderPipelineState, let depthStencilState else {
-                        return
-                    }
-                    encoder.setDepthStencilState(depthStencilState)
-                    encoder.setRenderPipelineState(flatShaderRenderPipelineState)
-                    encoder.setVertexBytes(of: cameraUniforms, index: 1)
-                    let lightUniforms = LightUniforms(lightPosition: scene.light.position.translation, lightColor: scene.light.color, lightPower: scene.light.power, ambientLightColor: scene.ambientLightColor)
-                    encoder.setFragmentBytes(of: lightUniforms, index: 3)
-
-                    let bucketedModels = scene.models.reduce(into: [:]) { partialResult, model in
-                        partialResult[model.mesh.0, default: []].append(model)
-                    }
-
-                    for (meshKey, models) in bucketedModels {
-                        encoder.withDebugGroup("Instanced \(meshKey)") {
-                            guard let mesh = cache.get(key: meshKey) as? YAMesh else {
-                                fatalError()
+                    let modes: [(MTLTriangleFillMode, SIMD4<Float>?)] = [
+                        (.fill, nil),
+                        (.lines, [1, 1, 1, 1]),
+                    ]
+                    for (fillMode, color) in modes {
+                        //print(meshKey, models)
+                        encoder.withDebugGroup("FillMode: \(fillMode))") {
+                            let modelUniforms = models.map { model in
+                                ModelUniforms(
+                                    modelViewMatrix: inverseCameraMatrix * model.transform.matrix,
+                                    modelNormalMatrix: simd_float3x3(truncating: model.transform.matrix.transpose.inverse),
+                                    color: color ?? model.color
+                                )
                             }
-                            encoder.setVertexBuffers(mesh)
-                            let modes: [(MTLTriangleFillMode, SIMD4<Float>?)] = [
-                                (.fill, nil),
-                                (.lines, [1, 1, 1, 1]),
-                            ]
-                            for (fillMode, color) in modes {
-                                //print(meshKey, models)
-                                encoder.withDebugGroup("FillMode: \(fillMode))") {
-                                    let modelUniforms = models.map { model in
-                                        ModelUniforms(
-                                            modelViewMatrix: inverseCameraMatrix * model.transform.matrix,
-                                            modelNormalMatrix: simd_float3x3(truncating: model.transform.matrix.transpose.inverse),
-                                            color: color ?? model.color
-                                        )
-                                    }
-                                    encoder.setVertexBytes(of: modelUniforms, index: 2)
-                                    encoder.setTriangleFillMode(fillMode)
-                                    encoder.draw(mesh, instanceCount: models.count)
-                                }
-                            }
+                            encoder.setVertexBytes(of: modelUniforms, index: 2)
+                            encoder.setTriangleFillMode(fillMode)
+                            encoder.draw(mesh, instanceCount: models.count)
                         }
                     }
                 }
@@ -162,5 +171,73 @@ class SimpleSceneRenderPass <Configuration>: RenderPass where Configuration: Met
     }
 }
 
-extension SimpleSceneRenderPass: Observable {
+class PanoramaRenderJob <Configuration>: SimpleRenderJob where Configuration: MetalConfiguration {
+    var renderPipelineState: MTLRenderPipelineState?
+    var depthStencilState: MTLDepthStencilState?
+    var mesh: YAMesh?
+
+    var scene: SimpleScene
+    var textures: [MTLTexture] = []
+
+    init(scene: SimpleScene) {
+        self.scene = scene
+    }
+
+    func prepare(device: MTLDevice, configuration: inout Configuration) throws {
+        let library = try! device.makeDefaultLibrary(bundle: .shadersBundle)
+        let vertexFunction = library.makeFunction(name: "panoramicVertexShader")!
+        let constantValues = MTLFunctionConstantValues()
+        //constantValues.setConstantValue(<#T##value: UnsafeRawPointer##UnsafeRawPointer#>, type: .ushort, withName: <#T##String#>)
+
+        let fragmentFunction = try library.makeFunction(name: "panoramicFragmentShader", constantValues: constantValues)
+
+        depthStencilState = device.makeDepthStencilState(descriptor: MTLDepthStencilDescriptor.always())
+
+        let renderPipelineDescriptor = MTLRenderPipelineDescriptor()
+        renderPipelineDescriptor.vertexFunction = vertexFunction
+        renderPipelineDescriptor.fragmentFunction = fragmentFunction
+        renderPipelineDescriptor.colorAttachments[0].pixelFormat = configuration.colorPixelFormat
+        renderPipelineDescriptor.depthAttachmentPixelFormat = configuration.depthStencilPixelFormat
+        let descriptor = VertexDescriptor.packed(semantics: [.position, .normal, .textureCoordinate])
+        renderPipelineDescriptor.vertexDescriptor = MTLVertexDescriptor(descriptor)
+        renderPipelineState = try device.makeRenderPipelineState(descriptor: renderPipelineDescriptor)
+
+        if let panorama = scene.panorama {
+            mesh = try! panorama.mesh(device)
+            let loader = MTKTextureLoader(device: device)
+            textures = try panorama.tileTextures.map { try $0(loader) }
+        }
+    }
+
+    func encode(on encoder: MTLRenderCommandEncoder, size: CGSize) throws {
+        guard let renderPipelineState, let depthStencilState else {
+            return
+        }
+        guard let panorama = scene.panorama else {
+            return
+        }
+        encoder.withDebugGroup("Panorama") {
+            encoder.setRenderPipelineState(renderPipelineState)
+            encoder.setDepthStencilState(depthStencilState)
+
+            guard let mesh else {
+                fatalError()
+            }
+            encoder.setVertexBuffers(mesh)
+            let cameraUniforms = CameraUniforms(projectionMatrix: scene.camera.projection.matrix(viewSize: SIMD2<Float>(size)))
+            let inverseCameraMatrix = scene.camera.transform.matrix.inverse
+            encoder.setVertexBytes(of: cameraUniforms, index: 1)
+            let modelViewMatrix = inverseCameraMatrix * float4x4.translation(scene.camera.transform.translation)
+            encoder.setVertexBytes(of: modelViewMatrix, index: 2)
+
+            let uniforms = PanoramaFragmentUniforms(gridSize: panorama.tilesSize, colorFactor: [1, 1, 1, 1])
+
+            encoder.setFragmentBytes(of: uniforms, index: 0)
+
+            encoder.setFragmentTextures(textures, range: 0..<textures.count)
+            //encoder.setTriangleFillMode(.fill)
+
+            encoder.draw(mesh)
+        }
+    }
 }

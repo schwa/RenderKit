@@ -98,3 +98,46 @@ extension MTLOrigin: ExpressibleByArrayLiteral {
         self = .init(x: elements[0], y: elements[1], z: elements[2])
     }
 }
+
+extension MTLDepthStencilDescriptor {
+    static func always() -> MTLDepthStencilDescriptor {
+        let descriptor = MTLDepthStencilDescriptor()
+        descriptor.depthCompareFunction = .always
+        descriptor.label = "always"
+        return descriptor
+    }
+}
+
+extension MTLRenderPipelineColorAttachmentDescriptor {
+    func enableStandardAlphaBlending() {
+        isBlendingEnabled = true
+        rgbBlendOperation = .add
+        alphaBlendOperation = .add
+        sourceRGBBlendFactor = .sourceAlpha
+        sourceAlphaBlendFactor = .sourceAlpha
+        destinationRGBBlendFactor = .oneMinusSourceAlpha
+        destinationAlphaBlendFactor = .oneMinusSourceAlpha
+    }
+}
+
+extension MTLBuffer {
+    func contentsBuffer() -> UnsafeMutableRawBufferPointer {
+        UnsafeMutableRawBufferPointer(start: contents(), count: length)
+    }
+
+    @available(*, unavailable, message: "Use contentsBuffer(of: T.Type).")
+    func contentsBuffer <T>(of type: [T.Type]) -> UnsafeMutableBufferPointer <[T]> {
+        fatalError()
+    }
+
+    func contentsBuffer <T>(of type: T.Type) -> UnsafeMutableBufferPointer <T> {
+        contentsBuffer().bindMemory(to: type)
+    }
+}
+
+extension MTLBuffer {
+    func labelled(_ label: String) -> MTLBuffer {
+        self.label = label
+        return self
+    }
+}

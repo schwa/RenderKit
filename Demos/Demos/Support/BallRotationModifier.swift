@@ -1,5 +1,6 @@
 import SwiftUI
 import simd
+import Everything
 
 // TODO: Move/Rename
 public struct Rotation: Hashable {
@@ -107,8 +108,4 @@ public extension View {
 
 func abs(_ value: Angle) -> Angle {
     .radians(abs(value.radians))
-}
-
-public func clamp<T>(_ value: T, in range: ClosedRange<T>) -> T where T: Comparable {
-    min(max(value, range.lowerBound), range.upperBound)
 }
