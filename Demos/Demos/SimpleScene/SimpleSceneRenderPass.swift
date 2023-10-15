@@ -18,7 +18,7 @@ class SimpleSceneRenderPass <Configuration>: RenderPass where Configuration: Met
         jobs = [
             AnyRenderJob(PanoramaRenderJob<Configuration>(scene: scene)),
             AnyRenderJob(SceneModelsRenderJob<Configuration>(scene: scene)),
-            AnyRenderJob(ParticlesRenderJob()),
+//            AnyRenderJob(ParticlesRenderJob()),
         ]
     }
 
