@@ -5,6 +5,8 @@ import LegacyGraphics
 import Everything
 import SwiftUI
 import MetalKit
+import RenderKit
+import RenderKitShaders
 
 // TODO: Move
 extension CGVector {
@@ -140,4 +142,55 @@ extension MTLBuffer {
         self.label = label
         return self
     }
+}
+
+struct ShowOnHoverModifier: ViewModifier {
+    @State
+    var hovering = false
+
+    func body(content: Content) -> some View {
+        ZStack {
+            Color.clear
+            content.opacity(hovering ? 1 : 0)
+        }
+        .onHover { hovering in
+            self.hovering = hovering
+        }
+    }
+}
+
+extension View {
+    func showOnHover() -> some View {
+        modifier(ShowOnHoverModifier())
+    }
+}
+
+extension YAMesh {
+    static func simpleMesh(label: String? = nil, primitiveType: MTLPrimitiveType = .triangle, device: MTLDevice, content: () -> ([UInt16], [SimpleVertex])) throws -> YAMesh {
+        let (indices, vertices) = content()
+        return try simpleMesh(label: label, indices: indices, vertices: vertices, primitiveType: primitiveType, device: device)
+    }
+}
+
+private class PrintOnceManager {
+    static let instance = PrintOnceManager()
+
+    var printedAlready: Set<String> = []
+
+    func printedAlready(_ s: String) -> Bool {
+        if printedAlready.contains(s) {
+            return true
+        }
+        printedAlready.insert(s)
+        return false
+    }
+}
+
+func printOnce(_ items: Any..., separator: String = " ", terminator: String = "\n") {
+    var s = ""
+    print(items, separator: separator, terminator: terminator, to: &s)
+    guard PrintOnceManager.instance.printedAlready(s) == false else {
+        return
+    }
+    print(s, terminator: "")
 }

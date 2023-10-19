@@ -33,7 +33,7 @@ protocol MTLBufferProviding {
 }
 
 extension YAMesh {
-    static func simpleMesh(label: String? = nil, indices: [UInt16], vertices: [SimpleVertex], device: MTLDevice) throws -> YAMesh {
+    static func simpleMesh(label: String? = nil, indices: [UInt16], vertices: [SimpleVertex], primitiveType: MTLPrimitiveType = .triangle, device: MTLDevice) throws -> YAMesh {
         guard let indexBuffer = device.makeBuffer(bytesOf: indices, options: .storageModeShared) else {
             fatalError()
         }
@@ -46,7 +46,7 @@ extension YAMesh {
         assert(vertexBuffer.length == vertices.count * 32)
         let vertexBufferView = BufferView(buffer: vertexBuffer, offset: 0)
         let vertexDescriptor = VertexDescriptor.packed(semantics: [.position, .normal, .textureCoordinate])
-        return YAMesh(indexType: .uint16, indexBufferView: indexBufferView, indexCount: indices.count, vertexDescriptor: vertexDescriptor, vertexBufferViews: [vertexBufferView], primitiveType: .triangle)
+        return YAMesh(indexType: .uint16, indexBufferView: indexBufferView, indexCount: indices.count, vertexDescriptor: vertexDescriptor, vertexBufferViews: [vertexBufferView], primitiveType: primitiveType)
     }
 
     static func triangle(label: String? = nil, triangle: Triangle, transform: simd_float3x2 = simd_float3x2([1, 0], [0, 1], [0, 0]), device: MTLDevice, textureCoordinate: (CGPoint) -> SIMD2<Float>) throws -> YAMesh {

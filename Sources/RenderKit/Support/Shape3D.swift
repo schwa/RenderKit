@@ -62,6 +62,24 @@ public struct Plane: Shape3D {
     }
 }
 
+public struct Circle: Shape3D {
+    public var extent: SIMD3<Float>
+    public var segments: Float
+    public var geometryType: MDLGeometryType
+    public var flippedTextureCoordinates: Bool
+
+    public init(extent: SIMD3<Float>, segments: Float = 36, geometryType: MDLGeometryType = .triangles, flippedTextureCoordinates: Bool = true) {
+        self.extent = extent
+        self.segments = segments
+        self.geometryType = geometryType
+        self.flippedTextureCoordinates = flippedTextureCoordinates
+    }
+
+    public func toMDLMesh(allocator: MDLMeshBufferAllocator?) -> MDLMesh {
+        fatalError()
+    }
+}
+
 public struct Sphere: Shape3D {
     public var extent: SIMD3<Float>
     public var segments: SIMD2<UInt32>

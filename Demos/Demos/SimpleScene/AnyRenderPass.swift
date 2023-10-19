@@ -7,7 +7,7 @@ public final class AnyRenderPass <Configuration>: RenderPass where Configuration
     private var _drawableSizeWillChange: (MTLDevice, inout Configuration, CGSize) throws -> Void
     private var _draw: (MTLDevice, Configuration, CGSize, MTLRenderPassDescriptor, MTLCommandBuffer) throws -> Void
 
-    public init(setup: @escaping (MTLDevice, inout Configuration) -> Void, drawableSizeWillChange: @escaping (MTLDevice, inout Configuration, CGSize) -> Void, draw: @escaping (MTLDevice, Configuration, CGSize, MTLRenderPassDescriptor, MTLCommandBuffer) -> Void) {
+    public init(setup: @escaping (MTLDevice, inout Configuration) throws -> Void, drawableSizeWillChange: @escaping (MTLDevice, inout Configuration, CGSize) throws -> Void = { _, _, _ in }, draw: @escaping (MTLDevice, Configuration, CGSize, MTLRenderPassDescriptor, MTLCommandBuffer) throws -> Void) {
         self.base = nil
         self._setup = setup
         self._drawableSizeWillChange = drawableSizeWillChange
