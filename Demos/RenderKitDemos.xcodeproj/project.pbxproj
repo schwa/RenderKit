@@ -81,6 +81,8 @@
 		45F5E51C2AC5E7A2003FBEBD /* RenderKit in Frameworks */ = {isa = PBXBuildFile; productRef = 459F48662A5077A300623EEE /* RenderKit */; };
 		45FAACBC2ACCF54C006C31BD /* Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45FAACBB2ACCF54C006C31BD /* Resources.swift */; };
 		45FB2CA22AE19A0F008824D4 /* SimpleJobsBasedRenderPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45FB2CA12AE19A0F008824D4 /* SimpleJobsBasedRenderPass.swift */; };
+		45FB2CA52AE19C55008824D4 /* MetalCanvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45FB2CA42AE19C55008824D4 /* MetalCanvas.swift */; };
+		45FB2CA72AE1A8E3008824D4 /* AnyRenderPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45FB2CA62AE1A8E3008824D4 /* AnyRenderPass.swift */; };
 		45FB79602ACF6E10001CD1B5 /* Cube.glb in Resources */ = {isa = PBXBuildFile; fileRef = 45FB795F2ACF6E10001CD1B5 /* Cube.glb */; };
 /* End PBXBuildFile section */
 
@@ -183,6 +185,8 @@
 		45CC35632AB8240F00C33779 /* StanfordVolumeData */ = {isa = PBXFileReference; lastKnownFileType = folder; path = StanfordVolumeData; sourceTree = "<group>"; };
 		45FAACBB2ACCF54C006C31BD /* Resources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resources.swift; sourceTree = "<group>"; };
 		45FB2CA12AE19A0F008824D4 /* SimpleJobsBasedRenderPass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleJobsBasedRenderPass.swift; sourceTree = "<group>"; };
+		45FB2CA42AE19C55008824D4 /* MetalCanvas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalCanvas.swift; sourceTree = "<group>"; };
+		45FB2CA62AE1A8E3008824D4 /* AnyRenderPass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyRenderPass.swift; sourceTree = "<group>"; };
 		45FB795F2ACF6E10001CD1B5 /* Cube.glb */ = {isa = PBXFileReference; lastKnownFileType = file; path = Cube.glb; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -252,6 +256,7 @@
 				457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */,
 				45FB795F2ACF6E10001CD1B5 /* Cube.glb */,
 				45650DE72ACCEA45009F2AF2 /* BarramundiFish.glb */,
+				45FB2CA32AE19C42008824D4 /* MetalCanvas */,
 				4555A0672ABE2F740088CFFB /* Support */,
 				4555A0492ABE2BF50088CFFB /* ShaderToy */,
 				4555A03F2ABE2BF00088CFFB /* SimpleScene */,
@@ -295,6 +300,7 @@
 				45650DEB2ACCEAEA009F2AF2 /* GLTFView.swift */,
 				459FAE542ACDFCAD000018E2 /* YAMesh.swift */,
 				45B1D71D2ACFB25600960D02 /* YAMesh+Conversion.swift */,
+				45FB2CA62AE1A8E3008824D4 /* AnyRenderPass.swift */,
 				453532532ADB422900B9745A /* Particles */,
 			);
 			path = SimpleScene;
@@ -403,6 +409,14 @@
 			);
 			path = xcconfig;
 			sourceTree = SOURCE_ROOT;
+		};
+		45FB2CA32AE19C42008824D4 /* MetalCanvas */ = {
+			isa = PBXGroup;
+			children = (
+				45FB2CA42AE19C55008824D4 /* MetalCanvas.swift */,
+			);
+			path = MetalCanvas;
+			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
@@ -547,6 +561,7 @@
 				453F7D3F2ACC7A590051D331 /* VolumetricRenderPass.swift in Sources */,
 				45B2E2502AD7426900A2E7A1 /* Particles.swift in Sources */,
 				4555A0662ABE2E7E0088CFFB /* Support.swift in Sources */,
+				45FB2CA52AE19C55008824D4 /* MetalCanvas.swift in Sources */,
 				45B1D71E2ACFB25600960D02 /* YAMesh+Conversion.swift in Sources */,
 				4555A05A2ABE2CF50088CFFB /* MovementController.swift in Sources */,
 				4555A0642ABE2E2E0088CFFB /* SwiftUI+Support.swift in Sources */,
@@ -563,6 +578,7 @@
 				4555A0512ABE2CD80088CFFB /* SimpleScene.swift in Sources */,
 				459FAE552ACDFCAD000018E2 /* YAMesh.swift in Sources */,
 				4555A0542ABE2CD80088CFFB /* BallRotationModifier.swift in Sources */,
+				45FB2CA72AE1A8E3008824D4 /* AnyRenderPass.swift in Sources */,
 				4555A0552ABE2CDD0088CFFB /* ShaderToyView.swift in Sources */,
 				4555A05E2ABE2D100088CFFB /* GameControllerWidget.swift in Sources */,
 				453D32B82A48D06500FCEE29 /* DemosApp.swift in Sources */,

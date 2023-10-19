@@ -7,7 +7,7 @@ import MetalSupport
 import SIMDSupport
 import RenderKit
 
-public class OffscreenDemoRenderPass: RenderPass {
+public class OffscreenRenderPass: RenderPass {
     public typealias Configuration = OffscreenRenderPassConfiguration
     public var shaderToyRenderPipelineState: MTLRenderPipelineState?
     public var plane: MTKMesh?
@@ -88,7 +88,7 @@ public struct OffscreenDemo {
         var configuration = OffscreenRenderPassConfiguration(device: device, size: [1024, 769])
         configuration.colorPixelFormat = .bgra10_xr_srgb
         configuration.update()
-        let offscreen = OffscreenDemoRenderPass()
+        let offscreen = OffscreenRenderPass()
         try offscreen.setup(device: device, configuration: &configuration)
 
         guard let commandQueue = device.makeCommandQueue() else {

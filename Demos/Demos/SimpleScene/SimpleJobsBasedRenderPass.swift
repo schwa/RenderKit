@@ -1,7 +1,7 @@
 import RenderKit
 import Metal
 
-public class SimpleJobsBasedRenderPass <Configuration>: RenderPass where Configuration: MetalConfiguration {
+public final class SimpleJobsBasedRenderPass <Configuration>: RenderPass where Configuration: MetalConfiguration {
     public var jobs: [AnyRenderJob<Configuration>]
 
     public init(jobs: [AnyRenderJob<Configuration>]) {
