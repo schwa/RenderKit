@@ -105,14 +105,14 @@ class Simulation <Storage>: Observable where Storage: SimulationStorage {
 
         for index in storage.positions.startIndex ..< storage.positions.endIndex {
             storage.velocities[index] += gravity * deltaTime
-            storage.densities[index] = CalculateDensity(storage.positions[index])
+            storage.densities[index] = calculateDensity(storage.positions[index])
         }
 
         table.update(points: storage.positions, radius: smoothingRadius)
 
         if enablePressure {
             for i in storage.positions.startIndex ..< storage.positions.endIndex {
-                let pressureForce = CalculatePressureForce(i)
+                let pressureForce = calculatePressureForce(i)
                 let pressureAcceleration = pressureForce / storage.densities[i]
                 storage.velocities[i] += pressureAcceleration * deltaTime
             }
@@ -120,7 +120,7 @@ class Simulation <Storage>: Observable where Storage: SimulationStorage {
 
         for index in storage.positions.startIndex ..< storage.positions.endIndex {
             storage.positions[index] += storage.velocities[index] * deltaTime
-            ResolveCollisions(index: index)
+            resolveCollisions(index: index)
         }
 
         self.statistics.maxDensity = storage.densities.reduce(Float.zero, max)
@@ -133,7 +133,7 @@ class Simulation <Storage>: Observable where Storage: SimulationStorage {
         self.statistics.averageSpeed = speeds.reduce(Float.zero, +) / Float(speeds.count)
     }
 
-    private func ResolveCollisions(index: Int) {
+    private func resolveCollisions(index: Int) {
         let size = SIMD2<Float>(size)
         var position = storage.positions[index]
         var velocity = storage.velocities[index]
@@ -155,32 +155,32 @@ class Simulation <Storage>: Observable where Storage: SimulationStorage {
         storage.velocities[index] = velocity
     }
 
-    private func CalculateDensity(_ samplePoint: SIMD2<Float>) -> Float {
+    private func calculateDensity(_ samplePoint: SIMD2<Float>) -> Float {
         var density: Float = 0
         let mass: Float = 1
         // Loop over all particle positions
         // TODO: optimize to only look at particles inside the smoothing radius
         storage.positions.forEach { position in
             let dst = (position - samplePoint).magnitude
-            let influence = SmoothingKernel(radius: smoothingRadius, dst: dst)
+            let influence = smoothingKernel(radius: smoothingRadius, dst: dst)
             density += mass * influence
         }
         return density
     }
 
-    private func SmoothingKernel(radius: Float, dst: Float) -> Float {
+    private func smoothingKernel(radius: Float, dst: Float) -> Float {
         if dst >= radius { return 0 }
         let volume = (.pi * pow(radius, 4)) / 6
         return (radius - dst) * (radius - dst) / volume
     }
 
-    private func SmoothingKernelDerivative(dst: Float, radius: Float) -> Float {
+    private func smoothingKernelDerivative(dst: Float, radius: Float) -> Float {
         if dst >= radius { return 0 }
         let scale = 12 / (pow(radius, 4) * .pi)
         return (dst - radius) * scale
     }
 
-    private func CalculatePressureForce(_ particleIndex: Int) -> SIMD2<Float> {
+    private func calculatePressureForce(_ particleIndex: Int) -> SIMD2<Float> {
         var pressureForce = SIMD2<Float>.zero
 
         let samplePoint = storage.positions[particleIndex]
@@ -192,23 +192,23 @@ class Simulation <Storage>: Observable where Storage: SimulationStorage {
             // SIMD2<Float> dir = dst == 0 ? GetRandomDir): offset / dst
             let offset = storage.positions[i] - samplePoint
             let dir = dst == 0 ? .randomDirection : offset / dst
-            let slope = SmoothingKernelDerivative(dst: dst, radius: smoothingRadius)
+            let slope = smoothingKernelDerivative(dst: dst, radius: smoothingRadius)
             let density = storage.densities[i]
-            let sharedPressure = -CalculateSharedPressure(densityA: density, densityB: storage.densities[particleIndex])
+            let sharedPressure = -calculateSharedPressure(densityA: density, densityB: storage.densities[particleIndex])
             pressureForce += sharedPressure * dir * slope * mass / density
         }
         return pressureForce
     }
 
-    private func ConvertDensityToPressure(_ density: Float) -> Float {
+    private func convertDensityToPressure(_ density: Float) -> Float {
         let densityError = density - targetDensity
         let pressure = densityError * pressureMultiplier
         return pressure
     }
 
-    private func CalculateSharedPressure(densityA: Float, densityB: Float) -> Float {
-        let pressureA = ConvertDensityToPressure(densityA)
-        let pressureB = ConvertDensityToPressure(densityB)
+    private func calculateSharedPressure(densityA: Float, densityB: Float) -> Float {
+        let pressureA = convertDensityToPressure(densityA)
+        let pressureB = convertDensityToPressure(densityB)
         return (pressureA + pressureB) / 2
     }
 }
