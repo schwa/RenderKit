@@ -254,16 +254,14 @@
 				4555A0362ABE017A0088CFFB /* DemosApp-VisionOS.swift */,
 				453D32B92A48D06500FCEE29 /* ContentView.swift */,
 				457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */,
-				45FB795F2ACF6E10001CD1B5 /* Cube.glb */,
-				45650DE72ACCEA45009F2AF2 /* BarramundiFish.glb */,
 				45FB2CA32AE19C42008824D4 /* MetalCanvas */,
 				4555A0672ABE2F740088CFFB /* Support */,
 				4555A0492ABE2BF50088CFFB /* ShaderToy */,
 				4555A03F2ABE2BF00088CFFB /* SimpleScene */,
+				453532532ADB422900B9745A /* Particles */,
 				4555A03C2ABE2BEC0088CFFB /* Volume */,
 				453D32BB2A48D06600FCEE29 /* Assets.xcassets */,
 				453D32BD2A48D06600FCEE29 /* Demos.entitlements */,
-				45CC35632AB8240F00C33779 /* StanfordVolumeData */,
 				453D32BE2A48D06600FCEE29 /* Preview Content */,
 			);
 			path = Demos;
@@ -280,9 +278,9 @@
 		4555A03C2ABE2BEC0088CFFB /* Volume */ = {
 			isa = PBXGroup;
 			children = (
+				45CC35632AB8240F00C33779 /* StanfordVolumeData */,
 				453F7D3C2ACC7A2C0051D331 /* VolumetricView.swift */,
 				453F7D3E2ACC7A590051D331 /* VolumetricRenderPass.swift */,
-				4555A03E2ABE2BEC0088CFFB /* VolumeData.swift */,
 			);
 			path = Volume;
 			sourceTree = "<group>";
@@ -301,7 +299,9 @@
 				459FAE542ACDFCAD000018E2 /* YAMesh.swift */,
 				45B1D71D2ACFB25600960D02 /* YAMesh+Conversion.swift */,
 				45FB2CA62AE1A8E3008824D4 /* AnyRenderPass.swift */,
-				453532532ADB422900B9745A /* Particles */,
+				4555A03E2ABE2BEC0088CFFB /* VolumeData.swift */,
+				45FB795F2ACF6E10001CD1B5 /* Cube.glb */,
+				45650DE72ACCEA45009F2AF2 /* BarramundiFish.glb */,
 			);
 			path = SimpleScene;
 			sourceTree = "<group>";
