@@ -23,23 +23,26 @@ struct CoreSimpleSceneView: View {
     var scene: SimpleScene
 
     @State
-    var renderPass: SimpleSceneRenderPass<MetalViewConfiguration>
+    var renderPass: SimpleJobsBasedRenderPass<MetalViewConfiguration>
 
     init(scene: Binding<SimpleScene> = .constant(.demo())) {
         self._scene = scene
-        self.renderPass = SimpleSceneRenderPass(scene: scene.wrappedValue)
+        self.renderPass = SimpleJobsBasedRenderPass(jobs: [
+            AnyRenderJob(PanoramaRenderJob<MetalViewConfiguration>(scene: scene.wrappedValue)),
+            AnyRenderJob(SceneModelsRenderJob<MetalViewConfiguration>(scene: scene.wrappedValue)),
+        ])
     }
 
     var body: some View {
         RendererView(renderPass: $renderPass)
             .onChange(of: scene.camera) {
-                renderPass.scene = scene
+                //renderPass.scene = scene
             }
             .onChange(of: scene.light) {
-                renderPass.scene = scene
+                //renderPass.scene = scene
             }
             .onChange(of: scene.ambientLightColor) {
-                renderPass.scene = scene
+                //renderPass.scene = scene
             }
     }
 }
@@ -108,8 +111,9 @@ public struct SimpleSceneView: View {
                 }
                 let scene = scene
                 Task {
-                    let renderPass = SimpleSceneRenderPass<OffscreenRenderPassConfiguration>(scene: scene)
-                    self.exportImage = Image(cgImage: try await renderPass.snapshot(device: device, size: [1024, 768]))
+                    fatalError()
+//                    let renderPass = SimpleJobsBasedRenderPass<OffscreenRenderPassConfiguration>(scene: scene)
+//                    self.exportImage = Image(cgImage: try await renderPass.snapshot(device: device, size: [1024, 768]))
                 }
             }
             .fileExporter(isPresented: isPresentedBinding, item: exportImage, contentTypes: [.png, .jpeg]) { _ in
