@@ -2,6 +2,7 @@
 #import "include/GraphToy.h"
 
 using namespace metal;
+using namespace graphtoy;
 
 struct Fragment {
     float4 position [[position]]; // in projection space
