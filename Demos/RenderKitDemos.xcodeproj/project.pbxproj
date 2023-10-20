@@ -20,7 +20,7 @@
 		4555A03B2ABE0B310088CFFB /* Info-visionOS.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4555A03A2ABE0B310088CFFB /* Info-visionOS.plist */; };
 		4555A04D2ABE2CD80088CFFB /* SimpleSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4555A0402ABE2BF00088CFFB /* SimpleSceneView.swift */; };
 		4555A04E2ABE2CD80088CFFB /* SimpleSceneInspector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4555A0452ABE2BF00088CFFB /* SimpleSceneInspector.swift */; };
-		4555A04F2ABE2CD80088CFFB /* SimpleSceneRenderPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4555A0442ABE2BF00088CFFB /* SimpleSceneRenderPass.swift */; };
+		4555A04F2ABE2CD80088CFFB /* SimpleSceneModelsRenderJob.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4555A0442ABE2BF00088CFFB /* SimpleSceneModelsRenderJob.swift */; };
 		4555A0502ABE2CD80088CFFB /* Projections.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4555A0472ABE2BF00088CFFB /* Projections.swift */; };
 		4555A0512ABE2CD80088CFFB /* SimpleScene.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4555A0482ABE2BF00088CFFB /* SimpleScene.swift */; };
 		4555A0522ABE2CD80088CFFB /* FirstPersonInteractiveViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4555A0432ABE2BF00088CFFB /* FirstPersonInteractiveViewModifier.swift */; };
@@ -118,7 +118,7 @@
 		4555A0402ABE2BF00088CFFB /* SimpleSceneView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleSceneView.swift; sourceTree = "<group>"; };
 		4555A0412ABE2BF00088CFFB /* SimpleSceneMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleSceneMapView.swift; sourceTree = "<group>"; };
 		4555A0432ABE2BF00088CFFB /* FirstPersonInteractiveViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirstPersonInteractiveViewModifier.swift; sourceTree = "<group>"; };
-		4555A0442ABE2BF00088CFFB /* SimpleSceneRenderPass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleSceneRenderPass.swift; sourceTree = "<group>"; };
+		4555A0442ABE2BF00088CFFB /* SimpleSceneModelsRenderJob.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleSceneModelsRenderJob.swift; sourceTree = "<group>"; };
 		4555A0452ABE2BF00088CFFB /* SimpleSceneInspector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleSceneInspector.swift; sourceTree = "<group>"; };
 		4555A0462ABE2BF00088CFFB /* BallRotationModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BallRotationModifier.swift; sourceTree = "<group>"; };
 		4555A0472ABE2BF00088CFFB /* Projections.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Projections.swift; sourceTree = "<group>"; };
@@ -293,7 +293,7 @@
 			children = (
 				4555A0402ABE2BF00088CFFB /* SimpleSceneView.swift */,
 				4555A0412ABE2BF00088CFFB /* SimpleSceneMapView.swift */,
-				4555A0442ABE2BF00088CFFB /* SimpleSceneRenderPass.swift */,
+				4555A0442ABE2BF00088CFFB /* SimpleSceneModelsRenderJob.swift */,
 				45FB2CA12AE19A0F008824D4 /* SimpleJobsBasedRenderPass.swift */,
 				4555A0452ABE2BF00088CFFB /* SimpleSceneInspector.swift */,
 				459E755C2AC1EF6F004BC055 /* SimpleMesh.swift */,
@@ -575,7 +575,7 @@
 				4555A0582ABE2CE20088CFFB /* VolumeData.swift in Sources */,
 				4555A0602ABE2D260088CFFB /* Counters.swift in Sources */,
 				45FB2CA22AE19A0F008824D4 /* SimpleJobsBasedRenderPass.swift in Sources */,
-				4555A04F2ABE2CD80088CFFB /* SimpleSceneRenderPass.swift in Sources */,
+				4555A04F2ABE2CD80088CFFB /* SimpleSceneModelsRenderJob.swift in Sources */,
 				456C5BA12ADA3D4E00C4AD0D /* Gradient.swift in Sources */,
 				4555A05C2ABE2D030088CFFB /* DisplayLink.swift in Sources */,
 				4555A0512ABE2CD80088CFFB /* SimpleScene.swift in Sources */,

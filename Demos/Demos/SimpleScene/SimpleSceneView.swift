@@ -29,7 +29,7 @@ struct CoreSimpleSceneView: View {
         self._scene = scene
         self.renderPass = SimpleJobsBasedRenderPass(jobs: [
             AnyRenderJob(PanoramaRenderJob<MetalViewConfiguration>(scene: scene.wrappedValue)),
-            AnyRenderJob(SceneModelsRenderJob<MetalViewConfiguration>(scene: scene.wrappedValue)),
+            AnyRenderJob(SimpleSceneModelsRenderJob<MetalViewConfiguration>(scene: scene.wrappedValue)),
         ])
     }
 

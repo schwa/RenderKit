@@ -117,15 +117,22 @@ struct UnlitMaterial: Material {
     var baseColorTexture: Texture?
 }
 
-struct PBRMaterial: Material {
+//struct PBRMaterial: Material {
+//    var label: String?
+//    var baseColorFactor: SIMD4<Float> = .one
+//    var baseColorTexture: Texture?
+//    var metallicFactor: Float = 1.0
+//    var roughnessFactor: Float = 1.0
+//    var metallicRoughnessTexture: Texture?
+//    var normalTexture: Texture?
+//    var occlusionTexture: Texture?
+//}
+
+struct CustomMaterial: Material {
     var label: String?
-    var baseColorFactor: SIMD4<Float> = .one
-    var baseColorTexture: Texture?
-    var metallicFactor: Float = 1.0
-    var roughnessFactor: Float = 1.0
-    var metallicRoughnessTexture: Texture?
-    var normalTexture: Texture?
-    var occlusionTexture: Texture?
+
+    var vertexShader: String
+    var fragmentShader: String
 }
 
 struct Texture: Labeled {

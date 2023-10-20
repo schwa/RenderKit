@@ -8,7 +8,7 @@ import RenderKit
 import Observation
 import Everything
 
-class SceneModelsRenderJob <Configuration>: SimpleRenderJob where Configuration: MetalConfiguration {
+class SimpleSceneModelsRenderJob <Configuration>: SimpleRenderJob where Configuration: MetalConfiguration {
     var renderPipelineState: MTLRenderPipelineState?
     var depthStencilState: MTLDepthStencilState?
 
