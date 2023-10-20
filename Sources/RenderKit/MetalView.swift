@@ -39,9 +39,6 @@ public struct MetalView: View {
             }
             else {
                 ViewAdaptor<MTKView> {
-                    guard let device else {
-                        fatalError()
-                    }
                     let view = MTKView()
                     model.view = view
                     view.device = device

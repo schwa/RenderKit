@@ -36,7 +36,7 @@ public struct RendererView <T>: View where T: RenderPass, T.Configuration == Met
         }
         .onAppear {
             if commandQueue == nil {
-                commandQueue = device?.makeCommandQueue()
+                commandQueue = device.makeCommandQueue()
             }
         }
     }

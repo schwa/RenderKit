@@ -106,9 +106,6 @@ public struct SimpleSceneView: View {
     func snapshot() -> some View {
         ValueView(value: false) { isPresentedBinding in
             Button(title: "Snapshot", systemImage: "camera") {
-                guard let device else {
-                    fatalError()
-                }
                 let scene = scene
                 Task {
                     fatalError()
