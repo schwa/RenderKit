@@ -1,30 +1,36 @@
 #import <simd/simd.h>
 #import <metal_stdlib>
 
+// /Applications/Xcode-15.0.0.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/metal/ios/lib/clang/32023.35/include/metal
+
 namespace graphtoy {
 
-template <typename T> T clamp(T x, T a, T b) {
-    if( x<a ) return a;
-    if( x>b ) return b;
-    return x;
-}
+// Use metal::clamp
+//template <typename T> T clamp(T x, T a, T b) {
+//    if( x<a ) return a;
+//    if( x>b ) return b;
+//    return x;
+//}
 
-template <typename T> T saturate(T x) {
-    return clamp(x,0.0,1.0);
-}
+// Use metal::clamp
+//template <typename T> T saturate(T x) {
+//    return clamp(x, 0.0, 1.0);
+//}
 
 template <typename T> T remap(T a, T b, T x, T c, T d) {
-    if( x<a ) return c;
-    if( x>b ) return d;
-    auto y=(x-a)/(b-a);
-    return c + (d-c)*y;
+    if (x < a) return c;
+    if (x > b) return d;
+    auto y = (x-a) / (b-a);
+    return c + (d - c) * y;
 }
 
-template <typename T> T smoothstep(T a, T b, T x) {
-    auto y = saturate((x-a) / (b-a));
-    return y*y*(3.0-2.0*y);
-}
+// Use metal::smoothstep
+//template <typename T> T smoothstep(T a, T b, T x) {
+//    auto y = saturate((x-a) / (b-a));
+//    return y*y*(3.0-2.0*y);
+//}
 
+// Note: unlike metal::sign 0 input is positive not NaN
 template <typename T> T ssign(T x) {
     return (x >= 0.0) ? 1.0 : -1.0;
 }
@@ -52,13 +58,16 @@ template <typename T> T fma(T x, T y,T z) {
     return x * y + z;
 }
 
-template <typename T> T step(T x, T a) {
-    return x < a ? 0.0 : 1.0;
-}
+// Use metal::step
+// NOTE: Arguments seem flipped.
+//template <typename T> T step(T x, T a) {
+//    return x < a ? 0.0 : 1.0;
+//}
 
-template <typename T> T mix(T a, T b, T x) {
-    return a + (b-a)*x;
-}
+// Use metal::mix
+//template <typename T> T mix(T a, T b, T x) {
+//    return a + (b-a)*x;
+//}
 
 template <typename T> T lerp(T a, T b, T x) {
     return mix(a,b,x);

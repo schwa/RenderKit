@@ -67,6 +67,7 @@
 		4570E2D22AC711A200B3B64D /* perseverance_13.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 4570E2C42AC711A200B3B64D /* perseverance_13.ktx */; };
 		4570E2D32AC711A200B3B64D /* perseverance_12.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 4570E2C52AC711A200B3B64D /* perseverance_12.ktx */; };
 		4570E2D42AC711A200B3B64D /* perseverance_06.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 4570E2C62AC711A200B3B64D /* perseverance_06.ktx */; };
+		457861512AE32EA0005DABD6 /* Particles2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 457861502AE32EA0005DABD6 /* Particles2.swift */; };
 		457D4F1F2ABD1634004CCD9D /* ContentView-VisionOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */; };
 		4589AB132ADB8E3400D8FFD1 /* SpatialLookupTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4589AB122ADB8E3400D8FFD1 /* SpatialLookupTable.swift */; };
 		459E755D2AC1EF6F004BC055 /* SimpleMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459E755C2AC1EF6F004BC055 /* SimpleMesh.swift */; };
@@ -163,6 +164,7 @@
 		4570E2C42AC711A200B3B64D /* perseverance_13.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = perseverance_13.ktx; sourceTree = "<group>"; };
 		4570E2C52AC711A200B3B64D /* perseverance_12.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = perseverance_12.ktx; sourceTree = "<group>"; };
 		4570E2C62AC711A200B3B64D /* perseverance_06.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = perseverance_06.ktx; sourceTree = "<group>"; };
+		457861502AE32EA0005DABD6 /* Particles2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Particles2.swift; sourceTree = "<group>"; };
 		457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView-VisionOS.swift"; sourceTree = "<group>"; };
 		4589AB122ADB8E3400D8FFD1 /* SpatialLookupTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpatialLookupTable.swift; sourceTree = "<group>"; };
 		459E755C2AC1EF6F004BC055 /* SimpleMesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleMesh.swift; sourceTree = "<group>"; };
@@ -257,6 +259,7 @@
 				453D32B92A48D06500FCEE29 /* ContentView.swift */,
 				457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */,
 				45F8C55B2AE1AAB200F01290 /* ScreenSpaceDemoView.swift */,
+				4578614F2AE32E95005DABD6 /* Particles2 */,
 				45FB2CA32AE19C42008824D4 /* MetalCanvas */,
 				4555A0672ABE2F740088CFFB /* Support */,
 				4555A0492ABE2BF50088CFFB /* ShaderToy */,
@@ -380,6 +383,14 @@
 			path = PerseveranceTiles;
 			sourceTree = "<group>";
 		};
+		4578614F2AE32E95005DABD6 /* Particles2 */ = {
+			isa = PBXGroup;
+			children = (
+				457861502AE32EA0005DABD6 /* Particles2.swift */,
+			);
+			path = Particles2;
+			sourceTree = "<group>";
+		};
 		459E2E272A48D64000E98F70 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -472,7 +483,7 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1500;
+				LastSwiftUpdateCheck = 1510;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					453D32B32A48D06500FCEE29 = {
@@ -584,6 +595,7 @@
 				45FB2CA72AE1A8E3008824D4 /* AnyRenderPass.swift in Sources */,
 				4555A0552ABE2CDD0088CFFB /* ShaderToyView.swift in Sources */,
 				4555A05E2ABE2D100088CFFB /* GameControllerWidget.swift in Sources */,
+				457861512AE32EA0005DABD6 /* Particles2.swift in Sources */,
 				453D32B82A48D06500FCEE29 /* DemosApp.swift in Sources */,
 				45F8C55C2AE1AAB200F01290 /* ScreenSpaceDemoView.swift in Sources */,
 				45BEC1212ABE3480001730AB /* Cache.swift in Sources */,

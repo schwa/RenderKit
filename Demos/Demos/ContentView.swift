@@ -11,6 +11,7 @@ struct ContentView: View {
 //        case gltf = "GLTF"
         case simulationSUI = "simulationSUI"
         case screenSpaceDemoView = "ScreenSpaceDemoView"
+        case particles2 = "particles2"
     }
 
     @State
@@ -51,6 +52,8 @@ struct ContentView: View {
                     SimulationView()
                 case .screenSpaceDemoView:
                     ScreenSpaceDemoView()
+                case .particles2:
+                    Particles2View()
                 }
             }
         }
