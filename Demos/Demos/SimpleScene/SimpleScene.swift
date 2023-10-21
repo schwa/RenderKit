@@ -202,7 +202,7 @@ public extension SimpleScene {
         let fishModel = Model(transform: .translation([0, 0, 0]).rotated(angle: .degrees(90), axis: [0, 1, 0]), color: [1, 0, 1, 1], mesh: ("glb-test", { device in
             try YAMesh(gltf: "BarramundiFish", device: device)
         }))
-//        models.append(fishModel)
+        //models.append(fishModel)
 
         let panorama = Panorama(tilesSize: tilesSize, tileTextures: tileTextures) { device in
             try Sphere(extent: [95, 95, 95], inwardNormals: true).toYAMesh(allocator: MTKMeshBufferAllocator(device: device), device: device)

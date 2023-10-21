@@ -52,7 +52,7 @@
 		45650DE22ACCE5CE009F2AF2 /* OffscreenDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45650DE12ACCE5CE009F2AF2 /* OffscreenDemo.swift */; };
 		45650DE62ACCEA09009F2AF2 /* SwiftGLTF in Frameworks */ = {isa = PBXBuildFile; productRef = 45650DE52ACCEA09009F2AF2 /* SwiftGLTF */; };
 		45650DE82ACCEA45009F2AF2 /* BarramundiFish.glb in Resources */ = {isa = PBXBuildFile; fileRef = 45650DE72ACCEA45009F2AF2 /* BarramundiFish.glb */; };
-		45650DEC2ACCEAEA009F2AF2 /* GLTFView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45650DEB2ACCEAEA009F2AF2 /* GLTFView.swift */; };
+		45650DEC2ACCEAEA009F2AF2 /* GLTF+YAMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45650DEB2ACCEAEA009F2AF2 /* GLTF+YAMesh.swift */; };
 		456C5BA12ADA3D4E00C4AD0D /* Gradient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456C5BA02ADA3D4E00C4AD0D /* Gradient.swift */; };
 		4570E2C72AC711A200B3B64D /* perseverance_08.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 4570E2B92AC711A200B3B64D /* perseverance_08.ktx */; };
 		4570E2C82AC711A200B3B64D /* perseverance_09.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 4570E2BA2AC711A200B3B64D /* perseverance_09.ktx */; };
@@ -149,7 +149,7 @@
 		45650DE12ACCE5CE009F2AF2 /* OffscreenDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OffscreenDemo.swift; sourceTree = "<group>"; };
 		45650DE32ACCE5FA009F2AF2 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		45650DE72ACCEA45009F2AF2 /* BarramundiFish.glb */ = {isa = PBXFileReference; lastKnownFileType = file; path = BarramundiFish.glb; sourceTree = "<group>"; };
-		45650DEB2ACCEAEA009F2AF2 /* GLTFView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GLTFView.swift; sourceTree = "<group>"; };
+		45650DEB2ACCEAEA009F2AF2 /* GLTF+YAMesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GLTF+YAMesh.swift"; sourceTree = "<group>"; };
 		456C5BA02ADA3D4E00C4AD0D /* Gradient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gradient.swift; sourceTree = "<group>"; };
 		4570E2B92AC711A200B3B64D /* perseverance_08.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = perseverance_08.ktx; sourceTree = "<group>"; };
 		4570E2BA2AC711A200B3B64D /* perseverance_09.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = perseverance_09.ktx; sourceTree = "<group>"; };
@@ -317,7 +317,7 @@
 				4555A0452ABE2BF00088CFFB /* SimpleSceneInspector.swift */,
 				459E755C2AC1EF6F004BC055 /* SimpleMesh.swift */,
 				4555A0482ABE2BF00088CFFB /* SimpleScene.swift */,
-				45650DEB2ACCEAEA009F2AF2 /* GLTFView.swift */,
+				45650DEB2ACCEAEA009F2AF2 /* GLTF+YAMesh.swift */,
 				459FAE542ACDFCAD000018E2 /* YAMesh.swift */,
 				45B1D71D2ACFB25600960D02 /* YAMesh+Conversion.swift */,
 				45FB2CA62AE1A8E3008824D4 /* AnyRenderPass.swift */,
@@ -574,7 +574,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4555A0532ABE2CD80088CFFB /* SimpleSceneMapView.swift in Sources */,
-				45650DEC2ACCEAEA009F2AF2 /* GLTFView.swift in Sources */,
+				45650DEC2ACCEAEA009F2AF2 /* GLTF+YAMesh.swift in Sources */,
 				4555A0562ABE2CDD0088CFFB /* ShaderToy.metal in Sources */,
 				453D32BA2A48D06500FCEE29 /* ContentView.swift in Sources */,
 				45BEC1222ABE3480001730AB /* LOLID2.swift in Sources */,

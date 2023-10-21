@@ -5,25 +5,6 @@ import SwiftGLTF
 import RenderKit
 import SwiftFormats
 
-struct GLTFView: View {
-    init() {
-        try! gltfTest()
-    }
-
-    var body: some View {
-        Text("hello")
-    }
-}
-
-func gltfTest() throws {
-    let device = MTLCreateSystemDefaultDevice()!
-    let fish = try YAMesh(gltf: "Cube", device: device)
-    let converted = try fish.convert(to: VertexDescriptor.packed(semantics: [.position, .position, .textureCoordinate]))
-    print(converted)
-
-//    dump(fish)
-}
-
 extension SwiftGLTF.Accessor {
     var vertexFormat: MTLVertexFormat? {
         switch (componentType, type) {
