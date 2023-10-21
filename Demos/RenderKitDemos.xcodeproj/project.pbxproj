@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		4519014E2AE37019004722F2 /* DemosSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 4519014D2AE37019004722F2 /* DemosSupport */; };
 		453532552ADB424000B9745A /* SimulationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453532542ADB424000B9745A /* SimulationView.swift */; };
 		453532572ADB426000B9745A /* ParticlesRenderJob.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453532562ADB426000B9745A /* ParticlesRenderJob.swift */; };
+		453A4A432AE43C9100838CF5 /* DemosSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 453A4A422AE43C9100838CF5 /* DemosSupport */; };
 		453D32B82A48D06500FCEE29 /* DemosApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453D32B72A48D06500FCEE29 /* DemosApp.swift */; };
 		453D32BA2A48D06500FCEE29 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453D32B92A48D06500FCEE29 /* ContentView.swift */; };
 		453D32BC2A48D06600FCEE29 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 453D32BB2A48D06600FCEE29 /* Assets.xcassets */; };
@@ -102,9 +102,9 @@
 
 /* Begin PBXFileReference section */
 		451196902A520D1F00F4F2DE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		4519014B2AE37002004722F2 /* DemosSupport */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = DemosSupport; sourceTree = "<group>"; };
 		453532542ADB424000B9745A /* SimulationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulationView.swift; sourceTree = "<group>"; };
 		453532562ADB426000B9745A /* ParticlesRenderJob.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticlesRenderJob.swift; sourceTree = "<group>"; };
+		453A4A412AE43C7F00838CF5 /* DemosSupport */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = DemosSupport; sourceTree = "<group>"; };
 		453D32B42A48D06500FCEE29 /* Demos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demos.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		453D32B72A48D06500FCEE29 /* DemosApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemosApp.swift; sourceTree = "<group>"; };
 		453D32B92A48D06500FCEE29 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -202,7 +202,7 @@
 			files = (
 				45F588142ABD4BD700ADE82B /* RenderKit in Frameworks */,
 				45650DE62ACCEA09009F2AF2 /* SwiftGLTF in Frameworks */,
-				4519014E2AE37019004722F2 /* DemosSupport in Frameworks */,
+				453A4A432AE43C9100838CF5 /* DemosSupport in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -220,8 +220,8 @@
 		4519014A2AE36FD6004722F2 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
+				453A4A412AE43C7F00838CF5 /* DemosSupport */,
 				45873CA32AE435E90043D96A /* Compute */,
-				4519014B2AE37002004722F2 /* DemosSupport */,
 			);
 			path = Packages;
 			sourceTree = "<group>";
@@ -462,7 +462,7 @@
 			packageProductDependencies = (
 				45F588132ABD4BD700ADE82B /* RenderKit */,
 				45650DE52ACCEA09009F2AF2 /* SwiftGLTF */,
-				4519014D2AE37019004722F2 /* DemosSupport */,
+				453A4A422AE43C9100838CF5 /* DemosSupport */,
 			);
 			productName = Demos;
 			productReference = 453D32B42A48D06500FCEE29 /* Demos.app */;
@@ -652,6 +652,9 @@
 			baseConfigurationReference = 45A147C12A4B1B7300C06FE1 /* Demos-Debug.xcconfig */;
 			buildSettings = {
 				"INFOPLIST_FILE[sdk=xros*]" = "Demos/Info-visionOS.plist";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 			};
 			name = Debug;
 		};
@@ -660,6 +663,9 @@
 			baseConfigurationReference = 45A147C22A4B1B7300C06FE1 /* Demos-Release.xcconfig */;
 			buildSettings = {
 				"INFOPLIST_FILE[sdk=xros*]" = "Demos/Info-visionOS.plist";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 			};
 			name = Release;
 		};
@@ -723,7 +729,7 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		4519014D2AE37019004722F2 /* DemosSupport */ = {
+		453A4A422AE43C9100838CF5 /* DemosSupport */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = DemosSupport;
 		};
