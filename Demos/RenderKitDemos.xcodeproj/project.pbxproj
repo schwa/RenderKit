@@ -277,13 +277,13 @@
 				453D32B92A48D06500FCEE29 /* ContentView.swift */,
 				457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */,
 				45F8C55B2AE1AAB200F01290 /* ScreenSpaceDemoView.swift */,
-				4578614F2AE32E95005DABD6 /* Particles2 */,
 				45FB2CA32AE19C42008824D4 /* MetalCanvas */,
-				4555A0672ABE2F740088CFFB /* Support */,
+				453532532ADB422900B9745A /* Particles */,
+				4578614F2AE32E95005DABD6 /* Particles2 */,
 				4555A0492ABE2BF50088CFFB /* ShaderToy */,
 				4555A03F2ABE2BF00088CFFB /* SimpleScene */,
-				453532532ADB422900B9745A /* Particles */,
-				4555A03C2ABE2BEC0088CFFB /* Volume */,
+				4555A0672ABE2F740088CFFB /* Support */,
+				4555A03C2ABE2BEC0088CFFB /* Volumetric */,
 				453D32BB2A48D06600FCEE29 /* Assets.xcassets */,
 				453D32BD2A48D06600FCEE29 /* Demos.entitlements */,
 				453D32BE2A48D06600FCEE29 /* Preview Content */,
@@ -299,14 +299,14 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
-		4555A03C2ABE2BEC0088CFFB /* Volume */ = {
+		4555A03C2ABE2BEC0088CFFB /* Volumetric */ = {
 			isa = PBXGroup;
 			children = (
 				45CC35632AB8240F00C33779 /* StanfordVolumeData */,
 				453F7D3C2ACC7A2C0051D331 /* VolumetricView.swift */,
 				453F7D3E2ACC7A590051D331 /* VolumetricRenderPass.swift */,
 			);
-			path = Volume;
+			path = Volumetric;
 			sourceTree = "<group>";
 		};
 		4555A03F2ABE2BF00088CFFB /* SimpleScene */ = {
