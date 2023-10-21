@@ -1,6 +1,7 @@
 import simd
 import SwiftUI
 import CoreGraphicsSupport
+import DemosSupport
 
 struct VerletObject {
     var id: Int

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4519014E2AE37019004722F2 /* DemosSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 4519014D2AE37019004722F2 /* DemosSupport */; };
 		453532552ADB424000B9745A /* SimulationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453532542ADB424000B9745A /* SimulationView.swift */; };
 		453532572ADB426000B9745A /* ParticlesRenderJob.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453532562ADB426000B9745A /* ParticlesRenderJob.swift */; };
 		453D32B82A48D06500FCEE29 /* DemosApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453D32B72A48D06500FCEE29 /* DemosApp.swift */; };
@@ -69,7 +70,6 @@
 		4570E2D42AC711A200B3B64D /* perseverance_06.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 4570E2C62AC711A200B3B64D /* perseverance_06.ktx */; };
 		457861512AE32EA0005DABD6 /* Particles2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 457861502AE32EA0005DABD6 /* Particles2.swift */; };
 		457D4F1F2ABD1634004CCD9D /* ContentView-VisionOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */; };
-		4589AB132ADB8E3400D8FFD1 /* SpatialLookupTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4589AB122ADB8E3400D8FFD1 /* SpatialLookupTable.swift */; };
 		459E755D2AC1EF6F004BC055 /* SimpleMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459E755C2AC1EF6F004BC055 /* SimpleMesh.swift */; };
 		459EDA582A494C0700F9211C /* CLI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459EDA572A494C0700F9211C /* CLI.swift */; };
 		459FAE552ACDFCAD000018E2 /* YAMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459FAE542ACDFCAD000018E2 /* YAMesh.swift */; };
@@ -102,6 +102,7 @@
 
 /* Begin PBXFileReference section */
 		451196902A520D1F00F4F2DE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		4519014B2AE37002004722F2 /* DemosSupport */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = DemosSupport; sourceTree = "<group>"; };
 		453532542ADB424000B9745A /* SimulationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulationView.swift; sourceTree = "<group>"; };
 		453532562ADB426000B9745A /* ParticlesRenderJob.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticlesRenderJob.swift; sourceTree = "<group>"; };
 		453D32B42A48D06500FCEE29 /* Demos.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demos.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -166,7 +167,6 @@
 		4570E2C62AC711A200B3B64D /* perseverance_06.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = perseverance_06.ktx; sourceTree = "<group>"; };
 		457861502AE32EA0005DABD6 /* Particles2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Particles2.swift; sourceTree = "<group>"; };
 		457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView-VisionOS.swift"; sourceTree = "<group>"; };
-		4589AB122ADB8E3400D8FFD1 /* SpatialLookupTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SpatialLookupTable.swift; sourceTree = "<group>"; };
 		459E755C2AC1EF6F004BC055 /* SimpleMesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleMesh.swift; sourceTree = "<group>"; };
 		459EDA552A494C0600F9211C /* CLI */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CLI; sourceTree = BUILT_PRODUCTS_DIR; };
 		459EDA572A494C0700F9211C /* CLI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLI.swift; sourceTree = "<group>"; };
@@ -201,6 +201,7 @@
 			files = (
 				45F588142ABD4BD700ADE82B /* RenderKit in Frameworks */,
 				45650DE62ACCEA09009F2AF2 /* SwiftGLTF in Frameworks */,
+				4519014E2AE37019004722F2 /* DemosSupport in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -215,13 +216,27 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		4519014A2AE36FD6004722F2 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				4519014B2AE37002004722F2 /* DemosSupport */,
+			);
+			path = Packages;
+			sourceTree = "<group>";
+		};
+		4519014C2AE37019004722F2 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		453532532ADB422900B9745A /* Particles */ = {
 			isa = PBXGroup;
 			children = (
 				45B2E24F2AD7426900A2E7A1 /* Particles.swift */,
 				453532562ADB426000B9745A /* ParticlesRenderJob.swift */,
 				453532542ADB424000B9745A /* SimulationView.swift */,
-				4589AB122ADB8E3400D8FFD1 /* SpatialLookupTable.swift */,
 			);
 			path = Particles;
 			sourceTree = "<group>";
@@ -233,7 +248,8 @@
 				453D32B62A48D06500FCEE29 /* Demos */,
 				459EDA562A494C0700F9211C /* CLI */,
 				453D32B52A48D06500FCEE29 /* Products */,
-				459E2E272A48D64000E98F70 /* Frameworks */,
+				4519014A2AE36FD6004722F2 /* Packages */,
+				4519014C2AE37019004722F2 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -391,13 +407,6 @@
 			path = Particles2;
 			sourceTree = "<group>";
 		};
-		459E2E272A48D64000E98F70 /* Frameworks */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = Frameworks;
-			sourceTree = "<group>";
-		};
 		459EDA562A494C0700F9211C /* CLI */ = {
 			isa = PBXGroup;
 			children = (
@@ -451,6 +460,7 @@
 			packageProductDependencies = (
 				45F588132ABD4BD700ADE82B /* RenderKit */,
 				45650DE52ACCEA09009F2AF2 /* SwiftGLTF */,
+				4519014D2AE37019004722F2 /* DemosSupport */,
 			);
 			productName = Demos;
 			productReference = 453D32B42A48D06500FCEE29 /* Demos.app */;
@@ -604,7 +614,6 @@
 				453532552ADB424000B9745A /* SimulationView.swift in Sources */,
 				4555A0502ABE2CD80088CFFB /* Projections.swift in Sources */,
 				4555A04E2ABE2CD80088CFFB /* SimpleSceneInspector.swift in Sources */,
-				4589AB132ADB8E3400D8FFD1 /* SpatialLookupTable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -712,6 +721,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		4519014D2AE37019004722F2 /* DemosSupport */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = DemosSupport;
+		};
 		45650DE52ACCEA09009F2AF2 /* SwiftGLTF */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 45650DE42ACCEA09009F2AF2 /* XCRemoteSwiftPackageReference "SwiftGLTF" */;

@@ -1,21 +1,11 @@
-import SwiftUI
-import ModelIO
-import Metal
-import MetalKit
-import SIMDSupport
-import RenderKitShaders
-import RenderKit
-import Observation
-import Everything
-import SwiftFormats
+import simd
 
-struct SpatialLookupTable <Positions> where Positions: Collection, Positions.Element == SIMD2<Float>, Positions.Index == Int {
-    var size: SIMD2<Float>
-    var radius: Float = 0
-    var points: Positions!
-    var spatialLookup: [(index: Int, cellKey: Int)] = []
-    var startIndices: [Int] = []
-
+public struct SpatialLookupTable <Positions> where Positions: Collection, Positions.Element == SIMD2<Float>, Positions.Index == Int {
+    public private(set) var size: SIMD2<Float>
+    public private(set) var radius: Float = 0
+    public private(set) var points: Positions!
+    private var spatialLookup: [(index: Int, cellKey: Int)] = []
+    private var startIndices: [Int] = []
     private let cellOffsets: [SIMD2<Int>] = [
         [-1, -1],
         [-1, 0],
@@ -28,11 +18,11 @@ struct SpatialLookupTable <Positions> where Positions: Collection, Positions.Ele
         [1, 1],
     ]
 
-    init(size: SIMD2<Float>) {
+    public init(size: SIMD2<Float>) {
         self.size = size
     }
 
-    mutating func update(points: Positions, radius: Float) {
+    public mutating func update(points: Positions, radius: Float) {
         self.points = points
         self.radius = radius
         // TODO: Combine this with later loop
@@ -73,7 +63,7 @@ struct SpatialLookupTable <Positions> where Positions: Collection, Positions.Ele
         return n % spatialLookup.count
     }
 
-    func indicesNear(point: SIMD2<Float>, hits: (Int) -> Void) {
+    public func indicesNear(point: SIMD2<Float>, hits: (Int) -> Void) {
         if radius == 0 {
             return
         }
@@ -98,7 +88,7 @@ struct SpatialLookupTable <Positions> where Positions: Collection, Positions.Ele
                 // Exit loop if we're no longer looking at the correct cell
                 if spatialLookup[i].cellKey != key { break }
                 let particleIndex = spatialLookup[i].index
-                let sqrDst = (points[particleIndex] - point).sqrMagnitude
+                let sqrDst = distance_squared(points[particleIndex], point)
                 // Test if the point is inside the radius
                 if sqrDst <= sqrRadius {
                     // Do something with the particleIndex!
@@ -108,5 +98,24 @@ struct SpatialLookupTable <Positions> where Positions: Collection, Positions.Ele
                 }
             }
         }
+    }
+}
+
+extension SpatialLookupTable {
+    public func indicesNear(point: SIMD2<Float>) -> Set<Int> {
+        var indices: Set<Int> = []
+        indicesNear(point: point, hits: {
+            indices.insert($0)
+        })
+        return indices
+    }
+
+    public func indicesNear(index: Int, hits: (Int) -> Void) {
+        let point = points[index]
+        indicesNear(point: point, hits: hits)
+    }
+    public func indicesNear(index: Int) -> Set<Int> {
+        let point = points[index]
+        return indicesNear(point: point)
     }
 }
