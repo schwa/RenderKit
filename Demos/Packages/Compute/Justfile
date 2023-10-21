@@ -1,0 +1,19 @@
+CMD := `pwd` / "/.build/debug/compute"
+
+example-identity:
+    swift build
+    cd Examples/Identity && {{CMD}} identity.json --logging
+    cd Examples/Identity && {{CMD}} identity.toml --logging
+
+example_1:
+    swift build
+    cd Examples/grayscaleKernel && {{CMD}} example.toml --logging
+
+example-shapes:
+    swift build
+    cd Examples/Shapes && {{CMD}} Shapes.toml  --logging
+    open --reveal Examples/Shapes/Shapes-Output.png
+
+example-BufferFile:
+    swift build
+    cd Examples/BufferFile && {{CMD}} BufferFile.toml --logging

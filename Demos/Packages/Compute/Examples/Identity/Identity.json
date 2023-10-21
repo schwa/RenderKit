@@ -1,0 +1,50 @@
+{
+    "version": "0.0.1",
+    "actions": [
+        {
+            "kind": "load_texture",
+            "source": "Shapes.png",
+            "destination": "input_texture"
+        },
+        {
+            "kind": "create_texture",
+            "destination": "output_texture",
+            "size": [
+                "input_texture.width",
+                "input_texture.height",
+                "input_texture.depth"
+            ],
+            "pixelFormat": "bgra8Unorm_srgb"
+        },
+        {
+            "kind": "compute",
+            "source": "Identity.metal",
+            "function": "identity",
+            "threads_per_grid": [
+                "output_texture.width",
+                "output_texture.height",
+                "output_texture.depth"
+            ],
+            "threads_per_threadgroup": [
+                32,
+                32,
+                1
+            ],
+            "bindings": [
+                {
+                    "index": 0,
+                    "key": "input_texture"
+                },
+                {
+                    "index": 1,
+                    "key": "output_texture"
+                }
+            ]
+        },
+        {
+            "kind": "write_texture",
+            "source": "output_texture",
+            "destination": "Shapes-Output.png"
+        }
+    ]
+}

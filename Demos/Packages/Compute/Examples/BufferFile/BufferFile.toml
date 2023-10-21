@@ -1,0 +1,8 @@
+version = "0.0.1"
+
+[[actions]]
+type = "uint8"
+kind = "load_buffer"
+path = "buffer.txt"
+destination = "buffer0"
+mapping = { "0" = 0, "1" = 1 }

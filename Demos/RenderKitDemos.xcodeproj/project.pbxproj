@@ -167,6 +167,7 @@
 		4570E2C62AC711A200B3B64D /* perseverance_06.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = perseverance_06.ktx; sourceTree = "<group>"; };
 		457861502AE32EA0005DABD6 /* Particles2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Particles2.swift; sourceTree = "<group>"; };
 		457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView-VisionOS.swift"; sourceTree = "<group>"; };
+		45873CA32AE435E90043D96A /* Compute */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Compute; sourceTree = "<group>"; };
 		459E755C2AC1EF6F004BC055 /* SimpleMesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleMesh.swift; sourceTree = "<group>"; };
 		459EDA552A494C0600F9211C /* CLI */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CLI; sourceTree = BUILT_PRODUCTS_DIR; };
 		459EDA572A494C0700F9211C /* CLI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLI.swift; sourceTree = "<group>"; };
@@ -219,6 +220,7 @@
 		4519014A2AE36FD6004722F2 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
+				45873CA32AE435E90043D96A /* Compute */,
 				4519014B2AE37002004722F2 /* DemosSupport */,
 			);
 			path = Packages;

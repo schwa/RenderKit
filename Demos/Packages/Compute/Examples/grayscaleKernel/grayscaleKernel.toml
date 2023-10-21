@@ -1,0 +1,42 @@
+version = "0.0.1"
+
+# Each "compute" file is made up of a list of actions.
+
+[[actions]]
+# Load file "baboon.png" as a texture and store it in key "input0"...
+kind = "load_texture"
+source = "baboon.png"
+destination = "input0"
+
+[[actions]]
+# Create a new (empty0 texture, the same size as input0...
+kind = "create_texture"
+destination = "output0"
+size = [ "input0.width", "input0.height", "input0.depth" ]
+pixelFormat = "bgra8Unorm"
+
+[[actions]]
+# Run a Metal compute kernel function on it.
+kind = "compute"
+# Specify the metal file to find the function in... You can also use a compiled .metallib too.
+source = "grayscaleKernel.metal"
+function = "grayscaleKernel"
+# Define how many threads to run for this kernel.
+threads_per_grid = [ "output0.width", "output0.height", "output0.depth" ]
+# (TODO: threads_per_threadgroup could optionally be computed automatically)
+threads_per_threadgroup = [ 32, 32, 1 ]
+
+  # Now we bind resources (textures and buffers) to parameters of the kernel function
+  [[actions.bindings]]
+  index = 0
+  key = "input0"
+
+  [[actions.bindings]]
+  index = 1
+  key = "output0"
+
+[[actions]]
+# And finally we write the result of the kernel, which is in tecture output0 to disk
+kind = "write_texture"
+source = "output0"
+destination = "output.png"

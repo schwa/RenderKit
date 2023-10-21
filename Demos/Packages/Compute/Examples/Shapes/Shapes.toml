@@ -1,0 +1,45 @@
+version = "0.0.1"
+
+[[actions]]
+kind = "load_texture"
+source = "Shapes.png"
+destination = "input_texture"
+
+[[actions]]
+kind = "load_buffer"
+destination = "bounds"
+inline = { type = "int32", values = [0, 0, 1024, 1024] }
+
+[[actions]]
+kind = "create_texture"
+destination = "output_texture"
+size = ["input_texture.width", "input_texture.height", "input_texture.depth"]
+pixelFormat = "bgra8Unorm"
+
+[[actions]]
+kind = "compute"
+source = "Shapes.metal"
+function = "shapes"
+threads_per_grid = [
+    "output_texture.width",
+    "output_texture.height",
+    "output_texture.depth",
+]
+threads_per_threadgroup = [32, 32, 1]
+
+[[actions.bindings]]
+index = 0
+key = "input_texture"
+
+[[actions.bindings]]
+index = 1
+key = "output_texture"
+
+[[actions.bindings]]
+index = 0
+key = "bounds"
+
+[[actions]]
+kind = "write_texture"
+source = "output_texture"
+destination = "Shapes-Output.png"
