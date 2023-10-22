@@ -13,13 +13,10 @@ Post-multiplication, Column-Major, Right-handed, Y up
 
 ## Goals
 
-### Short Term
+### Longer Term
 
 * Tie into WASD/Game Controller system (from RenderKit - move code to Everything)
 * Render the position of lights
-
-### Longer Term
-
 * Learn from [RenderKit2](https://github.com/schwa/RenderKit/tree/RenderKit2) & [RenderKitClassic](https://github.com/schwa/RenderKit/tree/RenderKitClassic)
 * More type-safety. Especially pipeline attributes
 * Async. (Good luck)

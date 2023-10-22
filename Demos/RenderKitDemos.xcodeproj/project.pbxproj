@@ -147,6 +147,8 @@
 		455741C92AC658060050267D /* Testcard_10.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = Testcard_10.ktx; sourceTree = "<group>"; };
 		455741CA2AC658060050267D /* Testcard_09.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = Testcard_09.ktx; sourceTree = "<group>"; };
 		455741CB2AC658060050267D /* Testcard_08.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = Testcard_08.ktx; sourceTree = "<group>"; };
+		455822172AE59E3B00189306 /* TODO.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = TODO.md; path = ../TODO.md; sourceTree = "<group>"; };
+		455822182AE59E5000189306 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		45650DE12ACCE5CE009F2AF2 /* OffscreenDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OffscreenDemo.swift; sourceTree = "<group>"; };
 		45650DE32ACCE5FA009F2AF2 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		45650DE72ACCEA45009F2AF2 /* BarramundiFish.glb */ = {isa = PBXFileReference; lastKnownFileType = file; path = BarramundiFish.glb; sourceTree = "<group>"; };
@@ -248,6 +250,8 @@
 		453D32AB2A48D06500FCEE29 = {
 			isa = PBXGroup;
 			children = (
+				455822182AE59E5000189306 /* README.md */,
+				455822172AE59E3B00189306 /* TODO.md */,
 				459F48632A50776C00623EEE /* RenderKit */,
 				453D32B62A48D06500FCEE29 /* Demos */,
 				459EDA562A494C0700F9211C /* CLI */,
