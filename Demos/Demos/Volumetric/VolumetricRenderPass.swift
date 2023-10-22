@@ -23,7 +23,7 @@ class VolumetricRenderPass <Configuration>: RenderPass where Configuration: Meta
 
     init() {
         let device = MTLCreateSystemDefaultDevice()! // TODO: Naughty
-        let volumeData = VolumeData(named: "CThead", size: [256, 256, 113]) // TODO: Hardcoded
+        let volumeData = try! VolumeData(named: "CThead", size: [256, 256, 113]) // TODO: Hardcoded
 //        let volumeData = VolumeData(named: "MRBrain", size: [256, 256, 109])
         let load = try! volumeData.load()
         texture = try! load(device)

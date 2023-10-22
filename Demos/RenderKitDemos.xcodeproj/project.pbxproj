@@ -53,6 +53,8 @@
 		45650DE62ACCEA09009F2AF2 /* SwiftGLTF in Frameworks */ = {isa = PBXBuildFile; productRef = 45650DE52ACCEA09009F2AF2 /* SwiftGLTF */; };
 		45650DE82ACCEA45009F2AF2 /* BarramundiFish.glb in Resources */ = {isa = PBXBuildFile; fileRef = 45650DE72ACCEA45009F2AF2 /* BarramundiFish.glb */; };
 		45650DEC2ACCEAEA009F2AF2 /* GLTF+YAMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45650DEB2ACCEAEA009F2AF2 /* GLTF+YAMesh.swift */; };
+		45664A4B2AE58DED00352D96 /* TarArchive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45664A4A2AE58DED00352D96 /* TarArchive.swift */; };
+		45664A4D2AE58F4A00352D96 /* StanfordVolumeData.tar in Resources */ = {isa = PBXBuildFile; fileRef = 45664A4C2AE58F4A00352D96 /* StanfordVolumeData.tar */; };
 		456C5BA12ADA3D4E00C4AD0D /* Gradient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 456C5BA02ADA3D4E00C4AD0D /* Gradient.swift */; };
 		4570E2C72AC711A200B3B64D /* perseverance_08.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 4570E2B92AC711A200B3B64D /* perseverance_08.ktx */; };
 		4570E2C82AC711A200B3B64D /* perseverance_09.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 4570E2BA2AC711A200B3B64D /* perseverance_09.ktx */; };
@@ -77,7 +79,6 @@
 		45B2E2502AD7426900A2E7A1 /* Particles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B2E24F2AD7426900A2E7A1 /* Particles.swift */; };
 		45BEC1212ABE3480001730AB /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45BEC11F2ABE3480001730AB /* Cache.swift */; };
 		45BEC1222ABE3480001730AB /* LOLID2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45BEC1202ABE3480001730AB /* LOLID2.swift */; };
-		45CC35642AB8240F00C33779 /* StanfordVolumeData in Resources */ = {isa = PBXBuildFile; fileRef = 45CC35632AB8240F00C33779 /* StanfordVolumeData */; };
 		45F588142ABD4BD700ADE82B /* RenderKit in Frameworks */ = {isa = PBXBuildFile; productRef = 45F588132ABD4BD700ADE82B /* RenderKit */; };
 		45F5E51C2AC5E7A2003FBEBD /* RenderKit in Frameworks */ = {isa = PBXBuildFile; productRef = 459F48662A5077A300623EEE /* RenderKit */; };
 		45F8C55C2AE1AAB200F01290 /* ScreenSpaceDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45F8C55B2AE1AAB200F01290 /* ScreenSpaceDemoView.swift */; };
@@ -150,6 +151,8 @@
 		45650DE32ACCE5FA009F2AF2 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		45650DE72ACCEA45009F2AF2 /* BarramundiFish.glb */ = {isa = PBXFileReference; lastKnownFileType = file; path = BarramundiFish.glb; sourceTree = "<group>"; };
 		45650DEB2ACCEAEA009F2AF2 /* GLTF+YAMesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GLTF+YAMesh.swift"; sourceTree = "<group>"; };
+		45664A4A2AE58DED00352D96 /* TarArchive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TarArchive.swift; sourceTree = "<group>"; };
+		45664A4C2AE58F4A00352D96 /* StanfordVolumeData.tar */ = {isa = PBXFileReference; lastKnownFileType = archive.tar; path = StanfordVolumeData.tar; sourceTree = "<group>"; };
 		456C5BA02ADA3D4E00C4AD0D /* Gradient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Gradient.swift; sourceTree = "<group>"; };
 		4570E2B92AC711A200B3B64D /* perseverance_08.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = perseverance_08.ktx; sourceTree = "<group>"; };
 		4570E2BA2AC711A200B3B64D /* perseverance_09.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = perseverance_09.ktx; sourceTree = "<group>"; };
@@ -186,7 +189,6 @@
 		45B2E24F2AD7426900A2E7A1 /* Particles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Particles.swift; sourceTree = "<group>"; };
 		45BEC11F2ABE3480001730AB /* Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		45BEC1202ABE3480001730AB /* LOLID2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LOLID2.swift; sourceTree = "<group>"; };
-		45CC35632AB8240F00C33779 /* StanfordVolumeData */ = {isa = PBXFileReference; lastKnownFileType = folder; path = StanfordVolumeData; sourceTree = "<group>"; };
 		45F8C55B2AE1AAB200F01290 /* ScreenSpaceDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenSpaceDemoView.swift; sourceTree = "<group>"; };
 		45FAACBB2ACCF54C006C31BD /* Resources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resources.swift; sourceTree = "<group>"; };
 		45FB2CA12AE19A0F008824D4 /* SimpleJobsBasedRenderPass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleJobsBasedRenderPass.swift; sourceTree = "<group>"; };
@@ -302,7 +304,7 @@
 		4555A03C2ABE2BEC0088CFFB /* Volumetric */ = {
 			isa = PBXGroup;
 			children = (
-				45CC35632AB8240F00C33779 /* StanfordVolumeData */,
+				45664A4C2AE58F4A00352D96 /* StanfordVolumeData.tar */,
 				453F7D3C2ACC7A2C0051D331 /* VolumetricView.swift */,
 				453F7D3E2ACC7A590051D331 /* VolumetricRenderPass.swift */,
 			);
@@ -357,6 +359,7 @@
 				4555A0592ABE2CF50088CFFB /* MovementController.swift */,
 				454386A02ACF35BA00928B52 /* BitSetN.swift */,
 				456C5BA02ADA3D4E00C4AD0D /* Gradient.swift */,
+				45664A4A2AE58DED00352D96 /* TarArchive.swift */,
 			);
 			path = Support;
 			sourceTree = "<group>";
@@ -539,6 +542,7 @@
 				4570E2CF2AC711A200B3B64D /* perseverance_05.ktx in Resources */,
 				455741CD2AC658060050267D /* Testcard_03.ktx in Resources */,
 				4570E2D32AC711A200B3B64D /* perseverance_12.ktx in Resources */,
+				45664A4D2AE58F4A00352D96 /* StanfordVolumeData.tar in Resources */,
 				455741D02AC658060050267D /* Testcard_12.ktx in Resources */,
 				455741CF2AC658060050267D /* Testcard_06.ktx in Resources */,
 				455741D12AC658060050267D /* Testcard_07.ktx in Resources */,
@@ -551,7 +555,6 @@
 				453D32C02A48D06600FCEE29 /* Preview Assets.xcassets in Resources */,
 				455741CC2AC658060050267D /* Testcard_01.ktx in Resources */,
 				455741D62AC658060050267D /* Testcard_09.ktx in Resources */,
-				45CC35642AB8240F00C33779 /* StanfordVolumeData in Resources */,
 				45650DE82ACCEA45009F2AF2 /* BarramundiFish.glb in Resources */,
 				455741D52AC658060050267D /* Testcard_10.ktx in Resources */,
 				4570E2CA2AC711A200B3B64D /* perseverance_03.ktx in Resources */,
@@ -585,6 +588,7 @@
 				4555A0522ABE2CD80088CFFB /* FirstPersonInteractiveViewModifier.swift in Sources */,
 				454386A12ACF35BA00928B52 /* BitSetN.swift in Sources */,
 				453F7D3F2ACC7A590051D331 /* VolumetricRenderPass.swift in Sources */,
+				45664A4B2AE58DED00352D96 /* TarArchive.swift in Sources */,
 				45B2E2502AD7426900A2E7A1 /* Particles.swift in Sources */,
 				4555A0662ABE2E7E0088CFFB /* Support.swift in Sources */,
 				45FB2CA52AE19C55008824D4 /* MetalCanvas.swift in Sources */,

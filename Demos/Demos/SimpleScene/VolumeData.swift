@@ -11,30 +11,31 @@ import Metal
 //                courtesy of North Carolina Memorial Hospital
 
 public struct VolumeData {
-    public var directoryURL: URL
+    public var name: String
+    public var archive: TarArchive
     public var size: MTLSize
 
-    public init(directoryURL: URL, size: MTLSize) {
-        self.directoryURL = directoryURL
+    public init(named name: String, size: MTLSize) throws {
+        self.name = name
+        self.archive = try TarArchive(named: "StanfordVolumeData")
         self.size = size
     }
 
-    public init(named name: String, size: MTLSize) {
-        let url = Bundle.main.resourceURL!.appendingPathComponent("StanfordVolumeData/\(name)")
-        self = .init(directoryURL: url, size: size)
-    }
-
     func slices() throws -> [[UInt16]] {
-        let slices = try FileManager().contentsOfDirectory(atPath: directoryURL.path)
-            .map { directoryURL.appendingPathComponent($0) }
+        let records = try archive.records.values
+            .filter { try $0.filename.hasPrefix("StanfordVolumeData/\(name)/") && $0.fileType == .normalFile }
             .sorted { lhs, rhs in
-                let lhs = Int(lhs.pathExtension)!
-                let rhs = Int(rhs.pathExtension)!
+                let lhs = Int(URL(filePath: try lhs.filename).pathExtension)!
+                let rhs = Int(URL(filePath: try rhs.filename).pathExtension)!
                 return lhs < rhs
             }
+        let slices = try records.map {
+            let data = try $0.content
+            assert(!data.isEmpty)
+            return data
+        }
             .map {
-                let data = try Data(contentsOf: $0)
-                .withUnsafeBytes { buffer in
+                let data = $0.withUnsafeBytes { buffer in
                     buffer.bindMemory(to: UInt16.self).map {
                         UInt16(bigEndian: $0)
                     }
@@ -72,7 +73,7 @@ public struct VolumeData {
             guard let texture = device.makeTexture(descriptor: textureDescriptor) else {
                 fatalError()
             }
-            texture.label = directoryURL.lastPathComponent
+            //texture.label = directoryURL.lastPathComponent
             let bytesPerRow = size.width * 2
             let bytesPerImage = size.width * size.height * 2
             for (index, slice) in slices.enumerated() {

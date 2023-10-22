@@ -21,7 +21,7 @@ public struct VolumetricView: View {
     var rotation = Rotation.zero
 
     @State
-    var volumeData = VolumeData(named: "CThead", size: [256, 256, 113])
+    var volumeData = try! VolumeData(named: "CThead", size: [256, 256, 113])
 
     @State
     var redTransferFunction: [Float] = Array(repeating: 1.0, count: 256)

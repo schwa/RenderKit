@@ -1,4 +1,5 @@
 import RenderKit
+import Foundation
 
 @main
 struct Main {
