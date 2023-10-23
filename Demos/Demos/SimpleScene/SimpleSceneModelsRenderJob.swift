@@ -51,7 +51,6 @@ class UnlitMaterialRenderJob <Configuration>: SimpleRenderJob where Configuratio
         var fragmentLightUniformsIndex: Int = -1
     }
     struct DrawState {
-        var key: AnyHashable
         var renderPipelineState: MTLRenderPipelineState
         var depthStencilState: MTLDepthStencilState
         var bindings: Bindings
@@ -61,7 +60,7 @@ class UnlitMaterialRenderJob <Configuration>: SimpleRenderJob where Configuratio
     var camera: Camera?
     var light: Light?
     var ambientLightColor: SIMD3<Float>?
-    var bucketedDrawStates: [AnyHashable: DrawState] = [:]
+    private var bucketedDrawStates: [AnyHashable: DrawState] = [:]
 
     init(models: [Model]) {
         self.models = models
@@ -98,7 +97,7 @@ class UnlitMaterialRenderJob <Configuration>: SimpleRenderJob where Configuratio
             ])
 
             let depthStencilState = device.makeDepthStencilState(descriptor: MTLDepthStencilDescriptor(depthCompareFunction: .lessEqual, isDepthWriteEnabled: true))!
-            let drawState = DrawState(key: key, renderPipelineState: renderPipelineState, depthStencilState: depthStencilState, bindings: bindings)
+            let drawState = DrawState(renderPipelineState: renderPipelineState, depthStencilState: depthStencilState, bindings: bindings)
             partialResult[key] = drawState
         }
         print(bucketedDrawStates.count)
@@ -129,25 +128,16 @@ class UnlitMaterialRenderJob <Configuration>: SimpleRenderJob where Configuratio
                 encoder.withDebugGroup("Instanced \(key)") {
                     let mesh = models.first!.mesh
                     encoder.setVertexBuffers(mesh)
-                    let modes: [(MTLTriangleFillMode, SIMD4<Float>?)] = [
-                        (.fill, nil),
-                        (.lines, [1, 1, 1, 1]),
-                    ]
-                    for (fillMode, color) in modes {
-                        //print(meshKey, models)
-                        encoder.withDebugGroup("FillMode: \(fillMode))") {
-                            let modelUniforms = models.map { model in
-                                ModelUniforms(
-                                    modelViewMatrix: inverseCameraMatrix * model.transform.matrix,
-                                    modelNormalMatrix: simd_float3x3(truncating: model.transform.matrix.transpose.inverse),
-                                    color: color ?? (model.material as? UnlitMaterial)?.baseColorFactor ?? [1, 0, 0, 1]
-                                )
-                            }
-                            encoder.setVertexBytes(of: modelUniforms, index: drawState.bindings.vertexInstancedModelUniformsIndex)
-                            encoder.setTriangleFillMode(fillMode)
-                            encoder.draw(mesh, instanceCount: models.count)
-                        }
+                    let modelUniforms = models.map { model in
+                        ModelUniforms(
+                            modelViewMatrix: inverseCameraMatrix * model.transform.matrix,
+                            modelNormalMatrix: simd_float3x3(truncating: model.transform.matrix.transpose.inverse),
+                            color: (model.material as? UnlitMaterial)?.baseColorFactor ?? [1, 0, 0, 1]
+                        )
                     }
+                    encoder.setVertexBytes(of: modelUniforms, index: drawState.bindings.vertexInstancedModelUniformsIndex)
+                    encoder.setTriangleFillMode(.fill)
+                    encoder.draw(mesh, instanceCount: models.count)
                 }
             }
         }

@@ -5,7 +5,8 @@ typedef SimpleVertex Vertex;
 struct Fragment {
     float4 position [[position]]; // in projection space
     float3 modelPosition;
-    float3 interpolatedNormal[[flat]];
+    float3 interpolatedNormalFlat[[flat]];
+    float3 interpolatedNormal;
     float2 textureCoordinate;
     float4 color;
 };
@@ -25,6 +26,7 @@ Fragment flatShaderVertexShader(
     return {
         .position = cameraUniforms.projectionMatrix * modelVertex,
         .modelPosition = float3(modelVertex) / modelVertex.w,
+        .interpolatedNormalFlat = modelUniforms.modelNormalMatrix * in.normal,
         .interpolatedNormal = modelUniforms.modelNormalMatrix * in.normal,
         .textureCoordinate = in.textureCoordinate,
         .color = modelUniforms.color
@@ -38,10 +40,10 @@ vector_float4 flatShaderFragmentShader(Fragment in [[stage_in]], constant LightU
     const auto ambientMaterialColor= in.color.rgb;
 
     // Compute diffuse color
-    const auto normal = normalize(in.interpolatedNormal);
+    const auto normal = normalize(in.interpolatedNormalFlat);
     const auto lightDirection = lightUniforms.lightPosition - in.modelPosition;
-    const auto lambertian = max(dot(lightDirection, normal), 0.0);
     const auto lightDistanceSquared = length_squared(lightDirection);
+    const auto lambertian = max(dot(lightDirection, normal), 0.0);
     const auto diffuseColor = diffuseMaterialColor * lambertian * lightUniforms.lightColor * lightUniforms.lightPower / lightDistanceSquared;
 
     // Compute ambient color
@@ -49,3 +51,5 @@ vector_float4 flatShaderFragmentShader(Fragment in [[stage_in]], constant LightU
 
     return float4(diffuseColor + ambientColor, 1.0);
 }
+
+// https://en.wikipedia.org/wiki/Blinn–Phong_reflection_model
