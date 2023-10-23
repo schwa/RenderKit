@@ -86,12 +86,12 @@ extension Light: Sendable {
 public struct Model: Identifiable {
     public var id = LOLID2(prefix: "Model")
     public var transform: Transform
-    public var color: SIMD4<Float>
+    public var material: any Material
     public var mesh: YAMesh
 
-    public init(transform: Transform, color: SIMD4<Float>, mesh: YAMesh) {
+    public init(transform: Transform, material: any Material, mesh: YAMesh) {
         self.transform = transform
-        self.color = color
+        self.material = material
         self.mesh = mesh
     }
 }
@@ -110,25 +110,14 @@ public struct Panorama: Identifiable {
     }
 }
 
-//struct Geometry: Labeled {
-//    var label: String?
-//    var mesh: Mesh
-////    var material: (any Material)?
-//}
+public protocol Material: Labeled {
+}
 
-//struct Mesh: Labeled {
-//    var label: String?
-//    var resource: any ResourceProtocol
-//}
-
-//protocol Material: Labeled {
-//}
-//
-//struct UnlitMaterial: Material {
-//    var label: String?
-//    var baseColorFactor: SIMD4<Float> = .one
-//    var baseColorTexture: Texture?
-//}
+public struct UnlitMaterial: Material {
+    public var label: String?
+    public var baseColorFactor: SIMD4<Float> = .one
+    public var baseColorTexture: Texture?
+}
 
 //struct PBRMaterial: Material {
 //    var label: String?
@@ -148,9 +137,7 @@ public struct Panorama: Identifiable {
 //    var fragmentShader: String
 //}
 
-//struct Texture: Labeled {
-//    var label: String?
-//    var resource: any ResourceProtocol
-//}
-
-// MARK: -
+public struct Texture: Labeled {
+    public var label: String?
+    public var resource: any ResourceProtocol
+}

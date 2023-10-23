@@ -194,3 +194,24 @@ func printOnce(_ items: Any..., separator: String = " ", terminator: String = "\
     }
     print(s, terminator: "")
 }
+
+struct Pair <LHS, RHS> {
+    var lhs: LHS
+    var rhs: RHS
+
+    init(_ lhs: LHS, _ rhs: RHS) {
+        self.lhs = lhs
+        self.rhs = rhs
+    }
+
+    init(_ value: (LHS, RHS)) {
+        self.lhs = value.0
+        self.rhs = value.1
+    }
+}
+
+extension Pair: Equatable where LHS: Equatable, RHS: Equatable {
+}
+
+extension Pair: Hashable where LHS: Hashable, RHS: Hashable {
+}

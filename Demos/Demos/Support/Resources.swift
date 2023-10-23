@@ -3,38 +3,38 @@ import MetalKit
 
 // TODO: all this is very experimental.
 
-protocol ResourceProtocol: Hashable, Sendable {
+public protocol ResourceProtocol: Hashable, Sendable {
 }
 
-extension ResourceProtocol {
+public extension ResourceProtocol {
     func `as`(_ type: any URLProviding.Type) -> (any URLProviding)? {
         self as? any URLProviding
     }
 }
 
-protocol URLProviding: ResourceProtocol {
+public protocol URLProviding: ResourceProtocol {
     var url: URL { get throws }
 }
 
-protocol SynchronousLoadable: ResourceProtocol {
+public protocol SynchronousLoadable: ResourceProtocol {
     associatedtype Content
     associatedtype Parameter
     func load(_ parameter: Parameter) throws -> Content
 }
 
-extension SynchronousLoadable where Parameter == () {
+public extension SynchronousLoadable where Parameter == () {
     func load() throws -> Content {
         return try load(())
     }
 }
 
-protocol AsynchronousLoadable: ResourceProtocol {
+public protocol AsynchronousLoadable: ResourceProtocol {
     associatedtype Content // TODO: Sendable?
     associatedtype Parameter
     func load(_ parameter: Parameter) async throws -> Content
 }
 
-extension AsynchronousLoadable where Parameter == () {
+public extension AsynchronousLoadable where Parameter == () {
     func load() async throws -> Content {
         return try await load(())
     }
@@ -42,7 +42,7 @@ extension AsynchronousLoadable where Parameter == () {
 
 // MARK: -
 
-enum BundleReference: Hashable, Sendable {
+public enum BundleReference: Hashable, Sendable {
     enum Error: Swift.Error {
         case missingBundle
     }
@@ -50,7 +50,9 @@ enum BundleReference: Hashable, Sendable {
     case main
     case byURL(URL)
     case byIdentifier(String)
+}
 
+public extension BundleReference {
     var exists: Bool {
         switch self {
         case .main:
@@ -84,12 +86,12 @@ enum BundleReference: Hashable, Sendable {
 
 // MARK: -
 
-struct BundleResourceReference {
-    var bundle: BundleReference
-    var name: String
-    var `extension`: String?
+public struct BundleResourceReference {
+    public var bundle: BundleReference
+    public var name: String
+    public var `extension`: String?
 
-    init(bundle: BundleReference, name: String, `extension`: String? = nil) {
+    public init(bundle: BundleReference, name: String, `extension`: String? = nil) {
         self.bundle = bundle
         self.name = name
         self.`extension` = `extension`
@@ -99,11 +101,11 @@ struct BundleResourceReference {
         case missingResource
     }
 
-    var exists: Bool {
+    public var exists: Bool {
         return (try? bundle.bundle.url(forResource: name, withExtension: `extension`)) != nil
     }
 
-    var url: URL {
+    public var url: URL {
         get throws {
             guard let url = try bundle.bundle.url(forResource: name, withExtension: `extension`) else {
                 throw Error.missingResource
@@ -113,7 +115,7 @@ struct BundleResourceReference {
     }
 }
 
-extension BundleReference {
+public extension BundleReference {
     func resource(named name: String, withExtension `extension`: String?) -> BundleResourceReference {
         return BundleResourceReference(bundle: self, name: name, extension: `extension`)
     }
@@ -124,7 +126,7 @@ extension BundleReference {
 extension BundleResourceReference: URLProviding {
 }
 
-extension MTKTextureLoader {
+public extension MTKTextureLoader {
     func newTexture(resource: some ResourceProtocol, options: [Option: Any]? = nil) throws -> MTLTexture {
         if let resource = resource as? any URLProviding {
             return try newTexture(resource: resource, options: options)
