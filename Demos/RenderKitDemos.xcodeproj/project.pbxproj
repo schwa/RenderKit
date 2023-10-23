@@ -49,6 +49,7 @@
 		455741D52AC658060050267D /* Testcard_10.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 455741C92AC658060050267D /* Testcard_10.ktx */; };
 		455741D62AC658060050267D /* Testcard_09.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 455741CA2AC658060050267D /* Testcard_09.ktx */; };
 		455741D72AC658060050267D /* Testcard_08.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 455741CB2AC658060050267D /* Testcard_08.ktx */; };
+		4558221B2AE5A2A700189306 /* PanoramaRenderJob.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4558221A2AE5A2A700189306 /* PanoramaRenderJob.swift */; };
 		45650DE22ACCE5CE009F2AF2 /* OffscreenDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45650DE12ACCE5CE009F2AF2 /* OffscreenDemo.swift */; };
 		45650DE62ACCEA09009F2AF2 /* SwiftGLTF in Frameworks */ = {isa = PBXBuildFile; productRef = 45650DE52ACCEA09009F2AF2 /* SwiftGLTF */; };
 		45650DE82ACCEA45009F2AF2 /* BarramundiFish.glb in Resources */ = {isa = PBXBuildFile; fileRef = 45650DE72ACCEA45009F2AF2 /* BarramundiFish.glb */; };
@@ -149,6 +150,8 @@
 		455741CB2AC658060050267D /* Testcard_08.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = Testcard_08.ktx; sourceTree = "<group>"; };
 		455822172AE59E3B00189306 /* TODO.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = TODO.md; path = ../TODO.md; sourceTree = "<group>"; };
 		455822182AE59E5000189306 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
+		455822192AE59FFB00189306 /* BitonicSort */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = BitonicSort; sourceTree = "<group>"; };
+		4558221A2AE5A2A700189306 /* PanoramaRenderJob.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanoramaRenderJob.swift; sourceTree = "<group>"; };
 		45650DE12ACCE5CE009F2AF2 /* OffscreenDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OffscreenDemo.swift; sourceTree = "<group>"; };
 		45650DE32ACCE5FA009F2AF2 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		45650DE72ACCEA45009F2AF2 /* BarramundiFish.glb */ = {isa = PBXFileReference; lastKnownFileType = file; path = BarramundiFish.glb; sourceTree = "<group>"; };
@@ -224,6 +227,7 @@
 		4519014A2AE36FD6004722F2 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
+				455822192AE59FFB00189306 /* BitonicSort */,
 				453A4A412AE43C7F00838CF5 /* DemosSupport */,
 				45873CA32AE435E90043D96A /* Compute */,
 			);
@@ -273,11 +277,7 @@
 		453D32B62A48D06500FCEE29 /* Demos */ = {
 			isa = PBXGroup;
 			children = (
-				4570E2B82AC711A200B3B64D /* PerseveranceTiles */,
-				455741BF2AC658060050267D /* TestcardTiles */,
 				45A147BB2A4B1B7300C06FE1 /* xcconfig */,
-				451196902A520D1F00F4F2DE /* Info.plist */,
-				4555A03A2ABE0B310088CFFB /* Info-visionOS.plist */,
 				453D32B72A48D06500FCEE29 /* DemosApp.swift */,
 				4555A0362ABE017A0088CFFB /* DemosApp-VisionOS.swift */,
 				453D32B92A48D06500FCEE29 /* ContentView.swift */,
@@ -288,10 +288,14 @@
 				4578614F2AE32E95005DABD6 /* Particles2 */,
 				4555A0492ABE2BF50088CFFB /* ShaderToy */,
 				4555A03F2ABE2BF00088CFFB /* SimpleScene */,
-				4555A0672ABE2F740088CFFB /* Support */,
 				4555A03C2ABE2BEC0088CFFB /* Volumetric */,
+				4555A0672ABE2F740088CFFB /* Support */,
 				453D32BB2A48D06600FCEE29 /* Assets.xcassets */,
 				453D32BD2A48D06600FCEE29 /* Demos.entitlements */,
+				4570E2B82AC711A200B3B64D /* PerseveranceTiles */,
+				455741BF2AC658060050267D /* TestcardTiles */,
+				451196902A520D1F00F4F2DE /* Info.plist */,
+				4555A03A2ABE0B310088CFFB /* Info-visionOS.plist */,
 				453D32BE2A48D06600FCEE29 /* Preview Content */,
 			);
 			path = Demos;
@@ -321,6 +325,7 @@
 				4555A0402ABE2BF00088CFFB /* SimpleSceneView.swift */,
 				4555A0412ABE2BF00088CFFB /* SimpleSceneMapView.swift */,
 				4555A0442ABE2BF00088CFFB /* SimpleSceneModelsRenderJob.swift */,
+				4558221A2AE5A2A700189306 /* PanoramaRenderJob.swift */,
 				45FB2CA12AE19A0F008824D4 /* SimpleJobsBasedRenderPass.swift */,
 				4555A0452ABE2BF00088CFFB /* SimpleSceneInspector.swift */,
 				459E755C2AC1EF6F004BC055 /* SimpleMesh.swift */,
@@ -610,6 +615,7 @@
 				456C5BA12ADA3D4E00C4AD0D /* Gradient.swift in Sources */,
 				4555A05C2ABE2D030088CFFB /* DisplayLink.swift in Sources */,
 				4555A0512ABE2CD80088CFFB /* SimpleScene.swift in Sources */,
+				4558221B2AE5A2A700189306 /* PanoramaRenderJob.swift in Sources */,
 				459FAE552ACDFCAD000018E2 /* YAMesh.swift in Sources */,
 				4555A0542ABE2CD80088CFFB /* BallRotationModifier.swift in Sources */,
 				45FB2CA72AE1A8E3008824D4 /* AnyRenderPass.swift in Sources */,
