@@ -50,6 +50,7 @@
 		455741D62AC658060050267D /* Testcard_09.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 455741CA2AC658060050267D /* Testcard_09.ktx */; };
 		455741D72AC658060050267D /* Testcard_08.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 455741CB2AC658060050267D /* Testcard_08.ktx */; };
 		4558221B2AE5A2A700189306 /* PanoramaRenderJob.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4558221A2AE5A2A700189306 /* PanoramaRenderJob.swift */; };
+		4558221D2AE60FF500189306 /* ShaderFunction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4558221C2AE60FF500189306 /* ShaderFunction.swift */; };
 		45650DE22ACCE5CE009F2AF2 /* OffscreenDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45650DE12ACCE5CE009F2AF2 /* OffscreenDemo.swift */; };
 		45650DE62ACCEA09009F2AF2 /* SwiftGLTF in Frameworks */ = {isa = PBXBuildFile; productRef = 45650DE52ACCEA09009F2AF2 /* SwiftGLTF */; };
 		45650DE82ACCEA45009F2AF2 /* BarramundiFish.glb in Resources */ = {isa = PBXBuildFile; fileRef = 45650DE72ACCEA45009F2AF2 /* BarramundiFish.glb */; };
@@ -152,6 +153,7 @@
 		455822182AE59E5000189306 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
 		455822192AE59FFB00189306 /* BitonicSort */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = BitonicSort; sourceTree = "<group>"; };
 		4558221A2AE5A2A700189306 /* PanoramaRenderJob.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanoramaRenderJob.swift; sourceTree = "<group>"; };
+		4558221C2AE60FF500189306 /* ShaderFunction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderFunction.swift; sourceTree = "<group>"; };
 		45650DE12ACCE5CE009F2AF2 /* OffscreenDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OffscreenDemo.swift; sourceTree = "<group>"; };
 		45650DE32ACCE5FA009F2AF2 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		45650DE72ACCEA45009F2AF2 /* BarramundiFish.glb */ = {isa = PBXFileReference; lastKnownFileType = file; path = BarramundiFish.glb; sourceTree = "<group>"; };
@@ -335,6 +337,7 @@
 				45B1D71D2ACFB25600960D02 /* YAMesh+Conversion.swift */,
 				45FB2CA62AE1A8E3008824D4 /* AnyRenderPass.swift */,
 				4555A03E2ABE2BEC0088CFFB /* VolumeData.swift */,
+				4558221C2AE60FF500189306 /* ShaderFunction.swift */,
 				45FB795F2ACF6E10001CD1B5 /* Cube.glb */,
 				45650DE72ACCEA45009F2AF2 /* BarramundiFish.glb */,
 			);
@@ -615,6 +618,7 @@
 				456C5BA12ADA3D4E00C4AD0D /* Gradient.swift in Sources */,
 				4555A05C2ABE2D030088CFFB /* DisplayLink.swift in Sources */,
 				4555A0512ABE2CD80088CFFB /* SimpleScene.swift in Sources */,
+				4558221D2AE60FF500189306 /* ShaderFunction.swift in Sources */,
 				4558221B2AE5A2A700189306 /* PanoramaRenderJob.swift in Sources */,
 				459FAE552ACDFCAD000018E2 /* YAMesh.swift in Sources */,
 				4555A0542ABE2CD80088CFFB /* BallRotationModifier.swift in Sources */,

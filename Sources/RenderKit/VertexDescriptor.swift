@@ -7,6 +7,21 @@ public enum Semantic: Hashable, Sendable {
     case position
     case normal
     case textureCoordinate
+    // TODO: Add in more semantics. (From ModelIO semantics and GLTF etc)
+}
+
+extension Semantic: Encodable {
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        switch self {
+        case .position:
+            try container.encode("position")
+        case .normal:
+            try container.encode("normal")
+        case .textureCoordinate:
+            try container.encode("textureCoordinate")
+        }
+    }
 }
 
 public struct VertexDescriptor: Labeled, Hashable, Sendable {
@@ -56,21 +71,7 @@ public struct VertexDescriptor: Labeled, Hashable, Sendable {
     }
 }
 
-/*
- <MTLVertexDescriptorInternal: 0x6000037d9140>
-     Buffer 0:
-         stepFunction = MTLVertexStepFunctionPerVertex
-         stride = 32
-         Attribute 0:
-             offset = 0
-             format = MTLAttributeFormatFloat3
-         Attribute 1:
-             offset = 12
-             format = MTLAttributeFormatFloat3
-         Attribute 2:
-             offset = 24
-             format = MTLAttributeFormatFloat2
-*/
+// MARK: CustomStringConvertible
 
 extension VertexDescriptor: CustomStringConvertible {
     public var description: String {
@@ -84,7 +85,7 @@ extension VertexDescriptor: CustomStringConvertible {
             print("\t\tbufferIndex: \(layout.bufferIndex)", to: &s)
             for (index, attribute) in layout.attributes.enumerated() {
                 print("\t\tattribute \(index) \(String(describing: attribute.label))", to: &s)
-                print("\t\t\tsemantic: \(attribute.semantic)", to: &s)
+                print("\t\t\tsemantic: \(String(describing: attribute.semantic))", to: &s)
                 print("\t\t\toffset: \(attribute.offset)", to: &s)
                 print("\t\t\tformat: \(attribute.format)", to: &s)
             }
@@ -93,12 +94,64 @@ extension VertexDescriptor: CustomStringConvertible {
     }
 }
 
-// MARK: -
+// Codable.
 
-public extension VertexDescriptor {
-    func validate() throws {
+extension VertexDescriptor: Encodable {
+}
+
+extension VertexDescriptor.Layout: Encodable {
+    enum CodingKeys: CodingKey {
+        case label
+        case bufferIndex
+        case stride
+        case stepFunction
+        case stepRate
+        case attributes
     }
 
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        if let label {
+            try container.encode(label, forKey: .label)
+        }
+        try container.encode(bufferIndex, forKey: .bufferIndex)
+        try container.encode(stride, forKey: .stride)
+        if stepFunction != .perVertex {
+            try container.encode(stepFunction.stringValue, forKey: .stepFunction)
+        }
+        if stepRate != 1 {
+            try container.encode(stepRate, forKey: .stepRate)
+        }
+        try container.encode(attributes, forKey: .attributes)
+    }
+}
+
+extension VertexDescriptor.Attribute: Encodable {
+    enum CodingKeys: CodingKey {
+        case label
+        case semantic
+        case format
+        case offset
+    }
+
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        if let label {
+            try container.encode(label, forKey: .label)
+        }
+        if let semantic {
+            try container.encode(semantic, forKey: .semantic)
+        }
+        try container.encode(format.stringValue, forKey: .format)
+        if offset != 0 {
+            try container.encode(offset, forKey: .offset)
+        }
+    }
+}
+
+// MARK: Utilities
+
+public extension VertexDescriptor {
     mutating func setPackedOffsets() {
         layouts = layouts.map { layout in
             var layout = layout
@@ -121,9 +174,18 @@ public extension VertexDescriptor {
             return layout
         }
     }
+
+    var encodedDescription: String {
+        let encoder = JSONEncoder()
+        encoder.outputFormatting = [.sortedKeys]
+        let data = try! encoder.encode(self)
+        let string = String(data: data, encoding: .utf8)!
+            .replacingOccurrences(of: "\"", with: "")
+        return string
+    }
 }
 
-// MARK: -
+// MARK: Convert from/to MTLVertexDescriptor
 
 public extension VertexDescriptor {
     init(_ mtlDescriptor: MTLVertexDescriptor) throws {
@@ -170,6 +232,8 @@ public extension MTLVertexDescriptor {
     }
 }
 
+// MARK: ModelIO support.
+
 public extension VertexDescriptor {
     init(_ mdlDescriptor: MDLVertexDescriptor) throws {
         // From "Metal feature set tables"
@@ -215,28 +279,81 @@ public extension VertexDescriptor {
     }
 }
 
-//public extension VertexDescriptor {
-//    func toSwift() -> String {
-//        let attributes = attributes.map { attribute in
-//            ".init(semantic: .\(attribute.semantic), format: .\(attribute.format), offset: \(attribute.offset), bufferIndex: \(attribute.bufferIndex))"
-//        }
-//            .joined(separator: ",\n\t\t")
-//
-//        let layouts = layouts.map { _, layout in
-//            ".init(stepFunction: .\(layout.stepFunction), stepRate: \(layout.stepRate), stride: \(layout.stride))"
-//        }
-//            .joined(separator: ",\n\t\t")
-//
-//        return """
-//    VertexDescriptor(
-//        label: "",
-//        attributes: [
-//            \(attributes)
-//        ],
-//        layouts: [
-//            \(layouts)
-//        ]
-//    )
-//    """
-//    }
-//}
+// MARK: Move.
+
+extension MTLVertexStepFunction {
+    var stringValue: String {
+        switch self {
+        case .constant: return "constant"
+        case .perVertex: return "perVertex"
+        case .perInstance: return "perInstance"
+        case .perPatch: return "perPatch"
+        case .perPatchControlPoint: return "perPatchControlPoint"
+        @unknown default:
+            fatalError()
+        }
+    }
+}
+
+extension MTLVertexFormat {
+    var stringValue: String {
+        switch self {
+        case .invalid: return "invalid"
+        case .uchar2: return "uchar2"
+        case .uchar3: return "uchar3"
+        case .uchar4: return "uchar4"
+        case .char2: return "char2"
+        case .char3: return "char3"
+        case .char4: return "char4"
+        case .uchar2Normalized: return "uchar2Normalized"
+        case .uchar3Normalized: return "uchar3Normalized"
+        case .uchar4Normalized: return "uchar4Normalized"
+        case .char2Normalized: return "char2Normalized"
+        case .char3Normalized: return "char3Normalized"
+        case .char4Normalized: return "char4Normalized"
+        case .ushort2: return "ushort2"
+        case .ushort3: return "ushort3"
+        case .ushort4: return "ushort4"
+        case .short2: return "short2"
+        case .short3: return "short3"
+        case .short4: return "short4"
+        case .ushort2Normalized: return "ushort2Normalized"
+        case .ushort3Normalized: return "ushort3Normalized"
+        case .ushort4Normalized: return "ushort4Normalized"
+        case .short2Normalized: return "short2Normalized"
+        case .short3Normalized: return "short3Normalized"
+        case .short4Normalized: return "short4Normalized"
+        case .half2: return "half2"
+        case .half3: return "half3"
+        case .half4: return "half4"
+        case .float: return "float"
+        case .float2: return "float2"
+        case .float3: return "float3"
+        case .float4: return "float4"
+        case .int: return "int"
+        case .int2: return "int2"
+        case .int3: return "int3"
+        case .int4: return "int4"
+        case .uint: return "uint"
+        case .uint2: return "uint2"
+        case .uint3: return "uint3"
+        case .uint4: return "uint4"
+        case .int1010102Normalized: return "int1010102Normalized"
+        case .uint1010102Normalized: return "uint1010102Normalized"
+        case .uchar4Normalized_bgra: return "uchar4Normalized_bgra"
+        case .uchar: return "uchar"
+        case .char: return "char"
+        case .ucharNormalized: return "ucharNormalized"
+        case .charNormalized: return "charNormalized"
+        case .ushort: return "ushort"
+        case .short: return "short"
+        case .ushortNormalized: return "ushortNormalized"
+        case .shortNormalized: return "shortNormalized"
+        case .half: return "half"
+        case .floatRG11B10: return "floatRG11B10"
+        case .floatRGB9E5: return "floatRGB9E5"
+        @unknown default:
+            fatalError()
+        }
+    }
+}

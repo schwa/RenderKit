@@ -31,8 +31,25 @@ class SimpleSceneModelsRenderJob <Configuration>: SimpleRenderJob where Configur
 
     func prepare(device: MTLDevice, configuration: inout Configuration) throws {
         let library = try! device.makeDefaultLibrary(bundle: .shadersBundle)
+
+        // Warm cache
+        for model in scene.models {
+            let key = model.mesh.0
+            let mesh = try model.mesh.1(device)
+            print("*********")
+            print(key)
+            print(mesh.vertexDescriptor.encodedDescription)
+
+            cache.insert(key: key, value: mesh)
+        }
+
         let vertexFunction = library.makeFunction(name: "flatShaderVertexShader")!
-        let fragmentFunction = library.makeFunction(name: "flatShaderFragmentShader")
+        let fragmentFunction = library.makeFunction(name: "flatShaderFragmentShader")!
+
+//        print(vertexFunction.vertexAttributes)
+//        print(vertexFunction.stageInputAttributes)
+//        print(fragmentFunction.vertexAttributes)
+//        print(fragmentFunction.stageInputAttributes)
 
         depthStencilState = device.makeDepthStencilState(descriptor: MTLDepthStencilDescriptor(depthCompareFunction: .lessEqual, isDepthWriteEnabled: true))
 
@@ -55,12 +72,6 @@ class SimpleSceneModelsRenderJob <Configuration>: SimpleRenderJob where Configur
             (\.fragmentLightUniformsIndex, .fragment, "lightUniforms"),
         ])
         self.bindings = bindings
-        print(bindings)
-
-        // Warm cache
-        for model in scene.models {
-            cache.insert(key: model.mesh.0, value: try! model.mesh.1(device))
-        }
     }
 
     func encode(on encoder: MTLRenderCommandEncoder, size: CGSize) throws {
@@ -114,12 +125,6 @@ class SimpleSceneModelsRenderJob <Configuration>: SimpleRenderJob where Configur
     }
 }
 
-enum ShaderType {
-    case compute
-    case vertex
-    case fragment
-}
-
 //struct Binding {
 //    var shaderType: ShaderType
 //    var type: MTLBindingType
@@ -127,7 +132,7 @@ enum ShaderType {
 //    var index: Int
 //}
 
-func resolveBindings <Bindable>(reflection: MTLRenderPipelineReflection, bindable: inout Bindable, _ a: [(WritableKeyPath<Bindable, Int>, ShaderType, String)]) {
+func resolveBindings <Bindable>(reflection: MTLRenderPipelineReflection, bindable: inout Bindable, _ a: [(WritableKeyPath<Bindable, Int>, MTLFunctionType, String)]) {
     for (keyPath, shaderType, name) in a {
         switch shaderType {
         case .vertex:
