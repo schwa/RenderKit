@@ -17,16 +17,16 @@ class SimpleSceneModelsRenderJob <Configuration>: SimpleRenderJob where Configur
         var vertexInstancedModelUniformsIndex: Int
         var fragmentLightUniformsIndex: Int
     }
-    struct DrawState <T> {
+    struct DrawState {
         var key: AnyHashable
         var renderPipelineState: MTLRenderPipelineState
         var depthStencilState: MTLDepthStencilState
-        var bindings: T
+        var bindings: Bindings
     }
 
     var scene: SimpleScene
     var cache = Cache<String, Any>()
-    var bucketedDrawStates: [AnyHashable: DrawState<Bindings>] = [:]
+    var bucketedDrawStates: [AnyHashable: DrawState] = [:]
 
     init(scene: SimpleScene) {
         self.scene = scene
@@ -123,13 +123,6 @@ class SimpleSceneModelsRenderJob <Configuration>: SimpleRenderJob where Configur
     }
 }
 
-//struct Binding {
-//    var shaderType: ShaderType
-//    var type: MTLBindingType
-//    var name: String
-//    var index: Int
-//}
-
 func resolveBindings <Bindable>(reflection: MTLRenderPipelineReflection, bindable: inout Bindable, _ a: [(WritableKeyPath<Bindable, Int>, MTLFunctionType, String)]) {
     for (keyPath, shaderType, name) in a {
         switch shaderType {
@@ -143,25 +136,4 @@ func resolveBindings <Bindable>(reflection: MTLRenderPipelineReflection, bindabl
             fatalError()
         }
     }
-}
-
-struct Pair <LHS, RHS> {
-    var lhs: LHS
-    var rhs: RHS
-
-    init(_ lhs: LHS, _ rhs: RHS) {
-        self.lhs = lhs
-        self.rhs = rhs
-    }
-
-    init(_ value: (LHS, RHS)) {
-        self.lhs = value.0
-        self.rhs = value.1
-    }
-}
-
-extension Pair: Equatable where LHS: Equatable, RHS: Equatable {
-}
-
-extension Pair: Hashable where LHS: Hashable, RHS: Hashable {
 }
