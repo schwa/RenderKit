@@ -9,13 +9,7 @@ import Observation
 import Everything
 
 class SimpleSceneModelsRenderJob <Configuration>: SimpleRenderJob where Configuration: MetalConfiguration {
-    var renderPipelineState: MTLRenderPipelineState?
-    var depthStencilState: MTLDepthStencilState?
-
     typealias Parameter = (SimpleScene)
-
-    var scene: SimpleScene
-    var cache = Cache<String, Any>()
 
     struct Bindings {
         var vertexBufferIndex: Int
@@ -23,7 +17,16 @@ class SimpleSceneModelsRenderJob <Configuration>: SimpleRenderJob where Configur
         var vertexInstancedModelUniformsIndex: Int
         var fragmentLightUniformsIndex: Int
     }
-    var bindings: Bindings?
+    struct DrawState <T> {
+        var key: AnyHashable
+        var renderPipelineState: MTLRenderPipelineState
+        var depthStencilState: MTLDepthStencilState
+        var bindings: T
+    }
+
+    var scene: SimpleScene
+    var cache = Cache<String, Any>()
+    var bucketedDrawStates: [AnyHashable: DrawState<Bindings>] = [:]
 
     init(scene: SimpleScene) {
         self.scene = scene
@@ -32,70 +35,67 @@ class SimpleSceneModelsRenderJob <Configuration>: SimpleRenderJob where Configur
     func prepare(device: MTLDevice, configuration: inout Configuration) throws {
         let library = try! device.makeDefaultLibrary(bundle: .shadersBundle)
 
-        // Warm cache
-//        for model in scene.models {
-//            let key = model.mesh.0
-//            let mesh = try model.mesh.1(device)
-//            print("*********")
-//            print(key)
-//            print(mesh.vertexDescriptor.encodedDescription)
-//
-//            cache.insert(key: key, value: mesh)
-//        }
+        print("START **********************")
+        bucketedDrawStates = try scene.models.reduce(into: [:]) { partialResult, model in
+            let key = Pair(model.mesh.id, model.mesh.vertexDescriptor.encodedDescription)
+            guard partialResult[key] == nil else {
+                return
+            }
 
-        let vertexFunction = library.makeFunction(name: "flatShaderVertexShader")!
-        let fragmentFunction = library.makeFunction(name: "flatShaderFragmentShader")!
+            let vertexFunction = library.makeFunction(name: "flatShaderVertexShader")!
+            let fragmentFunction = library.makeFunction(name: "flatShaderFragmentShader")!
 
-//        print(vertexFunction.vertexAttributes)
-//        print(vertexFunction.stageInputAttributes)
-//        print(fragmentFunction.vertexAttributes)
-//        print(fragmentFunction.stageInputAttributes)
+            let renderPipelineDescriptor = MTLRenderPipelineDescriptor()
+            renderPipelineDescriptor.label = Names.shared.hashed(hashable: key, pad: 4)
+            print(renderPipelineDescriptor.label)
+            renderPipelineDescriptor.vertexFunction = vertexFunction
+            renderPipelineDescriptor.fragmentFunction = fragmentFunction
+            renderPipelineDescriptor.colorAttachments[0].pixelFormat = configuration.colorPixelFormat
+            renderPipelineDescriptor.depthAttachmentPixelFormat = configuration.depthStencilPixelFormat
 
-        depthStencilState = device.makeDepthStencilState(descriptor: MTLDepthStencilDescriptor(depthCompareFunction: .lessEqual, isDepthWriteEnabled: true))
+            let descriptor = model.mesh.vertexDescriptor
+            renderPipelineDescriptor.vertexDescriptor = MTLVertexDescriptor(descriptor)
+            let (renderPipelineState, reflection) = try device.makeRenderPipelineState(descriptor: renderPipelineDescriptor, options: [.argumentInfo])
 
-        let renderPipelineDescriptor = MTLRenderPipelineDescriptor()
-        renderPipelineDescriptor.vertexFunction = vertexFunction
-        renderPipelineDescriptor.fragmentFunction = fragmentFunction
-        renderPipelineDescriptor.colorAttachments[0].pixelFormat = configuration.colorPixelFormat
-        renderPipelineDescriptor.depthAttachmentPixelFormat = configuration.depthStencilPixelFormat
+            var bindings = Bindings(vertexBufferIndex: 0, vertexCameraUniformsIndex: 0, vertexInstancedModelUniformsIndex: 0, fragmentLightUniformsIndex: 0)
+            resolveBindings(reflection: reflection!, bindable: &bindings, [
+                (\.vertexBufferIndex, .vertex, "vertexBuffer.0"),
+                (\.vertexCameraUniformsIndex, .vertex, "cameraUniforms"),
+                (\.vertexInstancedModelUniformsIndex, .vertex, "instancedModelUniforms"),
+                (\.fragmentLightUniformsIndex, .fragment, "lightUniforms"),
+            ])
 
-        let descriptor = VertexDescriptor.packed(semantics: [.position, .normal, .textureCoordinate])
-        renderPipelineDescriptor.vertexDescriptor = MTLVertexDescriptor(descriptor)
-        let reflection: MTLRenderPipelineReflection?
-        (renderPipelineState, reflection) = try device.makeRenderPipelineState(descriptor: renderPipelineDescriptor, options: [.argumentInfo])
-
-        var bindings = Bindings(vertexBufferIndex: 0, vertexCameraUniformsIndex: 0, vertexInstancedModelUniformsIndex: 0, fragmentLightUniformsIndex: 0)
-        resolveBindings(reflection: reflection!, bindable: &bindings, [
-            (\.vertexBufferIndex, .vertex, "vertexBuffer.0"),
-            (\.vertexCameraUniformsIndex, .vertex, "cameraUniforms"),
-            (\.vertexInstancedModelUniformsIndex, .vertex, "instancedModelUniforms"),
-            (\.fragmentLightUniformsIndex, .fragment, "lightUniforms"),
-        ])
-        self.bindings = bindings
+            let depthStencilState = device.makeDepthStencilState(descriptor: MTLDepthStencilDescriptor(depthCompareFunction: .lessEqual, isDepthWriteEnabled: true))!
+            let drawState = DrawState(key: key, renderPipelineState: renderPipelineState, depthStencilState: depthStencilState, bindings: bindings)
+            partialResult[key] = drawState
+        }
+        print("END *********************************")
+        print(bucketedDrawStates.count)
     }
 
     func encode(on encoder: MTLRenderCommandEncoder, size: CGSize) throws {
         guard !scene.models.isEmpty else {
             return
         }
-        guard let renderPipelineState, let depthStencilState, let bindings else {
-            return
+
+        let bucketedModels: [AnyHashable: [Model]] = scene.models.reduce(into: [:]) { partialResult, model in
+            let key = Pair(model.mesh.id, model.mesh.vertexDescriptor.encodedDescription)
+            partialResult[key, default: []].append(model)
         }
-        encoder.withDebugGroup("Instanced Models") {
-            encoder.setRenderPipelineState(renderPipelineState)
-            encoder.setDepthStencilState(depthStencilState)
-            let cameraUniforms = CameraUniforms(projectionMatrix: scene.camera.projection.matrix(viewSize: SIMD2<Float>(size)))
-            let inverseCameraMatrix = scene.camera.transform.matrix.inverse
-            encoder.setVertexBytes(of: cameraUniforms, index: bindings.vertexCameraUniformsIndex)
-            let lightUniforms = LightUniforms(lightPosition: scene.light.position.translation, lightColor: scene.light.color, lightPower: scene.light.power, ambientLightColor: scene.ambientLightColor)
-            encoder.setFragmentBytes(of: lightUniforms, index: bindings.fragmentLightUniformsIndex)
 
-            let bucketedModels = scene.models.reduce(into: [:]) { partialResult, model in
-                partialResult[model.mesh.id, default: []].append(model)
-            }
+        for (key, drawState) in bucketedDrawStates {
+            encoder.withDebugGroup("Instanced Models") {
+                encoder.setRenderPipelineState(drawState.renderPipelineState)
+                encoder.setDepthStencilState(drawState.depthStencilState)
+                let cameraUniforms = CameraUniforms(projectionMatrix: scene.camera.projection.matrix(viewSize: SIMD2<Float>(size)))
+                let inverseCameraMatrix = scene.camera.transform.matrix.inverse
+                encoder.setVertexBytes(of: cameraUniforms, index: drawState.bindings.vertexCameraUniformsIndex)
+                let lightUniforms = LightUniforms(lightPosition: scene.light.position.translation, lightColor: scene.light.color, lightPower: scene.light.power, ambientLightColor: scene.ambientLightColor)
+                encoder.setFragmentBytes(of: lightUniforms, index: drawState.bindings.fragmentLightUniformsIndex)
 
-            for (meshKey, models) in bucketedModels {
-                encoder.withDebugGroup("Instanced \(meshKey)") {
+                let models = bucketedModels[key]!
+
+                encoder.withDebugGroup("Instanced \(key)") {
                     let mesh = models.first!.mesh
                     encoder.setVertexBuffers(mesh)
                     let modes: [(MTLTriangleFillMode, SIMD4<Float>?)] = [
@@ -112,7 +112,7 @@ class SimpleSceneModelsRenderJob <Configuration>: SimpleRenderJob where Configur
                                     color: color ?? model.color
                                 )
                             }
-                            encoder.setVertexBytes(of: modelUniforms, index: bindings.vertexInstancedModelUniformsIndex)
+                            encoder.setVertexBytes(of: modelUniforms, index: drawState.bindings.vertexInstancedModelUniformsIndex)
                             encoder.setTriangleFillMode(fillMode)
                             encoder.draw(mesh, instanceCount: models.count)
                         }
@@ -143,4 +143,25 @@ func resolveBindings <Bindable>(reflection: MTLRenderPipelineReflection, bindabl
             fatalError()
         }
     }
+}
+
+struct Pair <LHS, RHS> {
+    var lhs: LHS
+    var rhs: RHS
+
+    init(_ lhs: LHS, _ rhs: RHS) {
+        self.lhs = lhs
+        self.rhs = rhs
+    }
+
+    init(_ value: (LHS, RHS)) {
+        self.lhs = value.0
+        self.rhs = value.1
+    }
+}
+
+extension Pair: Equatable where LHS: Equatable, RHS: Equatable {
+}
+
+extension Pair: Hashable where LHS: Hashable, RHS: Hashable {
 }

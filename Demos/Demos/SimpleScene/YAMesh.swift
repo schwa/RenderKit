@@ -45,7 +45,9 @@ extension BufferView: CustomStringConvertible {
 // MARK: -
 
 public struct YAMesh: Identifiable, Labeled {
-    public var id = LOLID2(prefix: "YAMesh")
+    public typealias ID = LOLID2
+
+    public var id = ID(prefix: "YAMesh")
     public var label: String?
     public var submeshes: [Submesh]
     public var vertexDescriptor: VertexDescriptor

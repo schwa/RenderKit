@@ -200,7 +200,7 @@ public extension SimpleScene {
             return Model(transform: .translation([x, 0, z]), color: rgba, mesh: meshes.randomElement()!)
         }
 
-        let fishModel = Model(transform: .translation([0, 0, 0]).rotated(angle: .degrees(90), axis: [0, 1, 0]), color: [1, 0, 1, 1], mesh:
+        let fishModel = Model(transform: .translation([0, 1, 0]).rotated(angle: .degrees(90), axis: [0, 1, 0]), color: [1, 0, 1, 1], mesh:
             try YAMesh(gltf: "BarramundiFish", device: device)
         )
         models.append(fishModel)
