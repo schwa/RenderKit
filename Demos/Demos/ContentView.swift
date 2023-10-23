@@ -37,7 +37,9 @@ struct ContentView: View {
             .navigationDestination(for: Demo.self) { demo in
                 switch demo {
                 case .simpleScene:
-                    CoreSimpleSceneView()
+                    let device = MTLCreateSystemDefaultDevice()!
+                    let scene = try! SimpleScene.demo(device: device)
+                    CoreSimpleSceneView(scene: .constant(scene))
                         .navigationTitle(demo.rawValue)
                 case .simpleSceneExtended:
                     SimpleSceneView()

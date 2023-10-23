@@ -88,9 +88,9 @@ public struct Model: Identifiable {
     public var id = LOLID2(prefix: "Model")
     public var transform: Transform
     public var color: SIMD4<Float>
-    public var mesh: (String, (MTLDevice) throws -> YAMesh)
+    public var mesh: YAMesh
 
-    public init(transform: Transform, color: SIMD4<Float>, mesh: (String, (MTLDevice) throws -> YAMesh)) {
+    public init(transform: Transform, color: SIMD4<Float>, mesh: YAMesh) {
         self.transform = transform
         self.color = color
         self.mesh = mesh
@@ -157,10 +157,11 @@ public struct Panorama: Identifiable {
 // MARK: -
 
 public extension SimpleScene {
-    static func demo() -> SimpleScene {
-        let cone = ("cone", { device in try Cone(extent: [0.5, 1, 0.5], segments: [20, 10]).toYAMesh(allocator: MTKMeshBufferAllocator(device: device), device: device) })
-        let sphere = ("sphere", { device in try Sphere(extent: [0.5, 0.5, 0.5], segments: [20, 10]).toYAMesh(allocator: MTKMeshBufferAllocator(device: device), device: device) })
-        let capsule = ("capsule", { device in try Capsule(extent: [0.25, 1, 0.25], cylinderSegments: [30, 10], hemisphereSegments: 5).toYAMesh(allocator: MTKMeshBufferAllocator(device: device), device: device) })
+    static func demo(device: MTLDevice) throws -> SimpleScene {
+        let allocator = MTKMeshBufferAllocator(device: device)
+        let cone = try Cone(extent: [0.5, 1, 0.5], segments: [20, 10]).toYAMesh(allocator: allocator, device: device)
+        let sphere = try Sphere(extent: [0.5, 0.5, 0.5], segments: [20, 10]).toYAMesh(allocator: allocator, device: device)
+        let capsule = try Capsule(extent: [0.25, 1, 0.25], cylinderSegments: [30, 10], hemisphereSegments: 5).toYAMesh(allocator: allocator, device: device)
 
         let meshes = [cone, sphere, capsule]
 
@@ -199,9 +200,9 @@ public extension SimpleScene {
             return Model(transform: .translation([x, 0, z]), color: rgba, mesh: meshes.randomElement()!)
         }
 
-        let fishModel = Model(transform: .translation([0, 0, 0]).rotated(angle: .degrees(90), axis: [0, 1, 0]), color: [1, 0, 1, 1], mesh: ("glb-test", { device in
+        let fishModel = Model(transform: .translation([0, 0, 0]).rotated(angle: .degrees(90), axis: [0, 1, 0]), color: [1, 0, 1, 1], mesh:
             try YAMesh(gltf: "BarramundiFish", device: device)
-        }))
+        )
         models.append(fishModel)
 
         let panorama = Panorama(tilesSize: tilesSize, tileTextures: tileTextures) { device in

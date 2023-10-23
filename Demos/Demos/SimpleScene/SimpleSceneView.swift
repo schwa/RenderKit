@@ -25,7 +25,7 @@ struct CoreSimpleSceneView: View {
     @State
     var renderPass: SimpleJobsBasedRenderPass<MetalViewConfiguration>
 
-    init(scene: Binding<SimpleScene> = .constant(.demo())) {
+    init(scene: Binding<SimpleScene>) {
         self._scene = scene
         self.renderPass = SimpleJobsBasedRenderPass(jobs: [
             AnyRenderJob(PanoramaRenderJob<MetalViewConfiguration>(scene: scene.wrappedValue)),
@@ -54,7 +54,7 @@ public struct SimpleSceneView: View {
     var device
 
     @State
-    var scene = SimpleScene.demo()
+    var scene: SimpleScene
 
 #if os(macOS)
     @State
@@ -69,6 +69,11 @@ public struct SimpleSceneView: View {
 
     //    @State
     //    var label: String?
+
+    init() {
+        let device = MTLCreateSystemDefaultDevice()!
+        scene = try! SimpleScene.demo(device: device)
+    }
 
     public var body: some View {
         CoreSimpleSceneView(scene: $scene)

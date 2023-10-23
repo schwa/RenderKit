@@ -33,15 +33,15 @@ class SimpleSceneModelsRenderJob <Configuration>: SimpleRenderJob where Configur
         let library = try! device.makeDefaultLibrary(bundle: .shadersBundle)
 
         // Warm cache
-        for model in scene.models {
-            let key = model.mesh.0
-            let mesh = try model.mesh.1(device)
-            print("*********")
-            print(key)
-            print(mesh.vertexDescriptor.encodedDescription)
-
-            cache.insert(key: key, value: mesh)
-        }
+//        for model in scene.models {
+//            let key = model.mesh.0
+//            let mesh = try model.mesh.1(device)
+//            print("*********")
+//            print(key)
+//            print(mesh.vertexDescriptor.encodedDescription)
+//
+//            cache.insert(key: key, value: mesh)
+//        }
 
         let vertexFunction = library.makeFunction(name: "flatShaderVertexShader")!
         let fragmentFunction = library.makeFunction(name: "flatShaderFragmentShader")!
@@ -91,14 +91,12 @@ class SimpleSceneModelsRenderJob <Configuration>: SimpleRenderJob where Configur
             encoder.setFragmentBytes(of: lightUniforms, index: bindings.fragmentLightUniformsIndex)
 
             let bucketedModels = scene.models.reduce(into: [:]) { partialResult, model in
-                partialResult[model.mesh.0, default: []].append(model)
+                partialResult[model.mesh.id, default: []].append(model)
             }
 
             for (meshKey, models) in bucketedModels {
                 encoder.withDebugGroup("Instanced \(meshKey)") {
-                    guard let mesh = cache.get(key: meshKey) as? YAMesh else {
-                        fatalError()
-                    }
+                    let mesh = models.first!.mesh
                     encoder.setVertexBuffers(mesh)
                     let modes: [(MTLTriangleFillMode, SIMD4<Float>?)] = [
                         (.fill, nil),
