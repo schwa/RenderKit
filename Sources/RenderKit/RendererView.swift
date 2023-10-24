@@ -2,7 +2,7 @@
 import SwiftUI
 import MetalSupport
 
-public struct RendererView <T>: View where T: RenderPass, T.Configuration == MetalViewConfiguration {
+public struct RendererView <T>: View where T: RenderPass {
     // TODO: Does this _really_ need to be a Binding?
     @Binding
     var renderPass: T

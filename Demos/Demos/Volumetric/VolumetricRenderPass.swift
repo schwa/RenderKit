@@ -10,7 +10,7 @@ import os
 import RenderKit
 import LegacyGraphics
 
-class VolumetricRenderPass <Configuration>: RenderPass where Configuration: MetalConfiguration {
+class VolumetricRenderPass: RenderPass {
     let id = LOLID2(prefix: "VolumeRenderPass")
     var scene: SimpleScene?
     var renderPipelineState: MTLRenderPipelineState?
@@ -44,7 +44,7 @@ class VolumetricRenderPass <Configuration>: RenderPass where Configuration: Meta
         transferFunctionTexture = texture
     }
 
-    func setup(device: MTLDevice, configuration: inout Configuration) throws {
+    func setup<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration) throws {
         if renderPipelineState == nil {
             let library = try! device.makeDebugLibrary(bundle: .shadersBundle)
             let vertexFunction = library.makeFunction(name: "volumeVertexShader")!
@@ -77,14 +77,14 @@ class VolumetricRenderPass <Configuration>: RenderPass where Configuration: Meta
         }
     }
 
-    func drawableSizeWillChange(device: MTLDevice, configuration: inout Configuration, size: CGSize) throws {
+    func drawableSizeWillChange<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration, size: CGSize) throws {
 //        guard let renderPipelineState, let depthStencilState else {
 //            let id = id
 //            return
 //        }
     }
 
-    func draw(device: MTLDevice, configuration: Configuration, size: CGSize, renderPassDescriptor: MTLRenderPassDescriptor, commandBuffer: MTLCommandBuffer) throws {
+    func draw<Configuration: MetalConfiguration>(device: MTLDevice, configuration: Configuration, size: CGSize, renderPassDescriptor: MTLRenderPassDescriptor, commandBuffer: MTLCommandBuffer) throws {
         do {
             guard let renderPipelineState, let depthStencilState else {
                 return

@@ -10,7 +10,7 @@ struct ContentView: View {
         case volumetric = "Volumetric"
 //        case gltf = "GLTF"
         case simulationSUI = "simulationSUI"
-        case screenSpaceDemoView = "ScreenSpaceDemoView"
+//        case screenSpaceDemoView = "ScreenSpaceDemoView"
         case particles2 = "particles2"
     }
 
@@ -52,8 +52,8 @@ struct ContentView: View {
 //                        .navigationTitle(demo.rawValue)
                 case .simulationSUI:
                     SimulationView()
-                case .screenSpaceDemoView:
-                    ScreenSpaceDemoView()
+//                case .screenSpaceDemoView:
+//                    ScreenSpaceDemoView()
                 case .particles2:
                     Particles2View()
                 }

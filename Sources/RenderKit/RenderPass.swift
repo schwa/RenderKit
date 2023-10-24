@@ -18,9 +18,7 @@ public struct MetalViewConfiguration: MetalConfiguration {
 }
 
 public protocol RenderPass: AnyObject {
-    associatedtype Configuration: MetalConfiguration
-
-    func setup(device: MTLDevice, configuration: inout Configuration) throws
-    func drawableSizeWillChange(device: MTLDevice, configuration: inout Configuration, size: CGSize) throws
-    func draw(device: MTLDevice, configuration: Configuration, size: CGSize, renderPassDescriptor: MTLRenderPassDescriptor, commandBuffer: MTLCommandBuffer) throws
+    func setup <Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration) throws
+    func drawableSizeWillChange <Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration, size: CGSize) throws
+    func draw <Configuration: MetalConfiguration>(device: MTLDevice, configuration: Configuration, size: CGSize, renderPassDescriptor: MTLRenderPassDescriptor, commandBuffer: MTLCommandBuffer) throws
 }

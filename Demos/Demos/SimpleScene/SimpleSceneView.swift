@@ -23,18 +23,18 @@ struct CoreSimpleSceneView: View {
     var scene: SimpleScene
 
     @State
-    var renderPass: SimpleJobsBasedRenderPass<MetalViewConfiguration>
+    var renderPass: SimpleJobsBasedRenderPass
 
     @State
-    var sceneRenderJob: SimpleSceneModelsRenderJob<MetalViewConfiguration>
+    var sceneRenderJob: SimpleSceneModelsRenderJob
 
     init(scene: Binding<SimpleScene>) {
         self._scene = scene
-        let sceneRenderJob = SimpleSceneModelsRenderJob<MetalViewConfiguration>(scene: scene.wrappedValue)
+        let sceneRenderJob = SimpleSceneModelsRenderJob(scene: scene.wrappedValue)
         self.sceneRenderJob = sceneRenderJob
         self.renderPass = SimpleJobsBasedRenderPass(jobs: [
-            AnyRenderJob(PanoramaRenderJob<MetalViewConfiguration>(scene: scene.wrappedValue)),
-            AnyRenderJob(sceneRenderJob),
+            PanoramaRenderJob(scene: scene.wrappedValue),
+            sceneRenderJob,
         ])
     }
 

@@ -8,29 +8,29 @@ import RenderKit
 import Observation
 import Everything
 
-class SimpleSceneModelsRenderJob <Configuration>: SimpleRenderJob where Configuration: MetalConfiguration {
+class SimpleSceneModelsRenderJob: SimpleRenderJob {
     var scene: SimpleScene
-    var renderJobs: [AnyRenderJob<Configuration>] = []
+    var renderJobs: [any SimpleRenderJob] = []
 
     init(scene: SimpleScene) {
         self.scene = scene
     }
 
-    func prepare(device: MTLDevice, configuration: inout Configuration) throws {
-        var renderJobs: [AnyHashable: AnyRenderJob<Configuration>] = [:]
+    func prepare<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration) throws {
+        var renderJobs: [AnyHashable: any SimpleRenderJob] = [:]
         for model in scene.models {
             if (model.material as? FlatMaterial) != nil {
                 if renderJobs["flat-material"] == nil {
-                    let job = FlatMaterialRenderJob<Configuration>(models: scene.models)
+                    let job = FlatMaterialRenderJob(models: scene.models)
                     try job.prepare(device: device, configuration: &configuration)
-                    renderJobs["flat-material"] = AnyRenderJob(job)
+                    renderJobs["flat-material"] = job
                 }
             }
             else if (model.material as? UnlitMaterial) != nil {
                 if renderJobs["Unlit-material"] == nil {
-                    let job = UnlitMaterialRenderJob<Configuration>(models: scene.models)
+                    let job = UnlitMaterialRenderJob(models: scene.models)
                     try job.prepare(device: device, configuration: &configuration)
-                    renderJobs["Unlit-material"] = AnyRenderJob(job)
+                    renderJobs["Unlit-material"] = job
                 }
             }
         }
@@ -40,7 +40,7 @@ class SimpleSceneModelsRenderJob <Configuration>: SimpleRenderJob where Configur
     func encode(on encoder: MTLRenderCommandEncoder, size: CGSize) throws {
         for renderJob in renderJobs {
             // TODO: DO NOT LIKE
-            if var sceneConsuming = renderJob.base as? SceneConsuming {
+            if var sceneConsuming = renderJob as? SceneConsuming {
                 sceneConsuming.scene = scene
             }
             try renderJob.encode(on: encoder, size: size)
@@ -54,7 +54,7 @@ protocol SceneConsuming {
     var scene: SimpleScene? { get set }
 }
 
-class FlatMaterialRenderJob <Configuration>: SimpleRenderJob, SceneConsuming where Configuration: MetalConfiguration {
+class FlatMaterialRenderJob: SimpleRenderJob, SceneConsuming {
     struct Bindings {
         var vertexBufferIndex: Int = -1
         var vertexCameraUniformsIndex: Int = -1
@@ -75,7 +75,7 @@ class FlatMaterialRenderJob <Configuration>: SimpleRenderJob, SceneConsuming whe
         self.models = models
     }
 
-    func prepare(device: MTLDevice, configuration: inout Configuration) throws {
+    func prepare<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration) throws {
         let library = try! device.makeDefaultLibrary(bundle: .shadersBundle)
         bucketedDrawStates = try models.reduce(into: [:]) { partialResult, model in
             let key = Pair(model.mesh.id, model.mesh.vertexDescriptor.encodedDescription)
@@ -152,7 +152,7 @@ class FlatMaterialRenderJob <Configuration>: SimpleRenderJob, SceneConsuming whe
     }
 }
 
-class UnlitMaterialRenderJob <Configuration>: SimpleRenderJob where Configuration: MetalConfiguration {
+class UnlitMaterialRenderJob: SimpleRenderJob {
     struct Bindings {
         var vertexBufferIndex: Int = -1
         var vertexCameraIndex: Int = -1
@@ -172,7 +172,7 @@ class UnlitMaterialRenderJob <Configuration>: SimpleRenderJob where Configuratio
         self.models = models
     }
 
-    func prepare(device: MTLDevice, configuration: inout Configuration) throws {
+    func prepare<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration) throws {
         let library = try! device.makeDefaultLibrary(bundle: .shadersBundle)
         bucketedDrawStates = try models.reduce(into: [:]) { partialResult, model in
             let key = Pair(model.mesh.id, model.mesh.vertexDescriptor.encodedDescription)
