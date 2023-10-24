@@ -23,30 +23,24 @@ struct CoreSimpleSceneView: View {
     var scene: SimpleScene
 
     @State
-    var renderPass: SimpleJobsBasedRenderPass
-
-    @State
-    var sceneRenderJob: SimpleSceneModelsRenderJob
+    var renderPass: SimpleSceneRenderPass
 
     init(scene: Binding<SimpleScene>) {
         self._scene = scene
-        let sceneRenderJob = SimpleSceneModelsRenderJob(scene: scene.wrappedValue)
-        self.sceneRenderJob = sceneRenderJob
-        self.renderPass = SimpleJobsBasedRenderPass(jobs: [
-            sceneRenderJob,
-        ])
+        let sceneRenderPass = SimpleSceneRenderPass(scene: scene.wrappedValue)
+        self.renderPass = sceneRenderPass
     }
 
     var body: some View {
         RendererView(renderPass: $renderPass)
             .onChange(of: scene.camera) {
-                sceneRenderJob.scene = scene
+                renderPass.scene = scene
             }
             .onChange(of: scene.light) {
-                sceneRenderJob.scene = scene
+                renderPass.scene = scene
             }
             .onChange(of: scene.ambientLightColor) {
-                sceneRenderJob.scene = scene
+                renderPass.scene = scene
             }
     }
 }

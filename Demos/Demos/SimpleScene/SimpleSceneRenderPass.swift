@@ -8,8 +8,18 @@ import RenderKit
 import Observation
 import Everything
 
-class SimpleSceneModelsRenderJob: RenderJob {
-    var scene: SimpleScene
+protocol SceneRenderJob: RenderJob {
+    var scene: SimpleScene { get set }
+}
+
+class SimpleSceneRenderPass: RenderPass {
+    var scene: SimpleScene {
+        didSet {
+            renderJobs.forEach { job in
+                job.scene = scene
+            }
+        }
+    }
     var renderJobs: [any RenderJob & SceneRenderJob] = []
 
     init(scene: SimpleScene) {
@@ -18,13 +28,11 @@ class SimpleSceneModelsRenderJob: RenderJob {
 
     func setup<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration) throws {
         var renderJobs: [AnyHashable: any RenderJob & SceneRenderJob] = [:]
-
         if let panorama = scene.panorama {
             let job = PanoramaRenderJob(scene: scene, panorama: panorama)
             job.scene = scene
             try job.setup(device: device, configuration: &configuration)
-
-            renderJobs["panorama"] = job
+            self.renderJobs.append(job)
         }
 
         for model in scene.models {
@@ -43,22 +51,21 @@ class SimpleSceneModelsRenderJob: RenderJob {
                 }
             }
         }
-        self.renderJobs = Array(renderJobs.values)
+
+        self.renderJobs.append(contentsOf: renderJobs.values)
     }
 
-    func encode(on encoder: MTLRenderCommandEncoder, size: CGSize) throws {
-        for renderJob in renderJobs {
-            renderJob.scene = scene
-            try renderJob.encode(on: encoder, size: size)
+    func draw(device: MTLDevice, size: CGSize, renderPassDescriptor: MTLRenderPassDescriptor, commandBuffer: MTLCommandBuffer) throws {
+        try commandBuffer.withRenderCommandEncoder(descriptor: renderPassDescriptor) { encoder in
+            encoder.label = "SimpleJobsBasedRenderPass-RenderCommandEncoder"
+            try renderJobs.forEach { job in
+                try job.encode(on: encoder, size: size)
+            }
         }
     }
 }
 
 // MARK: -
-
-protocol SceneRenderJob: RenderJob {
-    var scene: SimpleScene { get set }
-}
 
 class FlatMaterialRenderJob: SceneRenderJob {
     struct Bindings {
@@ -156,6 +163,8 @@ class FlatMaterialRenderJob: SceneRenderJob {
         }
     }
 }
+
+// MARK: -
 
 class UnlitMaterialRenderJob: SceneRenderJob {
     struct Bindings {
