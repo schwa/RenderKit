@@ -35,17 +35,6 @@ extension SimpleJobsBasedRenderPass: Observable {
 
 // MARK: -
 
-public protocol SimpleRenderJob: AnyObject {
-    func prepare<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration) throws
-    func drawableSizeWillChange<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration, size: CGSize) throws
-    func encode(on encoder: MTLRenderCommandEncoder, size: CGSize) throws
-}
-
-public extension SimpleRenderJob {
-    func drawableSizeWillChange<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration, size: CGSize) throws {
-    }
-}
-
 // MARK: -
 
 //public class AnyRenderJob <Configuration>: SimpleRenderJob where Configuration: MetalConfiguration {
