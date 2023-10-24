@@ -91,7 +91,6 @@
 		45FAACBC2ACCF54C006C31BD /* Resources.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45FAACBB2ACCF54C006C31BD /* Resources.swift */; };
 		45FB2CA22AE19A0F008824D4 /* SimpleJobsBasedRenderPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45FB2CA12AE19A0F008824D4 /* SimpleJobsBasedRenderPass.swift */; };
 		45FB2CA52AE19C55008824D4 /* MetalCanvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45FB2CA42AE19C55008824D4 /* MetalCanvas.swift */; };
-		45FB2CA72AE1A8E3008824D4 /* AnyRenderPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45FB2CA62AE1A8E3008824D4 /* AnyRenderPass.swift */; };
 		45FB79602ACF6E10001CD1B5 /* Cube.glb in Resources */ = {isa = PBXBuildFile; fileRef = 45FB795F2ACF6E10001CD1B5 /* Cube.glb */; };
 /* End PBXBuildFile section */
 
@@ -208,7 +207,6 @@
 		45FAACBB2ACCF54C006C31BD /* Resources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resources.swift; sourceTree = "<group>"; };
 		45FB2CA12AE19A0F008824D4 /* SimpleJobsBasedRenderPass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleJobsBasedRenderPass.swift; sourceTree = "<group>"; };
 		45FB2CA42AE19C55008824D4 /* MetalCanvas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalCanvas.swift; sourceTree = "<group>"; };
-		45FB2CA62AE1A8E3008824D4 /* AnyRenderPass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyRenderPass.swift; sourceTree = "<group>"; };
 		45FB795F2ACF6E10001CD1B5 /* Cube.glb */ = {isa = PBXFileReference; lastKnownFileType = file; path = Cube.glb; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -357,7 +355,6 @@
 				45650DEB2ACCEAEA009F2AF2 /* GLTF+YAMesh.swift */,
 				459FAE542ACDFCAD000018E2 /* YAMesh.swift */,
 				45B1D71D2ACFB25600960D02 /* YAMesh+Conversion.swift */,
-				45FB2CA62AE1A8E3008824D4 /* AnyRenderPass.swift */,
 				4558221C2AE60FF500189306 /* ShaderFunction.swift */,
 				45FB795F2ACF6E10001CD1B5 /* Cube.glb */,
 				45650DE72ACCEA45009F2AF2 /* BarramundiFish.glb */,
@@ -644,7 +641,6 @@
 				4558221B2AE5A2A700189306 /* PanoramaRenderJob.swift in Sources */,
 				459FAE552ACDFCAD000018E2 /* YAMesh.swift in Sources */,
 				4555A0542ABE2CD80088CFFB /* BallRotationModifier.swift in Sources */,
-				45FB2CA72AE1A8E3008824D4 /* AnyRenderPass.swift in Sources */,
 				4555A0552ABE2CDD0088CFFB /* ShaderToyView.swift in Sources */,
 				4555A05E2ABE2D100088CFFB /* GameControllerWidget.swift in Sources */,
 				457861512AE32EA0005DABD6 /* Particles2.swift in Sources */,

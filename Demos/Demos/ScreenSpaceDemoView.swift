@@ -155,4 +155,12 @@
 //        }
 //        .showOnHover()
 //    }
+//
+//    class _RenderPass: RenderPass {
+//        func setup<Configuration>(device: MTLDevice, configuration: inout Configuration) throws where Configuration : RenderKit.MetalConfiguration {
+//        }
+//
+//        func draw(device: MTLDevice, size: CGSize, renderPassDescriptor: MTLRenderPassDescriptor, commandBuffer: MTLCommandBuffer) throws {
+//        }
+//    }
 //}
