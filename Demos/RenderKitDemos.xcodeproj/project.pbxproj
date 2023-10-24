@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		451337B42AE861BC009F670B /* TextureManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 451337B32AE861BC009F670B /* TextureManager.swift */; };
 		452235AC2AE6F19E00CD89A3 /* Names.swift in Sources */ = {isa = PBXBuildFile; fileRef = 452235AB2AE6F19E00CD89A3 /* Names.swift */; };
 		452235AF2AE6F1F800CD89A3 /* nouns.txt in Resources */ = {isa = PBXBuildFile; fileRef = 452235AD2AE6F1F800CD89A3 /* nouns.txt */; };
 		452235B02AE6F1F800CD89A3 /* adjectives.txt in Resources */ = {isa = PBXBuildFile; fileRef = 452235AE2AE6F1F800CD89A3 /* adjectives.txt */; };
@@ -108,6 +109,7 @@
 
 /* Begin PBXFileReference section */
 		451196902A520D1F00F4F2DE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		451337B32AE861BC009F670B /* TextureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureManager.swift; sourceTree = "<group>"; };
 		452235AB2AE6F19E00CD89A3 /* Names.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Names.swift; sourceTree = "<group>"; };
 		452235AD2AE6F1F800CD89A3 /* nouns.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = nouns.txt; sourceTree = "<group>"; };
 		452235AE2AE6F1F800CD89A3 /* adjectives.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = adjectives.txt; sourceTree = "<group>"; };
@@ -356,6 +358,7 @@
 				4558221C2AE60FF500189306 /* ShaderFunction.swift */,
 				4555A0412ABE2BF00088CFFB /* SimpleSceneMapView.swift */,
 				4555A0452ABE2BF00088CFFB /* SimpleSceneInspector.swift */,
+				451337B32AE861BC009F670B /* TextureManager.swift */,
 				45FB795F2ACF6E10001CD1B5 /* Cube.glb */,
 				45650DE72ACCEA45009F2AF2 /* BarramundiFish.glb */,
 			);
@@ -654,6 +657,7 @@
 				4555A0502ABE2CD80088CFFB /* Projections.swift in Sources */,
 				452235B42AE738FD00CD89A3 /* Bindings.swift in Sources */,
 				4555A04E2ABE2CD80088CFFB /* SimpleSceneInspector.swift in Sources */,
+				451337B42AE861BC009F670B /* TextureManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
