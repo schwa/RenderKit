@@ -17,7 +17,7 @@ public extension SimpleScene {
 
         let tilesSize: SIMD2<UInt16>
         let tileTextures: [(MTKTextureLoader) throws -> MTLTexture]
-        if true {
+        if false {
             tilesSize = [6, 2]
             tileTextures = (1 ... 12).map { index in
                 BundleResourceReference(bundle: .main, name: "perseverance_\(index.formatted(.number.precision(.integerLength(2))))", extension: "ktx")
@@ -48,7 +48,7 @@ public extension SimpleScene {
             return Model(transform: .translation([x, 0, z]), material: material, mesh: meshes.randomElement()!)
         }
 
-        let fishModel = Model(transform: .translation([0, 1, 0]).rotated(angle: .degrees(90), axis: [0, 1, 0]), material: FlatMaterial(baseColorFactor: [1, 0, 1, 1]), mesh:
+        let fishModel = Model(transform: .translation([0, 1, 0]).rotated(angle: .degrees(90), axis: [0, 1, 0]), material: UnlitMaterial(baseColorFactor: [1, 0, 1, 1]), mesh:
             try YAMesh(gltf: "BarramundiFish", device: device)
         )
         models.append(fishModel)

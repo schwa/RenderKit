@@ -27,32 +27,27 @@ class SimpleSceneRenderPass: RenderPass {
     }
 
     func setup<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration) throws {
-        var renderJobs: [AnyHashable: any RenderJob & SceneRenderJob] = [:]
         if let panorama = scene.panorama {
             let job = PanoramaRenderJob(scene: scene, panorama: panorama)
             job.scene = scene
-            try job.setup(device: device, configuration: &configuration)
             self.renderJobs.append(job)
         }
 
-        for model in scene.models {
-            if (model.material as? FlatMaterial) != nil {
-                if renderJobs["flat-material"] == nil {
-                    let job = FlatMaterialRenderJob(scene: scene, models: scene.models)
-                    try job.setup(device: device, configuration: &configuration)
-                    renderJobs["flat-material"] = job
-                }
-            }
-            else if (model.material as? UnlitMaterial) != nil {
-                if renderJobs["Unlit-material"] == nil {
-                    let job = UnlitMaterialRenderJob(scene: scene, models: scene.models)
-                    try job.setup(device: device, configuration: &configuration)
-                    renderJobs["Unlit-material"] = job
-                }
-            }
+        let flatModels = scene.models.filter { ($0.material as? FlatMaterial) != nil }
+        if !flatModels.isEmpty {
+            let job = FlatMaterialRenderJob(scene: scene, models: flatModels)
+            self.renderJobs.append(job)
         }
 
-        self.renderJobs.append(contentsOf: renderJobs.values)
+        let unlitModels = scene.models.filter { ($0.material as? UnlitMaterial) != nil }
+        if !unlitModels.isEmpty {
+            let job = UnlitMaterialRenderJob(scene: scene, models: unlitModels)
+            self.renderJobs.append(job)
+        }
+
+        try self.renderJobs.forEach { job in
+            try job.setup(device: device, configuration: &configuration)
+        }
     }
 
     func draw(device: MTLDevice, size: CGSize, renderPassDescriptor: MTLRenderPassDescriptor, commandBuffer: MTLCommandBuffer) throws {
@@ -171,6 +166,7 @@ class UnlitMaterialRenderJob: SceneRenderJob {
         var vertexBufferIndex: Int = -1
         var vertexCameraIndex: Int = -1
         var vertexModelsIndex: Int = -1
+        var fragmentMaterialsIndex: Int = -1
     }
     struct DrawState {
         var renderPipelineState: MTLRenderPipelineState
@@ -214,6 +210,7 @@ class UnlitMaterialRenderJob: SceneRenderJob {
                 (\.vertexBufferIndex, .vertex, "vertexBuffer.0"),
                 (\.vertexCameraIndex, .vertex, "camera"),
                 (\.vertexModelsIndex, .vertex, "models"),
+                (\.fragmentMaterialsIndex, .fragment, "materials"),
             ])
 
             let depthStencilState = device.makeDepthStencilState(descriptor: MTLDepthStencilDescriptor(depthCompareFunction: .lessEqual, isDepthWriteEnabled: true))!
@@ -252,6 +249,13 @@ class UnlitMaterialRenderJob: SceneRenderJob {
                         )
                     }
                     encoder.setVertexBytes(of: modelTransforms, index: drawState.bindings.vertexModelsIndex)
+
+                    let materials = models.map { model in
+                        let color = (model.material as! UnlitMaterial).baseColorFactor
+                        return RenderKitShaders.UnlitMaterial(color: color)
+                    }
+                    encoder.setFragmentBytes(of: materials, index: drawState.bindings.fragmentMaterialsIndex)
+
                     encoder.setTriangleFillMode(.fill)
                     encoder.draw(mesh, instanceCount: models.count)
                 }
