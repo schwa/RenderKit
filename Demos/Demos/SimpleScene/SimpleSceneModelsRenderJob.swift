@@ -10,14 +10,14 @@ import Everything
 
 class SimpleSceneModelsRenderJob: RenderJob {
     var scene: SimpleScene
-    var renderJobs: [any RenderJob] = []
+    var renderJobs: [any RenderJob & SceneConsuming] = []
 
     init(scene: SimpleScene) {
         self.scene = scene
     }
 
     func setup<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration) throws {
-        var renderJobs: [AnyHashable: any RenderJob] = [:]
+        var renderJobs: [AnyHashable: any RenderJob & SceneConsuming] = [:]
         for model in scene.models {
             if (model.material as? FlatMaterial) != nil {
                 if renderJobs["flat-material"] == nil {
@@ -38,11 +38,8 @@ class SimpleSceneModelsRenderJob: RenderJob {
     }
 
     func encode(on encoder: MTLRenderCommandEncoder, size: CGSize) throws {
-        for renderJob in renderJobs {
-            // TODO: DO NOT LIKE
-            if var sceneConsuming = renderJob as? SceneConsuming {
-                sceneConsuming.scene = scene
-            }
+        for var renderJob in renderJobs {
+            renderJob.scene = scene
             try renderJob.encode(on: encoder, size: size)
         }
     }
@@ -150,7 +147,7 @@ class FlatMaterialRenderJob: RenderJob, SceneConsuming {
     }
 }
 
-class UnlitMaterialRenderJob: RenderJob {
+class UnlitMaterialRenderJob: RenderJob, SceneConsuming {
     struct Bindings {
         var vertexBufferIndex: Int = -1
         var vertexCameraIndex: Int = -1
@@ -163,7 +160,7 @@ class UnlitMaterialRenderJob: RenderJob {
     }
 
     var models: [Model]
-    var camera: Camera?
+    var scene: SimpleScene?
     private var bucketedDrawStates: [AnyHashable: DrawState] = [:]
 
     init(models: [Model]) {
@@ -206,7 +203,7 @@ class UnlitMaterialRenderJob: RenderJob {
     }
 
     func encode(on encoder: MTLRenderCommandEncoder, size: CGSize) throws {
-        guard !models.isEmpty, let camera else {
+        guard !models.isEmpty, let scene else {
             return
         }
 
@@ -219,8 +216,8 @@ class UnlitMaterialRenderJob: RenderJob {
             encoder.withDebugGroup("Instanced Models") {
                 encoder.setRenderPipelineState(drawState.renderPipelineState)
                 encoder.setDepthStencilState(drawState.depthStencilState)
-                let cameraUniforms = CameraUniforms(projectionMatrix: camera.projection.matrix(viewSize: SIMD2<Float>(size)))
-                let inverseCameraMatrix = camera.transform.matrix.inverse
+                let cameraUniforms = CameraUniforms(projectionMatrix: scene.camera.projection.matrix(viewSize: SIMD2<Float>(size)))
+                let inverseCameraMatrix = scene.camera.transform.matrix.inverse
                 encoder.setVertexBytes(of: cameraUniforms, index: drawState.bindings.vertexCameraIndex)
 
                 let models = bucketedModels[key]!
