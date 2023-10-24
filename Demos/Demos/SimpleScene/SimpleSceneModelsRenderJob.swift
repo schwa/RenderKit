@@ -82,10 +82,8 @@ class FlatMaterialRenderJob: RenderJob, SceneConsuming {
             guard partialResult[key] == nil else {
                 return
             }
-
             let vertexFunction = library.makeFunction(name: "flatShaderVertexShader")!
             let fragmentFunction = library.makeFunction(name: "flatShaderFragmentShader")!
-
             let renderPipelineDescriptor = MTLRenderPipelineDescriptor()
             renderPipelineDescriptor.label = Names.shared.hashed(hashable: key, pad: 4)
             renderPipelineDescriptor.vertexFunction = vertexFunction

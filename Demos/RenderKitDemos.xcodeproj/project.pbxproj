@@ -343,11 +343,10 @@
 		4555A03F2ABE2BF00088CFFB /* SimpleScene */ = {
 			isa = PBXGroup;
 			children = (
-				4555A0402ABE2BF00088CFFB /* SimpleSceneView.swift */,
-				4555A0412ABE2BF00088CFFB /* SimpleSceneMapView.swift */,
-				4555A0442ABE2BF00088CFFB /* SimpleSceneModelsRenderJob.swift */,
-				4558221A2AE5A2A700189306 /* PanoramaRenderJob.swift */,
 				45FB2CA12AE19A0F008824D4 /* SimpleJobsBasedRenderPass.swift */,
+				4555A0442ABE2BF00088CFFB /* SimpleSceneModelsRenderJob.swift */,
+				4555A0402ABE2BF00088CFFB /* SimpleSceneView.swift */,
+				4558221A2AE5A2A700189306 /* PanoramaRenderJob.swift */,
 				4555A0452ABE2BF00088CFFB /* SimpleSceneInspector.swift */,
 				459E755C2AC1EF6F004BC055 /* SimpleMesh.swift */,
 				4555A0482ABE2BF00088CFFB /* SimpleScene.swift */,
@@ -356,6 +355,7 @@
 				459FAE542ACDFCAD000018E2 /* YAMesh.swift */,
 				45B1D71D2ACFB25600960D02 /* YAMesh+Conversion.swift */,
 				4558221C2AE60FF500189306 /* ShaderFunction.swift */,
+				4555A0412ABE2BF00088CFFB /* SimpleSceneMapView.swift */,
 				45FB795F2ACF6E10001CD1B5 /* Cube.glb */,
 				45650DE72ACCEA45009F2AF2 /* BarramundiFish.glb */,
 			);

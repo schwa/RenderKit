@@ -29,8 +29,10 @@ struct ContentView: View {
                 }
                 #if os(macOS)
                 .frame(maxWidth: 320)
+                .cornerRadius(8)
                 .padding()
                 .frame(maxWidth: .infinity)
+                .background(.ultraThickMaterial)
                 #endif
             }
             .navigationTitle("RenderKit")
