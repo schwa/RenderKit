@@ -10,25 +10,34 @@ import Everything
 
 class SimpleSceneModelsRenderJob: RenderJob {
     var scene: SimpleScene
-    var renderJobs: [any RenderJob & SceneConsuming] = []
+    var renderJobs: [any RenderJob & SceneRenderJob] = []
 
     init(scene: SimpleScene) {
         self.scene = scene
     }
 
     func setup<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration) throws {
-        var renderJobs: [AnyHashable: any RenderJob & SceneConsuming] = [:]
+        var renderJobs: [AnyHashable: any RenderJob & SceneRenderJob] = [:]
+
+        if let panorama = scene.panorama {
+            let job = PanoramaRenderJob(scene: scene, panorama: panorama)
+            job.scene = scene
+            try job.setup(device: device, configuration: &configuration)
+
+            renderJobs["panorama"] = job
+        }
+
         for model in scene.models {
             if (model.material as? FlatMaterial) != nil {
                 if renderJobs["flat-material"] == nil {
-                    let job = FlatMaterialRenderJob(models: scene.models)
+                    let job = FlatMaterialRenderJob(scene: scene, models: scene.models)
                     try job.setup(device: device, configuration: &configuration)
                     renderJobs["flat-material"] = job
                 }
             }
             else if (model.material as? UnlitMaterial) != nil {
                 if renderJobs["Unlit-material"] == nil {
-                    let job = UnlitMaterialRenderJob(models: scene.models)
+                    let job = UnlitMaterialRenderJob(scene: scene, models: scene.models)
                     try job.setup(device: device, configuration: &configuration)
                     renderJobs["Unlit-material"] = job
                 }
@@ -38,7 +47,7 @@ class SimpleSceneModelsRenderJob: RenderJob {
     }
 
     func encode(on encoder: MTLRenderCommandEncoder, size: CGSize) throws {
-        for var renderJob in renderJobs {
+        for renderJob in renderJobs {
             renderJob.scene = scene
             try renderJob.encode(on: encoder, size: size)
         }
@@ -47,11 +56,11 @@ class SimpleSceneModelsRenderJob: RenderJob {
 
 // MARK: -
 
-protocol SceneConsuming {
-    var scene: SimpleScene? { get set }
+protocol SceneRenderJob: RenderJob {
+    var scene: SimpleScene { get set }
 }
 
-class FlatMaterialRenderJob: RenderJob, SceneConsuming {
+class FlatMaterialRenderJob: SceneRenderJob {
     struct Bindings {
         var vertexBufferIndex: Int = -1
         var vertexCameraUniformsIndex: Int = -1
@@ -65,10 +74,11 @@ class FlatMaterialRenderJob: RenderJob, SceneConsuming {
     }
 
     var models: [Model]
-    var scene: SimpleScene?
+    var scene: SimpleScene
     private var bucketedDrawStates: [AnyHashable: DrawState] = [:]
 
-    init(models: [Model]) {
+    init(scene: SimpleScene, models: [Model]) {
+        self.scene = scene
         self.models = models
     }
 
@@ -107,7 +117,7 @@ class FlatMaterialRenderJob: RenderJob, SceneConsuming {
     }
 
     func encode(on encoder: MTLRenderCommandEncoder, size: CGSize) throws {
-        guard !models.isEmpty, let scene else {
+        guard !models.isEmpty else {
             return
         }
 
@@ -147,7 +157,7 @@ class FlatMaterialRenderJob: RenderJob, SceneConsuming {
     }
 }
 
-class UnlitMaterialRenderJob: RenderJob, SceneConsuming {
+class UnlitMaterialRenderJob: SceneRenderJob {
     struct Bindings {
         var vertexBufferIndex: Int = -1
         var vertexCameraIndex: Int = -1
@@ -159,11 +169,12 @@ class UnlitMaterialRenderJob: RenderJob, SceneConsuming {
         var bindings: Bindings
     }
 
+    var scene: SimpleScene
     var models: [Model]
-    var scene: SimpleScene?
     private var bucketedDrawStates: [AnyHashable: DrawState] = [:]
 
-    init(models: [Model]) {
+    init(scene: SimpleScene, models: [Model]) {
+        self.scene = scene
         self.models = models
     }
 
@@ -203,7 +214,7 @@ class UnlitMaterialRenderJob: RenderJob, SceneConsuming {
     }
 
     func encode(on encoder: MTLRenderCommandEncoder, size: CGSize) throws {
-        guard !models.isEmpty, let scene else {
+        guard !models.isEmpty else {
             return
         }
 

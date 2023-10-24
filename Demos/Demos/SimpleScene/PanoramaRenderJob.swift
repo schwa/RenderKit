@@ -8,16 +8,18 @@ import RenderKit
 import Observation
 import Everything
 
-class PanoramaRenderJob: RenderJob {
+class PanoramaRenderJob: SceneRenderJob {
     var renderPipelineState: MTLRenderPipelineState?
     var depthStencilState: MTLDepthStencilState?
     var mesh: YAMesh?
 
     var scene: SimpleScene
+    var panorama: Panorama
     var textures: [MTLTexture] = []
 
-    init(scene: SimpleScene) {
+    init(scene: SimpleScene, panorama: Panorama) {
         self.scene = scene
+        self.panorama = panorama
     }
 
     func setup<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration) throws {
@@ -34,18 +36,13 @@ class PanoramaRenderJob: RenderJob {
         let descriptor = VertexDescriptor.packed(semantics: [.position, .normal, .textureCoordinate])
         renderPipelineDescriptor.vertexDescriptor = MTLVertexDescriptor(descriptor)
         renderPipelineState = try device.makeRenderPipelineState(descriptor: renderPipelineDescriptor)
-        if let panorama = scene.panorama {
-            mesh = try! panorama.mesh(device)
-            let loader = MTKTextureLoader(device: device)
-            textures = try panorama.tileTextures.map { try $0(loader) }
-        }
+        mesh = try! panorama.mesh(device)
+        let loader = MTKTextureLoader(device: device)
+        textures = try panorama.tileTextures.map { try $0(loader) }
     }
 
     func encode(on encoder: MTLRenderCommandEncoder, size: CGSize) throws {
         guard let renderPipelineState, let depthStencilState else {
-            return
-        }
-        guard let panorama = scene.panorama else {
             return
         }
         encoder.withDebugGroup("Panorama") {

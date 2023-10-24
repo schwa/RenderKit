@@ -33,7 +33,6 @@ struct CoreSimpleSceneView: View {
         let sceneRenderJob = SimpleSceneModelsRenderJob(scene: scene.wrappedValue)
         self.sceneRenderJob = sceneRenderJob
         self.renderPass = SimpleJobsBasedRenderPass(jobs: [
-            PanoramaRenderJob(scene: scene.wrappedValue),
             sceneRenderJob,
         ])
     }
