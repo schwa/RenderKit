@@ -110,7 +110,6 @@ struct Solver {
                     assert(dist != 0)
                     let n = collision_axis / dist
                     let delta = object_1.radius + object_2.radius - dist
-                    print(0.5 * delta * n)
                     object_1.position_current += 0.5 * delta * n
                     object_2.position_current -= 0.5 * delta * n
                     objects[i] = object_1

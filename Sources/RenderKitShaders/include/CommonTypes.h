@@ -21,7 +21,13 @@ struct SimpleVertex {
 };
 #endif
 
-struct ModelUniforms { // Rename to ModelState?
+struct ModelTransforms {
+    float4x4 modelViewMatrix; // model space -> camera space
+    float3x3 modelNormalMatrix; // model space - used for non-uniform scaled normal transformation. See https://www.youtube.com/watch?v=esC1HnyD9Bk&list=PLplnkTzzqsZS3R5DjmCQsqupu43oS9CFN
+};
+
+// TODO: DEPRECATE
+struct ModelUniforms {
     float4x4 modelViewMatrix; // model space -> camera space
     float3x3 modelNormalMatrix; // model space - used for non-uniform scaled normal transformation. See https://www.youtube.com/watch?v=esC1HnyD9Bk&list=PLplnkTzzqsZS3R5DjmCQsqupu43oS9CFN
     float4 color;

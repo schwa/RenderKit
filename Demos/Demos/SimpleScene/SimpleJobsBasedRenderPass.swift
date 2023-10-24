@@ -22,6 +22,7 @@ public final class SimpleJobsBasedRenderPass <Configuration>: RenderPass where C
 
     public func draw(device: MTLDevice, configuration: Configuration, size: CGSize, renderPassDescriptor: MTLRenderPassDescriptor, commandBuffer: MTLCommandBuffer) throws {
         try commandBuffer.withRenderCommandEncoder(descriptor: renderPassDescriptor) { encoder in
+            encoder.label = "SimpleJobsBasedRenderPass-RenderCommandEncoder"
             try jobs.forEach { job in
                 try job.encode(on: encoder, size: size)
             }

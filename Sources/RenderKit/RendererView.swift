@@ -31,6 +31,7 @@ public struct RendererView <T>: View where T: RenderPass, T.Configuration == Met
                 fatalError("Draw called before command queue set up. This should be impossible.")
             }
             try commandQueue.withCommandBuffer(drawable: currentDrawable, block: { commandBuffer in
+                commandBuffer.label = "RendererView-CommandBuffer"
                 try renderPass.draw(device: device, configuration: configuration, size: size, renderPassDescriptor: renderPassDescriptor, commandBuffer: commandBuffer)
             })
         }
