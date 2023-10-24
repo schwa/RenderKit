@@ -22,7 +22,7 @@ public class OffscreenRenderPass: RenderPass {
     public init() {
     }
 
-    public func setup(device: MTLDevice, configuration: inout Configuration) throws {
+    public func setup<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration) throws {
         let library = try! device.makeDefaultLibrary(bundle: .shadersBundle)
         let constants = MTLFunctionConstantValues()
 
@@ -46,10 +46,7 @@ public class OffscreenRenderPass: RenderPass {
         self.shaderToyRenderPipelineState = shaderToyRenderPipelineState
     }
 
-    public func drawableSizeWillChange(device: MTLDevice, configuration: inout Configuration, size: CGSize) throws {
-    }
-
-    public func draw(device: MTLDevice, configuration: Configuration, size: CGSize, renderPassDescriptor: MTLRenderPassDescriptor, commandBuffer: MTLCommandBuffer) throws {
+    public func draw(device: MTLDevice, size: CGSize, renderPassDescriptor: MTLRenderPassDescriptor, commandBuffer: MTLCommandBuffer) throws {
         guard let plane, let shaderToyRenderPipelineState else {
             return
         }
@@ -95,7 +92,7 @@ public struct OffscreenDemo {
             fatalError()
         }
         try commandQueue.withCommandBuffer(waitAfterCommit: true) { commandBuffer in
-            try offscreen.draw(device: device, configuration: configuration, size: configuration.size, renderPassDescriptor: configuration.currentRenderPassDescriptor!, commandBuffer: commandBuffer)
+            try offscreen.draw(device: device, size: configuration.size, renderPassDescriptor: configuration.currentRenderPassDescriptor!, commandBuffer: commandBuffer)
         }
 
 //        let histogram = configuration.targetTexture!.histogram()

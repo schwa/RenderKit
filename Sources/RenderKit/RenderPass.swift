@@ -21,8 +21,13 @@ public struct MetalViewConfiguration: MetalConfiguration {
 
 public protocol RenderPass: AnyObject {
     func setup <Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration) throws
-    func drawableSizeWillChange <Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration, size: CGSize) throws
-    func draw <Configuration: MetalConfiguration>(device: MTLDevice, configuration: Configuration, size: CGSize, renderPassDescriptor: MTLRenderPassDescriptor, commandBuffer: MTLCommandBuffer) throws
+    func drawableSizeWillChange(device: MTLDevice, size: CGSize) throws
+    func draw (device: MTLDevice, size: CGSize, renderPassDescriptor: MTLRenderPassDescriptor, commandBuffer: MTLCommandBuffer) throws
+}
+
+public extension RenderPass {
+    func drawableSizeWillChange(device: MTLDevice, size: CGSize) throws {
+    }
 }
 
 // MARK: -
@@ -31,11 +36,11 @@ public protocol RenderPass: AnyObject {
 
 public protocol SimpleRenderJob: AnyObject {
     func prepare<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration) throws
-    func drawableSizeWillChange<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration, size: CGSize) throws
+    func drawableSizeWillChange(device: MTLDevice, size: CGSize) throws
     func encode(on encoder: MTLRenderCommandEncoder, size: CGSize) throws // TODO: Add configuration just to be consistent? Or remove from renderpass.
 }
 
 public extension SimpleRenderJob {
-    func drawableSizeWillChange<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration, size: CGSize) throws {
+    func drawableSizeWillChange(device: MTLDevice, size: CGSize) throws {
     }
 }

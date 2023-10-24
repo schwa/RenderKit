@@ -14,13 +14,13 @@ public final class SimpleJobsBasedRenderPass: RenderPass {
         }
     }
 
-    public func drawableSizeWillChange<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration, size: CGSize) throws {
+    public func drawableSizeWillChange(device: MTLDevice, size: CGSize) throws {
         try jobs.forEach { job in
-            try job.drawableSizeWillChange(device: device, configuration: &configuration, size: size)
+            try job.drawableSizeWillChange(device: device, size: size)
         }
     }
 
-    public func draw<Configuration: MetalConfiguration>(device: MTLDevice, configuration: Configuration, size: CGSize, renderPassDescriptor: MTLRenderPassDescriptor, commandBuffer: MTLCommandBuffer) throws {
+    public func draw(device: MTLDevice, size: CGSize, renderPassDescriptor: MTLRenderPassDescriptor, commandBuffer: MTLCommandBuffer) throws {
         try commandBuffer.withRenderCommandEncoder(descriptor: renderPassDescriptor) { encoder in
             encoder.label = "SimpleJobsBasedRenderPass-RenderCommandEncoder"
             try jobs.forEach { job in

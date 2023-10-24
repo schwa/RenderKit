@@ -77,14 +77,7 @@ class VolumetricRenderPass: RenderPass {
         }
     }
 
-    func drawableSizeWillChange<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration, size: CGSize) throws {
-//        guard let renderPipelineState, let depthStencilState else {
-//            let id = id
-//            return
-//        }
-    }
-
-    func draw<Configuration: MetalConfiguration>(device: MTLDevice, configuration: Configuration, size: CGSize, renderPassDescriptor: MTLRenderPassDescriptor, commandBuffer: MTLCommandBuffer) throws {
+    func draw(device: MTLDevice, size: CGSize, renderPassDescriptor: MTLRenderPassDescriptor, commandBuffer: MTLCommandBuffer) throws {
         do {
             guard let renderPipelineState, let depthStencilState else {
                 return

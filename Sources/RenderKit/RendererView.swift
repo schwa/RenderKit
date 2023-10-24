@@ -24,15 +24,15 @@ public struct RendererView <T>: View where T: RenderPass {
             configuration.depthStencilPixelFormat = .depth16Unorm
             configuration.depthStencilStorageMode = .memoryless
             try renderPass.setup(device: device, configuration: &configuration)
-        } drawableSizeWillChange: { device, configuration, size in
-            try renderPass.drawableSizeWillChange(device: device, configuration: &configuration, size: size)
-        } draw: { device, configuration, size, currentDrawable, renderPassDescriptor in
+        } drawableSizeWillChange: { device, _, size in
+            try renderPass.drawableSizeWillChange(device: device, size: size)
+        } draw: { device, _, size, currentDrawable, renderPassDescriptor in
             guard let commandQueue else {
                 fatalError("Draw called before command queue set up. This should be impossible.")
             }
             try commandQueue.withCommandBuffer(drawable: currentDrawable, block: { commandBuffer in
                 commandBuffer.label = "RendererView-CommandBuffer"
-                try renderPass.draw(device: device, configuration: configuration, size: size, renderPassDescriptor: renderPassDescriptor, commandBuffer: commandBuffer)
+                try renderPass.draw(device: device, size: size, renderPassDescriptor: renderPassDescriptor, commandBuffer: commandBuffer)
             })
         }
         .onAppear {
