@@ -143,18 +143,3 @@ class UnlitMaterialRenderJob <Configuration>: SimpleRenderJob where Configuratio
         }
     }
 }
-
-func resolveBindings <Bindable>(reflection: MTLRenderPipelineReflection, bindable: inout Bindable, _ a: [(WritableKeyPath<Bindable, Int>, MTLFunctionType, String)]) {
-    for (keyPath, shaderType, name) in a {
-        switch shaderType {
-        case .vertex:
-            let binding = reflection.vertexBindings.first(where: { $0.name == name })!
-            bindable[keyPath: keyPath] = binding.index
-        case .fragment:
-            let binding = reflection.fragmentBindings.first(where: { $0.name == name })!
-            bindable[keyPath: keyPath] = binding.index
-        default:
-            fatalError()
-        }
-    }
-}

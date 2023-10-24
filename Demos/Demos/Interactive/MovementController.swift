@@ -38,6 +38,7 @@ class MovementController: @unchecked Sendable {
     @ObservationIgnored
     var controller: GCController? {
         didSet {
+            logger?.log("Controller did change.")
             capturedControllerProfile = controller?.physicalInputProfile.capture()
         }
     }
@@ -64,19 +65,24 @@ class MovementController: @unchecked Sendable {
 
     func disableUIKeys() {
         #if os(macOS)
+        logger?.debug("NSEvent.addLocalMonitorForEvents(matching: .keyDown) …")
         NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
             // If we're not focused return everything.
             guard self?.focused == true else {
+                logger?.debug("Ignoring event, not focused.")
                 return event
             }
             // If a modifier is down
             guard event.modifierFlags.intersection([.command, .shift, .control, .option]).isEmpty else {
+                logger?.debug("Ignoring event, modifier down.")
                 return event
             }
             // If we're not a WASD key
             guard ["w", "a", "s", "d"].contains(event.characters) else {
+                logger?.debug("Ignoring key that wasn't a movement key.")
                 return event
             }
+            logger?.debug("Got movement key.")
             // Consume the key
             return nil
         }
@@ -91,13 +97,15 @@ class MovementController: @unchecked Sendable {
         didSet {
             mouse?.handlerQueue = DispatchQueue(label: "Mouse", qos: .userInteractive)
             mouse?.mouseInput?.mouseMovedHandler = { [weak self] _, x, y in
-                guard x != 0 || y != 0 else {
-                    return
-                }
                 guard let strongSelf = self else {
                     return
                 }
+                guard x != 0 || y != 0 else {
+                    logger?.debug("Ignoring event, no movement.")
+                    return
+                }
                 guard strongSelf.focused == true else {
+                    logger?.debug("Ignoring event, not focused.")
                     return
                 }
 //                strongSelf.mouseMovement += SIMD2(x, y)
@@ -161,9 +169,8 @@ class MovementController: @unchecked Sendable {
                 return (self?.makeEvent() ?? []).async
             }
             guard let events else {
-                return
+                fatalError()
             }
-
             for await event in events {
                 Counters.shared.increment(counter: "Relay")
                 await self?.channel.send(event)
@@ -193,7 +200,7 @@ class MovementController: @unchecked Sendable {
 
             for await _ in displayLink.events() {
                 guard self?.focused == true else {
-                    print("Skipping")
+                    logger?.debug("Skipping event, not focused")
                     return
                 }
                 capturedInput.setStateFromPhysicalInput(keyboardInput)

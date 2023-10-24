@@ -25,24 +25,29 @@ struct CoreSimpleSceneView: View {
     @State
     var renderPass: SimpleJobsBasedRenderPass<MetalViewConfiguration>
 
+    @State
+    var sceneRenderJob: SimpleSceneModelsRenderJob<MetalViewConfiguration>
+
     init(scene: Binding<SimpleScene>) {
         self._scene = scene
+        let sceneRenderJob = SimpleSceneModelsRenderJob<MetalViewConfiguration>(scene: scene.wrappedValue)
+        self.sceneRenderJob = sceneRenderJob
         self.renderPass = SimpleJobsBasedRenderPass(jobs: [
             AnyRenderJob(PanoramaRenderJob<MetalViewConfiguration>(scene: scene.wrappedValue)),
-            AnyRenderJob(SimpleSceneModelsRenderJob<MetalViewConfiguration>(scene: scene.wrappedValue)),
+            AnyRenderJob(sceneRenderJob),
         ])
     }
 
     var body: some View {
         RendererView(renderPass: $renderPass)
             .onChange(of: scene.camera) {
-                //renderPass.scene = scene
+                sceneRenderJob.scene = scene
             }
             .onChange(of: scene.light) {
-                //renderPass.scene = scene
+                sceneRenderJob.scene = scene
             }
             .onChange(of: scene.ambientLightColor) {
-                //renderPass.scene = scene
+                sceneRenderJob.scene = scene
             }
     }
 }
@@ -67,9 +72,6 @@ public struct SimpleSceneView: View {
     @State
     var exportImage: Image?
 
-    //    @State
-    //    var label: String?
-
     init() {
         let device = MTLCreateSystemDefaultDevice()!
         scene = try! SimpleScene.demo(device: device)
@@ -78,15 +80,17 @@ public struct SimpleSceneView: View {
     public var body: some View {
         CoreSimpleSceneView(scene: $scene)
 #if os(macOS)
-            .showFrameEditor()
+        .firstPersonInteractive(camera: $scene.camera)
+        .displayLink(DisplayLink2())
+        .showFrameEditor()
 #endif
-            .overlay(alignment: .bottomTrailing, content: mapView)
-            .inspector(isPresented: $isInspectorPresented, content: inspector)
-            .toolbar {
-                ToolbarItem(placement: .secondaryAction) {
-                    snapshot()
-                }
+        .overlay(alignment: .bottomTrailing, content: mapView)
+        .inspector(isPresented: $isInspectorPresented, content: inspector)
+        .toolbar {
+            ToolbarItem(placement: .secondaryAction) {
+                snapshot()
             }
+        }
     }
 
     func mapView() -> some View {

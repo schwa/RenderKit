@@ -11,6 +11,7 @@
 		452235AF2AE6F1F800CD89A3 /* nouns.txt in Resources */ = {isa = PBXBuildFile; fileRef = 452235AD2AE6F1F800CD89A3 /* nouns.txt */; };
 		452235B02AE6F1F800CD89A3 /* adjectives.txt in Resources */ = {isa = PBXBuildFile; fileRef = 452235AE2AE6F1F800CD89A3 /* adjectives.txt */; };
 		452235B22AE7090A00CD89A3 /* SimpleScene+Demo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 452235B12AE7090A00CD89A3 /* SimpleScene+Demo.swift */; };
+		452235B42AE738FD00CD89A3 /* Bindings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 452235B32AE738FD00CD89A3 /* Bindings.swift */; };
 		453532552ADB424000B9745A /* SimulationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453532542ADB424000B9745A /* SimulationView.swift */; };
 		453532572ADB426000B9745A /* ParticlesRenderJob.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453532562ADB426000B9745A /* ParticlesRenderJob.swift */; };
 		453A4A432AE43C9100838CF5 /* DemosSupport in Frameworks */ = {isa = PBXBuildFile; productRef = 453A4A422AE43C9100838CF5 /* DemosSupport */; };
@@ -20,7 +21,6 @@
 		453D32C02A48D06600FCEE29 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 453D32BF2A48D06600FCEE29 /* Preview Assets.xcassets */; };
 		453F7D3D2ACC7A2C0051D331 /* VolumetricView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453F7D3C2ACC7A2C0051D331 /* VolumetricView.swift */; };
 		453F7D3F2ACC7A590051D331 /* VolumetricRenderPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453F7D3E2ACC7A590051D331 /* VolumetricRenderPass.swift */; };
-		454386A12ACF35BA00928B52 /* BitSetN.swift in Sources */ = {isa = PBXBuildFile; fileRef = 454386A02ACF35BA00928B52 /* BitSetN.swift */; };
 		4555A0372ABE017A0088CFFB /* DemosApp-VisionOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4555A0362ABE017A0088CFFB /* DemosApp-VisionOS.swift */; };
 		4555A03B2ABE0B310088CFFB /* Info-visionOS.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4555A03A2ABE0B310088CFFB /* Info-visionOS.plist */; };
 		4555A04D2ABE2CD80088CFFB /* SimpleSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4555A0402ABE2BF00088CFFB /* SimpleSceneView.swift */; };
@@ -113,6 +113,7 @@
 		452235AD2AE6F1F800CD89A3 /* nouns.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = nouns.txt; sourceTree = "<group>"; };
 		452235AE2AE6F1F800CD89A3 /* adjectives.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = adjectives.txt; sourceTree = "<group>"; };
 		452235B12AE7090A00CD89A3 /* SimpleScene+Demo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SimpleScene+Demo.swift"; sourceTree = "<group>"; };
+		452235B32AE738FD00CD89A3 /* Bindings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Bindings.swift; sourceTree = "<group>"; };
 		453532542ADB424000B9745A /* SimulationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimulationView.swift; sourceTree = "<group>"; };
 		453532562ADB426000B9745A /* ParticlesRenderJob.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ParticlesRenderJob.swift; sourceTree = "<group>"; };
 		453A4A412AE43C7F00838CF5 /* DemosSupport */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = DemosSupport; sourceTree = "<group>"; };
@@ -124,7 +125,6 @@
 		453D32BF2A48D06600FCEE29 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		453F7D3C2ACC7A2C0051D331 /* VolumetricView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VolumetricView.swift; sourceTree = "<group>"; };
 		453F7D3E2ACC7A590051D331 /* VolumetricRenderPass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumetricRenderPass.swift; sourceTree = "<group>"; };
-		454386A02ACF35BA00928B52 /* BitSetN.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BitSetN.swift; sourceTree = "<group>"; };
 		4555A0362ABE017A0088CFFB /* DemosApp-VisionOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemosApp-VisionOS.swift"; sourceTree = "<group>"; };
 		4555A03A2ABE0B310088CFFB /* Info-visionOS.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-visionOS.plist"; sourceTree = "<group>"; };
 		4555A03E2ABE2BEC0088CFFB /* VolumeData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeData.swift; sourceTree = "<group>"; };
@@ -251,6 +251,17 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		452235B52AE73C9800CD89A3 /* Interactive */ = {
+			isa = PBXGroup;
+			children = (
+				4555A0462ABE2BF00088CFFB /* BallRotationModifier.swift */,
+				4555A0432ABE2BF00088CFFB /* FirstPersonInteractiveViewModifier.swift */,
+				4555A05D2ABE2D100088CFFB /* GameControllerWidget.swift */,
+				4555A0592ABE2CF50088CFFB /* MovementController.swift */,
+			);
+			path = Interactive;
+			sourceTree = "<group>";
+		};
 		453532532ADB422900B9745A /* Particles */ = {
 			isa = PBXGroup;
 			children = (
@@ -299,6 +310,7 @@
 				4555A0492ABE2BF50088CFFB /* ShaderToy */,
 				4555A03F2ABE2BF00088CFFB /* SimpleScene */,
 				4555A03C2ABE2BEC0088CFFB /* Volumetric */,
+				452235B52AE73C9800CD89A3 /* Interactive */,
 				4555A0672ABE2F740088CFFB /* Support */,
 				453D32BB2A48D06600FCEE29 /* Assets.xcassets */,
 				453D32BD2A48D06600FCEE29 /* Demos.entitlements */,
@@ -322,6 +334,7 @@
 		4555A03C2ABE2BEC0088CFFB /* Volumetric */ = {
 			isa = PBXGroup;
 			children = (
+				4555A03E2ABE2BEC0088CFFB /* VolumeData.swift */,
 				45664A4C2AE58F4A00352D96 /* StanfordVolumeData.tar */,
 				453F7D3C2ACC7A2C0051D331 /* VolumetricView.swift */,
 				453F7D3E2ACC7A590051D331 /* VolumetricRenderPass.swift */,
@@ -345,7 +358,6 @@
 				459FAE542ACDFCAD000018E2 /* YAMesh.swift */,
 				45B1D71D2ACFB25600960D02 /* YAMesh+Conversion.swift */,
 				45FB2CA62AE1A8E3008824D4 /* AnyRenderPass.swift */,
-				4555A03E2ABE2BEC0088CFFB /* VolumeData.swift */,
 				4558221C2AE60FF500189306 /* ShaderFunction.swift */,
 				45FB795F2ACF6E10001CD1B5 /* Cube.glb */,
 				45650DE72ACCEA45009F2AF2 /* BarramundiFish.glb */,
@@ -365,8 +377,8 @@
 		4555A0672ABE2F740088CFFB /* Support */ = {
 			isa = PBXGroup;
 			children = (
+				452235B32AE738FD00CD89A3 /* Bindings.swift */,
 				4555A05F2ABE2D260088CFFB /* Counters.swift */,
-				4555A0462ABE2BF00088CFFB /* BallRotationModifier.swift */,
 				45BEC11F2ABE3480001730AB /* Cache.swift */,
 				45BEC1202ABE3480001730AB /* LOLID2.swift */,
 				4555A0472ABE2BF00088CFFB /* Projections.swift */,
@@ -374,11 +386,7 @@
 				45FAACBB2ACCF54C006C31BD /* Resources.swift */,
 				4555A0632ABE2E2E0088CFFB /* SwiftUI+Support.swift */,
 				4555A0612ABE2D590088CFFB /* Logging.swift */,
-				4555A0432ABE2BF00088CFFB /* FirstPersonInteractiveViewModifier.swift */,
 				4555A05B2ABE2D030088CFFB /* DisplayLink.swift */,
-				4555A05D2ABE2D100088CFFB /* GameControllerWidget.swift */,
-				4555A0592ABE2CF50088CFFB /* MovementController.swift */,
-				454386A02ACF35BA00928B52 /* BitSetN.swift */,
 				456C5BA02ADA3D4E00C4AD0D /* Gradient.swift */,
 				45664A4A2AE58DED00352D96 /* TarArchive.swift */,
 				452235AB2AE6F19E00CD89A3 /* Names.swift */,
@@ -612,7 +620,6 @@
 				453532572ADB426000B9745A /* ParticlesRenderJob.swift in Sources */,
 				4555A0622ABE2D590088CFFB /* Logging.swift in Sources */,
 				4555A0522ABE2CD80088CFFB /* FirstPersonInteractiveViewModifier.swift in Sources */,
-				454386A12ACF35BA00928B52 /* BitSetN.swift in Sources */,
 				452235AC2AE6F19E00CD89A3 /* Names.swift in Sources */,
 				453F7D3F2ACC7A590051D331 /* VolumetricRenderPass.swift in Sources */,
 				45664A4B2AE58DED00352D96 /* TarArchive.swift in Sources */,
@@ -649,6 +656,7 @@
 				453F7D3D2ACC7A2C0051D331 /* VolumetricView.swift in Sources */,
 				453532552ADB424000B9745A /* SimulationView.swift in Sources */,
 				4555A0502ABE2CD80088CFFB /* Projections.swift in Sources */,
+				452235B42AE738FD00CD89A3 /* Bindings.swift in Sources */,
 				4555A04E2ABE2CD80088CFFB /* SimpleSceneInspector.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
