@@ -119,6 +119,18 @@ public struct UnlitMaterial: Material {
     public var baseColorTexture: Texture?
 }
 
+public struct FlatMaterial: Material {
+    public var label: String?
+    public var baseColorFactor: SIMD4<Float> = .one
+    public var baseColorTexture: Texture?
+}
+
+public struct BlinnPhongMaterial: Material {
+    public var label: String?
+    public var baseColorFactor: SIMD4<Float> = .one
+    public var baseColorTexture: Texture?
+}
+
 //struct PBRMaterial: Material {
 //    var label: String?
 //    var baseColorFactor: SIMD4<Float> = .one

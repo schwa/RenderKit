@@ -14,7 +14,7 @@ struct SimpleSceneMapView: View {
             context.concatenate(.init(translation: [size.width / 2, size.height / 2]))
             for model in scene.models {
                 let position = CGPoint(model.transform.translation.xz)
-                let colorVector = (model.material as? UnlitMaterial)?.baseColorFactor ?? [1, 0, 0, 1]
+                let colorVector = (model.material as? FlatMaterial)?.baseColorFactor ?? [1, 0, 0, 1]
                 let color = Color(red: Double(colorVector.r), green: Double(colorVector.g), blue: Double(colorVector.b))
                 context.fill(Path(ellipseIn: CGRect(center: position * scale, diameter: 1 * scale)), with: .color(color.opacity(0.5)))
             }

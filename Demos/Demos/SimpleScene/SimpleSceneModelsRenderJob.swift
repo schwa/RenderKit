@@ -10,18 +10,18 @@ import Everything
 
 class SimpleSceneModelsRenderJob <Configuration>: SimpleRenderJob where Configuration: MetalConfiguration {
     var scene: SimpleScene
-    var renderJobs: [UnlitMaterialRenderJob<Configuration>] = []
+    var renderJobs: [FlatMaterialRenderJob<Configuration>] = []
 
     init(scene: SimpleScene) {
         self.scene = scene
     }
 
     func prepare(device: MTLDevice, configuration: inout Configuration) throws {
-        var renderJobs: [AnyHashable: UnlitMaterialRenderJob<Configuration>] = [:]
+        var renderJobs: [AnyHashable: FlatMaterialRenderJob<Configuration>] = [:]
         for model in scene.models {
-            if (model.material as? UnlitMaterial) != nil {
+            if (model.material as? FlatMaterial) != nil {
                 if renderJobs["unlit-material"] == nil {
-                    let job = UnlitMaterialRenderJob<Configuration>(models: scene.models)
+                    let job = FlatMaterialRenderJob<Configuration>(models: scene.models)
                     try job.prepare(device: device, configuration: &configuration)
                     renderJobs["unlit-material"] = job
                 }
@@ -43,7 +43,7 @@ class SimpleSceneModelsRenderJob <Configuration>: SimpleRenderJob where Configur
 
 // MARK: -
 
-class UnlitMaterialRenderJob <Configuration>: SimpleRenderJob where Configuration: MetalConfiguration {
+class FlatMaterialRenderJob <Configuration>: SimpleRenderJob where Configuration: MetalConfiguration {
     struct Bindings {
         var vertexBufferIndex: Int = -1
         var vertexCameraUniformsIndex: Int = -1
@@ -132,7 +132,7 @@ class UnlitMaterialRenderJob <Configuration>: SimpleRenderJob where Configuratio
                         ModelUniforms(
                             modelViewMatrix: inverseCameraMatrix * model.transform.matrix,
                             modelNormalMatrix: simd_float3x3(truncating: model.transform.matrix.transpose.inverse),
-                            color: (model.material as? UnlitMaterial)?.baseColorFactor ?? [1, 0, 0, 1]
+                            color: (model.material as? FlatMaterial)?.baseColorFactor ?? [1, 0, 0, 1]
                         )
                     }
                     encoder.setVertexBytes(of: modelUniforms, index: drawState.bindings.vertexInstancedModelUniformsIndex)
