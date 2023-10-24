@@ -8,28 +8,28 @@ import RenderKit
 import Observation
 import Everything
 
-class SimpleSceneModelsRenderJob: SimpleRenderJob {
+class SimpleSceneModelsRenderJob: RenderJob {
     var scene: SimpleScene
-    var renderJobs: [any SimpleRenderJob] = []
+    var renderJobs: [any RenderJob] = []
 
     init(scene: SimpleScene) {
         self.scene = scene
     }
 
-    func prepare<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration) throws {
-        var renderJobs: [AnyHashable: any SimpleRenderJob] = [:]
+    func setup<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration) throws {
+        var renderJobs: [AnyHashable: any RenderJob] = [:]
         for model in scene.models {
             if (model.material as? FlatMaterial) != nil {
                 if renderJobs["flat-material"] == nil {
                     let job = FlatMaterialRenderJob(models: scene.models)
-                    try job.prepare(device: device, configuration: &configuration)
+                    try job.setup(device: device, configuration: &configuration)
                     renderJobs["flat-material"] = job
                 }
             }
             else if (model.material as? UnlitMaterial) != nil {
                 if renderJobs["Unlit-material"] == nil {
                     let job = UnlitMaterialRenderJob(models: scene.models)
-                    try job.prepare(device: device, configuration: &configuration)
+                    try job.setup(device: device, configuration: &configuration)
                     renderJobs["Unlit-material"] = job
                 }
             }
@@ -54,7 +54,7 @@ protocol SceneConsuming {
     var scene: SimpleScene? { get set }
 }
 
-class FlatMaterialRenderJob: SimpleRenderJob, SceneConsuming {
+class FlatMaterialRenderJob: RenderJob, SceneConsuming {
     struct Bindings {
         var vertexBufferIndex: Int = -1
         var vertexCameraUniformsIndex: Int = -1
@@ -75,7 +75,7 @@ class FlatMaterialRenderJob: SimpleRenderJob, SceneConsuming {
         self.models = models
     }
 
-    func prepare<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration) throws {
+    func setup<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration) throws {
         let library = try! device.makeDefaultLibrary(bundle: .shadersBundle)
         bucketedDrawStates = try models.reduce(into: [:]) { partialResult, model in
             let key = Pair(model.mesh.id, model.mesh.vertexDescriptor.encodedDescription)
@@ -152,7 +152,7 @@ class FlatMaterialRenderJob: SimpleRenderJob, SceneConsuming {
     }
 }
 
-class UnlitMaterialRenderJob: SimpleRenderJob {
+class UnlitMaterialRenderJob: RenderJob {
     struct Bindings {
         var vertexBufferIndex: Int = -1
         var vertexCameraIndex: Int = -1
@@ -172,7 +172,7 @@ class UnlitMaterialRenderJob: SimpleRenderJob {
         self.models = models
     }
 
-    func prepare<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration) throws {
+    func setup<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration) throws {
         let library = try! device.makeDefaultLibrary(bundle: .shadersBundle)
         bucketedDrawStates = try models.reduce(into: [:]) { partialResult, model in
             let key = Pair(model.mesh.id, model.mesh.vertexDescriptor.encodedDescription)

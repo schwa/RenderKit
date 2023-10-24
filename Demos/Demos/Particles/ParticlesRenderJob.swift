@@ -9,7 +9,7 @@ import Observation
 import Everything
 import SwiftFormats
 
-class ParticlesRenderJob: SimpleRenderJob {
+class ParticlesRenderJob: RenderJob {
     var renderPipelineState: MTLRenderPipelineState?
     var depthStencilState: MTLDepthStencilState?
     var mesh: YAMesh?
@@ -19,7 +19,7 @@ class ParticlesRenderJob: SimpleRenderJob {
     var colors: [Float] = []
     var simulation: Simulation<UnsafeBufferSimulationStorage>?
 
-    func prepare<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration) throws {
+    func setup<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration) throws {
         let count = 500
 
         positions = device.makeBuffer(length: count * MemoryLayout<SIMD2<Float>>.stride, options: .storageModeShared)!.labelled("positions")

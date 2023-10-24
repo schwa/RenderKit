@@ -34,13 +34,13 @@ public extension RenderPass {
 
 // TODO: Combine jobs and passes
 
-public protocol SimpleRenderJob: AnyObject {
-    func prepare<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration) throws
+public protocol RenderJob: AnyObject {
+    func setup<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration) throws
     func drawableSizeWillChange(device: MTLDevice, size: CGSize) throws
     func encode(on encoder: MTLRenderCommandEncoder, size: CGSize) throws // TODO: Add configuration just to be consistent? Or remove from renderpass.
 }
 
-public extension SimpleRenderJob {
+public extension RenderJob {
     func drawableSizeWillChange(device: MTLDevice, size: CGSize) throws {
     }
 }

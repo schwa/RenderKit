@@ -8,7 +8,7 @@ import RenderKit
 import Observation
 import Everything
 
-class PanoramaRenderJob: SimpleRenderJob {
+class PanoramaRenderJob: RenderJob {
     var renderPipelineState: MTLRenderPipelineState?
     var depthStencilState: MTLDepthStencilState?
     var mesh: YAMesh?
@@ -20,7 +20,7 @@ class PanoramaRenderJob: SimpleRenderJob {
         self.scene = scene
     }
 
-    func prepare<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration) throws {
+    func setup<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration) throws {
         let library = try! device.makeDefaultLibrary(bundle: .shadersBundle)
         let vertexFunction = library.makeFunction(name: "panoramicVertexShader")!
         let constantValues = MTLFunctionConstantValues()

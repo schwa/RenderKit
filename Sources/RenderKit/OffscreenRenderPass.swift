@@ -73,7 +73,7 @@ public extension RenderPass {
             fatalError()
         }
         try commandQueue.withCommandBuffer(waitAfterCommit: true) { commandBuffer in
-            try draw(device: device, configuration: configuration, size: configuration.size, renderPassDescriptor: configuration.currentRenderPassDescriptor!, commandBuffer: commandBuffer)
+            try draw(device: device, size: size, renderPassDescriptor: configuration.currentRenderPassDescriptor!, commandBuffer: commandBuffer)
         }
         let cgImage = await configuration.targetTexture!.cgImage(colorSpace: CGColorSpace(name: CGColorSpace.extendedSRGB))
         return cgImage
