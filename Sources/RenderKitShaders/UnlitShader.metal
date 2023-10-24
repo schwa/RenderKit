@@ -5,7 +5,8 @@ typedef SimpleVertex Vertex;
 
 struct Fragment {
     float4 position [[position]]; // in projection space
-    ushort material_id;
+    float2 textureCoordinate;
+    short material_id;
 };
 
 // MARK: -
@@ -22,6 +23,7 @@ Fragment unlitVertexShader(
     const float4 modelVertex = model.modelViewMatrix * float4(in.position, 1.0);
     return {
         .position = camera.projectionMatrix * modelVertex,
+        .textureCoordinate = in.textureCoordinate,
         .material_id = 0, // instancedModelUniforms[instnace_id].material_id
     };
 }
@@ -29,8 +31,18 @@ Fragment unlitVertexShader(
 [[fragment]]
 vector_float4 unlitFragmentShader(
     Fragment in [[stage_in]],
-    constant UnlitMaterial *materials [[buffer(2)]]
+    constant UnlitMaterial *materials [[buffer(0)]],
+    array<texture2d<float, access::sample>, 12> textures [[texture(0)]]
     )
 {
-    return materials[in.material_id].color;
+    float4 color = { 0, 0, 0, 0};
+    auto material = materials[in.material_id];
+    if (material.textureIndex == -1) {
+        color = materials[in.material_id].color;
+    }
+    else {
+        auto texture = textures[material.textureIndex];
+        color = texture.sample(RenderKitShaders::basicSampler, in.textureCoordinate);
+    }
+    return color;
 }

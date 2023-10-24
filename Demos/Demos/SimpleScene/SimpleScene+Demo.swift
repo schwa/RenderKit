@@ -48,8 +48,10 @@ public extension SimpleScene {
             return Model(transform: .translation([x, 0, z]), material: material, mesh: meshes.randomElement()!)
         }
 
-        let fishModel = Model(transform: .translation([0, 1, 0]).rotated(angle: .degrees(90), axis: [0, 1, 0]), material: UnlitMaterial(baseColorFactor: [1, 0, 1, 1]), mesh:
-            try YAMesh(gltf: "BarramundiFish", device: device)
+        let fishModel = Model(
+            transform: .translation([0, 1, 0]).rotated(angle: .degrees(90), axis: [0, 1, 0]),
+            material: UnlitMaterial(baseColorFactor: [1, 0, 1, 1], baseColorTexture: .init(resource: BundleResourceReference(bundle: .main, name: "Checkerboard"))),
+            mesh: try YAMesh(gltf: "BarramundiFish", device: device)
         )
         models.append(fishModel)
 

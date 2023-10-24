@@ -5,7 +5,7 @@ import os
 import UIKit
 #endif
 
-public class Cache <Key, Value> where Key: Hashable & Sendable {
+public class Cache <Key, Value> where Key: Hashable {
     public let label: String?
 
     internal var lock = OSAllocatedUnfairLock()

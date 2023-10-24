@@ -152,4 +152,77 @@ public struct BlinnPhongMaterial: Material {
 public struct Texture: Labeled {
     public var label: String?
     public var resource: any ResourceProtocol
+    public var options: TextureManager.Options
+
+    public init(label: String? = nil, resource: any ResourceProtocol, options: TextureManager.Options = .init()) {
+        self.label = label
+        self.resource = resource
+        self.options = options
+    }
+}
+
+public class TextureManager {
+    public struct Options {
+        public var allocateMipMaps = false
+        public var generateMipmaps = false
+        public var SRGB = false
+        public var textureUsage: MTLTextureUsage = .shaderRead
+        public var textureCPUCacheMode: MTLCPUCacheMode = .defaultCache
+        public var textureStorageMode: MTLStorageMode = .shared
+        public var cubeLayout: MTKTextureLoader.CubeLayout?
+        public var origin: MTKTextureLoader.Origin?
+        public var loadAsArray = false
+
+        public init() {
+        }
+    }
+
+    private let device: MTLDevice
+    private let textureLoader: MTKTextureLoader
+    private let cache: Cache<AnyHashable, MTLTexture>
+
+    public init(device: MTLDevice) {
+        self.device = device
+        self.textureLoader = MTKTextureLoader(device: device)
+        self.cache = Cache()
+    }
+
+    public func texture(for resource: some ResourceProtocol, options: Options = Options()) throws -> MTLTexture {
+        return try cache.get(key: resource) {
+            return try textureLoader.newTexture(resource: resource, options: .init(options))
+        }
+    }
+}
+
+extension TextureManager.Options: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        allocateMipMaps.hash(into: &hasher)
+        generateMipmaps.hash(into: &hasher)
+        SRGB.hash(into: &hasher)
+        textureUsage.rawValue.hash(into: &hasher)
+        textureCPUCacheMode.hash(into: &hasher)
+        textureStorageMode.rawValue.hash(into: &hasher)
+        cubeLayout.hash(into: &hasher)
+        origin.hash(into: &hasher)
+        loadAsArray.hash(into: &hasher)
+    }
+}
+
+extension Dictionary where Key == MTKTextureLoader.Option, Value == Any {
+    init(_ options: TextureManager.Options) {
+        self = [:]
+        self[.allocateMipmaps] = options.allocateMipMaps
+        self[.generateMipmaps] = options.generateMipmaps
+        self[.SRGB] = options.SRGB
+        self[.textureUsage] = options.textureUsage
+        self[.textureCPUCacheMode] = options.textureCPUCacheMode
+        self[.textureStorageMode] = options.textureStorageMode
+        if let cubeLayout = options.cubeLayout {
+            self[.cubeLayout] = cubeLayout
+        }
+        if let origin = options.origin {
+            self[.origin] = origin
+        }
+        self[.loadAsArray] = options.loadAsArray
+    }
 }

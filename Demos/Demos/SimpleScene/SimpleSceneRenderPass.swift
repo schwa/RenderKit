@@ -167,6 +167,7 @@ class UnlitMaterialRenderJob: SceneRenderJob {
         var vertexCameraIndex: Int = -1
         var vertexModelsIndex: Int = -1
         var fragmentMaterialsIndex: Int = -1
+        var fragmentTexturesIndex: Int = -1
     }
     struct DrawState {
         var renderPipelineState: MTLRenderPipelineState
@@ -177,6 +178,7 @@ class UnlitMaterialRenderJob: SceneRenderJob {
     var scene: SimpleScene
     var models: [Model]
     private var bucketedDrawStates: [AnyHashable: DrawState] = [:]
+    var textureManager: TextureManager?
 
     init(scene: SimpleScene, models: [Model]) {
         self.scene = scene
@@ -184,6 +186,8 @@ class UnlitMaterialRenderJob: SceneRenderJob {
     }
 
     func setup<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration) throws {
+        textureManager = TextureManager(device: device)
+
         let library = try! device.makeDefaultLibrary(bundle: .shadersBundle)
         bucketedDrawStates = try models.reduce(into: [:]) { partialResult, model in
             let key = Pair(model.mesh.id, model.mesh.vertexDescriptor.encodedDescription)
@@ -230,7 +234,7 @@ class UnlitMaterialRenderJob: SceneRenderJob {
         }
 
         for (key, drawState) in bucketedDrawStates {
-            encoder.withDebugGroup("Instanced Models") {
+            try encoder.withDebugGroup("Instanced Models") {
                 encoder.setRenderPipelineState(drawState.renderPipelineState)
                 encoder.setDepthStencilState(drawState.depthStencilState)
                 let cameraUniforms = CameraUniforms(projectionMatrix: scene.camera.projection.matrix(viewSize: SIMD2<Float>(size)))
@@ -239,7 +243,7 @@ class UnlitMaterialRenderJob: SceneRenderJob {
 
                 let models = bucketedModels[key]!
 
-                encoder.withDebugGroup("Instanced \(key)") {
+                try encoder.withDebugGroup("Instanced \(key)") {
                     let mesh = models.first!.mesh
                     encoder.setVertexBuffers(mesh)
                     let modelTransforms = models.map { model in
@@ -250,9 +254,19 @@ class UnlitMaterialRenderJob: SceneRenderJob {
                     }
                     encoder.setVertexBytes(of: modelTransforms, index: drawState.bindings.vertexModelsIndex)
 
-                    let materials = models.map { model in
+                    // TODO: Move to setup.
+                    // TODO: needs to be a set() not an array()
+                    let textures: [MTLTexture] = try models.compactMap { model in
+                        guard let texture = (model.material as! UnlitMaterial).baseColorTexture else {
+                            return nil
+                        }
+                        return try textureManager!.texture(for: texture.resource, options: texture.options)
+                    }
+                    encoder.setFragmentTextures(textures, range: 0..<textures.count)
+
+                    let materials = models.enumerated().map { index, model in
                         let color = (model.material as! UnlitMaterial).baseColorFactor
-                        return RenderKitShaders.UnlitMaterial(color: color)
+                        return RenderKitShaders.UnlitMaterial(color: color, textureIndex: Int16(index))
                     }
                     encoder.setFragmentBytes(of: materials, index: drawState.bindings.fragmentMaterialsIndex)
 

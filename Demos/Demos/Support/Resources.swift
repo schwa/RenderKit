@@ -128,6 +128,10 @@ extension BundleResourceReference: URLProviding {
 
 public extension MTKTextureLoader {
     func newTexture(resource: some ResourceProtocol, options: [Option: Any]? = nil) throws -> MTLTexture {
+        if let resource = resource as? BundleResourceReference {
+            return try newTexture(resource: resource, options: options)
+        }
+
         if let resource = resource as? any URLProviding {
             return try newTexture(resource: resource, options: options)
         }
@@ -139,10 +143,16 @@ public extension MTKTextureLoader {
         }
     }
 
+    func newTexture(resource: BundleResourceReference, options: [Option: Any]? = nil) throws -> MTLTexture {
+        // TODO: Scale factor.
+        return try newTexture(name: resource.name, scaleFactor: 1.0, bundle: resource.bundle.bundle, options: nil)
+    }
+
     func newTexture(resource: some URLProviding, options: [Option: Any]? = nil) throws -> MTLTexture {
         let url = try resource.url
         return try newTexture(URL: url, options: options)
     }
+
     func newTexture(resource: some URLProviding, options: [Option: Any]? = nil) async throws -> MTLTexture {
         let url = try resource.url
         return try await newTexture(URL: url, options: options)
