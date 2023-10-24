@@ -44,7 +44,7 @@ public extension SimpleScene {
         models += product(xRange, zRange).map { x, z in
             let hsv: SIMD3<Float> = [Float.random(in: 0...1), 1, 1]
             let rgba = SIMD4<Float>(hsv.hsv2rgb(), 1.0)
-            let material = FlatMaterial(baseColorFactor: rgba)
+            let material = FlatMaterial(baseColorFactor: rgba, baseColorTexture: .init(resource: BundleResourceReference(bundle: .main, name: "Checkerboard")))
             return Model(transform: .translation([x, 0, z]), material: material, mesh: meshes.randomElement()!)
         }
 

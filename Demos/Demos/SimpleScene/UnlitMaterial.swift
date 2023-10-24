@@ -33,7 +33,7 @@ class UnlitMaterialRenderJob: SceneRenderJob {
     var scene: SimpleScene
     var models: [Model]
     private var bucketedDrawStates: [AnyHashable: DrawState] = [:]
-    var textureManager: TextureManager?
+    var textureManager: TextureManager? // TODO: Move to parent
 
     init(scene: SimpleScene, models: [Model]) {
         self.scene = scene

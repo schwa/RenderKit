@@ -6,7 +6,7 @@ typedef SimpleVertex Vertex;
 struct Fragment {
     float4 position [[position]]; // in projection space
     float2 textureCoordinate;
-    ushort instance_id;
+    ushort instance_id [[flat]]; // TODO: is flat needed?
 };
 
 // MARK: -
@@ -16,7 +16,7 @@ Fragment unlitVertexShader(
     Vertex in [[stage_in]],
     ushort instance_id[[instance_id]],
     constant CameraUniforms &camera[[buffer(1)]],
-    constant ModelTransforms *models[[buffer(2)]]
+    constant ModelTransforms *models[[buffer(2)]] // TODO: rename to modelTransforms
 )
 {
     const ModelTransforms model = models[instance_id];

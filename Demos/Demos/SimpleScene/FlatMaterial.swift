@@ -17,9 +17,10 @@ public struct FlatMaterial: Material {
 class FlatMaterialRenderJob: SceneRenderJob {
     struct Bindings {
         var vertexBufferIndex: Int = -1
-        var vertexCameraUniformsIndex: Int = -1
-        var vertexInstancedModelUniformsIndex: Int = -1
-        var fragmentLightUniformsIndex: Int = -1
+        var vertexCameraIndex: Int = -1
+        var vertexModelTransformsIndex: Int = -1
+        var fragmentLightingIndex: Int = -1
+        var fragmentMaterialsIndex: Int = -1
     }
     struct DrawState {
         var renderPipelineState: MTLRenderPipelineState
@@ -30,6 +31,7 @@ class FlatMaterialRenderJob: SceneRenderJob {
     var models: [Model]
     var scene: SimpleScene
     private var bucketedDrawStates: [AnyHashable: DrawState] = [:]
+    var textureManager: TextureManager? // TODO: move to "parent"
 
     init(scene: SimpleScene, models: [Model]) {
         self.scene = scene
@@ -37,6 +39,7 @@ class FlatMaterialRenderJob: SceneRenderJob {
     }
 
     func setup<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration) throws {
+        textureManager = TextureManager(device: device)
         let library = try! device.makeDefaultLibrary(bundle: .shadersBundle)
         bucketedDrawStates = try models.reduce(into: [:]) { partialResult, model in
             let key = Pair(model.mesh.id, model.mesh.vertexDescriptor.encodedDescription)
@@ -59,9 +62,10 @@ class FlatMaterialRenderJob: SceneRenderJob {
             var bindings = Bindings()
             resolveBindings(reflection: reflection!, bindable: &bindings, [
                 (\.vertexBufferIndex, .vertex, "vertexBuffer.0"),
-                (\.vertexCameraUniformsIndex, .vertex, "cameraUniforms"),
-                (\.vertexInstancedModelUniformsIndex, .vertex, "instancedModelUniforms"),
-                (\.fragmentLightUniformsIndex, .fragment, "lightUniforms"),
+                (\.vertexCameraIndex, .vertex, "camera"),
+                (\.vertexModelTransformsIndex, .vertex, "modelTransforms"),
+                (\.fragmentLightingIndex, .fragment, "lighting"),
+                (\.fragmentMaterialsIndex, .fragment, "materials"),
             ])
 
             let depthStencilState = device.makeDepthStencilState(descriptor: MTLDepthStencilDescriptor(depthCompareFunction: .lessEqual, isDepthWriteEnabled: true))!
@@ -81,28 +85,43 @@ class FlatMaterialRenderJob: SceneRenderJob {
         }
 
         for (key, drawState) in bucketedDrawStates {
-            encoder.withDebugGroup("Instanced Models") {
+            try encoder.withDebugGroup("Instanced Models") {
                 encoder.setRenderPipelineState(drawState.renderPipelineState)
                 encoder.setDepthStencilState(drawState.depthStencilState)
                 let cameraUniforms = CameraUniforms(projectionMatrix: scene.camera.projection.matrix(viewSize: SIMD2<Float>(size)))
                 let inverseCameraMatrix = scene.camera.transform.matrix.inverse
-                encoder.setVertexBytes(of: cameraUniforms, index: drawState.bindings.vertexCameraUniformsIndex)
+                encoder.setVertexBytes(of: cameraUniforms, index: drawState.bindings.vertexCameraIndex)
                 let lightUniforms = LightUniforms(lightPosition: scene.light.position.translation, lightColor: scene.light.color, lightPower: scene.light.power, ambientLightColor: scene.ambientLightColor)
-                encoder.setFragmentBytes(of: lightUniforms, index: drawState.bindings.fragmentLightUniformsIndex)
+                encoder.setFragmentBytes(of: lightUniforms, index: drawState.bindings.fragmentLightingIndex)
 
                 let models = bucketedModels[key]!
+
+                // TODO: Move to setup.
+                // TODO: needs to be a set() not an array()
+                let textures: [MTLTexture] = try models.compactMap { model in
+                    guard let texture = (model.material as! FlatMaterial).baseColorTexture else {
+                        return nil
+                    }
+                    return try textureManager!.texture(for: texture.resource, options: texture.options)
+                }
+                encoder.setFragmentTextures(textures, range: 0..<textures.count)
+
+                let materials = models.enumerated().map { _, model in
+                    let color = (model.material as! FlatMaterial).baseColorFactor
+                    return RenderKitShaders.FlatMaterial(diffuseColor: color, diffuseTextureIndex: -1, ambientColor: color, ambientTextureIndex: -1)
+                }
+                encoder.setFragmentBytes(of: materials, index: drawState.bindings.fragmentMaterialsIndex)
 
                 encoder.withDebugGroup("Instanced \(key)") {
                     let mesh = models.first!.mesh
                     encoder.setVertexBuffers(mesh)
                     let modelUniforms = models.map { model in
-                        ModelUniforms(
+                        ModelTransforms(
                             modelViewMatrix: inverseCameraMatrix * model.transform.matrix,
-                            modelNormalMatrix: simd_float3x3(truncating: model.transform.matrix.transpose.inverse),
-                            color: (model.material as? FlatMaterial)?.baseColorFactor ?? [1, 0, 0, 1]
+                            modelNormalMatrix: simd_float3x3(truncating: model.transform.matrix.transpose.inverse)
                         )
                     }
-                    encoder.setVertexBytes(of: modelUniforms, index: drawState.bindings.vertexInstancedModelUniformsIndex)
+                    encoder.setVertexBytes(of: modelUniforms, index: drawState.bindings.vertexModelTransformsIndex)
                     encoder.setTriangleFillMode(.fill)
                     encoder.draw(mesh, instanceCount: models.count)
                 }
