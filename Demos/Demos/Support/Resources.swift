@@ -145,7 +145,8 @@ public extension MTKTextureLoader {
 
     func newTexture(resource: BundleResourceReference, options: [Option: Any]? = nil) throws -> MTLTexture {
         // TODO: Scale factor.
-        return try newTexture(name: resource.name, scaleFactor: 1.0, bundle: resource.bundle.bundle, options: nil)
+        // TODO: Options
+        return try newTexture(name: resource.name, scaleFactor: 1.0, bundle: resource.bundle.bundle, options: options)
     }
 
     func newTexture(resource: some URLProviding, options: [Option: Any]? = nil) throws -> MTLTexture {

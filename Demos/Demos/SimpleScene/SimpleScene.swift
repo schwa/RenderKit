@@ -211,18 +211,19 @@ extension TextureManager.Options: Hashable {
 extension Dictionary where Key == MTKTextureLoader.Option, Value == Any {
     init(_ options: TextureManager.Options) {
         self = [:]
-        self[.allocateMipmaps] = options.allocateMipMaps
-        self[.generateMipmaps] = options.generateMipmaps
-        self[.SRGB] = options.SRGB
-        self[.textureUsage] = options.textureUsage
-        self[.textureCPUCacheMode] = options.textureCPUCacheMode
-        self[.textureStorageMode] = options.textureStorageMode
-        if let cubeLayout = options.cubeLayout {
-            self[.cubeLayout] = cubeLayout
-        }
-        if let origin = options.origin {
-            self[.origin] = origin
-        }
-        self[.loadAsArray] = options.loadAsArray
+//        // TODO: This is NOT necessarily correct
+//        self[.allocateMipmaps] = options.allocateMipMaps
+//        self[.generateMipmaps] = options.generateMipmaps
+//        self[.SRGB] = options.SRGB
+//        self[.textureUsage] = options.textureUsage
+//        self[.textureCPUCacheMode] = options.textureCPUCacheMode
+//        self[.textureStorageMode] = options.textureStorageMode
+//        if let cubeLayout = options.cubeLayout {
+//            self[.cubeLayout] = cubeLayout
+//        }
+//        if let origin = options.origin {
+//            self[.origin] = origin
+//        }
+//        self[.loadAsArray] = options.loadAsArray
     }
 }
