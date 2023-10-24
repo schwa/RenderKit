@@ -33,16 +33,15 @@ class UnlitMaterialRenderJob: SceneRenderJob {
     var scene: SimpleScene
     var models: [Model]
     private var bucketedDrawStates: [AnyHashable: DrawState] = [:]
-    var textureManager: TextureManager? // TODO: Move to parent
+    var textureManager: TextureManager
 
-    init(scene: SimpleScene, models: [Model]) {
+    init(scene: SimpleScene, textureManager: TextureManager, models: [Model]) {
         self.scene = scene
         self.models = models
+        self.textureManager = textureManager
     }
 
     func setup<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration) throws {
-        textureManager = TextureManager(device: device)
-
         let library = try! device.makeDefaultLibrary(bundle: .shadersBundle)
         bucketedDrawStates = try models.reduce(into: [:]) { partialResult, model in
             let key = Pair(model.mesh.id, model.mesh.vertexDescriptor.encodedDescription)
@@ -111,13 +110,13 @@ class UnlitMaterialRenderJob: SceneRenderJob {
 
                     // TODO: Move to setup.
                     // TODO: needs to be a set() not an array()
-                    let textures: [MTLTexture] = try models.compactMap { model in
+                    let textures: [MTLTexture?] = try models.compactMap { model in
                         guard let texture = (model.material as! UnlitMaterial).baseColorTexture else {
                             return nil
                         }
-                        return try textureManager!.texture(for: texture.resource, options: texture.options)
+                        return try textureManager.texture(for: texture.resource, options: texture.options)
                     }
-                    encoder.setFragmentTextures(textures, range: 0..<textures.count)
+                    encoder.setFragmentTextures(textures.extended(with: nil, count: 128 - textures.count), range: 0..<textures.count)
 
                     let materials = models.enumerated().map { index, model in
                         let color = (model.material as! UnlitMaterial).baseColorFactor

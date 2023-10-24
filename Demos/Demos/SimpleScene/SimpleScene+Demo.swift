@@ -50,7 +50,7 @@ public extension SimpleScene {
 
         let fishModel = Model(
             transform: .translation([0, 1, 0]).rotated(angle: .degrees(90), axis: [0, 1, 0]),
-            material: UnlitMaterial(baseColorFactor: [1, 0, 1, 1], baseColorTexture: .init(resource: BundleResourceReference(bundle: .main, name: "Checkerboard"))),
+            material: UnlitMaterial(baseColorFactor: [1, 0, 1, 1], baseColorTexture: .init(resource: BundleResourceReference(bundle: .main, name: "seamless-foods-mixed-0020"))),
             mesh: try YAMesh(gltf: "BarramundiFish", device: device)
         )
         models.append(fishModel)

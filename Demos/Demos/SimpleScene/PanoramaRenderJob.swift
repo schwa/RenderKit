@@ -15,10 +15,12 @@ class PanoramaRenderJob: SceneRenderJob {
 
     var scene: SimpleScene
     var panorama: Panorama
+    var textureManager: TextureManager
     var textures: [MTLTexture] = []
 
-    init(scene: SimpleScene, panorama: Panorama) {
+    init(scene: SimpleScene, textureManager: TextureManager, panorama: Panorama) {
         self.scene = scene
+        self.textureManager = textureManager
         self.panorama = panorama
     }
 

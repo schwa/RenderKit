@@ -17,10 +17,10 @@ Fragment gridVertexShader(
     SimpleVertex in [[stage_in]],
     ushort instance_id[[instance_id]],
     constant CameraUniforms &cameraUniforms [[buffer(1)]],
-    constant ModelUniforms *instancedModelUniforms [[buffer(2)]]
+    constant ModelTransforms *instancedModelUniforms [[buffer(2)]]
     )
 {
-    const ModelUniforms modelUniforms = instancedModelUniforms[instance_id];
+    const ModelTransforms modelUniforms = instancedModelUniforms[instance_id];
     const float4 modelVertex = modelUniforms.modelViewMatrix * float4(in.position, 1.0);
     return {
         .position = cameraUniforms.projectionMatrix * modelVertex,

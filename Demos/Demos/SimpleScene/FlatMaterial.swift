@@ -31,15 +31,15 @@ class FlatMaterialRenderJob: SceneRenderJob {
     var models: [Model]
     var scene: SimpleScene
     private var bucketedDrawStates: [AnyHashable: DrawState] = [:]
-    var textureManager: TextureManager? // TODO: move to "parent"
+    var textureManager: TextureManager // TODO: move to "parent"
 
-    init(scene: SimpleScene, models: [Model]) {
+    init(scene: SimpleScene, textureManager: TextureManager, models: [Model]) {
         self.scene = scene
         self.models = models
+        self.textureManager = textureManager
     }
 
     func setup<Configuration: MetalConfiguration>(device: MTLDevice, configuration: inout Configuration) throws {
-        textureManager = TextureManager(device: device)
         let library = try! device.makeDefaultLibrary(bundle: .shadersBundle)
         bucketedDrawStates = try models.reduce(into: [:]) { partialResult, model in
             let key = Pair(model.mesh.id, model.mesh.vertexDescriptor.encodedDescription)
@@ -102,7 +102,7 @@ class FlatMaterialRenderJob: SceneRenderJob {
                     guard let texture = (model.material as! FlatMaterial).baseColorTexture else {
                         return nil
                     }
-                    return try textureManager!.texture(for: texture.resource, options: texture.options)
+                    return try textureManager.texture(for: texture.resource, options: texture.options)
                 }
                 encoder.setFragmentTextures(textures, range: 0..<textures.count)
 
@@ -115,13 +115,13 @@ class FlatMaterialRenderJob: SceneRenderJob {
                 encoder.withDebugGroup("Instanced \(key)") {
                     let mesh = models.first!.mesh
                     encoder.setVertexBuffers(mesh)
-                    let modelUniforms = models.map { model in
+                    let modelTransforms = models.map { model in
                         ModelTransforms(
                             modelViewMatrix: inverseCameraMatrix * model.transform.matrix,
                             modelNormalMatrix: simd_float3x3(truncating: model.transform.matrix.transpose.inverse)
                         )
                     }
-                    encoder.setVertexBytes(of: modelUniforms, index: drawState.bindings.vertexModelTransformsIndex)
+                    encoder.setVertexBytes(of: modelTransforms, index: drawState.bindings.vertexModelTransformsIndex)
                     encoder.setTriangleFillMode(.fill)
                     encoder.draw(mesh, instanceCount: models.count)
                 }
@@ -129,5 +129,3 @@ class FlatMaterialRenderJob: SceneRenderJob {
         }
     }
 }
-
-// MARK: -
