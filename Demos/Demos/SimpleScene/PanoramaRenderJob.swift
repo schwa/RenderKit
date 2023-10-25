@@ -59,7 +59,8 @@ class PanoramaRenderJob: SceneRenderJob {
             encoder.setVertexBytes(of: cameraUniforms, index: 1)
             let modelViewMatrix = inverseCameraMatrix * float4x4.translation(scene.camera.transform.translation)
             encoder.setVertexBytes(of: modelViewMatrix, index: 2)
-            let uniforms = PanoramaFragmentUniforms(gridSize: panorama.tilesSize, colorFactor: [1, 1, 1, 1])
+//            let uniforms = PanoramaFragmentUniforms(gridSize: panorama.tilesSize, colorFactor: [1, 1, 1, 1])
+
             encoder.setFragmentBytes(of: uniforms, index: 0)
             encoder.setFragmentTextures(textures, range: 0..<textures.count)
             //encoder.setTriangleFillMode(.fill)

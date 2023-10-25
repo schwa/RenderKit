@@ -9,10 +9,8 @@ struct PanoramaShader {
     struct ModelTransforms modelTransforms;
 
 #ifdef __METAL_VERSION__
-    //texture2d<float> textures;
-    array<texture2d<float, access::sample>, 256> textures2;
-
+    array<texture2d<float, access::sample>, 12> textures;
 #else
-    //void *textures;
+    void *textures;
 #endif
 };
