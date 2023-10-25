@@ -33,7 +33,6 @@ struct GameOfLife {
         var gameOfLifePassB = gameOfLifePassA
         gameOfLifePassB.arguments.inputTexture = .texture(textureB)
         gameOfLifePassB.arguments.outputTexture = .texture(textureA)
-//        print(gameOfLifePassB)
 
         let assetWriter = try AVAssetWriter(outputURL: URL(filePath: "1234.mp4"), fileType: .mp4)
 
