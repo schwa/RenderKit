@@ -13,14 +13,13 @@ struct Fragment {
 [[vertex]]
 Fragment panoramicVertexShader(
     Vertex in [[stage_in]],
-    constant CameraUniforms &cameraUniforms [[buffer(1)]],
-    constant float4x4 &modelViewMatrix [[buffer(2)]]
-)
+    constant PanoramaShader &argument [[buffer(1)]]
+                               )
 {
-    const float4 modelVertex = modelViewMatrix * float4(in.position, 1.0);
+    const float4 modelVertex = argument.modelTransforms.modelViewMatrix * float4(in.position, 1.0);
 //    const float4 modelVertex = float4(in.position, 1.0);
     return {
-        .position = cameraUniforms.projectionMatrix * modelVertex,
+        .position = argument.camera.projectionMatrix * modelVertex,
         .textureCoordinate = in.textureCoordinate
     };
 }
@@ -28,7 +27,7 @@ Fragment panoramicVertexShader(
 [[fragment]]
 vector_float4 panoramicFragmentShader(
     Fragment in [[stage_in]],
-    constant PanoramaFragmentUniforms &uniforms[[buffer(0)]],
+    device PanoramaShader &argument [[buffer(1)]],
     array<texture2d<float, access::sample>, 12> tiles [[texture(0)]]
     )
 {
@@ -39,8 +38,8 @@ vector_float4 panoramicFragmentShader(
         color = texture.sample(RenderKitShaders::basicSampler, in.textureCoordinate);
     }
     else {
-        const float2 denormalizedTextureCoordinate = in.textureCoordinate * float2(uniforms.gridSize);
-        const ushort textureIndex = clamp(ushort(denormalizedTextureCoordinate.y) * uniforms.gridSize.x + ushort(denormalizedTextureCoordinate.x), 0, ushort(tiles.size()) - 1);
+        const float2 denormalizedTextureCoordinate = in.textureCoordinate * float2(argument.gridSize);
+        const ushort textureIndex = clamp(ushort(denormalizedTextureCoordinate.y) * argument.gridSize.x + ushort(denormalizedTextureCoordinate.x), 0, ushort(tiles.size()) - 1);
         const float2 textureCoordinate = denormalizedTextureCoordinate - floor(denormalizedTextureCoordinate);
         const auto texture = tiles[textureIndex];
         //    const float d = 1.0 / float(texture.get_width());
@@ -49,6 +48,6 @@ vector_float4 panoramicFragmentShader(
         //    }
         color = texture.sample(RenderKitShaders::basicSampler, textureCoordinate);
     }
-    color *= uniforms.colorFactor;
+    color *= argument.colorFactor;
     return color;
 }

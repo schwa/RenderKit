@@ -1,11 +1,6 @@
 #import "RenderKitShaders.h"
 #import "CommonTypes.h"
 
-struct PanoramaFragmentUniforms {
-    simd_ushort2 gridSize;
-    float4 colorFactor;
-};
-
 struct PanoramaShader {
     simd_ushort2 gridSize;
     float4 colorFactor;
@@ -14,8 +9,10 @@ struct PanoramaShader {
     struct ModelTransforms modelTransforms;
 
 #ifdef __METAL_VERSION__
-    device texture2d<float> *textures;
+    //texture2d<float> textures;
+    array<texture2d<float, access::sample>, 256> textures2;
+
 #else
-    void *textures;
+    //void *textures;
 #endif
 };
