@@ -116,15 +116,6 @@
         "branch" : "jwight/develop",
         "revision" : "f374684b5fd037bce0d57adbdf756e2d5630b8b3"
       }
-    },
-    {
-      "identity" : "tomlkit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/LebJe/TOMLKit.git",
-      "state" : {
-        "revision" : "404c4dd011743461bff12d00a5118d0ed59d630c",
-        "version" : "0.5.5"
-      }
     }
   ],
   "version" : 2

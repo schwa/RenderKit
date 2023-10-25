@@ -19,7 +19,10 @@ public struct BitonicSortDemo {
             return device.makeBuffer(bytes: buffer.baseAddress!, length: buffer.count)!
         }
         print("Preparing compute.", stopWatch)
-        let function = ShaderLibrary.default.bitonicSort
+
+        print(Bundle.module.bundlePath)
+
+        let function = ShaderLibrary.bundle(.module).bitonicSort
         let numStages = Int(log2(nextPowerOfTwo(Double(numEntries))))
 
         let compute = try Compute(device: device)

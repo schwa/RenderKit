@@ -75,34 +75,37 @@ float3 implVoronoiNoise(float3 value){
 
 // MARK: -
 
-kernel void voronoiNoiseCompute(
-    constant float2 &size [[buffer(0)]],
-    constant float2 &offset [[buffer(1)]],
-    constant short &mode [[buffer(2)]],
-    texture2d<float, access::write> outputTexture [[texture(3)]],
+struct VoronoiNoise {
+    float2 size;
+    float2 offset;
+    short mode;
+    texture2d<float, access::write> outputTexture;
+};
+
+[[kernel]]
+void voronoiNoiseCompute(
+    constant VoronoiNoise &argument[[buffer(0)]],
     uint2 gid [[thread_position_in_grid]]
 ) {
-    auto noise = implVoronoiNoise(float3((float2(gid.x, gid.y) + offset) / size, 0));
+    auto noise = implVoronoiNoise(float3((float2(gid.x, gid.y) + argument.offset) / argument.size, 0));
     float4 color;
-    if (mode == 0) {
+    if (argument.mode == 0) {
         float value = noise.x;
         color = float4(value, value, value, 1);
     }
-    else if (mode == 1) {
+    else if (argument.mode == 1) {
         color = float4(rand1dTo3d(noise.y), 1);
     }
-    else if (mode == 2) {
+    else if (argument.mode == 2) {
         float value = noise.z;
         color = float4(value, value, value, 1);
     }
-    else if (mode == 3) {
+    else if (argument.mode == 3) {
         float value = step(noise.z, 0.05);
         color = float4(value, value, value, 1);
     }
     else {
         color = float4(1, 0, 1, 1);
     }
-
-
-    outputTexture.write(color, gid);
+    argument.outputTexture.write(color, gid);
 }

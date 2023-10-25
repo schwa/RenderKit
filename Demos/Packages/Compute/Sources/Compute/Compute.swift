@@ -1,33 +1,5 @@
 import Metal
 
-@dynamicMemberLookup
-public struct ShaderLibrary {
-    public static var `default` = ShaderLibrary()
-
-    public subscript(dynamicMember name: String) -> ShaderFunction {
-        return ShaderFunction(library: self, name: name)
-    }
-}
-
-public extension MTLDevice {
-    func makeLibrary(_ library: ShaderLibrary) throws -> MTLLibrary {
-        let bundle = Bundle.module
-        return try makeDefaultLibrary(bundle: bundle)
-    }
-}
-
-public struct ShaderFunction {
-    public var library: ShaderLibrary
-    public var name: String
-
-    public init(library: ShaderLibrary, name: String) {
-        self.library = library
-        self.name = name
-    }
-}
-
-// MARK: -
-
 public struct Compute {
     public let device: MTLDevice
     let commandQueue: MTLCommandQueue

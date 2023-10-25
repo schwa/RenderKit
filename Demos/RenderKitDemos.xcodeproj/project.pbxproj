@@ -57,7 +57,6 @@
 		455741D62AC658060050267D /* Testcard_09.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 455741CA2AC658060050267D /* Testcard_09.ktx */; };
 		455741D72AC658060050267D /* Testcard_08.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 455741CB2AC658060050267D /* Testcard_08.ktx */; };
 		4558221B2AE5A2A700189306 /* PanoramaRenderJob.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4558221A2AE5A2A700189306 /* PanoramaRenderJob.swift */; };
-		4558221D2AE60FF500189306 /* ShaderFunction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4558221C2AE60FF500189306 /* ShaderFunction.swift */; };
 		45650DE22ACCE5CE009F2AF2 /* OffscreenDemo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45650DE12ACCE5CE009F2AF2 /* OffscreenDemo.swift */; };
 		45650DE62ACCEA09009F2AF2 /* SwiftGLTF in Frameworks */ = {isa = PBXBuildFile; productRef = 45650DE52ACCEA09009F2AF2 /* SwiftGLTF */; };
 		45650DE82ACCEA45009F2AF2 /* BarramundiFish.glb in Resources */ = {isa = PBXBuildFile; fileRef = 45650DE72ACCEA45009F2AF2 /* BarramundiFish.glb */; };
@@ -114,6 +113,7 @@
 		451337B32AE861BC009F670B /* TextureManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextureManager.swift; sourceTree = "<group>"; };
 		451337B52AE86B00009F670B /* UnlitMaterial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnlitMaterial.swift; sourceTree = "<group>"; };
 		451337B72AE86B68009F670B /* FlatMaterial.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlatMaterial.swift; sourceTree = "<group>"; };
+		4519D4432AE99B2B0047DA10 /* Compute */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Compute; sourceTree = "<group>"; };
 		452235AB2AE6F19E00CD89A3 /* Names.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Names.swift; sourceTree = "<group>"; };
 		452235AD2AE6F1F800CD89A3 /* nouns.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = nouns.txt; sourceTree = "<group>"; };
 		452235AE2AE6F1F800CD89A3 /* adjectives.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = adjectives.txt; sourceTree = "<group>"; };
@@ -164,9 +164,7 @@
 		455741CB2AC658060050267D /* Testcard_08.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = Testcard_08.ktx; sourceTree = "<group>"; };
 		455822172AE59E3B00189306 /* TODO.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = TODO.md; path = ../TODO.md; sourceTree = "<group>"; };
 		455822182AE59E5000189306 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; name = README.md; path = ../README.md; sourceTree = "<group>"; };
-		455822192AE59FFB00189306 /* BitonicSort */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = BitonicSort; sourceTree = "<group>"; };
 		4558221A2AE5A2A700189306 /* PanoramaRenderJob.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanoramaRenderJob.swift; sourceTree = "<group>"; };
-		4558221C2AE60FF500189306 /* ShaderFunction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShaderFunction.swift; sourceTree = "<group>"; };
 		45650DE12ACCE5CE009F2AF2 /* OffscreenDemo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OffscreenDemo.swift; sourceTree = "<group>"; };
 		45650DE32ACCE5FA009F2AF2 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		45650DE72ACCEA45009F2AF2 /* BarramundiFish.glb */ = {isa = PBXFileReference; lastKnownFileType = file; path = BarramundiFish.glb; sourceTree = "<group>"; };
@@ -190,7 +188,6 @@
 		4570E2C62AC711A200B3B64D /* perseverance_06.ktx */ = {isa = PBXFileReference; lastKnownFileType = file; path = perseverance_06.ktx; sourceTree = "<group>"; };
 		457861502AE32EA0005DABD6 /* Particles2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Particles2.swift; sourceTree = "<group>"; };
 		457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContentView-VisionOS.swift"; sourceTree = "<group>"; };
-		45873CA32AE435E90043D96A /* Compute */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = Compute; sourceTree = "<group>"; };
 		459E755C2AC1EF6F004BC055 /* SimpleMesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleMesh.swift; sourceTree = "<group>"; };
 		459EDA552A494C0600F9211C /* CLI */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CLI; sourceTree = BUILT_PRODUCTS_DIR; };
 		459EDA572A494C0700F9211C /* CLI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLI.swift; sourceTree = "<group>"; };
@@ -241,9 +238,8 @@
 		4519014A2AE36FD6004722F2 /* Packages */ = {
 			isa = PBXGroup;
 			children = (
-				455822192AE59FFB00189306 /* BitonicSort */,
+				4519D4432AE99B2B0047DA10 /* Compute */,
 				453A4A412AE43C7F00838CF5 /* DemosSupport */,
-				45873CA32AE435E90043D96A /* Compute */,
 			);
 			path = Packages;
 			sourceTree = "<group>";
@@ -361,7 +357,6 @@
 				45650DEB2ACCEAEA009F2AF2 /* GLTF+YAMesh.swift */,
 				459FAE542ACDFCAD000018E2 /* YAMesh.swift */,
 				45B1D71D2ACFB25600960D02 /* YAMesh+Conversion.swift */,
-				4558221C2AE60FF500189306 /* ShaderFunction.swift */,
 				4555A0412ABE2BF00088CFFB /* SimpleSceneMapView.swift */,
 				4555A0452ABE2BF00088CFFB /* SimpleSceneInspector.swift */,
 				451337B32AE861BC009F670B /* TextureManager.swift */,
@@ -648,7 +643,6 @@
 				456C5BA12ADA3D4E00C4AD0D /* Gradient.swift in Sources */,
 				4555A05C2ABE2D030088CFFB /* DisplayLink.swift in Sources */,
 				4555A0512ABE2CD80088CFFB /* SimpleScene.swift in Sources */,
-				4558221D2AE60FF500189306 /* ShaderFunction.swift in Sources */,
 				4558221B2AE5A2A700189306 /* PanoramaRenderJob.swift in Sources */,
 				459FAE552ACDFCAD000018E2 /* YAMesh.swift in Sources */,
 				4555A0542ABE2CD80088CFFB /* BallRotationModifier.swift in Sources */,

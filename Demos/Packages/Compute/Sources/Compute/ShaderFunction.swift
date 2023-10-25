@@ -4,7 +4,7 @@ import Metal
 public struct ShaderLibrary {
     public static var `default` = ShaderLibrary.bundle(.main)
 
-    static func bundle(_ bundle: Bundle) -> Self {
+    public static func bundle(_ bundle: Bundle) -> Self {
         return Self(bundle: bundle)
     }
 
@@ -21,8 +21,7 @@ public struct ShaderLibrary {
 
 public extension MTLDevice {
     func makeLibrary(_ library: ShaderLibrary) throws -> MTLLibrary {
-        let bundle = Bundle.main
-        return try makeDefaultLibrary(bundle: bundle)
+        return try makeDefaultLibrary(bundle: library.bundle)
     }
 }
 

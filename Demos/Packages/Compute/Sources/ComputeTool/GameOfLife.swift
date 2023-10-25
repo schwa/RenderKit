@@ -18,10 +18,14 @@ struct GameOfLife {
 
         let compute = try Compute(device: device)
 
-        var randomFillPass = try compute.makePass(function: ShaderLibrary.default.randomFill_uint)
+        print(Bundle.module.bundlePath)
+
+        let library = ShaderLibrary.bundle(.module)
+
+        var randomFillPass = try compute.makePass(function: library.randomFill_uint)
         randomFillPass.arguments.outputTexture = .texture(textureA)
 
-        var gameOfLifePassA = try compute.makePass(function: ShaderLibrary.default.gameOfLife_uint, constants: ["wrap": .bool(false)])
+        var gameOfLifePassA = try compute.makePass(function: library.gameOfLife_uint, constants: ["wrap": .bool(false)])
         gameOfLifePassA.arguments.inputTexture = .texture(textureA)
         gameOfLifePassA.arguments.outputTexture = .texture(textureB)
 //        print(gameOfLifePassA)
