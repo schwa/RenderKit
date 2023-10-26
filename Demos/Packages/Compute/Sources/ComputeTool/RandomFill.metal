@@ -13,28 +13,20 @@ float random(float2 p)
   return fract(cos(fmod(123456789.0, 1e-7 + 256.0 * dot(p,r))));
 }
 
-template <typename T> void randomFillGeneric(
-    uint2 gid,
-    texture2d<T, access::write> outputTexture
-    )
-{
-    const float2 id = float2(gid);
-    outputTexture.write(random(id) > 0.5 ? 1 : 0, gid);
-}
-
-
 [[kernel]]
 void randomFill_uint(
-    uint2 gid [[thread_position_in_grid]],
+    uint2 thread_position_in_grid [[thread_position_in_grid]],
     texture2d<uint, access::write> outputTexture [[texture(1)]])
 {
-    randomFillGeneric<uint>(gid, outputTexture);
+    const float2 id = float2(thread_position_in_grid);
+    outputTexture.write(random(id) > 0.5 ? 255 : 0, thread_position_in_grid);
 }
 
 [[kernel]]
 void randomFill_float(
-    uint2 gid [[thread_position_in_grid]],
+    uint2 thread_position_in_grid [[thread_position_in_grid]],
     texture2d<float, access::write> outputTexture [[texture(1)]])
 {
-    randomFillGeneric<float>(gid, outputTexture);
+    const float2 id = float2(thread_position_in_grid);
+    outputTexture.write(random(id) > 0.5 ? 1 : 0, thread_position_in_grid);
 }

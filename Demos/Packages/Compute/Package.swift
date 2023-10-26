@@ -9,11 +9,17 @@ let package = Package(
         .library(name: "Compute",
             targets: ["Compute"]),
     ],
+    dependencies: [
+        .package(url: "https://github.com/schwa/SwiftGraphics", branch: "jwight/develop")
+    ],
     targets: [
-        .target(name: "Compute"),
+        .target(name: "Compute", dependencies: [
+            .product(name: "MetalSupport", package: "SwiftGraphics"),
+            .product(name: "CoreGraphicsSupport", package: "SwiftGraphics"),
+        ]),
         .executableTarget(name: "ComputeTool", dependencies: ["Compute"], resources: [
             .process("BitonicSort.metal"),
-            .process("GPULifeKernel.metal"),
+            .process("GameOfLife.metal"),
             .process("RandomFill.metal"),
         ]),
     ]

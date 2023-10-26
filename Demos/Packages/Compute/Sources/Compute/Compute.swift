@@ -47,12 +47,12 @@ public extension Compute {
             let computePipelineDescriptor = MTLComputePipelineDescriptor()
             computePipelineDescriptor.threadGroupSizeIsMultipleOfThreadExecutionWidth = false
             computePipelineDescriptor.computeFunction = function
-            let reflection: MTLComputePipelineReflection?
-            (computePipelineState, reflection) = try device.makeComputePipelineState(descriptor: computePipelineDescriptor, options: [.argumentInfo])
+            let (computePipelineState, reflection) = try device.makeComputePipelineState(descriptor: computePipelineDescriptor, options: [.argumentInfo])
             bindings = Dictionary(uniqueKeysWithValues: reflection!.bindings.map { binding in
                 return (binding.name, binding.index)
             })
 
+            self.computePipelineState = computePipelineState
             self.arguments = Arguments(arguments: arguments)
         }
 

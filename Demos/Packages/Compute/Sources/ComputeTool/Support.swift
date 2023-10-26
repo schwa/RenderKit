@@ -47,3 +47,28 @@ public extension MTLSize {
         self = MTLSize(width: width, height: 1, depth: 1)
     }
 }
+
+extension MTLTexture {
+    func toString() -> String {
+        assert(pixelFormat == .r8Uint)
+        assert(depth == 1)
+
+        let size = width * height * depth
+
+        // TODO: Assumes width is aligned correctly
+        var buffer = Array(repeating: UInt8.zero, count: size)
+
+        buffer.withUnsafeMutableBytes { buffer in
+            getBytes(buffer.baseAddress!, bytesPerRow: width, from: MTLRegion(origin: MTLOrigin(x: 0, y: 0, z: 0), size: MTLSize(width: width, height: height, depth: depth)), mipmapLevel: 0)
+        }
+
+        var s = ""
+        for row in 0..<height {
+            let chunk = buffer[row * width ..< (row + 1) * width]
+            s += chunk.map { String($0) }.joined()
+            s += "\n"
+        }
+
+        return s
+    }
+}
