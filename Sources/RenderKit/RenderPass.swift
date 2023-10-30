@@ -3,18 +3,10 @@ import Metal
 
 public protocol MetalConfiguration {
     var colorPixelFormat: MTLPixelFormat { get set }
+    var clearColor: MTLClearColor { get set }
     var depthStencilPixelFormat: MTLPixelFormat { get set }
     var depthStencilStorageMode: MTLStorageMode { get set }
     var clearDepth: Double { get set }
-}
-
-public struct MetalViewConfiguration: MetalConfiguration {
-    // TODO: Fully expand this.
-    public var colorPixelFormat: MTLPixelFormat
-    public var depthStencilPixelFormat: MTLPixelFormat
-    public var depthStencilStorageMode: MTLStorageMode
-    public var clearDepth: Double
-    public var preferredFramesPerSecond: Int
 }
 
 // MARK: -

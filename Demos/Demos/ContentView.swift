@@ -9,9 +9,10 @@ struct ContentView: View {
         case simpleSceneExtended = "Simple Scene (Extended)"
         case volumetric = "Volumetric"
 //        case gltf = "GLTF"
-        case simulationSUI = "simulationSUI"
+        case simulationSUI
 //        case screenSpaceDemoView = "ScreenSpaceDemoView"
-        case particles2 = "particles2"
+        case particles2
+        case pixelFormats
     }
 
     @State
@@ -58,6 +59,8 @@ struct ContentView: View {
 //                    ScreenSpaceDemoView()
                 case .particles2:
                     Particles2View()
+                case .pixelFormats:
+                    PixelFormatsView()
                 }
             }
         }

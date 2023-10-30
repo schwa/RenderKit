@@ -32,7 +32,7 @@ Fragment unlitVertexShader(
 vector_float4 unlitFragmentShader(
     Fragment in [[stage_in]],
     constant UnlitMaterial *materials [[buffer(0)]],
-    array<texture2d<float, access::sample>, 128> textures [[texture(0)]]
+    array<texture2d<float, access::sample>, 1> textures [[texture(0)]]
     )
 {
     float4 color;

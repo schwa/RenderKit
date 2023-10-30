@@ -4,6 +4,17 @@ import Everything
 import MetalKit
 import Observation
 
+public struct MetalViewConfiguration: MetalConfiguration {
+    // TODO: Fully expand this.
+    public var colorPixelFormat: MTLPixelFormat
+    public var clearColor: MTLClearColor
+    public var depthStencilPixelFormat: MTLPixelFormat
+    public var depthStencilStorageMode: MTLStorageMode
+    public var clearDepth: Double
+    public var preferredFramesPerSecond: Int
+    public var enableSetNeedsDisplay: Bool
+}
+
 public struct MetalView: View {
     public typealias Setup = (MTLDevice, inout MetalViewConfiguration) throws -> Void
     public typealias DrawableSizeWillChange = (MTLDevice, inout MetalViewConfiguration, CGSize) throws -> Void
@@ -25,7 +36,7 @@ public struct MetalView: View {
     let drawableSizeWillChange: MetalView.DrawableSizeWillChange
     let draw: MetalView.Draw
 
-    init(setup: @escaping Setup, drawableSizeWillChange: @escaping DrawableSizeWillChange, draw: @escaping Draw) {
+    public init(setup: @escaping Setup, drawableSizeWillChange: @escaping DrawableSizeWillChange, draw: @escaping Draw) {
         self.setup = setup
         self.drawableSizeWillChange = drawableSizeWillChange
         self.draw = draw
@@ -43,6 +54,7 @@ public struct MetalView: View {
                     model.view = view
                     view.device = device
                     view.delegate = model
+                    view.layer?.isOpaque = false
                     return view
                 } update: { _ in
                 }
@@ -94,6 +106,10 @@ internal class MetalViewModel: NSObject, MTKViewDelegate {
             var configuration = view.configuration
             try drawableSizeWillChange(device, &configuration, size)
             view.configuration = configuration
+            // Automatically mark as needs display if configured to enableSetNeedsDisplay. This should not be controversial.
+            if view.enableSetNeedsDisplay {
+                view.needsDisplay = true
+            }
         }
         catch {
             set(error: error)
@@ -122,15 +138,20 @@ internal extension MTKView {
         get {
             return .init(
                 colorPixelFormat: colorPixelFormat,
+                clearColor: clearColor,
                 depthStencilPixelFormat: depthStencilPixelFormat,
                 depthStencilStorageMode: depthStencilStorageMode,
                 clearDepth: clearDepth,
-                preferredFramesPerSecond: preferredFramesPerSecond
+                preferredFramesPerSecond: preferredFramesPerSecond,
+                enableSetNeedsDisplay: enableSetNeedsDisplay
             )
         }
         set {
             if newValue.colorPixelFormat != colorPixelFormat {
                 colorPixelFormat = newValue.colorPixelFormat
+            }
+            if SIMD4(newValue.clearColor) != SIMD4(clearColor) {
+                clearColor = newValue.clearColor
             }
             if newValue.depthStencilPixelFormat != depthStencilPixelFormat {
                 depthStencilPixelFormat = newValue.depthStencilPixelFormat
@@ -144,7 +165,16 @@ internal extension MTKView {
             if newValue.preferredFramesPerSecond != preferredFramesPerSecond {
                 preferredFramesPerSecond = newValue.preferredFramesPerSecond
             }
+            if newValue.enableSetNeedsDisplay != enableSetNeedsDisplay {
+                enableSetNeedsDisplay = newValue.enableSetNeedsDisplay
+            }
         }
     }
 }
 #endif
+
+extension SIMD4<Double> {
+    init(_ clearColor: MTLClearColor) {
+        self = [clearColor.red, clearColor.green, clearColor.blue, clearColor.alpha]
+    }
+}

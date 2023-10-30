@@ -13,6 +13,7 @@ public struct OffscreenRenderPassConfiguration: MetalConfiguration {
     public let device: MTLDevice
 
     public var colorPixelFormat: MTLPixelFormat = .bgra8Unorm
+    public var clearColor: MTLClearColor = .init(red: 0, green: 0, blue: 0, alpha: 1.0)
     public var depthStencilPixelFormat: MTLPixelFormat = .invalid
     public var depthStencilStorageMode: MTLStorageMode = .shared
     public var clearDepth: Double = 1.0
@@ -20,7 +21,6 @@ public struct OffscreenRenderPassConfiguration: MetalConfiguration {
     internal var currentDrawable: CAMetalDrawable?
     internal var depthStencilAttachmentTextureUsage: MTLTextureUsage = .renderTarget
     internal var depthStencilTexture: MTLTexture?
-    internal var clearColor: MTLClearColor = .init(red: 0, green: 0, blue: 0, alpha: 1.0)
 
     public var currentRenderPassDescriptor: MTLRenderPassDescriptor?
     public var targetTexture: MTLTexture?

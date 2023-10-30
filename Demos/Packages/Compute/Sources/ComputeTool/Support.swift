@@ -1,5 +1,11 @@
-import Foundation
 import Metal
+import Foundation
+import Compute
+import MetalSupport
+import CoreGraphicsSupport
+import CoreGraphics
+import AppKit
+import RenderKit
 
 class StopWatch: CustomStringConvertible {
     var last: CFAbsoluteTime?
@@ -70,5 +76,29 @@ extension MTLTexture {
         }
 
         return s
+    }
+}
+
+extension CGImage {
+    static func makeTestImage(width: Int, height: Int) -> CGImage? {
+        guard let context = CGContext.bitmapContext(definition: .init(width: width, height: height, pixelFormat: .rgba8)) else {
+            return nil
+        }
+        let rect = CGRect(width: CGFloat(width), height: CGFloat(height))
+        let size2 = rect.size / 2
+        context.setFillColor(CGColor(red: 1, green: 0, blue: 0, alpha: 1))
+        context.fill([CGRect(origin: rect.minXMinY, size: size2)])
+        context.setFillColor(CGColor(red: 0, green: 1, blue: 0, alpha: 1))
+        context.fill([CGRect(origin: rect.midXMinY, size: size2)])
+        context.setFillColor(CGColor(red: 0, green: 0, blue: 1, alpha: 1))
+        context.fill([CGRect(origin: rect.minXMidY, size: size2)])
+
+        var locations: [CGFloat] = [0, 1]
+        let colors = [CGColor(red: 1, green: 1, blue: 1, alpha: 0), CGColor(red: 1, green: 1, blue: 1, alpha: 1)]
+        let gradient = CGGradient(colorsSpace: context.colorSpace!, colors: colors as CFArray, locations: &locations)!
+
+        context.clip(to: [CGRect(origin: rect.midXMidY, size: size2)])
+        context.drawLinearGradient(gradient, start: rect.midXMidY, end: rect.maxXMaxY, options: [.drawsBeforeStartLocation, .drawsAfterEndLocation])
+        return context.makeImage()
     }
 }
