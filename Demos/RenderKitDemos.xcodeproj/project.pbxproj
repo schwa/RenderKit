@@ -83,12 +83,10 @@
 		457D4F1F2ABD1634004CCD9D /* ContentView-VisionOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */; };
 		459E755D2AC1EF6F004BC055 /* SimpleMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459E755C2AC1EF6F004BC055 /* SimpleMesh.swift */; };
 		459EDA582A494C0700F9211C /* CLI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459EDA572A494C0700F9211C /* CLI.swift */; };
-		459FAE552ACDFCAD000018E2 /* YAMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459FAE542ACDFCAD000018E2 /* YAMesh.swift */; };
 		45AA935B2AEB022800AA3EAD /* TextureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45AA935A2AEB022800AA3EAD /* TextureView.swift */; };
 		45B1D71E2ACFB25600960D02 /* YAMesh+Conversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B1D71D2ACFB25600960D02 /* YAMesh+Conversion.swift */; };
 		45B2E2502AD7426900A2E7A1 /* Particles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B2E24F2AD7426900A2E7A1 /* Particles.swift */; };
 		45BEC1212ABE3480001730AB /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45BEC11F2ABE3480001730AB /* Cache.swift */; };
-		45BEC1222ABE3480001730AB /* LOLID2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45BEC1202ABE3480001730AB /* LOLID2.swift */; };
 		45F588142ABD4BD700ADE82B /* RenderKit in Frameworks */ = {isa = PBXBuildFile; productRef = 45F588132ABD4BD700ADE82B /* RenderKit */; };
 		45F5E51C2AC5E7A2003FBEBD /* RenderKit in Frameworks */ = {isa = PBXBuildFile; productRef = 459F48662A5077A300623EEE /* RenderKit */; };
 		45F8C55C2AE1AAB200F01290 /* ScreenSpaceDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45F8C55B2AE1AAB200F01290 /* ScreenSpaceDemoView.swift */; };
@@ -195,7 +193,6 @@
 		459EDA552A494C0600F9211C /* CLI */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = CLI; sourceTree = BUILT_PRODUCTS_DIR; };
 		459EDA572A494C0700F9211C /* CLI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLI.swift; sourceTree = "<group>"; };
 		459F48632A50776C00623EEE /* RenderKit */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = RenderKit; path = ..; sourceTree = "<group>"; };
-		459FAE542ACDFCAD000018E2 /* YAMesh.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YAMesh.swift; sourceTree = "<group>"; };
 		45A147BC2A4B1B7300C06FE1 /* CLI-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "CLI-Release.xcconfig"; sourceTree = "<group>"; };
 		45A147BD2A4B1B7300C06FE1 /* Project-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "Project-Release.xcconfig"; sourceTree = "<group>"; };
 		45A147BE2A4B1B7300C06FE1 /* CLI-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "CLI-Debug.xcconfig"; sourceTree = "<group>"; };
@@ -209,7 +206,6 @@
 		45B1D71D2ACFB25600960D02 /* YAMesh+Conversion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "YAMesh+Conversion.swift"; sourceTree = "<group>"; };
 		45B2E24F2AD7426900A2E7A1 /* Particles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Particles.swift; sourceTree = "<group>"; };
 		45BEC11F2ABE3480001730AB /* Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
-		45BEC1202ABE3480001730AB /* LOLID2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LOLID2.swift; sourceTree = "<group>"; };
 		45F8C55B2AE1AAB200F01290 /* ScreenSpaceDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenSpaceDemoView.swift; sourceTree = "<group>"; };
 		45FAACBB2ACCF54C006C31BD /* Resources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resources.swift; sourceTree = "<group>"; };
 		45FB2CA12AE19A0F008824D4 /* SimpleJobsBasedRenderPass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleJobsBasedRenderPass.swift; sourceTree = "<group>"; };
@@ -361,7 +357,6 @@
 				4555A0482ABE2BF00088CFFB /* SimpleScene.swift */,
 				452235B12AE7090A00CD89A3 /* SimpleScene+Demo.swift */,
 				45650DEB2ACCEAEA009F2AF2 /* GLTF+YAMesh.swift */,
-				459FAE542ACDFCAD000018E2 /* YAMesh.swift */,
 				45B1D71D2ACFB25600960D02 /* YAMesh+Conversion.swift */,
 				4555A0412ABE2BF00088CFFB /* SimpleSceneMapView.swift */,
 				4555A0452ABE2BF00088CFFB /* SimpleSceneInspector.swift */,
@@ -387,7 +382,6 @@
 				452235B32AE738FD00CD89A3 /* Bindings.swift */,
 				4555A05F2ABE2D260088CFFB /* Counters.swift */,
 				45BEC11F2ABE3480001730AB /* Cache.swift */,
-				45BEC1202ABE3480001730AB /* LOLID2.swift */,
 				4555A0472ABE2BF00088CFFB /* Projections.swift */,
 				4555A0652ABE2E7E0088CFFB /* Support.swift */,
 				45FAACBB2ACCF54C006C31BD /* Resources.swift */,
@@ -624,7 +618,6 @@
 				4555A0562ABE2CDD0088CFFB /* ShaderToy.metal in Sources */,
 				451337B62AE86B00009F670B /* UnlitMaterial.swift in Sources */,
 				453D32BA2A48D06500FCEE29 /* ContentView.swift in Sources */,
-				45BEC1222ABE3480001730AB /* LOLID2.swift in Sources */,
 				453532572ADB426000B9745A /* ParticlesRenderJob.swift in Sources */,
 				4555A0622ABE2D590088CFFB /* Logging.swift in Sources */,
 				45AA935B2AEB022800AA3EAD /* TextureView.swift in Sources */,
@@ -652,7 +645,6 @@
 				4555A05C2ABE2D030088CFFB /* DisplayLink.swift in Sources */,
 				4555A0512ABE2CD80088CFFB /* SimpleScene.swift in Sources */,
 				4558221B2AE5A2A700189306 /* PanoramaRenderJob.swift in Sources */,
-				459FAE552ACDFCAD000018E2 /* YAMesh.swift in Sources */,
 				4555A0542ABE2CD80088CFFB /* BallRotationModifier.swift in Sources */,
 				4555A0552ABE2CDD0088CFFB /* ShaderToyView.swift in Sources */,
 				4555A05E2ABE2D100088CFFB /* GameControllerWidget.swift in Sources */,

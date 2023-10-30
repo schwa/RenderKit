@@ -1,7 +1,6 @@
 import Metal
 import MetalKit
 import ModelIO
-import RenderKit
 
 // TODO: -> Semantics
 //struct Semantic: OptionSet, Hashable, Sendable {

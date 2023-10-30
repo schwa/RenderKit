@@ -4,6 +4,7 @@ import Foundation
 @main
 struct Main {
     static func main() async throws {
-        try await OffscreenDemo.main()
+//        try await OffscreenDemo.main()
+
     }
 }

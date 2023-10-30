@@ -61,7 +61,7 @@ extension YAMesh {
             return buffer
         }
 
-        var bufferViews: [BufferView] = []
+        var bufferViews: [RenderKit.BufferView] = []
 
         let semantics: [(SwiftGLTF.Mesh.Primitive.Semantic, Semantic, Int)] = [
             (.POSITION, .position, 10),
