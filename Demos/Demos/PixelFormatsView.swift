@@ -250,7 +250,7 @@ extension MTLPixelFormat {
 
 extension MTLPixelFormat: CaseIterable {
     public static var allCases: [MTLPixelFormat] {
-        return [
+        let baseCases: [MTLPixelFormat] = [
         .invalid,
         .a8Unorm,
         .r8Unorm,
@@ -386,11 +386,18 @@ extension MTLPixelFormat: CaseIterable {
         .depth16Unorm,
         .depth32Float,
         .stencil8,
-        .depth24Unorm_stencil8,
         .depth32Float_stencil8,
         .x32_stencil8,
-        .x24_stencil8,
         ]
+
+        #if os(macOS)
+        return baseCases + [
+            .depth24Unorm_stencil8,
+            .x24_stencil8,
+        ]
+        #else
+        return baseCases
+        #endif
     }
 }
 
