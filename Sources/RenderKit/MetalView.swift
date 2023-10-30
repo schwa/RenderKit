@@ -54,7 +54,9 @@ public struct MetalView: View {
                     model.view = view
                     view.device = device
                     view.delegate = model
+                    #if os(macOS)
                     view.layer?.isOpaque = false
+                    #endif
                     return view
                 } update: { _ in
                 }
@@ -108,7 +110,9 @@ internal class MetalViewModel: NSObject, MTKViewDelegate {
             view.configuration = configuration
             // Automatically mark as needs display if configured to enableSetNeedsDisplay. This should not be controversial.
             if view.enableSetNeedsDisplay {
+                #if os(macOS)
                 view.needsDisplay = true
+                #endif
             }
         }
         catch {
