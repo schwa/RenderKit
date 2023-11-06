@@ -26,9 +26,9 @@ final class VertexDescriptorTests: XCTestCase {
         XCTAssertEqual(mtl.layouts[0].stride, 32)
 
         var d2 = try VertexDescriptor(mtl)
-        XCTAssertEqual(d2.layouts[0].attributes[0].semantic, .undefined)
-        XCTAssertEqual(d2.layouts[0].attributes[1].semantic, .undefined)
-        XCTAssertEqual(d2.layouts[0].attributes[2].semantic, .undefined)
+        XCTAssertNil(d2.layouts[0].attributes[0].semantic)
+        XCTAssertNil(d2.layouts[0].attributes[1].semantic)
+        XCTAssertNil(d2.layouts[0].attributes[2].semantic)
         d2.layouts[0].attributes[0].semantic = .position
         d2.layouts[0].attributes[1].semantic = .normal
         d2.layouts[0].attributes[2].semantic = .textureCoordinate

@@ -8,7 +8,7 @@ let package = Package(
         .iOS(.v17),
         .macOS(.v14),
         .macCatalyst(.v17),
-//        .tvOS(.v16),
+        .tvOS(.v17),
         .visionOS(.v1),
     ],
     products: [
@@ -18,7 +18,7 @@ let package = Package(
     dependencies: [
         .package(url: "https://github.com/schwa/Everything", branch: "jwight/downsizing"),
         .package(url: "https://github.com/schwa/SwiftGraphics", branch: "jwight/develop"),
-        .package(url: "https://github.com/apple/swift-algorithms", from: "1.0.0"),
+        .package(url: "https://github.com/apple/swift-algorithms", from: "1.1.0"),
         .package(url: "https://github.com/apple/swift-async-algorithms", from: "0.1.0"),
         .package(url: "https://github.com/schwa/swiftformats", from: "0.3.3"),
         .package(url: "https://github.com/schwa/swiftfields", from: "0.1.3"),
