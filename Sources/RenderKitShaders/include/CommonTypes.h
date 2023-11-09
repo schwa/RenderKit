@@ -15,8 +15,8 @@ typedef struct {
 } PackedFloat3;
 
 struct SimpleVertex {
-    PackedFloat3 position;
-    PackedFloat3 normal;
+    PackedFloat3 packedPosition;
+    PackedFloat3 packedNormal;
     float2 textureCoordinate;
 };
 #endif

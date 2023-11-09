@@ -13,6 +13,7 @@ let package = Package(
     ],
     products: [
         .library(name: "RenderKit", targets: ["RenderKit"]),
+        .library(name: "RenderKitScratch", targets: ["RenderKitScratch"]),
         .library(name: "RenderKitShaders", targets: ["RenderKitShaders"]),
     ],
     dependencies: [
@@ -58,18 +59,19 @@ let package = Package(
         .target(name: "RenderKitScratch",
             dependencies: [
                 "Everything",
-                "RenderKitShaders",
-                .product(name: "CoreGraphicsSupport", package: "SwiftGraphics"),
-                .product(name: "MetalSupport", package: "SwiftGraphics"),
-                .product(name: "MetalSupportUnsafeConformances", package: "SwiftGraphics"),
-                .product(name: "SIMDSupport", package: "SwiftGraphics"),
-                .product(name: "LegacyGraphics", package: "SwiftGraphics"),
-                .product(name: "Algorithms", package: "swift-algorithms"),
-                .product(name: "SwiftFields", package: "swiftfields"),
-                .product(name: "SwiftFormats", package: "swiftformats"),
-                .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
+                "RenderKit",
+//                "RenderKitShaders",
+//                .product(name: "CoreGraphicsSupport", package: "SwiftGraphics"),
+//                .product(name: "MetalSupport", package: "SwiftGraphics"),
+//                .product(name: "MetalSupportUnsafeConformances", package: "SwiftGraphics"),
+//                .product(name: "SIMDSupport", package: "SwiftGraphics"),
+//                .product(name: "LegacyGraphics", package: "SwiftGraphics"),
+//                .product(name: "Algorithms", package: "swift-algorithms"),
+//                .product(name: "SwiftFields", package: "swiftfields"),
+//                .product(name: "SwiftFormats", package: "swiftformats"),
+//                .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
             ]
         ),
-        .testTarget(name: "RenderKitTests", dependencies: ["RenderKit"])
+        .testTarget(name: "RenderKitTests", dependencies: ["RenderKit", "RenderKitScratch"])
     ]
 )

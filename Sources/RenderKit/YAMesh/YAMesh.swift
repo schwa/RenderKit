@@ -1,6 +1,7 @@
 import Metal
 import MetalKit
 import ModelIO
+import RenderKitShaders
 
 // TODO: -> Semantics
 //struct Semantic: OptionSet, Hashable, Sendable {
@@ -87,6 +88,48 @@ public extension YAMesh {
     init(label: String? = nil, indexType: MTLIndexType, indexBufferView: BufferView, indexCount: Int, vertexDescriptor: VertexDescriptor, vertexBuffer: MTLBuffer, vertexBufferOffset: Int, primitiveType: MTLPrimitiveType) {
         assert(vertexDescriptor.layouts.count == 1)
         self = .init(label: label, indexType: indexType, indexBufferView: indexBufferView, indexCount: indexCount, vertexDescriptor: vertexDescriptor, vertexBufferViews: [BufferView(buffer: vertexBuffer, offset: vertexBufferOffset)], primitiveType: primitiveType)
+    }
+}
+
+public extension YAMesh {
+    static func simpleMesh(label: String? = nil, indices: [UInt16], vertices: [SimpleVertex], primitiveType: MTLPrimitiveType = .triangle, device: MTLDevice) throws -> YAMesh {
+        guard let indexBuffer = device.makeBuffer(bytesOf: indices, options: .storageModeShared) else {
+            fatalError()
+        }
+        indexBuffer.label = "\(label ?? "unlabeled YAMesh"):indices"
+        let indexBufferView = BufferView(buffer: indexBuffer, offset: 0)
+        guard let vertexBuffer = device.makeBuffer(bytesOf: vertices, options: .storageModeShared) else {
+            fatalError()
+        }
+        vertexBuffer.label = "\(label ?? "unlabeled YAMesh"):vertices"
+        assert(vertexBuffer.length == vertices.count * 32)
+        let vertexBufferView = BufferView(buffer: vertexBuffer, offset: 0)
+        let vertexDescriptor = VertexDescriptor.packed(semantics: [.position, .normal, .textureCoordinate])
+        return YAMesh(indexType: .uint16, indexBufferView: indexBufferView, indexCount: indices.count, vertexDescriptor: vertexDescriptor, vertexBufferViews: [vertexBufferView], primitiveType: primitiveType)
+    }
+
+    static func plane(label: String? = nil, rectangle: CGRect, transform: simd_float3x2 = simd_float3x2([1, 0], [0, 1], [0, 0]), device: MTLDevice, textureCoordinate: (CGPoint) -> SIMD2<Float>) throws -> YAMesh {
+        // Transforms:
+        // [1, 0], [0, 1], [0, 0]: XY aligned plane
+        // [1, 0], [0, 0], [0, 1]: XZ aligned plane
+        // ...
+
+        // 1---3
+        // |\  |
+        // | \ |
+        // |  \|
+        // 0---2
+        let vertices = [
+            rectangle.minXMinY,
+            rectangle.minXMaxY,
+            rectangle.maxXMinY,
+            rectangle.maxXMaxY,
+        ]
+        .map {
+            // TODO; Normal not impacted by transform. It should be.
+            SimpleVertex(position: SIMD2<Float>($0) * transform, normal: [0, 0, 1], textureCoordinate: textureCoordinate($0))
+        }
+        return try simpleMesh(label: label, indices: [0, 1, 2, 1, 3, 2], vertices: vertices, device: device)
     }
 }
 

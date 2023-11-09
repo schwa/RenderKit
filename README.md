@@ -41,3 +41,7 @@ Post-multiplication, Column-Major, Right-handed, Y up
 * Bring over my Projection package (3d vector graphics)
 * Take advantage of Swift macros (macro to encode struct into a buffer compatible with SwiftUI)
 * Sort out the various projection APIs
+
+## Links
+
+* <http://www.faqs.org/faqs/graphics/algorithms-faq/>
