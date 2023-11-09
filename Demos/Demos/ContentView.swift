@@ -13,6 +13,7 @@ struct ContentView: View {
 //        case screenSpaceDemoView = "ScreenSpaceDemoView"
         case particles2
         case pixelFormats
+        case csgDemoView
     }
 
     @State
@@ -61,6 +62,8 @@ struct ContentView: View {
                     Particles2View()
                 case .pixelFormats:
                     PixelFormatsView()
+                case .csgDemoView:
+                    CSGDemoView()
                 }
             }
         }

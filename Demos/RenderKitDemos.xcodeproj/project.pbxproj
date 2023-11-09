@@ -87,6 +87,8 @@
 		45B1D71E2ACFB25600960D02 /* YAMesh+Conversion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B1D71D2ACFB25600960D02 /* YAMesh+Conversion.swift */; };
 		45B2E2502AD7426900A2E7A1 /* Particles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45B2E24F2AD7426900A2E7A1 /* Particles.swift */; };
 		45BEC1212ABE3480001730AB /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45BEC11F2ABE3480001730AB /* Cache.swift */; };
+		45C525522B0078B600593B44 /* CSGDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45C525512B0078B600593B44 /* CSGDemoView.swift */; };
+		45C525542B007C2E00593B44 /* RenderKitScratch in Frameworks */ = {isa = PBXBuildFile; productRef = 45C525532B007C2E00593B44 /* RenderKitScratch */; };
 		45F588142ABD4BD700ADE82B /* RenderKit in Frameworks */ = {isa = PBXBuildFile; productRef = 45F588132ABD4BD700ADE82B /* RenderKit */; };
 		45F5E51C2AC5E7A2003FBEBD /* RenderKit in Frameworks */ = {isa = PBXBuildFile; productRef = 459F48662A5077A300623EEE /* RenderKit */; };
 		45F8C55C2AE1AAB200F01290 /* ScreenSpaceDemoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45F8C55B2AE1AAB200F01290 /* ScreenSpaceDemoView.swift */; };
@@ -206,6 +208,7 @@
 		45B1D71D2ACFB25600960D02 /* YAMesh+Conversion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "YAMesh+Conversion.swift"; sourceTree = "<group>"; };
 		45B2E24F2AD7426900A2E7A1 /* Particles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Particles.swift; sourceTree = "<group>"; };
 		45BEC11F2ABE3480001730AB /* Cache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
+		45C525512B0078B600593B44 /* CSGDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CSGDemoView.swift; sourceTree = "<group>"; };
 		45F8C55B2AE1AAB200F01290 /* ScreenSpaceDemoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenSpaceDemoView.swift; sourceTree = "<group>"; };
 		45FAACBB2ACCF54C006C31BD /* Resources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resources.swift; sourceTree = "<group>"; };
 		45FB2CA12AE19A0F008824D4 /* SimpleJobsBasedRenderPass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleJobsBasedRenderPass.swift; sourceTree = "<group>"; };
@@ -218,6 +221,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				45C525542B007C2E00593B44 /* RenderKitScratch in Frameworks */,
 				45F588142ABD4BD700ADE82B /* RenderKit in Frameworks */,
 				45650DE62ACCEA09009F2AF2 /* SwiftGLTF in Frameworks */,
 				453A4A432AE43C9100838CF5 /* DemosSupport in Frameworks */,
@@ -306,6 +310,7 @@
 				45F8C55B2AE1AAB200F01290 /* ScreenSpaceDemoView.swift */,
 				45AA935A2AEB022800AA3EAD /* TextureView.swift */,
 				4515CA752AEC116800FF9753 /* PixelFormatsView.swift */,
+				45C525512B0078B600593B44 /* CSGDemoView.swift */,
 				45FB2CA32AE19C42008824D4 /* MetalCanvas */,
 				453532532ADB422900B9745A /* Particles */,
 				4578614F2AE32E95005DABD6 /* Particles2 */,
@@ -499,6 +504,7 @@
 				45F588132ABD4BD700ADE82B /* RenderKit */,
 				45650DE52ACCEA09009F2AF2 /* SwiftGLTF */,
 				453A4A422AE43C9100838CF5 /* DemosSupport */,
+				45C525532B007C2E00593B44 /* RenderKitScratch */,
 			);
 			productName = Demos;
 			productReference = 453D32B42A48D06500FCEE29 /* Demos.app */;
@@ -654,6 +660,7 @@
 				45BEC1212ABE3480001730AB /* Cache.swift in Sources */,
 				45FAACBC2ACCF54C006C31BD /* Resources.swift in Sources */,
 				452235B22AE7090A00CD89A3 /* SimpleScene+Demo.swift in Sources */,
+				45C525522B0078B600593B44 /* CSGDemoView.swift in Sources */,
 				453F7D3D2ACC7A2C0051D331 /* VolumetricView.swift in Sources */,
 				453532552ADB424000B9745A /* SimulationView.swift in Sources */,
 				4555A0502ABE2CD80088CFFB /* Projections.swift in Sources */,
@@ -785,6 +792,10 @@
 		459F48662A5077A300623EEE /* RenderKit */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = RenderKit;
+		};
+		45C525532B007C2E00593B44 /* RenderKitScratch */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = RenderKitScratch;
 		};
 		45F588132ABD4BD700ADE82B /* RenderKit */ = {
 			isa = XCSwiftPackageProductDependency;
