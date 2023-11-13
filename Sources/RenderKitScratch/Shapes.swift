@@ -1,4 +1,5 @@
 import simd
+import RenderKitShaders
 
 public struct Line3D {
     public var point: SIMD3<Float>
@@ -131,6 +132,18 @@ public protocol VertexLike: Hashable, Sendable {
     var normal: SIMD3<Float> { get set }
 
     init()
+}
+
+extension SimpleVertex: VertexLike {
+}
+
+extension VertexLike {
+    func interpolate(_ other: Self, _ value: Float) -> Self {
+        var result = Self()
+        result.position = simd_mix(position, other.position, .init(repeating: value))
+        result.normal = simd_mix(normal, other.normal, .init(repeating: value))
+        return result
+    }
 }
 
 public struct Polygon3D<Vertex> where Vertex: VertexLike {
