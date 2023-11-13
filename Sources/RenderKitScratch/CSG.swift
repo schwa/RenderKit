@@ -30,6 +30,20 @@ public extension CSG {
         self.polygons = node.allPolygons
     }
 
+    // Return a new CSG solid representing space in either this solid or in the
+    // solid `csg`. Neither this solid nor the solid `csg` are modified.
+    //
+    //     A.union(B)
+    //
+    //     +-------+            +-------+
+    //     |       |            |       |
+    //     |   A   |            |       |
+    //     |    +--+----+   =   |       +----+
+    //     +----+--+    |       +----+       |
+    //          |   B   |            |       |
+    //          |       |            |       |
+    //          +-------+            +-------+
+    //
     func union(_ other: Self) -> Self {
         let a = Node(polygons: polygons)
         let b = Node(polygons: other.polygons)
@@ -40,6 +54,20 @@ public extension CSG {
         return Self(polygons: a.allPolygons + b.allPolygons)
     }
 
+    // Return a new CSG solid representing space in this solid but not in the
+    // solid `csg`. Neither this solid nor the solid `csg` are modified.
+    //
+    //     A.subtract(B)
+    //
+    //     +-------+            +-------+
+    //     |       |            |       |
+    //     |   A   |            |       |
+    //     |    +--+----+   =   |    +--+
+    //     +----+--+    |       +----+
+    //          |   B   |
+    //          |       |
+    //          +-------+
+    //
     func subtracting(_ other: Self) -> Self {
         let a = Node(polygons: polygons)
         let b = Node(polygons: other.polygons)
@@ -54,6 +82,20 @@ public extension CSG {
         return Self(polygons: polygons)
     }
 
+    // Return a new CSG solid representing space both this solid and in the
+    // solid `csg`. Neither this solid nor the solid `csg` are modified.
+    //
+    //     A.intersect(B)
+    //
+    //     +-------+
+    //     |       |
+    //     |   A   |
+    //     |    +--+----+   =   +--+
+    //     +----+--+    |       +--+
+    //          |   B   |
+    //          |       |
+    //          +-------+
+    //
     func intersecting(_ other: Self) -> Self {
         let a = Node(polygons: polygons)
         let b = Node(polygons: other.polygons)
@@ -144,36 +186,27 @@ extension CSG.Node {
     func invert() {
         polygons = polygons.map { $0.flipped() }
         plane!.flip()
-        if let front {
-            front.invert()
-        }
-        if let back {
-            back.invert()
-        }
+        front?.invert()
+        back?.invert()
         swap(&front, &back)
     }
 
     // Recursively remove all polygons in `polygons` that are inside this BSP tree.
     func clip(polygons: [Polygon]) -> [Polygon] {
-        if plane == nil {
+        guard let plane else {
             return []
         }
 
-        var coplanarFront: [Polygon] = []
-        var coplanarBack: [Polygon] = []
         var front: [Polygon] = []
         var back: [Polygon] = []
 
         for polygon in polygons {
-            let result = polygon.split(plane: plane!)
-            coplanarFront += result.coplanarFront
-            coplanarBack += result.coplanarBack
+            let result = polygon.split(plane: plane)
+            front += result.coplanarFront
+            back += result.coplanarBack
             front += result.front
             back += result.back
         }
-
-        front = coplanarFront + front
-        back = coplanarBack + back
 
         if self.front != nil {
             front = self.front!.clip(polygons: front)
@@ -218,41 +251,36 @@ extension SplitType {
     static func | (lhs: Self, rhs: Self) -> Self {
         return SplitType(rawValue: lhs.rawValue | rhs.rawValue)!
     }
+    static func |= (lhs: inout Self, rhs: Self) {
+        lhs = lhs | rhs
+    }
 }
 
 extension Polygon3D {
-    func split(plane: Plane) -> (coplanarFront: [Self], coplanarBack: [Self], front: [Self], back: [Self]) {
+    func split(plane splitter: Plane) -> (coplanarFront: [Self], coplanarBack: [Self], front: [Self], back: [Self]) {
+        let EPSILON: Float = 1e-5
+
         var coplanarFront: [Self] = []
         var coplanarBack: [Self] = []
         var front: [Self] = []
         var back: [Self] = []
 
-        let EPSILON: Float = 1e-5
         var polygonType = SplitType.coplanar
         var types: [SplitType] = []
         for vertex in vertices {
-            let t = simd.dot(plane.normal, vertex.position) - plane.w
-            let type: SplitType
-            if t < -EPSILON {
-                type = .back
-            }
-            else if t > EPSILON {
-                type = .front
-            }
-            else {
-                type = .coplanar
-            }
-            polygonType = SplitType(rawValue: polygonType.rawValue | type.rawValue)!
+            let t = simd.dot(splitter.normal, vertex.position) - splitter.w
+            let type: SplitType = (t < -EPSILON) ? .back : (t > EPSILON) ? .front : .coplanar
+            polygonType |= type
             types.append(type)
         }
 
         switch polygonType {
         case .coplanar:
-            if simd.dot(plane.normal, vertices[0].position) - plane.w < 0 {
-                coplanarBack.append(self)
+            if splitter.normal.dot(plane.normal) - plane.w > 0 {
+                coplanarFront.append(self)
             }
             else {
-                coplanarFront.append(self)
+                coplanarBack.append(self)
             }
         case .front:
             front.append(self)
@@ -268,11 +296,10 @@ extension Polygon3D {
                     f.append(vi)
                 }
                 if ti != .front {
-                    // b.append(ti != .back ? vi.clone() : vi)
                     b.append(vi)
                 }
                 if ti | tj == .spanning {
-                    let t = (plane.w - plane.normal.dot(vi.position)) / plane.normal.dot(vj.position - vi.position)
+                    let t = (splitter.w - splitter.normal.dot(vi.position)) / splitter.normal.dot(vj.position - vi.position)
                     let v = vi.interpolate(vj, t)
                     f.append(v)
                     b.append(v)
@@ -285,7 +312,6 @@ extension Polygon3D {
                 back.append(Polygon3D(vertices: b))
             }
         }
-
         return (coplanarFront, coplanarBack, front, back)
     }
 }
@@ -418,7 +444,7 @@ public extension CSG {
             encoder.encodeElement([
                 .float(vertex.position.x), .float(vertex.position.y), .float(vertex.position.z),
                 .float(vertex.normal.x), .float(vertex.normal.y), .float(vertex.normal.z),
-                .uchar(0), .uchar(0), .uchar(0)
+                .uchar(128), .uchar(128), .uchar(128)
             ], to: &s)
         }
         for face in faces {

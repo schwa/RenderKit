@@ -15,7 +15,7 @@ struct CSGDemoView: View {
 
         c = a.union(b)
 
-        try! a.inverted().toPLY().write(to: URL(filePath: "test-a.ply"), atomically: true, encoding: .ascii)
+        try! a.toPLY().write(to: URL(filePath: "test-a.ply"), atomically: true, encoding: .ascii)
         try! b.toPLY().write(to: URL(filePath: "test-b.ply"), atomically: true, encoding: .ascii)
         try! c.toPLY().write(to: URL(filePath: "test-c.ply"), atomically: true, encoding: .ascii)
 
