@@ -11,7 +11,11 @@ struct CSGDemoView: View {
 
     init() {
         a = Box(min: [-5, -5, -5], max: [5, 5, 5]).toCSG()
-        b = Box(min: [-7.5, -7.5, -5], max: [2.5, 2.5, 5]).toCSG()
+        b = Box(min: [-10, -2, -2], max: [0, 2, 2]).toCSG()
+        //b = Sphere(center: [5, 0, 0], radius: 5).toCSG()
+
+//        a = CGRect(x: -5, y: -5, width: 10, height: 10).toCSG()
+//        b = CGRect(x: 0, y: 0, width: 10, height: 10).toCSG()
 
         c = a.union(b)
 

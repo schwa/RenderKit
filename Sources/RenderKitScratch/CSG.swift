@@ -1,4 +1,4 @@
-// from https://github.com/evanw/csg.js/blob/master/csg.js#L291
+// from https://github.com/evanw/csg.js/blob/master/csg.js
 
 import RenderKit
 import RenderKitShaders
@@ -9,24 +9,10 @@ public struct CSG<Vertex> where Vertex: VertexLike {
     public typealias Polygon = Polygon3D<Vertex>
 
     public var polygons: [Polygon]
-
-    class Node {
-        var plane: Plane?
-        var front: Node?
-        var back: Node?
-        var polygons: [Polygon]
-
-        init(plane: Plane? = nil, front: Node? = nil, back: Node? = nil, polygons: [Polygon] = []) {
-            self.plane = plane
-            self.front = front
-            self.back = back
-            self.polygons = polygons
-        }
-    }
 }
 
 public extension CSG {
-    internal init(node: Node) {
+    internal init(node: Node<Vertex>) {
         self.polygons = node.allPolygons
     }
 
@@ -48,6 +34,7 @@ public extension CSG {
         let a = Node(polygons: polygons)
         let b = Node(polygons: other.polygons)
         a.clip(to: b)
+        try! CSG(node: a).toPLY().write(to: URL(filePath: "intermediate-1.ply"), atomically: true, encoding: .ascii)
         b.clip(to: a)
         b.invert()
         b.clip(to: a)
@@ -132,8 +119,22 @@ public extension CSG {
     }
 }
 
-extension CSG.Node {
-    typealias Polygon = CSG.Polygon
+// MARK: -
+
+class Node <Vertex> where Vertex: VertexLike {
+    typealias Polygon = Polygon3D<Vertex>
+
+    var plane: Plane?
+    var front: Node?
+    var back: Node?
+    var polygons: [Polygon]
+
+    init(plane: Plane? = nil, front: Node? = nil, back: Node? = nil, polygons: [Polygon] = []) {
+        self.plane = plane
+        self.front = front
+        self.back = back
+        self.polygons = polygons
+    }
 
     convenience init(polygons: [Polygon]) {
         self.init()
@@ -165,7 +166,7 @@ extension CSG.Node {
 
         if !front.isEmpty {
             if self.front == nil {
-                self.front = CSG.Node(polygons: front)
+                self.front = Node(polygons: front)
             }
             else {
                 self.front!.insert(polygons: front)
@@ -174,7 +175,7 @@ extension CSG.Node {
 
         if !back.isEmpty {
             if self.back == nil {
-                self.back = CSG.Node(polygons: back)
+                self.back = Node(polygons: back)
             }
             else {
                 self.back!.insert(polygons: back)
@@ -199,13 +200,10 @@ extension CSG.Node {
 
         var front: [Polygon] = []
         var back: [Polygon] = []
-
         for polygon in polygons {
             let result = polygon.split(plane: plane)
-            front += result.coplanarFront
-            back += result.coplanarBack
-            front += result.front
-            back += result.back
+            front += result.front + result.coplanarFront
+            back += result.back + result.coplanarBack
         }
 
         if self.front != nil {
@@ -218,7 +216,7 @@ extension CSG.Node {
     }
 
     // Remove all polygons in this BSP tree that are inside the other BSP tree.
-    func clip(to node: CSG.Node) {
+    func clip(to node: Node) {
         polygons = node.clip(polygons: polygons)
         if let front {
             front.clip(to: node)
@@ -273,7 +271,6 @@ extension Polygon3D {
             polygonType |= type
             types.append(type)
         }
-
         switch polygonType {
         case .coplanar:
             if splitter.normal.dot(plane.normal) - plane.w > 0 {
@@ -453,5 +450,15 @@ public extension CSG {
         }
 
         return s
+    }
+}
+
+public extension CGRect {
+    func toCSG() -> CSG<SimpleVertex> {
+        let vertices = [minXMinY, maxXMinY, maxXMaxY, minXMaxY]
+            .map {
+                SimpleVertex(position: SIMD3(SIMD2($0), 0), normal: [0, 0, 1])
+            }
+        return CSG(polygons: [Polygon3D(vertices: vertices)])
     }
 }
