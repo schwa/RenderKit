@@ -129,22 +129,22 @@ public extension CSG {
 
 // MARK: -
 
-internal class Node <Vertex> where Vertex: VertexLike {
-    typealias Polygon = Polygon3D<Vertex>
+public class Node <Vertex> where Vertex: VertexLike {
+    public typealias Polygon = Polygon3D<Vertex>
 
-    var plane: Plane?
-    var front: Node?
-    var back: Node?
-    var polygons: [Polygon]
+    public var plane: Plane?
+    public var front: Node?
+    public var back: Node?
+    public var polygons: [Polygon]
 
-    init(plane: Plane? = nil, front: Node? = nil, back: Node? = nil, polygons: [Polygon] = []) {
+    public init(plane: Plane? = nil, front: Node? = nil, back: Node? = nil, polygons: [Polygon] = []) {
         self.plane = plane
         self.front = front
         self.back = back
         self.polygons = polygons
     }
 
-    convenience init(polygons: [Polygon]) {
+    public convenience init(polygons: [Polygon]) {
         self.init()
         insert(polygons: polygons)
     }
@@ -220,7 +220,7 @@ internal class Node <Vertex> where Vertex: VertexLike {
     }
 
     // Remove all polygons in this BSP tree that are inside the other BSP tree.
-    func clip(to node: Node) {
+    public func clip(to node: Node) {
         polygons = node.clip(polygons: polygons)
         if let front {
             front.clip(to: node)

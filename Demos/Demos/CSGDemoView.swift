@@ -8,6 +8,7 @@ struct CSGDemoView: View {
     let a: CSG<SimpleVertex>
     let b: CSG<SimpleVertex>
     let c: CSG<SimpleVertex>
+    let node: Node<SimpleVertex>
 
     init() {
         a = Box(min: [-5, -5, -5], max: [5, 5, 5]).toCSG()
@@ -16,6 +17,13 @@ struct CSGDemoView: View {
 
 //        a = CGRect(x: -5, y: -5, width: 10, height: 10).toCSG()
 //        b = CGRect(x: 0, y: 0, width: 10, height: 10).toCSG()
+
+        do {
+            let a = Node(polygons: a.polygons)
+            let b = Node(polygons: b.polygons)
+            a.clip(to: b)
+            node = a
+        }
 
         c = a.union(b)
 
@@ -40,7 +48,8 @@ struct CSGDemoView: View {
             context.translateBy(x: size.width / 2, y: size.height / 2)
 //            context.draw(csg: a, transform: transform, with: .color(.red))
 //            context.draw(csg: b, transform: transform, with: .color(.green))
-            context.draw(csg: c, transform: transform, with: .color(.blue))
+            //context.draw(csg: c, transform: transform, with: .color(.blue))
+            context.draw(node: node, transform: transform)
         }
     }
 }
@@ -62,6 +71,34 @@ extension GraphicsContext {
             }
             .applying(transform)
             stroke(path, with: shading)
+        }
+    }
+
+    func draw(node: Node<SimpleVertex>, transform: CGAffineTransform = .identity) {
+        let n = abs(ObjectIdentifier(node).hashValue) % kellyColors.count
+        let rgb = kellyColors[n]
+        let color = Color(red: Double(rgb.0), green: Double(rgb.1), blue: Double(rgb.2))
+        for polygon in node.polygons {
+            let a = polygon.vertices[0].position
+            let b = polygon.vertices[1].position
+            let c = polygon.vertices[2].position
+            let dir = simd_normalize(simd_cross(b - a, c - a))
+            guard dir.z > 0 else {
+                continue
+            }
+            let lines = polygon.vertices.map { CGPoint($0.position.xy) }
+            let path = Path { path in
+                path.addLines(lines)
+                path.closeSubpath()
+            }
+            .applying(transform)
+            stroke(path, with: .color(color))
+        }
+        if let front = node.front {
+            draw(node: front, transform: transform)
+        }
+        if let back = node.back {
+            draw(node: back, transform: transform)
         }
     }
 }
