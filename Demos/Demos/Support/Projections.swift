@@ -43,11 +43,14 @@ public struct OrthographicProjection: ProjectionProtocol {
 }
 
 public enum Projection: ProjectionProtocol {
+    case matrix(simd_float4x4)
     case perspective(PerspectiveProjection)
     case orthographic(OrthographicProjection)
 
     public func matrix(viewSize: SIMD2<Float>) -> simd_float4x4 {
         switch self {
+        case .matrix(let projection):
+            return projection
         case .perspective(let projection):
             return projection.matrix(viewSize: viewSize)
         case .orthographic(let projection):
@@ -57,12 +60,15 @@ public enum Projection: ProjectionProtocol {
 
     // TODO: Use that macro
     public enum Meta: CaseIterable {
+        case matrix
         case perspective
         case orthographic
     }
 
     public var meta: Meta {
         switch self {
+        case .matrix:
+            return .matrix
         case .perspective:
             return .perspective
         case .orthographic:

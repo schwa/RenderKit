@@ -4,6 +4,8 @@
 // https://ui.adsabs.harvard.edu/abs/1989SPIE.1077..322B/abstract
 // https://stackoverflow.com/questions/470690/how-to-automatically-generate-n-distinct-colors/4382138#4382138
 
+import SwiftUI
+
 public let kellyColors: [(Float, Float, Float)] = [
     0xFFB300,    // Vivid Yellow
     0x803E75,    // Strong Purple
@@ -30,6 +32,12 @@ public let kellyColors: [(Float, Float, Float)] = [
     let green = hex >> 8 & 0xFF
     let blue = hex & 0xFF
     return (Float(red) / 255, Float(green) / 255, Float(blue) / 255)
+}
+
+public extension Color {
+    init(rgb: (Float, Float, Float)) {
+        self = .init(red: Double(rgb.0), green: Double(rgb.1), blue: Double(rgb.2))
+    }
 }
 
 // Green-Armytage

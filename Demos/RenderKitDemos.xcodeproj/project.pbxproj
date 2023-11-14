@@ -25,6 +25,7 @@
 		453D32C02A48D06600FCEE29 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 453D32BF2A48D06600FCEE29 /* Preview Assets.xcassets */; };
 		453F7D3D2ACC7A2C0051D331 /* VolumetricView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453F7D3C2ACC7A2C0051D331 /* VolumetricView.swift */; };
 		453F7D3F2ACC7A590051D331 /* VolumetricRenderPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 453F7D3E2ACC7A590051D331 /* VolumetricRenderPass.swift */; };
+		454A91402B02E8D200276EAB /* SoftwareRendererView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 454A913F2B02E8D200276EAB /* SoftwareRendererView.swift */; };
 		4555A0372ABE017A0088CFFB /* DemosApp-VisionOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4555A0362ABE017A0088CFFB /* DemosApp-VisionOS.swift */; };
 		4555A03B2ABE0B310088CFFB /* Info-visionOS.plist in Resources */ = {isa = PBXBuildFile; fileRef = 4555A03A2ABE0B310088CFFB /* Info-visionOS.plist */; };
 		4555A04D2ABE2CD80088CFFB /* SimpleSceneView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4555A0402ABE2BF00088CFFB /* SimpleSceneView.swift */; };
@@ -133,6 +134,7 @@
 		453D32BF2A48D06600FCEE29 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		453F7D3C2ACC7A2C0051D331 /* VolumetricView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VolumetricView.swift; sourceTree = "<group>"; };
 		453F7D3E2ACC7A590051D331 /* VolumetricRenderPass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumetricRenderPass.swift; sourceTree = "<group>"; };
+		454A913F2B02E8D200276EAB /* SoftwareRendererView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoftwareRendererView.swift; sourceTree = "<group>"; };
 		4555A0362ABE017A0088CFFB /* DemosApp-VisionOS.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DemosApp-VisionOS.swift"; sourceTree = "<group>"; };
 		4555A03A2ABE0B310088CFFB /* Info-visionOS.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "Info-visionOS.plist"; sourceTree = "<group>"; };
 		4555A03E2ABE2BEC0088CFFB /* VolumeData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VolumeData.swift; sourceTree = "<group>"; };
@@ -311,6 +313,7 @@
 				45AA935A2AEB022800AA3EAD /* TextureView.swift */,
 				4515CA752AEC116800FF9753 /* PixelFormatsView.swift */,
 				45C525512B0078B600593B44 /* CSGDemoView.swift */,
+				454A913F2B02E8D200276EAB /* SoftwareRendererView.swift */,
 				45FB2CA32AE19C42008824D4 /* MetalCanvas */,
 				453532532ADB422900B9745A /* Particles */,
 				4578614F2AE32E95005DABD6 /* Particles2 */,
@@ -662,6 +665,7 @@
 				452235B22AE7090A00CD89A3 /* SimpleScene+Demo.swift in Sources */,
 				45C525522B0078B600593B44 /* CSGDemoView.swift in Sources */,
 				453F7D3D2ACC7A2C0051D331 /* VolumetricView.swift in Sources */,
+				454A91402B02E8D200276EAB /* SoftwareRendererView.swift in Sources */,
 				453532552ADB424000B9745A /* SimulationView.swift in Sources */,
 				4555A0502ABE2CD80088CFFB /* Projections.swift in Sources */,
 				452235B42AE738FD00CD89A3 /* Bindings.swift in Sources */,

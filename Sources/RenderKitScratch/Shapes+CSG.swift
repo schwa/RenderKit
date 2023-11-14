@@ -3,6 +3,10 @@ import SIMDSupport
 
 public extension Box {
     func toCSG() -> CSG<SimpleVertex> {
+        return CSG(polygons: toPolygons())
+    }
+
+    func toPolygons() -> [Polygon3D<SimpleVertex>] {
         let polygons = [
             Polygon3D(vertices: [
                 SimpleVertex(position: SIMD3<Float>(min.x, min.y, min.z), normal: .init(x: -1, y: 0, z: 0)),
@@ -42,7 +46,7 @@ public extension Box {
                 SimpleVertex(position: SIMD3<Float>(min.x, max.y, max.z), normal: .init(x: 0, y: 0, z: 1)),
             ]),
         ]
-        return CSG(polygons: polygons)
+        return polygons
     }
 }
 
