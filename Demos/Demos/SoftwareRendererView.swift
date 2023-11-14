@@ -46,7 +46,7 @@ struct SoftwareRendererView: View {
             }
             rasterizer.rasterize(graphicsContext: context)
         }
-        .ballRotation($ballConstraint.rotation, pitchLimit: .degrees(-.infinity) ... .degrees(.infinity), yawLimit: .degrees(-.infinity) ... .degrees(.infinity))
+        .ballRotation($ballConstraint.rotation, pitchLimit: .degrees(0) ... .degrees(0), yawLimit: .degrees(-.infinity) ... .degrees(.infinity))
         .onChange(of: ballConstraint.transform) {
             camera.transform.matrix = ballConstraint.transform
         }
@@ -57,6 +57,9 @@ struct SoftwareRendererView: View {
                 }
                 GroupBox("Model") {
                     TransformEditor(transform: $modelTransform)
+                }
+                GroupBox("Ball Constraint") {
+                    BallConstraintEditor(ballConstraint: $ballConstraint)
                 }
             }
             .padding(4)
@@ -140,12 +143,23 @@ struct Rasterizer {
 }
 
 struct BallConstraint {
-    var radius: Float = 5
+    var radius: Float = 0
     var lookAt: SIMD3<Float> = .zero
-
     var rotation: Rotation = .zero
 
     var transform: simd_float4x4 {
         return rotation.matrix * simd_float4x4(translate: [0, 0, radius])
+    }
+}
+
+struct BallConstraintEditor: View {
+    @Binding
+    var ballConstraint: BallConstraint
+
+    var body: some View {
+        TextField("Radius", value: $ballConstraint.radius, format: .number)
+        TextField("Look AT", value: $ballConstraint.lookAt, format: .vector)
+        TextField("Pitch", value: $ballConstraint.rotation.pitch, format: .angle)
+        TextField("Yaw", value: $ballConstraint.rotation.yaw, format: .angle)
     }
 }
