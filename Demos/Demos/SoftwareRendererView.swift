@@ -3,6 +3,7 @@ import RenderKit
 import RenderKitShaders
 import RenderKitScratch
 import SIMDSupport
+import Projection
 
 struct SoftwareRendererView: View {
     @State
@@ -71,7 +72,7 @@ struct SoftwareRendererView: View {
             var rasterizer = context.rasterizer
             for model in models {
                 for (index, polygon) in model.toPolygons().enumerated() {
-                    rasterizer.submit(polygon: polygon, modelViewTransform: modelViewTransform, with: .color(Color(rgb: kellyColors[index % kellyColors.count]).opacity(0.8)))
+                    rasterizer.submit(polygon: polygon.vertices.map { $0.position }, modelViewTransform: modelViewTransform, with: .color(Color(rgb: kellyColors[index % kellyColors.count]).opacity(0.8)))
                 }
             }
             rasterizer.rasterize()
@@ -106,167 +107,6 @@ struct SoftwareRendererView: View {
             .controlSize(.mini)
             .frame(width: 200)
             .padding(4)
-        }
-    }
-}
-
-struct Canvas3D <Symbols>: View where Symbols: View {
-    var opaque: Bool
-    var colorMode: ColorRenderingMode
-    var rendersAsynchronously: Bool
-    var renderer: (inout GraphicsContext3D, CGSize) -> Void
-    var symbols: Symbols
-
-    init(opaque: Bool = false, colorMode: ColorRenderingMode = .nonLinear, rendersAsynchronously: Bool = false, renderer: @escaping (inout GraphicsContext3D, CGSize) -> Void, @ViewBuilder symbols: () -> Symbols) {
-        self.opaque = opaque
-        self.colorMode = colorMode
-        self.rendersAsynchronously = rendersAsynchronously
-        self.renderer = renderer
-        self.symbols = symbols()
-    }
-
-    var body: some View {
-        Canvas { context, size in
-            context.translateBy(x: size.width / 2, y: size.height / 2)
-            var graphicsContext3D = GraphicsContext3D(graphicsContext2D: context)
-            renderer(&graphicsContext3D, size)
-        }
-        symbols: {
-            symbols
-        }
-    }
-}
-
-extension Canvas3D where Symbols == EmptyView {
-    init(opaque: Bool = false, colorMode: ColorRenderingMode = .nonLinear, rendersAsynchronously: Bool = false, renderer: @escaping (inout GraphicsContext3D, CGSize) -> Void) {
-        self.init(opaque: opaque, colorMode: colorMode, rendersAsynchronously: rendersAsynchronously, renderer: renderer, symbols: {
-            EmptyView()
-        })
-    }
-}
-
-struct GraphicsContext3D {
-    var graphicsContext2D: GraphicsContext
-
-    var projectionTransform = float4x4.identity
-    var viewTransform = float4x4.identity
-    var clipTransform = float4x4.identity
-
-    var rasterizer: Rasterizer {
-        return Rasterizer(graphicsContext: self)
-    }
-
-    func project(_ point: SIMD3<Float>, viewProjectionTransform: simd_float4x4? = nil) -> CGPoint {
-        let viewProjectionTransform = viewProjectionTransform ?? (projectionTransform * viewTransform)
-        var point = clipTransform * viewProjectionTransform * SIMD4<Float>(point, 1.0)
-        point /= point.w
-        return CGPoint(point.xy)
-    }
-
-    func stroke(path: Path3D, with shading: GraphicsContext.Shading) {
-        let viewProjectionTransform = projectionTransform * viewTransform
-        let path = Path { path2D in
-            for element in path.elements {
-                switch element {
-                case .move(let point):
-                    var point = clipTransform * viewProjectionTransform * SIMD4<Float>(point, 1.0)
-                    point /= point.w
-                    path2D.move(to: CGPoint(point.xy))
-                case .line(let point):
-                    var point = clipTransform * viewProjectionTransform * SIMD4<Float>(point, 1.0)
-                    point /= point.w
-                    path2D.addLine(to: CGPoint(point.xy))
-                case .closePath:
-                    path2D.closeSubpath()
-                }
-            }
-        }
-        print(path)
-        graphicsContext2D.stroke(path, with: shading)
-    }
-}
-
-struct Path3D {
-    enum Element {
-        case move(to: SIMD3<Float>)
-        case line(to: SIMD3<Float>)
-        case closePath
-    }
-
-    var elements: [Element] = []
-
-    init() {
-    }
-
-    init(builder: (inout Path3D) -> Void) {
-        var path = Path3D()
-        builder(&path)
-        self = path
-    }
-
-    mutating func move(to: SIMD3<Float>) {
-        elements.append(.move(to: to))
-    }
-
-    mutating func line(to: SIMD3<Float>) {
-        elements.append(.line(to: to))
-    }
-
-    mutating func closePath() {
-        elements.append(.closePath)
-    }
-}
-
-struct Rasterizer {
-    struct ClipSpacePolygon {
-        var vertices: [SIMD4<Float>]
-        var shading: GraphicsContext.Shading
-        var z: Float
-
-        init(vertices: [SIMD4<Float>], shading: GraphicsContext.Shading) {
-            self.vertices = vertices
-            self.shading = shading
-            self.z = vertices.map(\.z).reduce(0, +) / Float(vertices.count)
-        }
-    }
-
-    var graphicsContext: GraphicsContext3D
-    var polygons: [ClipSpacePolygon] = []
-
-    mutating func submit<V>(polygon: Polygon3D<V>, modelViewTransform: simd_float4x4, with shading: GraphicsContext.Shading) where V: VertexLike {
-        let modelViewProjectionTransform = graphicsContext.projectionTransform * modelViewTransform
-        let vertices = polygon.vertices.map {
-            (graphicsContext.clipTransform * modelViewProjectionTransform * SIMD4<Float>($0.position, 1.0))
-        }
-        polygons.append(ClipSpacePolygon(vertices: vertices, shading: shading))
-    }
-
-    mutating func rasterize() {
-        let polygons = polygons.filter {
-            // TODO: Do actual frustrum culling.
-            $0.z <= 0
-        }
-        .sorted(by: \.z)
-
-        //        let a = polygon.vertices[0].position
-        //        let b = polygon.vertices[1].position
-        //        let c = polygon.vertices[2].position
-        //        let dir = simd_normalize(simd_cross(b - a, c - a))
-        //        guard dir.z > 0 else {
-        //            return
-        //        }
-
-        for polygon in polygons {
-            let lines = polygon.vertices.map {
-                let screenSpace = $0.xyz / $0.w
-                return CGPoint(screenSpace.xy)
-            }
-            let path = Path { path in
-                path.addLines(lines)
-                path.closeSubpath()
-            }
-            graphicsContext.graphicsContext2D.fill(path, with: polygon.shading)
-            //graphicsContext.graphicsContext2D.stroke(path, with: .color(.black), style: .init(lineWidth: 1, lineCap: .round, lineJoin: .round))
         }
     }
 }

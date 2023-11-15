@@ -15,6 +15,7 @@ let package = Package(
         .library(name: "RenderKit", targets: ["RenderKit"]),
         .library(name: "RenderKitScratch", targets: ["RenderKitScratch"]),
         .library(name: "RenderKitShaders", targets: ["RenderKitShaders"]),
+        .library(name: "Projection", targets: ["Projection"]),
     ],
     dependencies: [
         .package(url: "https://github.com/schwa/Everything", branch: "jwight/downsizing"),
@@ -27,7 +28,8 @@ let package = Package(
         //.package(url: "https://github.com/schwa/StreamBuilder", branch: "main"),
     ],
     targets: [
-        .target(name: "RenderKit",
+        .target(
+            name: "RenderKit",
             dependencies: [
                 "Everything",
                 "RenderKitShaders",
@@ -40,10 +42,10 @@ let package = Package(
                 .product(name: "SwiftFields", package: "swiftfields"),
                 .product(name: "SwiftFormats", package: "swiftformats"),
                 .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
-//                .product(name: "StreamBuilder", package: "StreamBuilder"),
+                //                .product(name: "StreamBuilder", package: "StreamBuilder"),
             ],
             resources: [
-//                .process("Media.xcassets"),
+                //                .process("Media.xcassets"),
                 .process("VisionOS/Assets.xcassets"),
             ],
             swiftSettings: [
@@ -51,27 +53,26 @@ let package = Package(
                 .enableUpcomingFeature("StrictConcurrency"),
             ]
         ),
-        .target(name: "RenderKitShaders",
+        .target(
+            name: "RenderKitShaders",
             plugins: [
-//                .plugin(name: "MetalCompilerPlugin", package: "MetalCompilerPlugin")
+                //                .plugin(name: "MetalCompilerPlugin", package: "MetalCompilerPlugin")
             ]
         ),
-        .target(name: "RenderKitScratch",
+        .target(
+            name: "RenderKitScratch",
             dependencies: [
                 "Everything",
                 "RenderKit",
-//                "RenderKitShaders",
-//                .product(name: "CoreGraphicsSupport", package: "SwiftGraphics"),
-//                .product(name: "MetalSupport", package: "SwiftGraphics"),
-//                .product(name: "MetalSupportUnsafeConformances", package: "SwiftGraphics"),
-//                .product(name: "SIMDSupport", package: "SwiftGraphics"),
-//                .product(name: "LegacyGraphics", package: "SwiftGraphics"),
-//                .product(name: "Algorithms", package: "swift-algorithms"),
-//                .product(name: "SwiftFields", package: "swiftfields"),
-//                .product(name: "SwiftFormats", package: "swiftformats"),
-//                .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
             ]
         ),
-        .testTarget(name: "RenderKitTests", dependencies: ["RenderKit", "RenderKitScratch"])
+        .testTarget(
+            name: "RenderKitTests",
+            dependencies: ["RenderKit", "RenderKitScratch"]),
+        .target(
+            name: "Projection",
+            dependencies: [
+                .product(name: "SIMDSupport", package: "SwiftGraphics"),
+            ]),
     ]
 )

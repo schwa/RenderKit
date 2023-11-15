@@ -82,6 +82,7 @@
 		4570E2D42AC711A200B3B64D /* perseverance_06.ktx in Resources */ = {isa = PBXBuildFile; fileRef = 4570E2C62AC711A200B3B64D /* perseverance_06.ktx */; };
 		457861512AE32EA0005DABD6 /* Particles2.swift in Sources */ = {isa = PBXBuildFile; fileRef = 457861502AE32EA0005DABD6 /* Particles2.swift */; };
 		457D4F1F2ABD1634004CCD9D /* ContentView-VisionOS.swift in Sources */ = {isa = PBXBuildFile; fileRef = 457D4F1E2ABD1634004CCD9D /* ContentView-VisionOS.swift */; };
+		459C7D202B05715E00AD6E6B /* Projection in Frameworks */ = {isa = PBXBuildFile; productRef = 459C7D1F2B05715E00AD6E6B /* Projection */; };
 		459E755D2AC1EF6F004BC055 /* SimpleMesh.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459E755C2AC1EF6F004BC055 /* SimpleMesh.swift */; };
 		459EDA582A494C0700F9211C /* CLI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 459EDA572A494C0700F9211C /* CLI.swift */; };
 		45AA935B2AEB022800AA3EAD /* TextureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45AA935A2AEB022800AA3EAD /* TextureView.swift */; };
@@ -223,6 +224,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				459C7D202B05715E00AD6E6B /* Projection in Frameworks */,
 				45C525542B007C2E00593B44 /* RenderKitScratch in Frameworks */,
 				45F588142ABD4BD700ADE82B /* RenderKit in Frameworks */,
 				45650DE62ACCEA09009F2AF2 /* SwiftGLTF in Frameworks */,
@@ -508,6 +510,7 @@
 				45650DE52ACCEA09009F2AF2 /* SwiftGLTF */,
 				453A4A422AE43C9100838CF5 /* DemosSupport */,
 				45C525532B007C2E00593B44 /* RenderKitScratch */,
+				459C7D1F2B05715E00AD6E6B /* Projection */,
 			);
 			productName = Demos;
 			productReference = 453D32B42A48D06500FCEE29 /* Demos.app */;
@@ -792,6 +795,10 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 45650DE42ACCEA09009F2AF2 /* XCRemoteSwiftPackageReference "SwiftGLTF" */;
 			productName = SwiftGLTF;
+		};
+		459C7D1F2B05715E00AD6E6B /* Projection */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Projection;
 		};
 		459F48662A5077A300623EEE /* RenderKit */ = {
 			isa = XCSwiftPackageProductDependency;
