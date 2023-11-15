@@ -1,12 +1,18 @@
 import RenderKitShaders
 import SIMDSupport
 
-public extension Box {
+public protocol PolygonConvertable {
+    func toPolygons() -> [Polygon3D<SimpleVertex>]
+}
+
+public extension PolygonConvertable {
     func toCSG() -> CSG<SimpleVertex> {
         return CSG(polygons: toPolygons())
     }
+}
 
-    func toPolygons() -> [Polygon3D<SimpleVertex>] {
+extension Box: PolygonConvertable {
+    public func toPolygons() -> [Polygon3D<SimpleVertex>] {
         let polygons = [
             Polygon3D(vertices: [
                 SimpleVertex(position: SIMD3<Float>(min.x, min.y, min.z), normal: .init(x: -1, y: 0, z: 0)),
@@ -50,10 +56,10 @@ public extension Box {
     }
 }
 
-public extension Sphere {
-    func toCSG() -> CSG<SimpleVertex> {
-        let slices = 36
-        let stacks = 36
+extension Sphere: PolygonConvertable {
+    public func toPolygons() -> [Polygon3D<SimpleVertex>] {
+        let slices = 12
+        let stacks = 12
         var polygons: [Polygon3D<SimpleVertex>] = []
         func vertex(_ theta: Angle<Float>, _ phi: Angle<Float>) -> SimpleVertex {
             let dir = SIMD3<Float>(cos(theta.radians) * sin(phi.radians), cos(phi.radians), sin(theta.radians) * sin(phi.radians))
@@ -69,7 +75,7 @@ public extension Sphere {
                 polygons.append(Polygon3D(vertices: [v1, v3, v4]))
             }
         }
-        return CSG(polygons: polygons)
+        return polygons
     }
 }
 
