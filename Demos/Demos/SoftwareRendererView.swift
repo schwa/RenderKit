@@ -31,51 +31,53 @@ struct SoftwareRendererView: View {
     }
 
     var body: some View {
-        Canvas3D { context, size in
-            context.viewTransform = camera.transform.matrix.inverse
-            context.projectionTransform = camera.projection.matrix(viewSize: .init(size))
-            context.clipTransform = simd_float4x4(scale: [Float(size.width) / 2, Float(size.height) / 2, 1])
-            let modelViewTransform = context.viewTransform * modelTransform.matrix
+        Canvas { context, size in
+            var projection = Projection3D(size: size)
+            projection.viewTransform = camera.transform.matrix.inverse
+            projection.projectionTransform = camera.projection.matrix(viewSize: .init(size))
+            projection.clipTransform = simd_float4x4(scale: [Float(size.width) / 2, Float(size.height) / 2, 1])
 
-            context.stroke(path: Path3D { path in
-                path.move(to: [-5, 0, 0])
-                path.line(to: [5, 0, 0])
-            }, with: .color(.red))
-            context.stroke(path: Path3D { path in
-                path.move(to: [0, -5, 0])
-                path.line(to: [0, 5, 0])
-            }, with: .color(.green))
-            context.stroke(path: Path3D { path in
-                path.move(to: [0, 0, -5])
-                path.line(to: [0, 0, 5])
-            }, with: .color(.blue))
+            context.draw3DLayer(projection: projection) { context, context3D in
+                context3D.stroke(path: Path3D { path in
+                    path.move(to: [-5, 0, 0])
+                    path.addLine(to: [5, 0, 0])
+                }, with: .color(.red))
+                context3D.stroke(path: Path3D { path in
+                    path.move(to: [0, -5, 0])
+                    path.addLine(to: [0, 5, 0])
+                }, with: .color(.green))
+                context3D.stroke(path: Path3D { path in
+                    path.move(to: [0, 0, -5])
+                    path.addLine(to: [0, 0, 5])
+                }, with: .color(.blue))
 
-            if let symbol = context.graphicsContext2D.resolveSymbol(id: "-X") {
-                context.graphicsContext2D.draw(symbol, at: context.project([-5, 0, 0]))
-            }
-            if let symbol = context.graphicsContext2D.resolveSymbol(id: "+X") {
-                context.graphicsContext2D.draw(symbol, at: context.project([5, 0, 0]))
-            }
-            if let symbol = context.graphicsContext2D.resolveSymbol(id: "-Y") {
-                context.graphicsContext2D.draw(symbol, at: context.project([0, -5, 0]))
-            }
-            if let symbol = context.graphicsContext2D.resolveSymbol(id: "+Y") {
-                context.graphicsContext2D.draw(symbol, at: context.project([0, 5, 0]))
-            }
-            if let symbol = context.graphicsContext2D.resolveSymbol(id: "-Z") {
-                context.graphicsContext2D.draw(symbol, at: context.project([0, 0, -5]))
-            }
-            if let symbol = context.graphicsContext2D.resolveSymbol(id: "+Z") {
-                context.graphicsContext2D.draw(symbol, at: context.project([0, 0, 5]))
-            }
-
-            var rasterizer = context.rasterizer
-            for model in models {
-                for (index, polygon) in model.toPolygons().enumerated() {
-                    rasterizer.submit(polygon: polygon.vertices.map { $0.position }, modelViewTransform: modelViewTransform, with: .color(Color(rgb: kellyColors[index % kellyColors.count]).opacity(0.8)))
+                if let symbol = context.resolveSymbol(id: "-X") {
+                    context.draw(symbol, at: projection.project([-5, 0, 0]))
                 }
+                if let symbol = context.resolveSymbol(id: "+X") {
+                    context.draw(symbol, at: projection.project([5, 0, 0]))
+                }
+                if let symbol = context.resolveSymbol(id: "-Y") {
+                    context.draw(symbol, at: projection.project([0, -5, 0]))
+                }
+                if let symbol = context.resolveSymbol(id: "+Y") {
+                    context.draw(symbol, at: projection.project([0, 5, 0]))
+                }
+                if let symbol = context.resolveSymbol(id: "-Z") {
+                    context.draw(symbol, at: projection.project([0, 0, -5]))
+                }
+                if let symbol = context.resolveSymbol(id: "+Z") {
+                    context.draw(symbol, at: projection.project([0, 0, 5]))
+                }
+
+                var rasterizer = context3D.rasterizer
+                for model in models {
+                    for (index, polygon) in model.toPolygons().enumerated() {
+                        rasterizer.submit(polygon: polygon.vertices.map { $0.position }, with: .color(Color(rgb: kellyColors[index % kellyColors.count]).opacity(0.8)))
+                    }
+                }
+                rasterizer.rasterize()
             }
-            rasterizer.rasterize()
         }
         symbols: {
             ForEach(["-X", "+X", "-Y", "+Y", "-Z", "+Z"], id: \.self) { value in
