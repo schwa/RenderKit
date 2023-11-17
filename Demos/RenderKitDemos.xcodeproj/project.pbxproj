@@ -98,6 +98,7 @@
 		45FB2CA22AE19A0F008824D4 /* SimpleJobsBasedRenderPass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45FB2CA12AE19A0F008824D4 /* SimpleJobsBasedRenderPass.swift */; };
 		45FB2CA52AE19C55008824D4 /* MetalCanvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45FB2CA42AE19C55008824D4 /* MetalCanvas.swift */; };
 		45FB79602ACF6E10001CD1B5 /* Cube.glb in Resources */ = {isa = PBXBuildFile; fileRef = 45FB795F2ACF6E10001CD1B5 /* Cube.glb */; };
+		45FFF2922B072CBA00A5E240 /* Teapot.ply in Resources */ = {isa = PBXBuildFile; fileRef = 45FFF2912B072CBA00A5E240 /* Teapot.ply */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -217,6 +218,7 @@
 		45FB2CA12AE19A0F008824D4 /* SimpleJobsBasedRenderPass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SimpleJobsBasedRenderPass.swift; sourceTree = "<group>"; };
 		45FB2CA42AE19C55008824D4 /* MetalCanvas.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MetalCanvas.swift; sourceTree = "<group>"; };
 		45FB795F2ACF6E10001CD1B5 /* Cube.glb */ = {isa = PBXFileReference; lastKnownFileType = file; path = Cube.glb; sourceTree = "<group>"; };
+		45FFF2912B072CBA00A5E240 /* Teapot.ply */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Teapot.ply; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -316,6 +318,7 @@
 				4515CA752AEC116800FF9753 /* PixelFormatsView.swift */,
 				45C525512B0078B600593B44 /* CSGDemoView.swift */,
 				454A913F2B02E8D200276EAB /* SoftwareRendererView.swift */,
+				45FFF2912B072CBA00A5E240 /* Teapot.ply */,
 				45FB2CA32AE19C42008824D4 /* MetalCanvas */,
 				453532532ADB422900B9745A /* Particles */,
 				4578614F2AE32E95005DABD6 /* Particles2 */,
@@ -614,6 +617,7 @@
 				455741D72AC658060050267D /* Testcard_08.ktx in Resources */,
 				4570E2C82AC711A200B3B64D /* perseverance_09.ktx in Resources */,
 				455741D42AC658060050267D /* Testcard_04.ktx in Resources */,
+				45FFF2922B072CBA00A5E240 /* Teapot.ply in Resources */,
 				453D32BC2A48D06600FCEE29 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

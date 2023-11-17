@@ -4,6 +4,8 @@ import RenderKitShaders
 import RenderKitScratch
 import SIMDSupport
 import Projection
+import ModelIO
+import Algorithms
 
 struct SoftwareRendererView: View {
     @State
@@ -18,16 +20,20 @@ struct SoftwareRendererView: View {
     @State
     var ballConstraint: BallConstraint
 
+    @State
+    var teapot: TrivialMesh<UInt32, SIMD3<Float>>
+
     init() {
         camera = Camera(transform: .translation([0, 0, -5]), target: [0, 0, 0], projection: .perspective(.init(fovy: .degrees(90), zClip: 0.01 ... 1000.0)))
         models = [
             Box(min: [-1, -0.5, -0.5], max: [-2.0, 0.5, 0.5]),
             //Box(min: [-0.5, -0.5, -0.5], max: [0.5, 0.5, 0.5]),
-            Sphere(center: .zero, radius: 0.5),
+            //Sphere(center: .zero, radius: 0.5),
             Box(min: [1, -0.5, -0.5], max: [2.0, 0.5, 0.5]),
         ]
         modelTransform = .init(rotation: .init(angle: .degrees(0), axis: [0, 1, 0]))
         ballConstraint = BallConstraint()
+        teapot = loadTeapot()
     }
 
     var body: some View {
@@ -76,6 +82,11 @@ struct SoftwareRendererView: View {
                         rasterizer.submit(polygon: polygon.vertices.map { $0.position }, with: .color(Color(rgb: kellyColors[index % kellyColors.count]).opacity(0.8)))
                     }
                 }
+
+                for (index, polygon) in teapot.toPolygons().enumerated() {
+                    rasterizer.submit(polygon: polygon.map { $0 }, with: .color(Color(rgb: kellyColors[index % kellyColors.count]).opacity(0.8)))
+                }
+
                 rasterizer.rasterize()
             }
         }
@@ -154,3 +165,44 @@ struct BallConstraintEditor: View {
 //                    path.line(to: [cos(angle.radians) * 5, sin(angle.radians) * 5, 0])
 //                }, with: .color(.blue))
 //            }
+
+func loadTeapot() -> TrivialMesh <UInt32, SIMD3<Float>> {
+    let url = Bundle.main.url(forResource: "Teapot", withExtension: "ply")!
+    let asset = MDLAsset(url: url)
+    let mesh = asset.object(at: 0) as! MDLMesh
+
+    guard let attribute = mesh.vertexDescriptor.attributes.compactMap({ $0 as? MDLVertexAttribute }).first(where: { $0.name == MDLVertexAttributePosition }) else {
+        fatalError()
+    }
+
+    let layout = mesh.vertexDescriptor.layouts[attribute.bufferIndex] as! MDLVertexBufferLayout
+    let positionBuffer = mesh.vertexBuffers[attribute.bufferIndex]
+    let positionBytes = UnsafeRawBufferPointer(start: positionBuffer.map().bytes, count: positionBuffer.length)
+    let positions = positionBytes.chunks(ofCount: layout.stride).map { slice in
+        let start = slice.index(slice.startIndex, offsetBy: attribute.offset)
+        let end = slice.index(start, offsetBy: 12) // TODO: assumes packed float 3
+        let slice = slice[start ..< end]
+        return slice.load(as: PackedFloat3.self) // TODO: assumes packed float 3
+    }
+
+    let submesh = mesh.submeshes![0] as! MDLSubmesh
+    let indexBuffer = submesh.indexBuffer
+    let indexBytes = UnsafeRawBufferPointer(start: indexBuffer.map().bytes, count: indexBuffer.length)
+    let indices = indexBytes.bindMemory(to: UInt32.self)
+    print(indices.count)
+
+    return TrivialMesh(indices: Array(indices), vertices: Array(positions.map { SIMD3<Float>($0) }))
+}
+
+struct TrivialMesh <Index, Vertex> where Index: UnsignedInteger & BinaryInteger {
+    var indices: [Index]
+    var vertices: [Vertex]
+}
+
+extension TrivialMesh {
+    func toPolygons() -> [[Vertex]] {
+        indices.chunks(ofCount: 3).map {
+            $0.map { vertices[Int($0)] }
+        }
+    }
+}
