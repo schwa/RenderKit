@@ -28,6 +28,15 @@
       }
     },
     {
+      "identity" : "projection",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/schwa/projection",
+      "state" : {
+        "branch" : "main",
+        "revision" : "b5cd0cc6d743828edbd7a8e5c1b42b7eb6df6dda"
+      }
+    },
+    {
       "identity" : "swift-algorithms",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-algorithms",

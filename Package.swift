@@ -15,7 +15,6 @@ let package = Package(
         .library(name: "RenderKit", targets: ["RenderKit"]),
         .library(name: "RenderKitScratch", targets: ["RenderKitScratch"]),
         .library(name: "RenderKitShaders", targets: ["RenderKitShaders"]),
-        .library(name: "Projection", targets: ["Projection"]),
     ],
     dependencies: [
         .package(url: "https://github.com/schwa/Everything", branch: "jwight/downsizing"),
@@ -69,10 +68,5 @@ let package = Package(
         .testTarget(
             name: "RenderKitTests",
             dependencies: ["RenderKit", "RenderKitScratch"]),
-        .target(
-            name: "Projection",
-            dependencies: [
-                .product(name: "SIMDSupport", package: "SwiftGraphics"),
-            ]),
     ]
 )
