@@ -1,5 +1,6 @@
 import simd
 import RenderKitShaders
+import RenderKit
 
 public struct Line3D {
     public var point: SIMD3<Float>

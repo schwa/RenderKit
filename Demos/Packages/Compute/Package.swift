@@ -4,7 +4,13 @@ import PackageDescription
 
 let package = Package(
     name: "Compute",
-    platforms: [.macOS(.v14)],
+    platforms: [
+        .iOS(.v17),
+        .macOS(.v14),
+        .macCatalyst(.v17),
+        .tvOS(.v17),
+        .visionOS(.v1),
+    ],
     products: [
         .library(name: "Compute",
             targets: ["Compute"]),
