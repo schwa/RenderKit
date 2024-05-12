@@ -14,7 +14,6 @@ struct ContentView: View {
         case particles2
         case pixelFormats
         case csgDemoView
-        case softwareRendererView
     }
 
     @State
@@ -65,8 +64,6 @@ struct ContentView: View {
                     PixelFormatsView()
                 case .csgDemoView:
                     CSGDemoView()
-                case .softwareRendererView:
-                    SoftwareRendererView()
                 }
             }
         }

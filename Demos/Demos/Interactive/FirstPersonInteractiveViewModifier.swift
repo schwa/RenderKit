@@ -47,7 +47,7 @@ public struct FirstPersonInteractiveViewModifier: ViewModifier, @unchecked Senda
                     case .rotation(let rotation):
                         Task {
                             await MainActor.run {
-                                camera.heading.degrees += Float(rotation * 2)
+                                camera.heading.degrees += Double(rotation * 2)
                             }
                         }
                     }

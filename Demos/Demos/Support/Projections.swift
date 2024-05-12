@@ -1,5 +1,6 @@
 import simd
 import SIMDSupport
+import SwiftUI
 
 public protocol ProjectionProtocol: Equatable, Sendable {
     func matrix(viewSize: SIMD2<Float>) -> simd_float4x4
@@ -16,7 +17,7 @@ public struct PerspectiveProjection: ProjectionProtocol {
 
     public func matrix(viewSize: SIMD2<Float>) -> simd_float4x4 {
         let aspect = viewSize.x / viewSize.y
-        return .perspective(aspect: aspect, fovy: fovy.radians, near: zClip.lowerBound, far: zClip.upperBound)
+        return .perspective(aspect: aspect, fovy: Float(fovy.radians), near: zClip.lowerBound, far: zClip.upperBound)
     }
 }
 

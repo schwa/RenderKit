@@ -9,6 +9,7 @@ import MetalSupport
 import os
 import RenderKit
 import Shapes2D
+import CoreGraphicsSupport
 
 // https://www.youtube.com/watch?v=y4KdxaMC69w&t=1761s
 

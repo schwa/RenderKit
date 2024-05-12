@@ -6,6 +6,7 @@ import ModelIO
 import MetalKit
 import SwiftUI
 import RenderKit
+import CoreGraphicsSupport
 
 public struct SimpleScene {
     public var camera: Camera
@@ -49,14 +50,12 @@ extension Camera: Sendable {
 }
 
 public extension Camera {
-    var heading: SIMDSupport.Angle<Float> {
+    var heading: Angle {
         get {
-            let degrees = Angle(from: .zero, to: target.xz).degrees
-            return Angle(degrees: degrees)
+            Angle(from: .zero, to: CGPoint(target.xz))
         }
         set {
-            let length = target.length
-            target = SIMD3<Float>(xz: SIMD2<Float>(length: length, angle: newValue))
+            target = SIMD3<Float>(xz: SIMD2<Float>(CGPoint(distance: Double(target.length), angle: newValue)))
         }
     }
 }

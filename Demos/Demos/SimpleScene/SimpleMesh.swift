@@ -8,6 +8,7 @@ import Everything
 import MetalSupport
 import os
 import RenderKit
+import Shapes2D
 
 protocol MTLBufferProviding {
     var buffer: MTLBuffer { get }
@@ -16,9 +17,9 @@ protocol MTLBufferProviding {
 extension YAMesh {
     static func triangle(label: String? = nil, triangle: Triangle, transform: simd_float3x2 = simd_float3x2([1, 0], [0, 1], [0, 0]), device: MTLDevice, textureCoordinate: (CGPoint) -> SIMD2<Float>) throws -> YAMesh {
         let vertices = [
-            triangle.vertex.0,
-            triangle.vertex.1,
-            triangle.vertex.2,
+            triangle.vertices.0,
+            triangle.vertices.1,
+            triangle.vertices.2,
         ]
             .map {
                 // TODO; Normal not impacted by transform. It should be.

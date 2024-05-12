@@ -1,8 +1,8 @@
 import SwiftUI
-import RenderKitScratch
 import RenderKit
 import RenderKitShaders
 import Everything
+import RenderKitScratch
 
 struct CSGDemoView: View {
     let a: CSG<SimpleVertex>
@@ -44,7 +44,7 @@ struct CSGDemoView: View {
 
     var body: some View {
         Canvas { context, size in
-            let transform = CGAffineTransform(scale: 30)
+            let transform = CGAffineTransform(scaleX: 30, y: 30)
             context.translateBy(x: size.width / 2, y: size.height / 2)
 //            context.draw(csg: a, transform: transform, with: .color(.red))
 //            context.draw(csg: b, transform: transform, with: .color(.green))

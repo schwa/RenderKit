@@ -6,6 +6,8 @@ import SwiftUI
 import MetalKit
 import RenderKit
 import RenderKitShaders
+import Shapes2D
+import CoreGraphicsSupport
 
 // TODO: Move
 extension CGVector {
@@ -74,9 +76,9 @@ extension Shapes2D.Circle {
 
 extension Triangle {
     init(containing circle: Shapes2D.Circle) {
-        let a = circle.center + CGPoint(length: circle.radius * 2, angle: Angle.degrees(0).radians)
-        let b = circle.center + CGPoint(length: circle.radius * 2, angle: Angle.degrees(120).radians)
-        let c = circle.center + CGPoint(length: circle.radius * 2, angle: Angle.degrees(240).radians)
+        let a = circle.center + CGPoint(distance: circle.radius * 2, angle: Angle.degrees(0))
+        let b = circle.center + CGPoint(distance: circle.radius * 2, angle: Angle.degrees(120))
+        let c = circle.center + CGPoint(distance: circle.radius * 2, angle: Angle.degrees(240))
         self = .init(a, b, c)
     }
 }
