@@ -6,7 +6,4 @@ steps:
           - xcodebuild -scheme 'Demos' -allowProvisioningUpdates -destination 'generic/platform=macOS'
     - command:
           - cd Demos
-          - xcodebuild -scheme 'CLI' -allowProvisioningUpdates -destination 'generic/platform=macOS'
-    - command:
-          - cd Demos
           - xcodebuild -scheme 'Demos' -allowProvisioningUpdates -destination 'generic/platform=iOS'
