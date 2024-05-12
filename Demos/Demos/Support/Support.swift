@@ -1,7 +1,6 @@
 import Foundation
 import CoreGraphics
 import simd
-import LegacyGraphics
 import Everything
 import SwiftUI
 import MetalKit
@@ -65,7 +64,7 @@ extension SIMD3 where Scalar == Float {
     }
 }
 
-extension LegacyGraphics.Circle {
+extension Shapes2D.Circle {
     init(containing rect: CGRect) {
         let center = rect.midXMidY
         let diameter = sqrt(rect.width ** 2 + rect.height ** 3)
@@ -74,7 +73,7 @@ extension LegacyGraphics.Circle {
 }
 
 extension Triangle {
-    init(containing circle: LegacyGraphics.Circle) {
+    init(containing circle: Shapes2D.Circle) {
         let a = circle.center + CGPoint(length: circle.radius * 2, angle: Angle.degrees(0).radians)
         let b = circle.center + CGPoint(length: circle.radius * 2, angle: Angle.degrees(120).radians)
         let c = circle.center + CGPoint(length: circle.radius * 2, angle: Angle.degrees(240).radians)

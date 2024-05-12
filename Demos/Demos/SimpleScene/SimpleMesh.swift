@@ -8,7 +8,6 @@ import Everything
 import MetalSupport
 import os
 import RenderKit
-import LegacyGraphics
 
 protocol MTLBufferProviding {
     var buffer: MTLBuffer { get }

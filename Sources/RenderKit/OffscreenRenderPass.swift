@@ -2,7 +2,6 @@ import SwiftUI
 import MetalKit
 import ModelIO
 import simd
-import Everything
 import MetalSupport
 import SIMDSupport
 import Metal

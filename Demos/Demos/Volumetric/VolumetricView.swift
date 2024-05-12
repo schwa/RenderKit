@@ -8,8 +8,7 @@ import RenderKitShaders
 import MetalSupport
 import os
 import RenderKit
-import LegacyGraphics
-import LegacyGraphics
+import Shapes2D
 
 // https://www.youtube.com/watch?v=y4KdxaMC69w&t=1761s
 

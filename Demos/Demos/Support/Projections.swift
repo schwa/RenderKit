@@ -6,10 +6,10 @@ public protocol ProjectionProtocol: Equatable, Sendable {
 }
 
 public struct PerspectiveProjection: ProjectionProtocol {
-    public var fovy: SIMDSupport.Angle<Float>
+    public var fovy: Angle
     public var zClip: ClosedRange<Float>
 
-    public init(fovy: SIMDSupport.Angle<Float>, zClip: ClosedRange<Float>) {
+    public init(fovy: Angle, zClip: ClosedRange<Float>) {
         self.fovy = fovy
         self.zClip = zClip
     }

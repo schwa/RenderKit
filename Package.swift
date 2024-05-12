@@ -30,17 +30,17 @@ let package = Package(
         .target(
             name: "RenderKit",
             dependencies: [
-                "Everything",
-                "RenderKitShaders",
-                .product(name: "CoreGraphicsSupport", package: "SwiftGraphics"),
                 .product(name: "MetalSupport", package: "SwiftGraphics"),
                 .product(name: "MetalSupportUnsafeConformances", package: "SwiftGraphics"),
                 .product(name: "SIMDSupport", package: "SwiftGraphics"),
-                .product(name: "LegacyGraphics", package: "SwiftGraphics"),
+                .product(name: "Shapes2D", package: "SwiftGraphics"),
+                .product(name: "Everything", package: "Everything"),
+                .product(name: "CoreGraphicsSupport", package: "SwiftGraphics"),
                 .product(name: "Algorithms", package: "swift-algorithms"),
                 .product(name: "SwiftFields", package: "swiftfields"),
                 .product(name: "SwiftFormats", package: "swiftformats"),
                 .product(name: "AsyncAlgorithms", package: "swift-async-algorithms"),
+                "RenderKitShaders",
                 //                .product(name: "StreamBuilder", package: "StreamBuilder"),
             ],
             resources: [

@@ -8,7 +8,7 @@ import Everything
 import MetalSupport
 import os
 import RenderKit
-import LegacyGraphics
+import Shapes2D
 
 class VolumetricRenderPass: RenderPass {
     let id = LOLID2(prefix: "VolumeRenderPass")
@@ -92,7 +92,7 @@ class VolumetricRenderPass: RenderPass {
 
                 let mesh2 = try cache.get(key: "mesh2", of: YAMesh.self) {
                     let rect = CGRect(center: .zero, radius: 0.5)
-                    let circle = LegacyGraphics.Circle(containing: rect)
+                    let circle = Shapes2D.Circle(containing: rect)
                     let triangle = Triangle(containing: circle)
                     return try YAMesh.triangle(label: "triangle", triangle: triangle, device: device) {
                         SIMD2<Float>($0) + [0.5, 0.5]

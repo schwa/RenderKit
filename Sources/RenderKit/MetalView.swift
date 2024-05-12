@@ -1,8 +1,8 @@
 #if !os(visionOS)
 import SwiftUI
-import Everything
 import MetalKit
 import Observation
+import Everything
 
 public struct MetalViewConfiguration: MetalConfiguration {
     // TODO: Fully expand this.
