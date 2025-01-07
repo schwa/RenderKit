@@ -1,9 +1,0 @@
-steps:
-    - command:
-          - swift build
-    - command:
-          - cd Demos
-          - xcodebuild -scheme 'Demos' -allowProvisioningUpdates -destination 'generic/platform=macOS'
-    - command:
-          - cd Demos
-          - xcodebuild -scheme 'Demos' -allowProvisioningUpdates -destination 'generic/platform=iOS'
